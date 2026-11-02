@@ -366,3 +366,4 @@ body{background-color:#090B10;background-image:
 /* Bestellungen: knallgrün (Neon) statt Pink */
 #v-bestell .alert.pinkish{background:rgba(57,242,107,.09);border-color:#1f6b38;color:#C9FBD6}#v-bestell .alert.pinkish .atag{color:#39F26B}
 #v-bestell .mini.go{background:#39F26B;border-color:#39F26B;color:#062b12}
+#v-planer .date span{font-size:18px!important}
