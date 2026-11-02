@@ -556,3 +556,6 @@ body[data-v=kunden] .tt small{background:var(--rb);-webkit-background-clip:text;
 #grid .e .x{border-radius:2px}
 #grid .c[data-col="wa"] .e{padding:4px 5px 4px 9px}
 #grid .tchip{border-radius:2px;border:0;box-shadow:inset 2px 0 0 #FDE047}
+/* 1.6.4: Kürzel-Kreis am Status-Knopf (wer montiert/O.K./… hat) */
+.stb .st{position:relative}
+.st .sav{position:absolute;top:-6px;right:-6px;display:grid;place-items:center;width:14px;height:14px;border-radius:50%;font:800 8.5px/1 var(--body);color:#0b0e15;background:var(--uc);box-shadow:0 0 0 2px #0b0e15,0 0 6px var(--uc);pointer-events:none}
