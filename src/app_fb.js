@@ -381,9 +381,8 @@ let bEdit=null,bShowDone=false;
 const BST=[['offen','Offen'],['bestellt','Bestellt'],['da','Da · Kunde informieren']];
 const BF=[['datum','Datum'],['kunde','Kunde / Modell'],['telefon','Telefon'],['artikel','Artikel'],['lieferant','Lieferant'],['lieferzeit','Lieferzeit'],['notiz','Notiz']];
 let bF='';
-function rb(){const s1=($('bSearch').value||'').toLowerCase(),m=b=>(!s1||(b.kunde+' '+b.artikel+' '+b.lieferant+' '+b.telefon).toLowerCase().includes(s1))&&(bF!=='np'||b.bezahlt!=='ja');
+function rb(){const m=b=>true;
  const st=k=>B.filter(b=>(b.status||'offen')===k).length;
- stats('bStats',[{n:'Offen · noch bestellen',v:st('offen'),c:'#FBBF24',i:'bell'},{n:'Bestellt · unterwegs',v:st('bestellt'),c:'#60A5FA',i:'truck'},{n:'Da · Kunde informieren',v:st('da'),c:'#34D399',i:'box'},{k:'np',n:'Nicht bezahlt',v:B.filter(b=>(b.status||'offen')!=='fertig'&&b.bezahlt!=='ja').length,c:'#F87171',i:'euro'}],bF);
  $('bForm').innerHTML=bEdit?bForm(bEdit==='new'?{id:'new',datum:new Date().toLocaleDateString('de-DE'),status:'offen'}:B.find(x=>x.id===bEdit)||{id:'new'}):'';
  const cols=bShowDone?[...BST,['fertig','Erledigt']]:BST;
  $('bCols').style.gridTemplateColumns=`repeat(${cols.length},minmax(0,1fr))`;
@@ -400,8 +399,6 @@ $('v-bestell').addEventListener('click',e=>{const mv=e.target.closest('[data-bmv
  if(e.target.closest('[data-bcancel]')){bEdit=null;rb();return;}
  const dl=e.target.closest('[data-bdel]');if(dl){if(!dl.dataset.sure){dl.dataset.sure=1;dl.textContent='Wirklich löschen?';return;}const id=dl.dataset.bdel,b=B.find(x=>x.id===id);B=B.filter(x=>x.id!==id);bEdit=null;rb();del('B',id);toast('Gelöscht',()=>{B.unshift(b);rb();save('B',b).catch(()=>{});});}});
 $('v-bestell').addEventListener('submit',e=>{if(!e.target.dataset.bf)return;e.preventDefault();const f=e.target,id=f.dataset.bf,d=new FormData(f);const b=id==='new'?{id:nid('b'),status:'offen',von:ME.id}:Object.assign({},B.find(x=>x.id===id));BF.forEach(([k])=>b[k]=String(d.get(k)||'').trim());b.bezahlt=d.get('bezahlt')||'';bEdit=null;putB(b);toast('Gespeichert');});
-$('bSearch').addEventListener('input',rb);
-$('bStats').addEventListener('click',e=>{const b=e.target.closest('[data-sf]');if(!b)return;bF=bF===b.dataset.sf?'':b.dataset.sf;rb();});
 $('bAdd').addEventListener('click',()=>{bEdit='new';rb();const f=document.querySelector('[data-bf=new] input[name=kunde]');if(f)f.focus();});
 $('bDone').addEventListener('click',e=>{bShowDone=!bShowDone;e.currentTarget.setAttribute('aria-pressed',bShowDone);rb();});
 
