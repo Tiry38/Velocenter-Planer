@@ -1046,7 +1046,7 @@ body[data-v=kunden] .tt small{background:var(--rb);-webkit-background-clip:text;
   <section class="view" id="v-lief">
     <div class="toolbar">
       <label class="search"><svg class="ico" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg><input id="sSearch" placeholder="Lieferant oder Kunden-Nr. suchen"></label>
-      <button class="btn red" type="button" id="sAdd">+ Lieferant</button>
+      <button class="btn" type="button" id="sExp" title="Alle Lieferanten-Namen in die Zwischenablage (für die Kontakt-Recherche)">📋 Namen kopieren</button><button class="btn red" type="button" id="sAdd">+ Lieferant</button>
     </div>
     <div class="stats" id="sStats"></div><div class="azbar" id="sAZ"></div><p class="hint" style="margin:0 0 8px">Felder direkt anklicken und ändern – Enter oder Klick daneben speichert.</p><div id="sForm"></div>
     <div class="tbl"><table id="sTab"></table></div>
@@ -1092,7 +1092,7 @@ body[data-v=kunden] .tt small{background:var(--rb);-webkit-background-clip:text;
 <script>
 const FB_CONFIG={apiKey:"AIzaSyC_uZPvc5rJETwlS4JbfCoTkkE4ckjtp0M",authDomain:"velocenter-planer.firebaseapp.com",projectId:"velocenter-planer",storageBucket:"velocenter-planer.firebasestorage.app",messagingSenderId:"1018330488700",appId:"1:1018330488700:web:262a4d1660353e6fde8ef9"};
 /* ================= Velocenter Werkstatt-Cockpit – Oberfläche ================= */
-const CLIENT_VERSION='1.7.6';
+const CLIENT_VERSION='1.7.7';
 const USERS=[{id:'kevin',n:'Kevin',c:'#E2232D'},{id:'stefan',n:'Stefan',c:'#F59E0B'},{id:'martina',n:'Martina',c:'#EC4899'},{id:'sascha',n:'Sascha',c:'#22D3EE'},{id:'rene',n:'René',c:'#34D399'}];
 const U=id=>USERS.find(u=>u.id===id)||{n:'',c:'#64748B',id:''};
 const $=id=>document.getElementById(id);
@@ -2416,6 +2416,9 @@ const SF=[['name','Lieferant'],['kdnr','Kunden-Nr.'],['mbw','Mindestbestellwert'
 let sAZ='';
 // Recherchierte Mindestbestellwerte (Websuche 02.11.2026, nur Belegtes) – einmalig, nur in LEERE Felder, sobald ein Admin angemeldet ist
 const SMBW_VER=1,SMBW={'böttcher':'kein Mindestbestellwert (B2B-Shop)','bbf':'kein fester MBW · unter 50 € netto +6,95 € Mindermenge · ab 50 € netto 9,90 € Fracht'};
+/* 1.7.7: alle Lieferanten-Namen kopieren (nur Namen, keine Kd-Nr./Logins) */
+$('sExp').addEventListener('click',async()=>{const t=S.map(o=>String(o.name||'').trim()).filter(Boolean).sort((a,b)=>a.localeCompare(b,'de')).join('\n');
+ try{await navigator.clipboard.writeText(t);toast(S.length+' Namen kopiert – jetzt einfach in den Chat einfügen');}catch(_){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([t],{type:'text/plain'}));a.download='lieferanten-namen.txt';a.click();toast('Als Datei gespeichert (Download-Ordner)');}});
 let smbwDone=false;async function smbwSeed(){if(smbwDone||!ME||!ME.adm||!S.length)return;smbwDone=true;try{const f=db.doc('meta/seed');const d=await f.get();if(d.exists&&(d.data().smbw||0)>=SMBW_VER)return;
  for(const o of S){const v=SMBW[String(o.name||'').trim().toLowerCase()];if(v&&!String(o.mbw||'').trim()){const n=Object.assign({},o,{mbw:v});delete n.hasLogin;await save('S',n);}}await f.set({smbw:SMBW_VER},{merge:true});}catch(e){smbwDone=false;}}
 // Mindestbestellwert immer in €: „500“ → „500 €“ (Text wie „frachtfrei ab 300“ bleibt unverändert)
