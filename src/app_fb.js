@@ -213,7 +213,7 @@ function rv(){const s1=($('vkSearch').value||'').toLowerCase();
  document.querySelectorAll('#vkViewSeg .btn').forEach(x=>x.setAttribute('aria-pressed',x.dataset.vv===vkView));$('vkSortSel').value=vkSort;
  const form=vkEdit==='new'?vkForm({id:'new'}):vkEdit&&V.find(x=>x.id===vkEdit)?vkForm(V.find(x=>x.id===vkEdit)):'';
  if(document.querySelector('#cards [contenteditable]:focus, #cards .din'))return;
- if(vkView==='liste'){$('cards').className='vlist';$('cards').innerHTML=form+(list.length?`<div class="tbl vtab"><table><thead><tr><th></th><th>Kunde · Modell</th><th>Leasing</th><th>Verkauft</th><th>LT</th><th>Antrag</th><th>O.K.</th><th>L.-Ende</th><th class="thn">Notiz</th><th>Beratung</th><th>Status</th><th></th></tr></thead><tbody>${list.map(vkRow).join('')}</tbody></table></div>`:'<p class="empty">Keine Räder in dieser Auswahl.</p>');}
+ if(vkView==='liste'){$('cards').className='vlist';$('cards').innerHTML=form+(list.length?`<div class="tbl vtab"><table><thead><tr class="h1"><th colspan="5"></th><th colspan="3" class="lgrp"><span>Leasing</span></th><th colspan="4"></th></tr><tr class="h2"><th></th><th>Kunde · Modell</th><th>Leasing</th><th>Verkauft</th><th>LT</th><th>Antrag</th><th>O.K.</th><th>L.-Ende</th><th class="thn">Notiz</th><th>Beratung</th><th>Status</th><th></th></tr></thead><tbody>${list.map(vkRow).join('')}</tbody></table></div>`:'<p class="empty">Keine Räder in dieser Auswahl.</p>');}
  else{$('cards').className='cards';$('cards').innerHTML=form+(list.filter(b=>b.id!==vkEdit).map(vkCard).join('')||'<p class="empty">Keine Räder in dieser Auswahl.</p>');}
  $('nOffen').textContent=V.filter(b=>b.a!=='1').length;}
 /* Sortierung: Datum „17.8.“ / „29.09.“ / LT „38“ „KW 38“ „Lager“ */
