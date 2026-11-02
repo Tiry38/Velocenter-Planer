@@ -650,6 +650,8 @@ body.navmini .navtog svg{transform:rotate(180deg)}
 .tt .tile svg{filter:drop-shadow(0 1px 1.5px rgba(0,0,0,.55))}
 .top h1{text-shadow:none!important;filter:drop-shadow(0 2px 6px rgba(0,0,0,.55))}
 .tt small{color:color-mix(in srgb,var(--ac) 35%,#fff)!important;text-shadow:0 1px 6px rgba(0,0,0,.6)}
+/* Hauptfläche: feines Wabenmuster über den Farbschimmern (Navi bleibt Karomuster) */
+body{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='97' viewBox='0 0 56 97'%3E%3Cpath d='M28 0L56 16.17V48.5L28 64.67L0 48.5V16.17ZM28 64.67V97' fill='none' stroke='%23ffffff' stroke-opacity='.075' stroke-width='1'/%3E%3C/svg%3E"),radial-gradient(760px 420px at 0% 0%,rgba(70,95,190,.26),transparent 70%),radial-gradient(820px 440px at 100% 0%,rgba(190,30,45,.22),transparent 70%),radial-gradient(900px 520px at 100% 100%,rgba(120,80,200,.16),transparent 70%),radial-gradient(820px 520px at 0% 100%,rgba(90,60,140,.10),transparent 70%);background-size:56px 97px,auto,auto,auto,auto;background-attachment:fixed}
 
 [hidden]{display:none!important}
 #sTab td.b{font-weight:700}#sTab .pwm.ed{outline:none;padding:2px 6px;border-radius:6px;font-family:var(--mono)}#sTab td{vertical-align:top}
@@ -788,7 +790,7 @@ body.navmini .navtog svg{transform:rotate(180deg)}
 <script>
 const FB_CONFIG={apiKey:"AIzaSyC_uZPvc5rJETwlS4JbfCoTkkE4ckjtp0M",authDomain:"velocenter-planer.firebaseapp.com",projectId:"velocenter-planer",storageBucket:"velocenter-planer.firebasestorage.app",messagingSenderId:"1018330488700",appId:"1:1018330488700:web:262a4d1660353e6fde8ef9"};
 /* ================= Velocenter Werkstatt-Cockpit – Oberfläche ================= */
-const CLIENT_VERSION='1.3.4';
+const CLIENT_VERSION='1.3.5';
 const USERS=[{id:'kevin',n:'Kevin',c:'#E2232D'},{id:'stefan',n:'Stefan',c:'#F59E0B'},{id:'martina',n:'Martina',c:'#EC4899'},{id:'sascha',n:'Sascha',c:'#22D3EE'},{id:'rene',n:'René',c:'#34D399'}];
 const U=id=>USERS.find(u=>u.id===id)||{n:'',c:'#64748B',id:''};
 const $=id=>document.getElementById(id);
