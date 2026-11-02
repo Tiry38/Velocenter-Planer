@@ -591,3 +591,6 @@ body[data-v=kunden] .tt small{background:var(--rb);-webkit-background-clip:text;
 .vtab thead tr.h2 th{font-size:11px}
 /* 1.7.4: leeres Leasingende = nur Strich (Kunde hatte vorher kein Leasing) */
 .vtab td.d-lende:empty::before{content:"–";color:var(--muted);font-weight:400}
+/* 1.7.5: Spaltenköpfe Verkauf rund statt kantig – normale Groß-/Kleinschreibung */
+.vtab thead tr.h2 th{text-transform:none!important;letter-spacing:0!important;font-size:13px;font-weight:600}
+.vtab thead tr.h2 th *{letter-spacing:0!important}

@@ -215,8 +215,8 @@ function startLive(){stopLive();const from=iso(new Date(Date.now()-35*864e5));
 async function seedLeasing(){if(!ME||!ME.adm)return;try{await db.runTransaction(async t=>{const f=db.doc('meta/seed');const d=await t.get(f);if(d.exists&&d.data().leasing)return;
   LSDEF.forEach(x=>t.set(db.collection('leasing').doc(x.k),Object.assign(clean(x),{ts:stamp()})));t.set(f,{leasing:true,rec:LSREC_VER},{merge:true});});}catch(e){fail(e);}}
 // Leasing-Infos einmalig auf die neue Struktur (Tirys Fragenliste) bringen; alte Listen werden in „alt“ gesichert
-let recDone=false;async function recLeasing(){if(recDone||!ME||!ME.adm||!L.length)return;recDone=true;try{await db.runTransaction(async t=>{const f=db.doc('meta/seed');const d=await t.get(f);if(d.exists&&(d.data().rec||0)>=LSREC_VER)return;
-  LSREC.forEach(x=>{const o=L.find(l=>l.id===x.k)||L.find(l=>l.k===x.k);if(!o)return;const u=recMerge(o,x);u.ts=stamp();t.set(db.collection('leasing').doc(o.id),u,{merge:true});});t.set(f,{rec:LSREC_VER},{merge:true});});}catch(e){recDone=false;fail(e);}}
+let recDone=false;async function recLeasing(){if(recDone||!ME||!ME.adm||!L.length)return;recDone=true;try{await db.runTransaction(async t=>{const f=db.doc('meta/seed');const d=await t.get(f);const old=d.exists?(d.data().rec||0):0;if(old>=LSREC_VER)return;
+  LSREC.filter(x=>(x.v||3)>old).forEach(x=>{/* nur neue Fassungen überschreiben, eigene Änderungen an anderen Karten bleiben */const o=L.find(l=>l.id===x.k)||L.find(l=>l.k===x.k);if(!o)return;const u=recMerge(o,x);u.ts=stamp();t.set(db.collection('leasing').doc(o.id),u,{merge:true});});t.set(f,{rec:LSREC_VER},{merge:true});});}catch(e){recDone=false;fail(e);}}
 // Offenes (nicht gelöscht = nicht erledigt) wandert auf heute: Werkstatt wie bisher, dazu Intern/WhatsApp/Notiz ab 02.11.2026 (ältere = Sheet-Historie)
 const ROLL_NEU=['int','wa','not'],ROLL_AB='2026-11-02';
 async function rollover(){const t=TODAY();try{const go=await db.runTransaction(async tr=>{const f=db.doc('meta/rollover');const d=await tr.get(f);if(d.exists&&d.data().datum===t)return false;tr.set(f,{datum:t,von:ME.id});return true;});
@@ -487,7 +487,7 @@ $('bDone').addEventListener('click',e=>{bShowDone=!bShowDone;e.currentTarget.set
 /* ================= LEASING ================= */
 __LSDEF__
 __LSREC__
-function recMerge(o,x){const u=clean(x);delete u.k;if(!o.alt&&((o.abh||[]).length||(o.ser||[]).length))u.alt={abh:o.abh||[],ser:o.ser||[],is:o.is||'',vs:o.vs||'',gs:o.gs||'',text:o.text||'',tel:o.tel||''};u.abh=[];u.ser=[];return u;}
+function recMerge(o,x){const u=clean(x);delete u.k;delete u.v;if(!o.alt&&((o.abh||[]).length||(o.ser||[]).length))u.alt={abh:o.abh||[],ser:o.ser||[],is:o.is||'',vs:o.vs||'',gs:o.gs||'',text:o.text||'',tel:o.tel||''};u.abh=[];u.ser=[];return u;}
 const LSDEF=LS.map(x=>{const r=LSREC.find(r=>r.k===x.k);return r?Object.assign({},x,recMerge(x,r)):Object.assign({},x);});
 __LOGOS__
 let lsQ='',lsDrei=false,lsEdit=-1;
