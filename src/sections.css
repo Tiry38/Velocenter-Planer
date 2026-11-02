@@ -568,3 +568,15 @@ body[data-v=kunden] .tt small{background:var(--rb);-webkit-background-clip:text;
 .vstu .av{width:20px;height:20px;font-size:10.5px}
 .vstx{margin-top:8px;width:calc(100% - 16px);color:#FCA5A5;border-top:1px solid #2A3344;border-radius:0;padding-top:9px}
 .vstx:hover{color:#F87171}
+/* 1.6.6: Kürzel an Leasing-Feldern (wählbar Kevin/Stefan/Martina) und an der Notiz */
+.lvon{all:unset;cursor:pointer;display:inline-grid;place-items:center;width:15px;height:15px;margin-left:6px;vertical-align:1px;border-radius:50%;font:800 8.5px/1 var(--body);color:#0b0e15;background:var(--uc);box-shadow:0 0 0 2px #0b0e15,0 0 6px var(--uc);flex:none}
+.lvon.nv{background:transparent;color:#64748B;box-shadow:inset 0 0 0 1px #3A4558;opacity:.7}
+.lvon.nv:hover,.lvon:hover{opacity:1;transform:scale(1.15)}
+.lvon:focus-visible{outline:2px solid var(--cyan)}
+.vtab td.ce.vnote[data-von]{position:relative;padding-right:24px}
+.vtab td.ce.vnote[data-von]::after{content:attr(data-von);position:absolute;right:5px;top:50%;transform:translateY(-50%);display:grid;place-items:center;width:15px;height:15px;border-radius:50%;font:800 8.5px/1 var(--body);color:#0b0e15;background:var(--uc);box-shadow:0 0 0 2px #0b0e15,0 0 6px var(--uc);pointer-events:none}
+/* 1.6.7: Liefertermin-Fortschrittsbalken unten an der Zeile (Kunde → Notiz) */
+.vtab td.who2{position:relative}
+.vtab .ltbar{position:absolute;left:0;bottom:0;height:3px;width:var(--lbw,600px);pointer-events:none;z-index:1;border-radius:0 2px 2px 0;
+ background:linear-gradient(90deg,var(--lc) 0 calc(var(--lp)*100%),rgba(255,255,255,.05) calc(var(--lp)*100%) 100%);
+ filter:drop-shadow(0 0 4px color-mix(in srgb,var(--lc) 60%,transparent))}

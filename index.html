@@ -892,6 +892,18 @@ body[data-v=kunden] .tt small{background:var(--rb);-webkit-background-clip:text;
 .vstu .av{width:20px;height:20px;font-size:10.5px}
 .vstx{margin-top:8px;width:calc(100% - 16px);color:#FCA5A5;border-top:1px solid #2A3344;border-radius:0;padding-top:9px}
 .vstx:hover{color:#F87171}
+/* 1.6.6: Kürzel an Leasing-Feldern (wählbar Kevin/Stefan/Martina) und an der Notiz */
+.lvon{all:unset;cursor:pointer;display:inline-grid;place-items:center;width:15px;height:15px;margin-left:6px;vertical-align:1px;border-radius:50%;font:800 8.5px/1 var(--body);color:#0b0e15;background:var(--uc);box-shadow:0 0 0 2px #0b0e15,0 0 6px var(--uc);flex:none}
+.lvon.nv{background:transparent;color:#64748B;box-shadow:inset 0 0 0 1px #3A4558;opacity:.7}
+.lvon.nv:hover,.lvon:hover{opacity:1;transform:scale(1.15)}
+.lvon:focus-visible{outline:2px solid var(--cyan)}
+.vtab td.ce.vnote[data-von]{position:relative;padding-right:24px}
+.vtab td.ce.vnote[data-von]::after{content:attr(data-von);position:absolute;right:5px;top:50%;transform:translateY(-50%);display:grid;place-items:center;width:15px;height:15px;border-radius:50%;font:800 8.5px/1 var(--body);color:#0b0e15;background:var(--uc);box-shadow:0 0 0 2px #0b0e15,0 0 6px var(--uc);pointer-events:none}
+/* 1.6.7: Liefertermin-Fortschrittsbalken unten an der Zeile (Kunde → Notiz) */
+.vtab td.who2{position:relative}
+.vtab .ltbar{position:absolute;left:0;bottom:0;height:3px;width:var(--lbw,600px);pointer-events:none;z-index:1;border-radius:0 2px 2px 0;
+ background:linear-gradient(90deg,var(--lc) 0 calc(var(--lp)*100%),rgba(255,255,255,.05) calc(var(--lp)*100%) 100%);
+ filter:drop-shadow(0 0 4px color-mix(in srgb,var(--lc) 60%,transparent))}
 
 [hidden]{display:none!important}
 #sTab td.b{font-weight:700}#sTab .pwm.ed{outline:none;padding:2px 6px;border-radius:6px;font-family:var(--mono)}#sTab td{vertical-align:top}
@@ -1066,7 +1078,7 @@ body[data-v=kunden] .tt small{background:var(--rb);-webkit-background-clip:text;
 <script>
 const FB_CONFIG={apiKey:"AIzaSyC_uZPvc5rJETwlS4JbfCoTkkE4ckjtp0M",authDomain:"velocenter-planer.firebaseapp.com",projectId:"velocenter-planer",storageBucket:"velocenter-planer.firebasestorage.app",messagingSenderId:"1018330488700",appId:"1:1018330488700:web:262a4d1660353e6fde8ef9"};
 /* ================= Velocenter Werkstatt-Cockpit – Oberfläche ================= */
-const CLIENT_VERSION='1.6.5';
+const CLIENT_VERSION='1.6.7';
 const USERS=[{id:'kevin',n:'Kevin',c:'#E2232D'},{id:'stefan',n:'Stefan',c:'#F59E0B'},{id:'martina',n:'Martina',c:'#EC4899'},{id:'sascha',n:'Sascha',c:'#22D3EE'},{id:'rene',n:'René',c:'#34D399'}];
 const U=id=>USERS.find(u=>u.id===id)||{n:'',c:'#64748B',id:''};
 const $=id=>document.getElementById(id);
@@ -1358,13 +1370,26 @@ function rv(){
  if(document.querySelector('#cards [contenteditable]:focus, #cards .din'))return;
  {const hold=$('vkCtlHold');['vkSortSel','vkDone','vkAdd'].forEach(id=>hold.append($(id)));vkSelSync();
  $('cards').className='vlist';$('cards').innerHTML=form+`<div class="tbl vtab"><table><thead><tr class="h1"><th colspan="7" class="hL"></th><th colspan="4" class="lgrp"><span>Leasing</span></th><th colspan="3" class="hR"></th></tr><tr class="h2">${vkHead()}</tr></thead><tbody>${list.length?list.map(vkRow).join(''):'<tr><td colspan="14" class="empty">Keine Räder in dieser Auswahl.</td></tr>'}</tbody></table></div>`;
- document.querySelector('#cards th.hL').append($('vkSortSel'),$('vkDone'));document.querySelector('#cards th.hR').append($('vkAdd'));}
+ document.querySelector('#cards th.hL').append($('vkSortSel'),$('vkDone'));document.querySelector('#cards th.hR').append($('vkAdd'));ltBarPos();}
  $('nOffen').textContent=V.filter(b=>b.a!=='1').length;}
 /* Sortierung: Datum „17.8.“ / „29.09.“ / LT „38“ „KW 38“ „Lager“ */
 function vkDate(s){const m=String(s||'').match(/(\d{1,2})\.(\d{1,2})\.?(\d{2,4})?/);if(!m)return 0;const now=new Date();let y=m[3]?+m[3]:now.getFullYear();if(y<100)y+=2000;let d=new Date(y,+m[2]-1,+m[1]);if(!m[3]&&d>new Date(now.getTime()+60*864e5))d=new Date(y-1,+m[2]-1,+m[1]);return d.getTime();}
 // LT „KW 47/27“ (ab 1.6.3 mit Jahr); alte Einträge „KW 47“ ohne Jahr: Jahr wird geschätzt (bis 20 Wochen zurück = dieses Jahr, sonst nächstes)
 function ltParse(s){s=String(s||'').trim();const m=s.match(/(\d{1,2})(?:\s*\/\s*(\d{2,4}))?/);if(!m||/^sofort|lager|^l$/i.test(s))return null;const k=+m[1],cy=new Date().getFullYear(),ck=kw(new Date());
  let y=m[2]?+m[2]:0;if(y&&y<100)y+=2000;if(!y){const d=k-ck;y=cy+(d<-20?1:d>32?-1:0);}return {k,y};}
+/* 1.6.7: Liefertermin-Fortschritt je Zeile (Kunde → Notiz). Start = Vom Kunde bestellt am, Ziel = Montag der LT-KW.
+   Lager / schon angeliefert = voll grün, Sofort = voll gelb, nach der LT-Woche = voll rot. */
+function kwMon(k,y){const j=new Date(y,0,4),d=(j.getDay()||7)-1;return new Date(y,0,4-d+(k-1)*7);}
+function ltBar(b){if(b.a==='1')return null;const s=String(b.lt||'').trim();
+ if(b.an==='1'||b.m==='1'||b.b==='1')return s||b.an==='1'?{p:1,c:'#34D399',t:'Rad ist da'}:null;
+ if(/^sofort/i.test(s))return {p:1,c:'#FACC15',t:'Liefertermin: Sofort'};if(/lager|^l$/i.test(s))return {p:1,c:'#34D399',t:'Liefertermin: Lager'};
+ const L=ltParse(s);if(!L)return null;const z=kwMon(L.k,L.y).getTime(),now=Date.now();
+ if(now>=z+7*864e5)return {p:1,c:'#F87171',t:'Liefertermin KW '+L.k+' überschritten'};
+ const a=vkDate(b.dat);if(!a)return null;const p=now>=z?1:Math.max(0.02,Math.min(1,(now-a)/Math.max(864e5,z-a)));
+ return {p:+p.toFixed(3),c:'#34D399',t:'Liefertermin KW '+L.k+': '+Math.round(p*100)+' % der Wartezeit vorbei'};}
+function ltBarPos(){requestAnimationFrame(()=>{const t=document.querySelector('#cards .vtab table');if(!t)return;const r=t.querySelector('tr.vr');if(!r)return;const a=r.querySelector('td.who2'),n=r.querySelector('td.vnote');if(!a||!n)return;
+ const w=n.getBoundingClientRect().right-a.getBoundingClientRect().left;if(w>0)t.style.setProperty('--lbw',Math.round(w)+'px');});}
+addEventListener('resize',()=>ltBarPos());
 function vkLt(s){s=String(s||'').trim();if(/^sofort/i.test(s))return -1;if(/lager|^l$/i.test(s))return 0;const p=ltParse(s);if(!p)return 999;return p.k+(p.y-new Date().getFullYear())*53;}
 const ltNorm=s=>{const p=ltParse(s);return p?'KW '+p.k+'/'+String(p.y%100).padStart(2,'0'):String(s||'');};
 const ltShow=s=>{const p=ltParse(s);return p?'KW '+p.k+'<small class="lty">'+String(p.y%100).padStart(2,'0')+'</small>':esc(s||'');};
@@ -1408,13 +1433,14 @@ function vkSty(b){const c=VKC.filter(x=>b[x[0]]==='1');if(!c.length)return'';con
  return `--wpbg:${bg};--wpbd:rgba(${L[1]},.5);--wpgl:rgba(${L[1]},.16);--wpfg:${c.length===1?L[2]:'#fff'}`;}
 function vkRow(b){const st=b.a==='1'?'a':b.b==='1'?'b':b.m==='1'?'m':b.an==='1'?'l':'o';const ce=(f,v,cls)=>`<td class="ce ${cls||''}" contenteditable="true" spellcheck="false" data-vid="${esc(b.id)}" data-f="${f}">${esc(v||'')}</td>`;
  const dcD=(f,v)=>`<td class="dcell d-dat" data-vid="${esc(b.id)}" data-df="${f}" title="Klick = Datum wählen" tabindex="0">${esc(dshort(v))}</td>`;
- const dc=(f,v,cls)=>`<td class="dcell ${cls}" data-vid="${esc(b.id)}" data-df="${f}" title="${esc(v||'')} · Klick = Datum wählen" tabindex="0">${esc(dshort(v))}</td>`;
- return `<tr class="vr st-${st}">
+ const dc=(f,v,cls)=>`<td class="dcell ${cls}" data-vid="${esc(b.id)}" data-df="${f}" title="${esc(v||'')} · Klick = Datum wählen" tabindex="0">${esc(dshort(v))}${v?lvB(b,f):''}</td>`;
+ const lb=ltBar(b);
+ return `<tr class="vr st-${st}${lb?' lbr':''}"${lb?` style="--lp:${lb.p};--lc:${lb.c}" title="${esc(lb.t)}"`:''}>
  <td class="sdot" title="${{o:'offen',l:'angeliefert',m:'montiert',b:'O.K. – abholbereit',a:'abgeholt'}[st]}"><i></i></td>
- <td class="who2${vkSty(b)?' wfx':''}" style="${vkSty(b)}"><div class="wp"><b class="ef" contenteditable="true" spellcheck="false" data-vid="${esc(b.id)}" data-f="name" title="Klick = Kunde bearbeiten">${esc(b.name||'')}</b><small>${bModelE(b)}</small></div></td>
+ <td class="who2${vkSty(b)?' wfx':''}" style="${vkSty(b)}">${lb?'<i class="ltbar"></i>':''}<div class="wp"><b class="ef" contenteditable="true" spellcheck="false" data-vid="${esc(b.id)}" data-f="name" title="Klick = Kunde bearbeiten">${esc(b.name||'')}</b><small>${bModelE(b)}</small></div></td>
  <td class="pcell pf" data-vid="${esc(b.id)}" data-pf="form" title="Klick = Form wählen" tabindex="0">${esc(b.form||'')}</td><td class="pcell pg" data-vid="${esc(b.id)}" data-pf="gr" title="Klick = Größe wählen" tabindex="0">${esc(b.gr||'')}</td>
- ${dcD('dat',b.dat)}<td class="kcell${ltHot(b.lt)&&b.a!=='1'?' hot':''}" data-vid="${esc(b.id)}" title="Klick = Kalenderwoche wählen" tabindex="0">${ltShow(b.lt)}</td>${ce('notiz',[b.notiz,b.montieren?'Montieren: '+b.montieren:''].filter(Boolean).join(' · '),'vnote')}
-<td><div class="lcell">${leasLogo(b.firma)}<select class="lsel mini2${b.firma?'':' off'}" data-vi="${esc(b.id)}" aria-label="Leasing-Firma"><option value="">–</option>${Object.entries(FN).map(([k,n])=>`<option value="${esc(k)}"${b.firma===k?' selected':''}>${esc(k)} · ${esc(n)}</option>`).join('')}${b.firma&&!FN[b.firma]?`<option selected>${esc(b.firma)}</option>`:''}</select></div></td>
+ ${dcD('dat',b.dat)}<td class="kcell${ltHot(b.lt)&&b.a!=='1'?' hot':''}" data-vid="${esc(b.id)}" title="Klick = Kalenderwoche wählen" tabindex="0">${ltShow(b.lt)}</td>${ce('notiz',[b.notiz,b.montieren?'Montieren: '+b.montieren:''].filter(Boolean).join(' · '),'vnote'+(b.notiz&&U(b.notizVon).n?'" data-von="'+esc(U(b.notizVon).n[0])+'" style="--uc:'+U(b.notizVon).c+'" title="Notiz von '+esc(U(b.notizVon).n):''))}
+<td><div class="lcell">${leasLogo(b.firma)}<select class="lsel mini2${b.firma?'':' off'}" data-vi="${esc(b.id)}" aria-label="Leasing-Firma"><option value="">–</option>${Object.entries(FN).map(([k,n])=>`<option value="${esc(k)}"${b.firma===k?' selected':''}>${esc(k)} · ${esc(n)}</option>`).join('')}${b.firma&&!FN[b.firma]?`<option selected>${esc(b.firma)}</option>`:''}</select>${b.firma?lvB(b,'firma'):''}</div></td>
  ${b.firma?dc('antrag',b.antrag,'d-antrag'):'<td class="na">–</td>'}${b.firma?dc('ok',b.ok,b.ok?'d-ok':'d-ok miss'):'<td class="na">–</td>'}${b.firma?dc('lende',b.lende,'d-lende'):'<td class="na">–</td>'}
  <td><select class="ssel mini2" data-vi="${esc(b.id)}" aria-label="Verkauf/Beratung"><option value="">–</option>${USERS.map(u=>`<option value="${u.id}"${b.verk===u.id?' selected':''}>${esc(u.n)}</option>`).join('')}</select></td>
  <td class="stb"><button class="st an" type="button" aria-pressed="${b.an==='1'}" data-vi="${esc(b.id)}" data-k="an" title="${b.anVon?'angeliefert, eingetragen von '+esc(U(b.anVon).n)+' '+esc(b.anAm):'angeliefert'}">📦${b.an==='1'?sav(b.anVon):''}</button><button class="st m" type="button" aria-pressed="${b.m==='1'}" data-vi="${esc(b.id)}" data-k="m" title="${b.mVon?'montiert von '+esc(U(b.mVon).n)+' '+esc(b.mAm):'montiert'}">🔧${b.m==='1'?sav(b.mVon):''}</button><button class="st b" type="button" aria-pressed="${b.b==='1'}" data-vi="${esc(b.id)}" data-k="b" title="${b.bVon?'O.K. von '+esc(U(b.bVon).n)+' '+esc(b.bAm):'O.K.'}">O.K.${b.b==='1'?sav(b.bVon):''}</button><button class="st a" type="button" aria-pressed="${b.a==='1'}" data-vi="${esc(b.id)}" data-k="a" title="${b.aVon?'abgeholt von '+esc(U(b.aVon).n)+' '+esc(b.aAm):'abgeholt'}">✓${b.a==='1'?sav(b.aVon):''}</button></td>
@@ -1427,8 +1453,16 @@ function vkForm(b){const nw=b.id==='new',dIso=nw?iso(new Date()):toIsoDe(b.dat);
  return `<article class="bike editing"><form class="edf vnew" data-vf="${esc(b.id)}" autocomplete="off" novalidate><b>${nw?'Neues verkauftes Rad':'Rad bearbeiten'}</b><datalist id="brandList">${allBrands().map(x=>`<option value="${esc(x.n)}">`).join('')}</datalist>
  <div class="g5">${VF0.map(fld).join('')}</div>${nw?'<p class="hint">Alles optional – Rest (LT, Form, Größe, Leasing-Daten …) später direkt in der Liste.</p>':`<div class="g2">${VF1.map(fld).join('')}</div>`}
  <div class="acts"><button class="btn red" type="submit">${nw?'In die Liste':'Speichern'}</button><button class="btn" type="button" data-vcancel>Abbrechen</button>${!nw?`<button class="btn del" type="button" data-vdel="${esc(b.id)}">Löschen</button>`:''}</div></form></article>`;}
-async function putV(b){const i=V.findIndex(x=>x.id===b.id);if(i<0)V.unshift(b);else V[i]=b;rv();try{await save('V',b);}catch(_){}}
+/* 1.6.6: wer hat Leasing-Felder/Notiz eingetragen – Leasing nur Admins (Team = leer, Admin kann nachtragen), Notiz jeder */
+const VLF=['firma','antrag','ok','lende'],VLN={firma:'Leasing-Anbieter',antrag:'Antrag gestellt',ok:'Leasing genehmigt',lende:'Leasingende'};
+function vAutoVon(n){const o=V.find(x=>x.id===n.id)||{};VLF.concat('notiz').forEach(f=>{if((n[f]||'')===(o[f]||'')||(n[f+'Von']||'')!==(o[f+'Von']||''))return;n[f+'Von']=!n[f]?'':(f==='notiz'||(ME&&ME.adm))?ME.id:'';});}
+function lvB(b,f){const u=U(b[f+'Von']),ok=b[f+'Von']&&u.n;return `<button class="lvon${ok?'':' nv'}" type="button" data-lvi="${esc(b.id)}" data-lvf="${f}" style="--uc:${u.c}" title="${ok?esc(VLN[f]+' – '+u.n):'Wer war es? Klick = auswählen'}">${ok?esc(u.n[0]):'?'}</button>`;}
+function lvPick(t){const b=V.find(x=>x.id===t.dataset.lvi),f=t.dataset.lvf;if(!b)return;if(kdPop&&kdPop.lv===b.id+f){kdPopClose();return;}const cur=b[f+'Von'];
+ const el=kdPopOpen(t,`<div class="vstp"><div class="kph">${VLN[f]} – von wem?</div><div class="vstl">${USERS.filter(u=>ADMINS.includes(u.id)).map(u=>`<button type="button" class="vstu${cur===u.id?' on':''}" style="--uc:${u.c}" data-vsu="${u.id}"><span class="av">${esc(u.n[0])}</span>${esc(u.n)}</button>`).join('')}</div>${cur?`<button type="button" class="vstx" data-vsu="">✕ Person entfernen</button>`:''}</div>`);kdPop.lv=b.id+f;
+ el.addEventListener('click',e=>{const x=e.target.closest('[data-vsu]');if(!x)return;kdPopClose();const bb=V.find(v=>v.id===b.id);if(!bb||(bb[f+'Von']||'')===x.dataset.vsu)return;putV(Object.assign({},bb,{[f+'Von']:x.dataset.vsu}));});}
+async function putV(b){vAutoVon(b);const i=V.findIndex(x=>x.id===b.id);if(i<0)V.unshift(b);else V[i]=b;rv();try{await save('V',b);}catch(_){}}
 /* 1.6.5: Status setzen – who = Person-ID oder '' (entfernen). Admins wählen die Person, Team setzt nur sich selbst. */
+$('cards').addEventListener('click',e=>{const t=e.target.closest('.lvon');if(!t)return;e.stopPropagation();e.preventDefault();lvPick(t);},true);
 function vStSet(b,k,who){const n=Object.assign({},b);n[k]=who?'1':'';if(n[k]){n[k+'Von']=who;const _d=new Date(),_s=String(_d.getDate()).padStart(2,'0')+'.'+String(_d.getMonth()+1).padStart(2,'0')+'.';n[k+'Am']=_s;if(k==='b'&&!n.ok)n.ok=_s+_d.getFullYear();}else{n[k+'Von']='';n[k+'Am']='';}putV(n);if(n[k]){if(k==='a')toast('Abgeholt – '+(b.name||b.modell)+' (unter „Abgeholte zeigen“)',()=>{putV(Object.assign({},b));toast('Wieder offen');});else toast({an:'Angeliefert',m:'Montiert',b:'O.K.'}[k]+' – '+U(who).n);}}
 const VSTN={an:'Angeliefert',m:'Montiert',b:'O.K.',a:'Abgeholt'};
 function vStPick(t,b,k){if(kdPop&&kdPop.vst===b.id+k){kdPopClose();return;}const cur=b[k]==='1'?b[k+'Von']:null;
@@ -2261,7 +2295,7 @@ let kdPop=null;
 function kdPopClose(){if(kdPop){kdPop.el.remove();kdPop=null;}}
 function kdPopOpen(anchor,html,o){kdPopClose();const el=document.createElement('div');el.className='kdpop';el.innerHTML=html;document.body.appendChild(el);kdPop=Object.assign({el,t0:Date.now()},o);kdPopPos(anchor);const i=el.querySelector('input:not([type=checkbox])');if(i)i.focus();return el;}
 function kdPopPos(anchor){const el=kdPop.el,rc=anchor.getBoundingClientRect(),W=el.offsetWidth,H=el.offsetHeight;el.style.left=Math.max(8,Math.min(innerWidth-W-8,rc.left))+'px';el.style.top=(rc.bottom+4+H>innerHeight-8?Math.max(8,rc.top-4-H):rc.bottom+4)+'px';}
-document.addEventListener('pointerdown',e=>{if(kdPop&&!kdPop.el.contains(e.target)&&!e.target.closest('[data-kpick],.kdh[data-kc],.stb .st'))kdPopClose();},true);
+document.addEventListener('pointerdown',e=>{if(kdPop&&!kdPop.el.contains(e.target)&&!e.target.closest('[data-kpick],.kdh[data-kc],.stb .st,.lvon'))kdPopClose();},true);
 document.addEventListener('keydown',e=>{if(kdPop&&e.key==='Escape')kdPopClose();});
 document.addEventListener('scroll',e=>{if(kdPop&&!kdPop.el.contains(e.target)&&Date.now()-kdPop.t0>250)kdPopClose();},true);
 function kdFltOpen(hd){const k=hd.dataset.kc,c=KDC.find(x=>x.k===k);if(kdPop&&kdPop.t==='flt'&&kdPop.k===k){kdPopClose();return;}
