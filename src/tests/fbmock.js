@@ -34,6 +34,7 @@ const db={enablePersistence:()=>Promise.resolve(),collection:c=>query(c,[]),doc:
  async runTransaction(fn){const ops=[];const tr={get:r=>r.get(),set:(r,o,opt)=>{ops.push(()=>r.set(o,opt));},update:(r,o)=>{ops.push(()=>r.update(o));}};const res=await fn(tr);for(const o of ops)await o();return res;},
  batch(){const ops=[];return{set:(r,o)=>ops.push(()=>r.set(o)),update:(r,o)=>ops.push(()=>r.update(o)),delete:r=>ops.push(()=>r.delete()),async commit(){for(const o of ops)await o();}};}};
 const authFn=()=>auth;authFn.EmailAuthProvider={credential:(e,pw)=>({e,pw})};
-window.firebase={initializeApp(){},auth:authFn,firestore:()=>db};
+const secA={async createUserWithEmailAndPassword(e,p){await tick();ST=ld();if(ST.users[e])throw err('auth/email-already-in-use');if(p.length<6)throw err('auth/weak-password');ST.users[e]=p;sv();},async signOut(){}};
+window.firebase={apps:[],initializeApp(c,n){if(!n)return;const a={name:n,auth:()=>secA};this.apps.push(a);return a;},auth:authFn,firestore:()=>db};
 window.__fbmState=()=>ld();
 })();

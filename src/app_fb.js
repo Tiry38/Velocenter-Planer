@@ -18,6 +18,7 @@ firebase.initializeApp(FB_CONFIG);
 const auth=firebase.auth(),db=firebase.firestore();
 try{db.enablePersistence({synchronizeTabs:true}).catch(()=>{});}catch(_){}
 const COL={P:'planer',V:'verkauf',B:'bestell',T:'trinkgeld',L:'leasing',S:'lieferanten',I:'info'};
+const PWMIN=1;/* 1.7.0: Tiry: Passwort frei wählbar (auch kurz) */
 const fpw=pw=>'VC!'+pw+'#cockpit';                       // Firebase verlangt min. 6 Zeichen – so geht auch „7“
 const stamp=()=>new Date().toISOString();
 function clean(o){const c={};for(const k in o){if(k[0]==='_'||o[k]===undefined)continue;c[k]=o[k];}return c;}
@@ -61,7 +62,7 @@ async function showLogin(){ME=null;document.body.classList.remove('navmini');sto
  try{const d=await db.doc('meta/users').get({source:'server'});USERSET=d.exists?d.data():{};}catch(e){try{const d=await db.doc('meta/users').get();USERSET=d.exists?d.data():{};}catch(_){USERSET={};}}
  $('whoGrid').innerHTML=USERS.map(u=>`<button class="wt" type="button" data-u="${u.id}" style="--uc:${u.c}"><span class="ring">${esc(u.n[0])}</span><b>${esc(u.n)}</b></button>`).join('');}
 function pwOpen(id){pwU=U(id);const f=$('pwForm'),first=!USERSET[id];f.style.setProperty('--uc',pwU.c);$('pwRing').textContent=pwU.n[0];$('pwName').textContent=pwU.n;
- $('pwHint').textContent=first?'Erste Anmeldung: Leg dein Passwort fest. Alles ist erlaubt – auch nur 4 Zahlen.':'Passwort eingeben';
+ $('pwHint').textContent=first?'Erste Anmeldung: Leg dein Passwort fest.':USERSET[id]==='start'?'Startpasswort eingeben (bekommst du von Kevin) – danach legst du dein eigenes fest':'Passwort eingeben';
  $('pw1').placeholder=first?'Neues Passwort':'Passwort';$('pw2').hidden=!first;$('pwGo').textContent=first?'Festlegen & los':'Anmelden';
  $('pw1').value='';$('pw2').value='';$('pwErr').textContent='';$('whoGrid').hidden=true;$('whoP').hidden=true;f.hidden=false;$('pw1').focus();}
 function pwBack(){$('pwForm').hidden=true;$('whoGrid').hidden=false;$('whoP').hidden=false;}
@@ -70,25 +71,42 @@ $('pwBack').addEventListener('click',pwBack);
 $('whoGrid').addEventListener('click',e=>{const b=e.target.closest('[data-u]');if(b)pwOpen(b.dataset.u);});
 let autoT=null,autoSilent=false,lastTry='';
 function autoLogin(){clearTimeout(autoT);if(!pwU)return;const a=$('pw1').value,first=!USERSET[pwU.id];if(!a)return;
- if(first){const b=$('pw2').value;if(!b||b.length<a.length)return;if(a!==b)return;}
+ if(first){const b=$('pw2').value;if(a.length<PWMIN||!b||b.length<a.length)return;if(a!==b)return;}
  const key=pwU.id+'|'+a+'|'+(first?$('pw2').value:'');if(key===lastTry)return;
  autoT=setTimeout(()=>{lastTry=key;autoSilent=true;$('pwForm').requestSubmit();},first?500:650);}
 ['pw1','pw2'].forEach(id=>$(id).addEventListener('input',()=>{$('pwErr').textContent='';autoLogin();}));
 $('pwForm').addEventListener('submit',async e=>{e.preventDefault();clearTimeout(autoT);const silent=autoSilent;autoSilent=false;const go=$('pwGo');if(go.disabled)return;const a=$('pw1').value;if(!a){pwErr('Bitte ein Passwort eingeben.');return;}
- if(!USERSET[pwU.id]&&a!==$('pw2').value){pwErr('Die beiden Eingaben sind nicht gleich.');return;}
+ if(!USERSET[pwU.id]&&a.length<PWMIN){pwErr('Mindestens '+PWMIN+' Zeichen.');return;}if(!USERSET[pwU.id]&&a!==$('pw2').value){pwErr('Die beiden Eingaben sind nicht gleich.');return;}
  go.disabled=true;const mail=pwU.id+DOMAIN;
  try{if(!USERSET[pwU.id]){try{await auth.createUserWithEmailAndPassword(mail,fpw(a));}catch(e){if(e.code==='auth/email-already-in-use')await auth.signInWithEmailAndPassword(mail,fpw(a));else throw e;}
    await db.doc('meta/users').set({[pwU.id]:true},{merge:true});USERSET[pwU.id]=true;}
-  else await auth.signInWithEmailAndPassword(mail,fpw(a));}
- catch(err){const c=err.code||'';if(silent&&/password|credential|user-not-found/.test(c)){$('pwErr').textContent='';return;}pwErr(c==='auth/too-many-requests'?'Zu viele Versuche – bitte kurz warten.':/password|credential|user-not-found/.test(c)?'Passwort falsch.':c==='auth/network-request-failed'?'Keine Internetverbindung.':err.message);}
+  else{const need=USERSET[pwU.id]==='start'?'start':a.length<PWMIN?'kurz':'';if(need)ls.set('vc_pwneed',pwU.id+'|'+need);await auth.signInWithEmailAndPassword(mail,fpw(a));}}
+ catch(err){ls.set('vc_pwneed','');const c=err.code||'';if(silent&&/password|credential|user-not-found/.test(c)){$('pwErr').textContent='';return;}pwErr(c==='auth/too-many-requests'?'Zu viele Versuche – bitte kurz warten.':/password|credential|user-not-found/.test(c)?'Passwort falsch.':c==='auth/network-request-failed'?'Keine Internetverbindung.':err.message);}
  finally{go.disabled=false;}});
 $('switchUser').addEventListener('click',async()=>{relock();await auth.signOut();});
 async function start(me){if(ME&&ME.id===me.id)return;ME=me;const u=U(me.id);$('meName').textContent=u.n;$('meRole').textContent=me.adm?'Admin':'Team';$('meAv').style.setProperty('--uc',u.c);$('meAv').textContent=u.n[0];
- document.querySelector('.navbtn[data-v=tresor]').hidden=true;/* Reiter Passwörter abgeschaltet (1.5.9, Tiry) – Daten bleiben unberührt */document.querySelector('.navbtn[data-v=notes]').hidden=!me.adm;$('whoOv').hidden=true;navForUser();startLive();show(ls.get('vc_view','planer'));toast('Hallo '+u.n+' 👋');}
+ document.querySelector('.navbtn[data-v=tresor]').hidden=true;/* Reiter Passwörter abgeschaltet (1.5.9, Tiry) – Daten bleiben unberührt */document.querySelector('.navbtn[data-v=notes]').hidden=!me.adm;$('whoOv').hidden=true;navForUser();startLive();show(ls.get('vc_view','planer'));toast('Hallo '+u.n+' 👋');pwForceChk();}
 
 /* Passwort ändern / zurücksetzen */
 function dlg(html){$('dlgBox').innerHTML=html;$('dlg').hidden=false;const f=$('dlgBox').querySelector('input');if(f)f.focus();}
-function dlgClose(){$('dlg').hidden=true;$('dlgBox').innerHTML='';$('dlgBox').classList.remove('wide');}
+/* 1.7.0: Startpasswort / zu kurzes Passwort -> eigenes festlegen (Pflicht, Fenster nicht wegklickbar) */
+let DLGLOCK=false;
+function pwForceChk(){const v=String(ls.get('vc_pwneed','')||''),[id,why]=v.split('|');if(!ME||id!==ME.id||!why)return;DLGLOCK=true;
+ dlg(`<h3>Eigenes Passwort festlegen</h3><p class="hint">Du bist mit dem Startpasswort angemeldet. Bitte jetzt dein <b>eigenes Passwort</b> festlegen.</p><form id="pfF" autocomplete="off"><input id="pfN" type="password" placeholder="Neues Passwort"><input id="pfN2" type="password" placeholder="Neues Passwort wiederholen"><div class="err" id="pfE"></div><div class="acts"><button class="btn" type="button" id="pfOut">Abmelden</button><button class="btn red" type="submit">Speichern</button></div></form>`);
+ $('pfOut').addEventListener('click',async()=>{DLGLOCK=false;dlgClose();relock();await auth.signOut();});
+ $('pfF').addEventListener('submit',async e=>{e.preventDefault();const a=$('pfN').value;if(!a){$('pfE').textContent='Bitte ein Passwort eingeben.';return;}if(a!==$('pfN2').value){$('pfE').textContent='Die beiden Eingaben sind nicht gleich.';return;}
+  try{await auth.currentUser.updatePassword(fpw(a));if(why==='start'){await db.doc('meta/users').set({[ME.id]:true},{merge:true});USERSET[ME.id]=true;}ls.set('vc_pwneed','');DLGLOCK=false;dlgClose();toast('Passwort gespeichert ✓');}catch(err){$('pfE').textContent=/recent/.test(err.code||'')?'Bitte einmal ab- und wieder anmelden, dann nochmal.':err.message||String(err);}});}
+/* 1.7.0: Komplettsicherung als JSON-Datei (Admin). Tresor bleibt draußen. */
+let BK_LAST=ls.get('vc_bklast','');
+async function backupDl(){const out={app:'Velocenter-Planer',version:document.querySelector('meta[name=vc-ver]')?.content||'',stand:new Date().toISOString(),von:ME.id,daten:{}};let n=0;
+ for(const c of ['planer','verkauf','bestell','trinkgeld','leasing','lieferanten','info','meta']){const q=await db.collection(c).get();out.daten[c]={};q.forEach(d=>{out.daten[c][d.id]=d.data();n++;});}
+ const blob=new Blob([JSON.stringify(out)],{type:'application/json'}),a=document.createElement('a'),t=new Date();a.href=URL.createObjectURL(blob);a.download='velocenter-sicherung-'+iso(t)+'.json';document.body.append(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},2000);
+ BK_LAST=t.toLocaleDateString('de-DE')+' '+t.toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'});ls.set('vc_bklast',BK_LAST);return n;}
+/* 1.7.0: Admin legt fehlende Konten mit Startpasswort an (zweite Firebase-Instanz, damit der Admin angemeldet bleibt) */
+async function kontenSichern(start){const sec=((firebase.apps||[]).find(a=>a.name==='vcsec')||firebase.initializeApp(FB_CONFIG,'vcsec')).auth();const neu=[],da=[];
+ for(const u of USERS){if(u.id===ME.id)continue;try{await sec.createUserWithEmailAndPassword(u.id+DOMAIN,fpw(start));neu.push(u);await db.doc('meta/users').set({[u.id]:'start'},{merge:true});USERSET[u.id]='start';}catch(e){if(e.code==='auth/email-already-in-use')da.push(u);else throw e;}finally{try{await sec.signOut();}catch(_){}}}
+ return {neu,da};}
+function dlgClose(){if(DLGLOCK)return;$('dlg').hidden=true;$('dlgBox').innerHTML='';$('dlgBox').classList.remove('wide');}
 $('dlg').addEventListener('click',e=>{if(e.target.id==='dlg'||e.target.closest('[data-close]'))dlgClose();});
 $('meCfg').addEventListener('click',()=>brandDlg());
 /* ⚙ Einstellungen → Markenlogos: Bild hochladen → automatisch freistellen, zuschneiden, schärfen, auf Einheitshöhe bringen */
@@ -156,9 +174,14 @@ function brandDlg(){const A0=allBrands(),A=A0.concat([...new Map(V.filter(b=>Str
   r.querySelector('.bw').addEventListener('change',async e=>{const w=e.target.value.trim(),b=A.find(x=>x.k===k),l=(BUSER.list||[]).filter(x=>x.k!==k);if(w||b.own)l.push({k,n:b.n,w});BUSER.list=l;try{await brSave();toast('Erkennung gespeichert');}catch(err){fail(err);}});});
  $('brNew').addEventListener('submit',async e=>{e.preventDefault();const n=e.target.n.value.trim(),w=e.target.w.value.trim();if(!n)return;const k=bKey(n);if(allBrands().some(b=>b.k===k||b.n.toLowerCase()===n.toLowerCase())){E('Marke gibt es schon');return;}BUSER.list=(BUSER.list||[]).concat([{k,n,w}]);try{await brSave();}catch(err){fail(err);}brandDlg();});}
 $('meSet').addEventListener('click',()=>{dlg(`<h3>Passwort ändern</h3><form id="pcF" autocomplete="off"><input id="pcO" type="password" placeholder="Altes Passwort"><input id="pcN" type="password" placeholder="Neues Passwort"><input id="pcN2" type="password" placeholder="Neues Passwort wiederholen"><div class="err" id="pcE"></div><div class="acts"><button class="btn" type="button" data-close>Abbrechen</button><button class="btn red" type="submit">Speichern</button></div></form>
- ${ME&&ME.adm?`<h3 style="margin-top:18px">Passwort eines Mitarbeiters zurücksetzen</h3><p class="hint">Passwort vergessen? So geht es (dauert 1 Minute):</p><p class="hint rsHint">Firebase-Konsole → Projekt <b>Velocenter Planer</b> → Authentication → Nutzer → Person (z. B. sascha@…) → ⋮ → <b>Konto löschen</b>. Dann hier unten auf ihren Namen klicken – beim nächsten Öffnen legt sie ein neues Passwort fest.</p><div class="acts">${USERS.filter(u=>u.id!==ME.id).map(u=>`<button class="btn" type="button" data-reset="${u.id}">${esc(u.n)}</button>`).join('')}</div>`:''}`);
+ ${ME&&ME.adm?`<h3 style="margin-top:18px">🛡 Konten sichern</h3><p class="hint">Legt alle noch fehlenden Konten (${USERS.filter(u=>u.id!==ME.id&&!USERSET[u.id]).map(u=>esc(u.n)).join(', ')||'keins – alle angelegt'}) sofort mit einem <b>Startpasswort</b> an. So kann sich niemand Fremdes als diese Person registrieren. Gib das Startpasswort der Person persönlich – bei der ersten Anmeldung muss sie ein eigenes festlegen.</p><form id="ksF" autocomplete="off" class="acts" style="justify-content:flex-start"><input id="ksP" type="text" placeholder="Startpasswort, z. B. 0204" style="flex:1;min-width:180px"><button class="btn red" type="submit">Konten sichern</button></form><div class="err" id="ksE"></div>
+ <h3 style="margin-top:18px">💾 Sicherung</h3><p class="hint">Lädt <b>alle Daten</b> (Planer, Verkauf, Bestellungen, Reklamationen, Kunden, Leasing, Lieferanten, Trinkgeld, Einstellungen) als Datei auf diesen PC. Der kostenlose Firebase-Tarif macht selbst keine Backups – am besten 1× pro Woche. Tresor/Notizen sind nicht dabei. <b>Enthält Kundendaten – nur auf dem Büro-PC speichern, nie verschicken.</b>${BK_LAST?'<br>Letzte Sicherung: '+esc(BK_LAST):''}</p><div class="acts" style="justify-content:flex-start"><button class="btn" type="button" id="bkGo">💾 Sicherung herunterladen</button></div><div class="err" id="bkE"></div>
+ <h3 style="margin-top:18px">Passwort eines Mitarbeiters zurücksetzen</h3><p class="hint">Passwort vergessen? So geht es (dauert 1 Minute):</p><p class="hint rsHint">Firebase-Konsole → Projekt <b>Velocenter Planer</b> → Authentication → Nutzer → Person (z. B. sascha@…) → ⋮ → <b>Konto löschen</b>. Danach oben <b>„Konten sichern“</b> mit einem neuen Startpasswort – die Person legt beim nächsten Login ihr eigenes fest.</p><div class="acts">${USERS.filter(u=>u.id!==ME.id).map(u=>`<button class="btn" type="button" data-reset="${u.id}">${esc(u.n)}</button>`).join('')}</div>`:''}`);
  $('pcF').addEventListener('submit',async e=>{e.preventDefault();if($('pcN').value!==$('pcN2').value){$('pcE').textContent='Die neuen Eingaben sind nicht gleich.';return;}if(!$('pcN').value){$('pcE').textContent='Neues Passwort fehlt.';return;}
-  try{const u=auth.currentUser;await u.reauthenticateWithCredential(firebase.auth.EmailAuthProvider.credential(u.email,fpw($('pcO').value)));await u.updatePassword(fpw($('pcN').value));dlgClose();toast('Passwort geändert');}catch(err){$('pcE').textContent=/password|credential/.test(err.code||'')?'Altes Passwort falsch.':err.message;}});
+  try{const u=auth.currentUser;await u.reauthenticateWithCredential(firebase.auth.EmailAuthProvider.credential(u.email,fpw($('pcO').value)));await u.updatePassword(fpw($('pcN').value));ls.set('vc_pwneed','');dlgClose();toast('Passwort geändert');}catch(err){$('pcE').textContent=/password|credential/.test(err.code||'')?'Altes Passwort falsch.':err.message;}});
+ const bk=$('bkGo');if(bk)bk.addEventListener('click',async()=>{bk.disabled=true;$('bkE').textContent='Sammle Daten …';try{const n=await backupDl();$('bkE').textContent='✓ Gespeichert ('+n+' Einträge) – liegt im Download-Ordner.';}catch(err){$('bkE').textContent=err.message||String(err);}finally{bk.disabled=false;}});
+ const ks=$('ksF');if(ks)ks.addEventListener('submit',async e=>{e.preventDefault();const p=$('ksP').value.trim();if(!p){$('ksE').textContent='Bitte ein Startpasswort eingeben.';return;}$('ksE').textContent='Lege Konten an …';
+  try{const r=await kontenSichern(p);$('ksE').innerHTML=(r.neu.length?'✓ Neu angelegt mit Startpasswort: <b>'+r.neu.map(u=>esc(u.n)).join(', ')+'</b>. ':'Kein Konto neu angelegt. ')+(r.da.length?'Gab es schon: '+r.da.map(u=>esc(u.n)+(USERSET[u.id]?'':' ⚠ (nicht über die App angelegt – in der Firebase-Konsole prüfen!)')).join(', '):'');$('ksP').value='';}catch(err){$('ksE').textContent=err.message||String(err);}});
  $('dlgBox').querySelectorAll('[data-reset]').forEach(b=>b.addEventListener('click',()=>{$('dlgBox').querySelector('.rsHint').hidden=false;}));});
 
 /* ---------- Live-Daten (Firestore, sofort auf allen Geräten) ---------- */
