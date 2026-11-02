@@ -867,6 +867,10 @@ body[data-v=kunden] .tt small{background:var(--rb);-webkit-background-clip:text;
 .kbr>div{flex:1;min-width:0;display:flex;flex-direction:column;gap:1px}.kbr b{font-size:14px}.kbr span{font-size:12px;color:#C7CFDB;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.kbr i{font-style:normal;font-size:11px;color:#8B95A8}
 .kbr .btn{flex:none;white-space:nowrap;border-color:rgba(57,242,107,.5);color:#86EFAC}
 
+/* Lieferanten: sortierbare Spaltenköpfe (1.6.0) */
+#sTab th.ssort{cursor:pointer;user-select:none;white-space:nowrap;transition:color .15s}#sTab th.ssort:hover{color:#fff}
+#sTab th.ssort i{font-style:normal;margin-left:6px;font-size:10px;opacity:.45}#sTab th.ssort.on{color:#22D3EE}#sTab th.ssort.on i{opacity:1;color:#22D3EE}
+
 [hidden]{display:none!important}
 #sTab td.b{font-weight:700}#sTab .pwm.ed{outline:none;padding:2px 6px;border-radius:6px;font-family:var(--mono)}#sTab td{vertical-align:top}
 #sTab td.ce,#ltab td.ce{cursor:text;border-bottom:1px dashed #2A3446;outline:none}#sTab td.ce:focus,#sTab .pwm.ed:focus,#ltab td.ce:focus{box-shadow:inset 0 0 0 2px var(--cyan);background:var(--panel2)}#ltab td.tg{cursor:pointer;user-select:none}#sTab td.ce:hover,#ltab td.tg:hover,#ltab td.ce:hover{background:rgba(255,255,255,.04)}#ltab td.tg:focus-visible{outline:2px solid var(--cyan)}
@@ -1040,7 +1044,7 @@ body[data-v=kunden] .tt small{background:var(--rb);-webkit-background-clip:text;
 <script>
 const FB_CONFIG={apiKey:"AIzaSyC_uZPvc5rJETwlS4JbfCoTkkE4ckjtp0M",authDomain:"velocenter-planer.firebaseapp.com",projectId:"velocenter-planer",storageBucket:"velocenter-planer.firebasestorage.app",messagingSenderId:"1018330488700",appId:"1:1018330488700:web:262a4d1660353e6fde8ef9"};
 /* ================= Velocenter Werkstatt-Cockpit – Oberfläche ================= */
-const CLIENT_VERSION='1.5.9';
+const CLIENT_VERSION='1.6.0';
 const USERS=[{id:'kevin',n:'Kevin',c:'#E2232D'},{id:'stefan',n:'Stefan',c:'#F59E0B'},{id:'martina',n:'Martina',c:'#EC4899'},{id:'sascha',n:'Sascha',c:'#22D3EE'},{id:'rene',n:'René',c:'#34D399'}];
 const U=id=>USERS.find(u=>u.id===id)||{n:'',c:'#64748B',id:''};
 const $=id=>document.getElementById(id);
@@ -2316,8 +2320,9 @@ function rs(){const s1=($('sSearch').value||'').toLowerCase();
  const letters=[...new Set(S.map(o=>String(o.name||'').trim()[0]).filter(Boolean).map(c=>c.toUpperCase()))].sort();$('sAZ').innerHTML=['Alle',...letters].map(c=>`<button type="button" class="az${(c==='Alle'?!sAZ:sAZ===c)?' on':''}" data-az="${c==='Alle'?'':esc(c)}">${esc(c)}</button>`).join('');const lg=id=>LOGINS&&LOGINS.find(x=>x.id===id);
  $('sForm').innerHTML=sEdit?sFormH(sEdit==='new'?{id:'new'}:S.find(x=>x.id===sEdit)||{id:'new'}):'';
  if(document.querySelector('#sTab [contenteditable]:focus'))return;
- $('sTab').innerHTML='<thead><tr><th class="thlg">Logo</th><th>Lieferant</th><th>Kunden-Nr.</th><th>Mindestbestellwert</th><th>Notiz</th><th></th></tr></thead><tbody>'+
-  S.filter(o=>(!s1||(o.name+' '+o.kdnr+' '+o.notiz).toLowerCase().includes(s1))&&(!sAZ||String(o.name||'').trim().toUpperCase().startsWith(sAZ))).sort((a,b)=>a.name.localeCompare(b.name)).map(o=>{const l=lg(o.id);
+ const sh=(k,n)=>`<th class="ssort${sSort.k===k?' on':''}" data-ssort="${k}" title="Klick = sortieren (nochmal = umdrehen)">${n}<i>${sSort.k===k?(sSort.d>0?'▲':'▼'):'↕'}</i></th>`;
+ $('sTab').innerHTML='<thead><tr><th class="thlg">Logo</th>'+sh('name','Lieferant')+sh('kdnr','Kunden-Nr.')+sh('mbw','Mindestbestellwert')+sh('notiz','Notiz')+'<th></th></tr></thead><tbody>'+
+  S.filter(o=>(!s1||(o.name+' '+o.kdnr+' '+o.notiz).toLowerCase().includes(s1))&&(!sAZ||String(o.name||'').trim().toUpperCase().startsWith(sAZ))).sort(sCmp).map(o=>{const l=lg(o.id);
   const ce=(f,v,cls)=>`<td class="ce ${cls||''}" contenteditable="true" spellcheck="false" data-sid="${esc(o.id)}" data-f="${f}">${esc(v||'')}</td>`;
   const lgo=sLogo(o);return `<tr><td class="slogo${lgo?' has':''}" data-slogo="${esc(o.id)}" title="${lgo?'Klick = Logo ersetzen':'Klick = Logo hochladen (wird automatisch freigestellt + geschärft)'}">${lgo?`<img src="${lgo}" alt="">`:'<span>＋ Logo</span>'}${o.logo?`<button class="sldel" type="button" data-sldel="${esc(o.id)}" title="Logo entfernen">×</button>`:''}</td>${ce('name',o.name,'b')}${ce('kdnr',o.kdnr)}${ce('mbw',euro(o.mbw),'mbw')}${ce('notiz',o.notiz,'wrap')}<td><button class="mini" type="button" data-sedit="${esc(o.id)}" title="Formular / Löschen">✎</button></td></tr>`;}).join('')+'</tbody>';
  }
@@ -2338,7 +2343,12 @@ $('sTab').addEventListener('keydown',e=>{const c=e.target.closest('[contentedita
 $('sTab').addEventListener('focusout',async e=>{const c=e.target.closest('[contenteditable]');if(!c)return;const id=c.dataset.sid,f=c.dataset.f,v=c.textContent.trim();
  if(f==='login'||f==='pass'){const l=(LOGINS||[]).find(x=>x.id===id)||{};if(v!==(l[f]||''))await setLogin(id,f,v);setTimeout(rs,50);return;}
  const o=S.find(x=>x.id===id);const vv=f==='mbw'?euro(v):v;if(!o||vv===(o[f]||''))return;const n=Object.assign({},o,{[f]:vv});delete n.hasLogin;const i=S.indexOf(o);S[i]=Object.assign({},n,{hasLogin:o.hasLogin});try{await save('S',n);toast('Gespeichert');}catch(_){}});
-$('sTab').addEventListener('click',e=>{if(e.target.closest('[data-unlock]')){pinDlg();return;}
+// Lieferanten sortieren (1.6.0): Spaltenkopf antippen = A–Z, nochmal = Z–A; Leere immer unten; gemerkt in vc_ssort
+var sSort=(()=>{const [k,d]=String(ls.get('vc_ssort','name:1')).split(':');return{k:['name','kdnr','mbw','notiz'].includes(k)?k:'name',d:d==='-1'?-1:1};})();
+function sVal(o,k){const v=String(o[k]||'').trim();if(k==='mbw'){const n=parseFloat(v.replace(/[^\d,.-]/g,'').replace(/\./g,'').replace(',','.'));return isNaN(n)?'':n;}return v;}
+function sCmp(a,b){const x=sVal(a,sSort.k),y=sVal(b,sSort.k);if(x===''&&y!=='')return 1;if(y===''&&x!=='')return -1;
+ const r=typeof x==='number'&&typeof y==='number'?x-y:String(x).localeCompare(String(y),'de',{numeric:true,sensitivity:'base'});return (r||String(a.name||'').localeCompare(String(b.name||''),'de',{sensitivity:'base'}))*(r?sSort.d:1);}
+$('sTab').addEventListener('click',e=>{const sh=e.target.closest('[data-ssort]');if(sh){const k=sh.dataset.ssort;sSort=sSort.k===k?{k,d:-sSort.d}:{k,d:1};ls.set('vc_ssort',sSort.k+':'+sSort.d);rs();return;}if(e.target.closest('[data-unlock]')){pinDlg();return;}
  const sd=e.target.closest('[data-sldel]');if(sd){const o=S.find(x=>x.id===sd.dataset.sldel);if(o){const n=Object.assign({},o);delete n.logo;delete n.hasLogin;S[S.indexOf(o)]=Object.assign({},n,{hasLogin:o.hasLogin});save('S',n).then(()=>{rs();toast('Logo entfernt');}).catch(()=>{});}return;}
  const sl=e.target.closest('[data-slogo]');if(sl){const o=S.find(x=>x.id===sl.dataset.slogo);if(!o)return;const inp=document.createElement('input');inp.type='file';inp.accept='image/*';
   inp.addEventListener('change',async()=>{const f=inp.files[0];if(!f)return;toast('Logo wird aufbereitet …');try{const u=await procLogo(f,64);if(u.length>200000)throw new Error('Logo zu groß');const n=Object.assign({},o,{logo:u});delete n.hasLogin;S[S.indexOf(o)]=Object.assign({},n,{hasLogin:o.hasLogin});await save('S',n);rs();toast('Logo gespeichert – '+(o.name||''));}catch(err){toast(err.message||String(err));}});inp.click();return;}const b=e.target.closest('[data-pedit]');if(!b)return;const id=b.dataset.pedit,l=(LOGINS||[]).find(x=>x.id===id)||{};const sp=document.querySelector(`.pwm[data-sid="${id}"]`);if(!sp)return;sp.textContent=l.pass||'';sp.contentEditable='true';sp.dataset.f='pass';sp.classList.add('ed');sp.focus();arm();});
