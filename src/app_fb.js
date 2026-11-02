@@ -176,9 +176,13 @@ async function seedLeasing(){if(!ME||!ME.adm)return;try{await db.runTransaction(
 // Leasing-Infos einmalig auf die neue Struktur (Tirys Fragenliste) bringen; alte Listen werden in „alt“ gesichert
 let recDone=false;async function recLeasing(){if(recDone||!ME||!ME.adm||!L.length)return;recDone=true;try{await db.runTransaction(async t=>{const f=db.doc('meta/seed');const d=await t.get(f);if(d.exists&&(d.data().rec||0)>=LSREC_VER)return;
   LSREC.forEach(x=>{const o=L.find(l=>l.id===x.k)||L.find(l=>l.k===x.k);if(!o)return;const u=recMerge(o,x);u.ts=stamp();t.set(db.collection('leasing').doc(o.id),u,{merge:true});});t.set(f,{rec:LSREC_VER},{merge:true});});}catch(e){recDone=false;fail(e);}}
+// Offenes (nicht gelöscht = nicht erledigt) wandert auf heute: Werkstatt wie bisher, dazu Intern/WhatsApp/Notiz ab 02.11.2026 (ältere = Sheet-Historie)
+const ROLL_NEU=['int','wa','not'],ROLL_AB='2026-11-02';
 async function rollover(){const t=TODAY();try{const go=await db.runTransaction(async tr=>{const f=db.doc('meta/rollover');const d=await tr.get(f);if(d.exists&&d.data().datum===t)return false;tr.set(f,{datum:t,von:ME.id});return true;});
   if(!go)return;const snap=await db.collection('planer').where('datum','<',t).get();const b=db.batch();let n=0;
-  snap.forEach(d=>{const o=d.data();if(o.spalte==='ws'&&o.erledigt!=='1'){b.update(d.ref,{datum:t,ts:stamp(),tsVon:ME.id});n++;}});if(n)await b.commit();}catch(e){}}
+  snap.forEach(d=>{const o=d.data();if(o.erledigt==='1')return;if(o.spalte==='ws'||(ROLL_NEU.includes(o.spalte)&&String(o.datum)>=ROLL_AB)){b.update(d.ref,{datum:t,ts:stamp(),tsVon:ME.id});n++;}});if(n)await b.commit();}catch(e){}}
+// Mitternacht: läuft die App durch, rutscht Offenes ebenfalls automatisch auf den neuen Tag
+let rollDay=TODAY();setInterval(()=>{const t=TODAY();if(t!==rollDay&&ME){rollDay=t;rollover();scheduleRender();}},60000);
 /* Auto-Update: neue Version auf GitHub → Seite lädt sich selbst neu (nicht während einer Eingabe) */
 async function verCheck(){try{const v=(await (await fetch('version.txt?'+Date.now(),{cache:'no-store'})).text()).trim();if(v&&v!==CLIENT_VERSION){if(editing()){$('upd').hidden=false;return;}location.replace(location.pathname+'?v='+encodeURIComponent(v));}}catch(_){}}
 setInterval(verCheck,30000);setTimeout(verCheck,3000);

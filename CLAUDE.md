@@ -28,7 +28,7 @@ Web-App für **Velocenter Hessert** (Fahrradgeschäft, Wörth am Rhein). Ersetzt
   - `logo_small.b64` – Velocenter-Logo · `fbconfig.js` – Firebase-Konfiguration (öffentlich, kein Geheimnis)
   - `firestore.rules` – Sicherheitsregeln (Kopie; aktiv sind sie in der Firebase-Konsole)
 - **Bauen:** `cd src && python3 build.py <neue Version>` → schreibt `../index.html`, `../version.txt` usw. und `tests/test_fb.html`.
-- **Ausliefern:** commit + `git push origin main`. GitHub Pages braucht ~1 Min. **Offene Geräte prüfen alle 30 s `version.txt` und laden sich selbst neu** (mit `?v=` am Cache vorbei). Version bei jeder Auslieferung hochzählen (zuletzt **1.4.7**).
+- **Ausliefern:** commit + `git push origin main`. GitHub Pages braucht ~1 Min. **Offene Geräte prüfen alle 30 s `version.txt` und laden sich selbst neu** (mit `?v=` am Cache vorbei). Version bei jeder Auslieferung hochzählen (zuletzt **1.4.8**).
 - **Tests (lokal, ohne Internet):** `src/tests/` – `fbmock.js` baut Firebase Auth + Firestore nach (localStorage, Live-Abgleich zwischen Tabs).
   - Einmalig: `cd src/tests && npm pack xlsx@0.18.5 && tar xzf xlsx-0.18.5.tgz package/dist/xlsx.full.min.js && mv package/dist/xlsx.full.min.js . && rm -rf package xlsx-0.18.5.tgz`
   - `node quick.js` (Kurztest, ~30 s) · `node tf.js` (Gesamttest, ~2 Min). Playwright/Chromium ist vorinstalliert.
@@ -61,7 +61,7 @@ Web-App für **Velocenter Hessert** (Fahrradgeschäft, Wörth am Rhein). Ersetzt
   - **Klick irgendwo ins Feld = eintragen** (kein „+“ mehr in den Feldern). Eintrag anklicken = bearbeiten, rotes × = löschen (6 s Rückgängig), Ziehen auf anderen Tag.
   - **Uhrzeit:** Klick ins Zeit-Feld → Auswahl **nur 09:00–12:00 und 14:30–17:45 in 15-Min-Schritten**, danach Termin-Text. Gelbe Zeit-Chips anklicken = Zeit ändern.
   - **Kein Abhak-Kästchen mehr** (nur löschen oder stehen lassen). **Keine** Such-/Filterleiste, **keine** Zähler-Leiste. Oben nur WICHTIG/MERKER (anklickbar).
-  - Offenes in Werkstatt wandert täglich auf heute (`rollover`).
+  - **Offenes wandert täglich auf heute** (`rollover`, auch um 0 Uhr bei offener App): Sonstiges Werkstatt (alle), Intern + WhatsApp + Notiz (nur Einträge ab 02.11.2026, `ROLL_AB` – ältere = Sheet-Historie). Erledigt = gelöscht. Termine/Anfragen bleiben am Tag.
   - Jeder Eintrag zeigt Kürzel des Erstellers.
 - **Verkauf:** Standard **Liste** (umschaltbar Karten), Kennzahlen-Kacheln als Filter (Noch montieren · Montiert/wartet O.K. · O.K./abholbereit · Leasing ohne O.K.), Sortierung (Neueste, Liefertermin, Status, Name).
   - Spalten: Status-Punkt · Kunde/Modell · Leasing (Logo + Auswahl) · Verkauft · LT · Antrag · O.K. · L.-Ende · **Notiz** (ersetzt „Montieren“) · Beratung (Person) · Status 🔧 / O.K. / ✓ · ✎.
