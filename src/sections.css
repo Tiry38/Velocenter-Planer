@@ -116,7 +116,7 @@ body.navmini .navsep{width:40px;margin:8px auto}
 .vtab td.dcell:empty::before{content:"📅 –";color:var(--muted);font-weight:400}
 .vtab td.d-antrag{color:#C4B5FD}
 .vtab td.d-ok{color:#34D399}
-.vtab td.d-ok.miss:empty::before{content:"fehlt";color:#FCA5A5;font-weight:700}
+.vtab td.d-ok.miss:empty::before{content:"Genehmigung\A fehlt";white-space:pre;display:block;line-height:1.15;font-size:11px;text-align:center;color:#FCA5A5;font-weight:700}
 .vtab td.d-lende{color:#67E8F9}
 .edit.din{width:132px;padding:3px 4px;font:700 12px var(--mono);color-scheme:dark;background:var(--panel2);color:#fff;border:1px solid var(--cyan);border-radius:7px}
 .vtab thead tr.h2 th:nth-child(9){color:#C4B5FD}.vtab thead tr.h2 th:nth-child(10){color:#34D399}.vtab thead tr.h2 th:nth-child(11){color:#67E8F9}
