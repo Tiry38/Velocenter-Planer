@@ -179,6 +179,7 @@ function startLive(){stopLive();const from=iso(new Date(Date.now()-35*864e5));
  listen('I',x=>{I={};x.forEach(o=>I[o.id]=o.wert);});
  if(ME&&ME.adm)unsubs.push(db.doc('tresor/pw').onSnapshot(d=>{if(KEY&&NOTES&&d.exists&&d.data().ct&&d.data().tsVon!==ME.id&&!document.querySelector('#nGrid [contenteditable]:focus'))open_(KEY,d.data()).then(x=>{if(!Array.isArray(x)){NOTES=x.notes||[];PWGRID=x.grid||PWGRID;rn();}}).catch(()=>{});},()=>{}));
  for(let y=1995;y<=new Date().getFullYear()+1;y++)unsubs.push(db.doc('meta/kd_'+y).onSnapshot(d=>{KD[y]=(d.exists&&d.data().items)||{};kdDirty=true;scheduleRender();},()=>{}));
+ unsubs.push(db.doc('meta/kd_trash').onSnapshot(d=>{const it=(d.exists&&d.data().items)||{},o={};for(const k in it)if(it[k])o[k]=it[k];KDT=o;kdDirty=true;scheduleRender();kdBinPrune();},()=>{}));
  unsubs.push(db.doc('meta/kd_x').onSnapshot(d=>{KD.x=(d.exists&&d.data().items)||{};kdDirty=true;scheduleRender();},()=>{}));
  unsubs.push(db.doc('meta/import').onSnapshot(d=>{KDIMP=!!(d.exists&&d.data().kunden);if($('kdImp'))$('kdImp').hidden=!(ME&&ME.adm)||KDIMP;},()=>{}));
  unsubs.push(db.doc('meta/reklam').onSnapshot(d=>{RKD=(d.exists&&d.data().items)||{};scheduleRender();},()=>{}));
@@ -616,6 +617,7 @@ function rk(){const g=$('kdGrid');if(!g)return;const all=kdAll();{const cy=new D
  $('kdMore').hidden=!!(kdYr||q||fk.length)||!more;$('kdMore').textContent='Ältere Jahre anzeigen (bis '+(now-kdYears-1)+')';
  $('kdForm').innerHTML=kdEdit?kdFormH():'';
  if($('kdClr'))$('kdClr').hidden=!(ME&&ME.adm)||!all.length;
+ {const nb=Object.keys(KDT).length;$('kdBin').hidden=!nb;$('kdBinN').textContent=nb;}
  const cols=kdCols();kdTpl();
  let h=`<div class="hd kdh kgh" style="--hc:${KDRB[0]}"></div>`+cols.map((c,i)=>`<div class="hd kdh${c.k==='kunde'?' kl':''}${kdF[c.k]?' kfon':''}" draggable="true" data-kc="${c.k}" title="Klick = filtern · Ziehen = Spalte verschieben · rechter Rand = Breite" style="--hc:${KDRB[i%KDRB.length]}">${c.n||'·'}<i class="kfi">${kdF[c.k]?'▼':'▾'}</i><span class="kres" data-kres="${c.k}" title="Ziehen = Breite ändern · Doppelklick = Standard"></span></div>`).join('')+`<div class="hd kdh" style="--hc:${KDRB[KDRB.length-1]}"></div>`;let yr=null;const cnt={};list.forEach(r=>{const y=kdYear(r);cnt[y]=(cnt[y]||0)+1;});
  if(!all.length){kdPopClose();g.innerHTML=h+`<div class="kdempty">${ME&&ME.adm?'Noch keine Kunden – oben „📥 Kunden aus Sheet übernehmen“ und die .xlsx des Sheets wählen.':'Noch keine Kunden übernommen.'}</div>`;return;}
@@ -628,6 +630,17 @@ function kdCell(c,r,id,ky){if(c.k==='marke'){const b=brandOfB({marke:r.marke,mod
  if(c.k==='dat'||c.k==='leas'||c.k==='vers'){const v=String(r[c.k]||''),t=c.k==='dat'?'Klick = Datum wählen':(kdLab(c.k,v)+' · Klick = auswählen');
   const lg=c.k!=='dat'&&kdLogoH(v);return `<div class="c kc ${c.c} kpk${lg?' kplg':''}" role="button" tabindex="0" data-kpick="${c.k}" data-kid="${id}" data-ky="${ky}" data-kc="${c.k}" title="${esc(t)}">${lg||esc(v)}</div>`;}
  const v=kdVal(c.k,r);return `<div class="c kc ${c.c}" contenteditable="true" spellcheck="false" data-kid="${id}" data-ky="${ky}" data-kf="${c.k}" data-kc="${c.k}">${esc(v==null?'':v)}</div>`;}
+// Papierkorb (1.5.8): gelöschte Zeilen 30 Tage in meta/kd_trash = {items:{id:{…Zeile,_y,_del,_von}}}
+let KDT={};const KDT_DAYS=30;
+async function kdBinSet(id,v){if(v)KDT=Object.assign({},KDT,{[id]:v});else{KDT=Object.assign({},KDT);delete KDT[id];}
+ try{await db.doc('meta/kd_trash').update({['items.'+id]:v||null});}catch(e){try{await db.doc('meta/kd_trash').set({items:Object.assign({},KDT)},{merge:true});}catch(e2){fail(e2);}}}
+let kdPruned=false;function kdBinPrune(){if(kdPruned||!ME)return;const lim=Date.now()-KDT_DAYS*864e5,old=Object.keys(KDT).filter(k=>(KDT[k]._del||0)<lim);if(!old.length)return;kdPruned=true;
+ const u={};old.forEach(k=>{u['items.'+k]=null;delete KDT[k];});db.doc('meta/kd_trash').update(u).catch(()=>{});}
+async function kdRestore(id){const x=KDT[id];if(!x)return;const r=Object.assign({},x),y=r._y||r.y||'x';delete r._y;delete r._del;delete r._von;await kdPut(y,r);await kdBinSet(id,null);kdDirty=true;rk();}
+function kdBinOpen(btn){const L=Object.values(KDT).sort((a,b)=>(b._del||0)-(a._del||0));
+ if(!L.length){kdPopClose();return;}
+ const el=kdPopOpen(btn,`<div class="kbin"><b>↩ Gelöschte Zeilen</b><small>Bleiben ${KDT_DAYS} Tage hier, dann endgültig weg.</small><div class="kbl">${L.map(x=>{const dd=new Date(x._del||0);return `<div class="kbr"><div><b>${esc(x.kunde||'(ohne Kunde)')}</b><span>${esc([x.dat,x.marke,x.modell].filter(Boolean).join(' · '))}</span><i>gelöscht ${dd.toLocaleDateString('de-DE',{day:'2-digit',month:'2-digit'})} ${dd.toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'})}${x._von?' · '+esc((U(x._von)||{}).n||x._von):''}</i></div><button class="btn" type="button" data-kres="${esc(x.id)}">↩ Zurückholen</button></div>`;}).join('')}</div></div>`);
+ el.addEventListener('click',async e=>{const b=e.target.closest('[data-kres]');if(!b)return;b.disabled=true;await kdRestore(b.dataset.kres);toast('Zeile zurückgeholt');kdBinOpen(btn);});}
 async function kdPut(y,r){const c=Object.assign({},r);delete c._t;delete c._d;delete c._o;c.ts=stamp();c.tsVon=ME?ME.id:'';KD[y]=Object.assign({},KD[y]||{},{[r.id]:c});kdDirty=true;
  try{await db.doc('meta/kd_'+y).update({['items.'+r.id]:c});}catch(e){try{await db.doc('meta/kd_'+y).set({items:Object.assign({},KD[y])},{merge:true});}catch(e2){fail(e2);}}}
 function kdFormH(){const opt='<option value="">–</option>'+Object.entries(FN).map(([k,n])=>`<option value="${esc(k)}">${esc(k)} · ${esc(n)}</option>`).join('');
@@ -641,7 +654,7 @@ $('kdMore').addEventListener('click',()=>{kdYears+=3;rk();});
 $('kdAdd').addEventListener('click',()=>{kdEdit='new';rk();$('kdForm').scrollIntoView({block:'start'});});
 $('v-kunden').addEventListener('click',e=>{if(e.target.closest('[data-kcancel]')){kdEdit=null;rk();return;}
  const dl=e.target.closest('[data-kdel]');if(dl){const y=dl.dataset.ky,id=dl.dataset.kdel,old=KD[y]&&KD[y][id];if(!old)return;if(!dl.dataset.sure){dl.dataset.sure=1;dl.textContent='?';dl.title='Nochmal klicken = löschen';return;}
-  const n=Object.assign({},KD[y]);delete n[id];KD[y]=n;kdDirty=true;rk();db.doc('meta/kd_'+y).update({['items.'+id]:null}).catch(fail);toast('Gelöscht',()=>{kdPut(y,old).then(rk);toast('Wiederhergestellt');});}});
+  const n=Object.assign({},KD[y]);delete n[id];KD[y]=n;kdDirty=true;rk();db.doc('meta/kd_'+y).update({['items.'+id]:null}).catch(fail);const tr=Object.assign({},old,{_y:y,_del:Date.now(),_von:ME?ME.id:''});delete tr._t;delete tr._d;delete tr._o;kdBinSet(id,tr);toast('Gelöscht – auch später über „↩ Gelöschte“ zurückholbar',()=>{kdRestore(id);toast('Wiederhergestellt');});}});
 $('v-kunden').addEventListener('submit',async e=>{if(!e.target.dataset.kf2)return;e.preventDefault();const d=new FormData(e.target),y=String(new Date().getFullYear());const r={id:nid('k'),y};
  ['nr','marke','modell','preis','leas','kunde','vers','rahmen','tel'].forEach(k=>r[k]=String(d.get(k)||'').trim());const v=String(d.get('dat')||'');r.dat=/^\d{4}-\d{2}-\d{2}$/.test(v)?deDate(fromIso(v)):'';
  kdEdit=null;await kdPut(y,r);rk();toast('Gespeichert');});
@@ -727,6 +740,7 @@ function kdMoveRow(d){const all=kdAll(),a=all.find(r=>r.id===d.id&&String(r.y)==
  kdDirty=true;rk();for(const yy in by)db.doc('meta/kd_'+yy).update(by[yy]).catch(fail);toast('Zeile verschoben');}
 $('kdRst').addEventListener('click',()=>{kdLay=kdDef();kdLaySave();rk();toast('Spalten zurückgesetzt');});
 // Alle Kunden löschen (nur Admin, mit Bestätigung). Das Google-Sheet bleibt unberührt -> über „📥 Kunden aus Sheet übernehmen“ jederzeit neu holbar.
+$('kdBin').addEventListener('click',e=>{if(kdPop&&kdPop.bin){kdPopClose();return;}kdBinOpen(e.currentTarget);if(kdPop)kdPop.bin=1;});
 $('kdClr').addEventListener('click',()=>{if(!ME||!ME.adm)return;const n=kdAll().length;
  dlg(`<h3>🗑 Alle Kunden löschen</h3><p class="hint">Löscht <b>alle ${n.toLocaleString('de-DE')} Einträge</b> im Reiter Kunden – für alle Nutzer. Das Google-Sheet bleibt unverändert; über „📥 Kunden aus Sheet übernehmen“ kannst du später neu übernehmen.</p><form id="kcF" autocomplete="off"><label>Zum Bestätigen <b>LÖSCHEN</b> eintippen<input id="kcIn" autocomplete="off"></label><div class="err" id="kcE"></div><div class="acts"><button class="btn" type="button" data-close>Abbrechen</button><button class="btn red" type="submit">Endgültig löschen</button></div></form>`);
  $('kcF').addEventListener('submit',async ev=>{ev.preventDefault();if($('kcIn').value.trim().toUpperCase()!=='LÖSCHEN'){$('kcE').textContent='Bitte genau LÖSCHEN eintippen.';return;}
