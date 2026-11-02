@@ -87,7 +87,7 @@ async function start(me){if(ME&&ME.id===me.id)return;ME=me;const u=U(me.id);$('m
 
 /* Passwort ändern / zurücksetzen */
 function dlg(html){$('dlgBox').innerHTML=html;$('dlg').hidden=false;const f=$('dlgBox').querySelector('input');if(f)f.focus();}
-function dlgClose(){$('dlg').hidden=true;$('dlgBox').innerHTML='';}
+function dlgClose(){$('dlg').hidden=true;$('dlgBox').innerHTML='';$('dlgBox').classList.remove('wide');}
 $('dlg').addEventListener('click',e=>{if(e.target.id==='dlg'||e.target.closest('[data-close]'))dlgClose();});
 $('meSet').addEventListener('click',()=>{dlg(`<h3>Passwort ändern</h3><form id="pcF" autocomplete="off"><input id="pcO" type="password" placeholder="Altes Passwort"><input id="pcN" type="password" placeholder="Neues Passwort"><input id="pcN2" type="password" placeholder="Neues Passwort wiederholen"><div class="err" id="pcE"></div><div class="acts"><button class="btn" type="button" data-close>Abbrechen</button><button class="btn red" type="submit">Speichern</button></div></form>
  ${ME&&ME.adm?`<h3 style="margin-top:18px">Passwort eines Mitarbeiters zurücksetzen</h3><p class="hint">Passwort vergessen? So geht es (dauert 1 Minute):</p><p class="hint rsHint">Firebase-Konsole → Projekt <b>Velocenter Planer</b> → Authentication → Nutzer → Person (z. B. sascha@…) → ⋮ → <b>Konto löschen</b>. Dann hier unten auf ihren Namen klicken – beim nächsten Öffnen legt sie ein neues Passwort fest.</p><div class="acts">${USERS.filter(u=>u.id!==ME.id).map(u=>`<button class="btn" type="button" data-reset="${u.id}">${esc(u.n)}</button>`).join('')}</div>`:''}`);
@@ -117,7 +117,7 @@ function startLive(){stopLive();const from=iso(new Date(Date.now()-35*864e5));
  rollover();}
 async function seedLeasing(){if(!ME||!ME.adm)return;try{await db.runTransaction(async t=>{const f=db.doc('meta/seed');const d=await t.get(f);if(d.exists&&d.data().leasing)return;
   LSDEF.forEach(x=>t.set(db.collection('leasing').doc(x.k),Object.assign(clean(x),{ts:stamp()})));t.set(f,{leasing:true,rec:LSREC_VER},{merge:true});});}catch(e){fail(e);}}
-// Überarbeitete Leasing-Infos einmalig in die Datenbank übernehmen (eigenes Logo bleibt)
+// Leasing-Infos einmalig auf die neue Struktur (Tirys Fragenliste) bringen; alte Listen werden in „alt“ gesichert
 let recDone=false;async function recLeasing(){if(recDone||!ME||!ME.adm||!L.length)return;recDone=true;try{await db.runTransaction(async t=>{const f=db.doc('meta/seed');const d=await t.get(f);if(d.exists&&(d.data().rec||0)>=LSREC_VER)return;
   LSREC.forEach(x=>{const o=L.find(l=>l.id===x.k)||L.find(l=>l.k===x.k);if(!o)return;const u=recMerge(o,x);u.ts=stamp();t.set(db.collection('leasing').doc(o.id),u,{merge:true});});t.set(f,{rec:LSREC_VER},{merge:true});});}catch(e){recDone=false;fail(e);}}
 async function rollover(){const t=TODAY();try{const go=await db.runTransaction(async tr=>{const f=db.doc('meta/rollover');const d=await tr.get(f);if(d.exists&&d.data().datum===t)return false;tr.set(f,{datum:t,von:ME.id});return true;});
@@ -303,34 +303,46 @@ $('bDone').addEventListener('click',e=>{bShowDone=!bShowDone;e.currentTarget.set
 /* ================= LEASING ================= */
 __LSDEF__
 __LSREC__
-function recMerge(o,x){const u={};['abh','ser'].forEach(k=>{const a=(o[k]||[]).slice();(x[k]||[]).forEach(t=>{if(!a.includes(t))a.push(t);});u[k]=a;});Object.entries(x.set||{}).forEach(([k,v])=>{if(o[k]===undefined||o[k]===null||o[k]===''||o[k]==='–')u[k]=v;});return u;}
+function recMerge(o,x){const u=clean(x);delete u.k;if(!o.alt&&((o.abh||[]).length||(o.ser||[]).length))u.alt={abh:o.abh||[],ser:o.ser||[],is:o.is||'',vs:o.vs||'',gs:o.gs||'',text:o.text||'',tel:o.tel||''};u.abh=[];u.ser=[];return u;}
 const LSDEF=LS.map(x=>{const r=LSREC.find(r=>r.k===x.k);return r?Object.assign({},x,recMerge(x,r)):Object.assign({},x);});
 __LOGOS__
-let lsQ='',lsDrei=false,lsM={abh:true,ser:true},lsEdit=-1;
+let lsQ='',lsDrei=false,lsEdit=-1;
 const hl=t=>{let x=esc(t);if(lsQ){const i=x.toLowerCase().indexOf(esc(lsQ));if(i>=0)x=x.slice(0,i)+'<mark>'+x.slice(i,i+esc(lsQ).length)+'</mark>'+x.slice(i+esc(lsQ).length);}return x;};
 const li=t=>`<li class="${t[0]==='!'?'w':''}">${hl(t.replace(/^!/,''))}</li>`;
 const logoOf=f=>f.logo||LOGOS[f.k]||'';
+// Feste Fragen je Anbieter (Tirys Liste) – [Feld, Frage, 't' = ja/nein/offen]
+const LQG=[['🔧 Inspektion & Verschleiß',[['isz','Inspektion – wir bekommen'],['vsd','Verschleiß dabei?'],['abMon','Einreichen ab Monat'],['isCode','Inspektionscode für Kunden?']]],
+ ['🛡 Versicherung',[['vers','Versicherung dabei?']]],
+ ['🧾 Rechnungsadressen',[['reNeu','Neurad'],['reIV','Inspektion & Verschleiß'],['reSch','Schaden']]],
+ ['🚲 Erlaubt zu leasen',[['drei','E-Dreirad','t'],['spe','S-Pedelec','t']]],
+ ['🔑 Neuradabholung',[['code','Abholcode?'],['mit','Kunde bringt mit']]]];
+const LQF=LQG.flatMap(g=>g[1]);
+const OFFEN='<span class="qo">offen</span>';
+const triV=v=>v===true?'<span class="qy">✓ ja</span>':v===false?'<span class="qn">✗ nein</span>':OFFEN;
+const qv=(f,[k,,t])=>t==='t'?triV(f[k]):String(f[k]||'').trim()?hl(f[k]):OFFEN;
+function lsCard(f,i){const nj=(f.zubJa||[]).length,nn=(f.zubNein||[]).length;
+ return `<article class="lc" style="--ac:${esc(f.ac||'#94A3B8')}"><div class="lh">${logoOf(f)?`<div class="logo"><img src="${esc(logoOf(f))}" alt="${esc(f.n)} Logo"></div>`:`<div class="mono">${esc(f.k)}</div>`}<div style="min-width:0">${logoOf(f)?'':`<b>${esc(f.n)}</b>`}<small>${esc(f.sub||'Leasing')} · ${esc(f.k)}</small></div><button class="edbtn" type="button" data-led="${i}" aria-label="${esc(f.n)} bearbeiten">✎ Bearbeiten</button></div>
+ <div class="blk"><h4>📦 Pakete · Leistungen · Preis für den Kunden</h4>${(f.pak||[]).length?`<ul>${f.pak.map(li).join('')}</ul>`:`<p class="qe">${OFFEN}</p>`}</div>
+ ${LQG.map(([h,qs])=>`<div class="blk"><h4>${esc(h)}</h4><dl class="qa">${qs.map(q=>`<dt>${esc(q[1])}</dt><dd>${qv(f,q)}</dd>`).join('')}</dl></div>`).join('')}
+ <button class="zubbtn" type="button" data-zub="${i}">🧩 Leasingfähiges Zubehör <span>${nj||nn?`${nj} ✓ · ${nn} ✗`:'offen'}</span></button>
+ </article>`;}
 function rl(){
- $('lgrid').innerHTML=L.map((f,i)=>[f,i]).filter(([f,i])=>i===lsEdit||((!lsDrei||f.drei)&&(!lsQ||JSON.stringify(Object.assign({},f,{logo:''})).toLowerCase().includes(lsQ)))).map(([f,i])=>i===lsEdit?editCard(f,i):`
- <article class="lc" style="--ac:${esc(f.ac||'#94A3B8')}"><div class="lh">${logoOf(f)?`<div class="logo"><img src="${esc(logoOf(f))}" alt="${esc(f.n)} Logo"></div>`:`<div class="mono">${esc(f.k)}</div>`}<div style="min-width:0">${logoOf(f)?'':`<b>${esc(f.n)}</b>`}<small>${esc(f.sub||'Leasing')} · ${esc(f.k)}</small></div><button class="edbtn" type="button" data-led="${i}" aria-label="${esc(f.n)} bearbeiten">✎ Bearbeiten</button></div>
- <div class="facts">${f.drei===true?'<span class="fx y">Dreirad ✓</span>':''}${f.is&&f.is!=='–'?`<span class="fx">IS: ${esc(f.is)}</span>`:''}${f.vs&&f.vs!=='–'?`<span class="fx">Verschleiß: ${esc(f.vs)}</span>`:''}${f.gs==='nein'?'<span class="fx n">Keine Gutschrift</span>':f.gs==='nur IS'?'<span class="fx e">Gutschrift nur IS</span>':f.gs==='ja'?'<span class="fx y">Gutschrift</span>':''}</div>
- ${lsM.abh&&(f.abh||[]).length?`<div class="blk"><h4>🚲 Neurad-Abholung</h4><ul>${f.abh.map(li).join('')}</ul>${f.text?`<div class="rt">${esc(f.text)}</div><button class="cpy" type="button" data-t="${i}">Text kopieren</button>`:''}</div>`:''}
- ${lsM.ser&&(f.ser||[]).length?`<div class="blk"><h4>🔧 Inspektion &amp; Reparatur</h4><ul>${f.ser.map(li).join('')}</ul></div>`:''}
- ${f.tel?`<div>Arbeitnehmer-Support: <a class="tel" href="tel:${esc(f.tel.replace(/[^0-9+]/g,''))}">${esc(f.tel)}</a></div>`:''}
- </article>`).join('')||'<p class="hint">Nichts gefunden.</p>';
- if(!document.querySelector('#ltab [contenteditable]:focus'))$('ltab').innerHTML='<thead><tr><th>Anbieter</th><th>Dreirad</th><th>IS-Zahlung</th><th>Verschleiß</th><th>Gutschrift</th></tr></thead><tbody>'+L.map((f,i)=>`<tr><td><b style="color:${esc(f.ac)}">●</b> ${esc(f.n)}</td><td class="tg ${f.drei===true?'y':''}" data-lt="${i}" data-f="drei" role="button" tabindex="0" title="Klick = umschalten">${f.drei===true?'✓':'–'}</td><td class="ce" contenteditable="true" spellcheck="false" data-lt="${i}" data-f="is">${esc(f.is||'')}</td><td class="ce" contenteditable="true" spellcheck="false" data-lt="${i}" data-f="vs">${esc(f.vs||'')}</td><td class="tg ${f.gs==='nein'?'n':f.gs==='ja'?'y':''}" data-lt="${i}" data-f="gs" role="button" tabindex="0" title="Klick = ja / nein / nur IS / –">${esc(f.gs||'–')}</td></tr>`).join('')+'</tbody>';
+ $('lgrid').innerHTML=L.map((f,i)=>[f,i]).filter(([f,i])=>i===lsEdit||((!lsDrei||f.drei===true)&&(!lsQ||JSON.stringify(Object.assign({},f,{logo:'',alt:''})).toLowerCase().includes(lsQ)))).map(([f,i])=>i===lsEdit?editCard(f,i):lsCard(f,i)).join('')||'<p class="hint">Nichts gefunden.</p>';
+ if(!document.querySelector('#ltab [contenteditable]:focus'))$('ltab').innerHTML='<thead><tr><th>Anbieter</th><th>E-Dreirad</th><th>S-Pedelec</th><th>Inspektion – wir bekommen</th><th>Verschleiß</th><th>Versicherung</th></tr></thead><tbody>'+L.map((f,i)=>`<tr><td><b style="color:${esc(f.ac)}">●</b> ${esc(f.n)}</td>${['drei','spe'].map(k=>`<td class="tg ${f[k]===true?'y':f[k]===false?'n':''}" data-lt="${i}" data-f="${k}" role="button" tabindex="0" title="Klick = ✓ / ✗ / offen">${f[k]===true?'✓':f[k]===false?'✗':'–'}</td>`).join('')}${['isz','vsd','vers'].map(k=>`<td class="ce" contenteditable="true" spellcheck="false" data-lt="${i}" data-f="${k}">${esc(f[k]||'')}</td>`).join('')}</tr>`).join('')+'</tbody>';
  FN=Object.assign({BL:'Bikeleasing',CB:'Company Bike',KM:'Kazenmaier',BB:'Businessbike',JR:'JobRad',DD:'Deutsche Dienstrad',LB:'Lease a Bike',RD:'RIDE',ER:'Eurorad'},Object.fromEntries(L.filter(f=>!/versicherung|schäden/i.test(f.sub||'')).map(f=>[f.k,f.n])));}
-function editCard(f,i){return `<article class="lc editing" style="--ac:${esc(f.ac||'#94A3B8')}"><form class="edf" data-lf="${i}" autocomplete="off">
+function zubDlg(f){const L1=a=>(a||[]).map(t=>`<li>${esc(t)}</li>`).join(''),E='<p class="qe"><span class="qo">offen</span></p>';
+ dlg(`<div class="zubd" style="--ac:${esc(f.ac||'#94A3B8')}"><h3>🧩 Leasingfähiges Zubehör · ${esc(f.n)}</h3>
+ <div class="zcols"><div class="zj"><h4>✓ Leasingfähig</h4>${(f.zubJa||[]).length?`<ul>${L1(f.zubJa)}</ul>`:E}</div>
+ <div class="zn"><h4>✗ Nicht leasingfähig</h4>${(f.zubNein||[]).length?`<ul>${L1(f.zubNein)}</ul>`:E}</div></div>
+ <div class="acts"><button class="btn" type="button" data-close>Schließen</button></div></div>`);$('dlgBox').classList.add('wide');}
+function editCard(f,i){const ta=(k,lbl,r)=>`<label>${lbl} <em>(eine Zeile pro Punkt)</em><textarea name="${k}" rows="${r}">${esc((f[k]||[]).join('\n'))}</textarea></label>`;
+ return `<article class="lc editing" style="--ac:${esc(f.ac||'#94A3B8')}"><form class="edf" data-lf="${i}" autocomplete="off">
  <div class="lh">${logoOf(f)?`<div class="logo"><img src="${esc(logoOf(f))}" alt=""></div>`:`<div class="mono">${esc(f.k)}</div>`}<div style="flex:1;min-width:0"><b>Bearbeiten</b><small>Änderungen gelten sofort für alle</small></div></div>
  <div class="g2"><label>Name<input name="n" value="${esc(f.n)}" required></label><label>Kürzel<input name="k" value="${esc(f.k)}" maxlength="4" required></label>
- <label>Unterzeile<input name="sub" value="${esc(f.sub||'Leasing')}"></label><label>Farbe<input name="ac" type="color" value="${esc(f.ac||'#94A3B8')}"></label>
- <label>IS-Zahlung<input name="is" value="${esc(f.is||'')}"></label><label>Verschleiß<input name="vs" value="${esc(f.vs||'')}"></label>
- <label>Gutschrift<select name="gs">${['ja','nein','nur IS','–'].map(o=>`<option${f.gs===o?' selected':''}>${o}</option>`).join('')}</select></label>
- <label>Dreirad<select name="drei"><option value="1"${f.drei===true?' selected':''}>möglich</option><option value="0"${f.drei!==true?' selected':''}>nicht angegeben</option></select></label></div>
- <label>Neurad-Abholung <em>(eine Zeile pro Punkt · ! am Anfang = rot)</em><textarea name="abh" rows="4">${esc((f.abh||[]).join('\n'))}</textarea></label>
- <label>Inspektion &amp; Reparatur<textarea name="ser" rows="5">${esc((f.ser||[]).join('\n'))}</textarea></label>
- <label>Rechnungstext (optional)<textarea name="text" rows="3">${esc(f.text||'')}</textarea></label>
- <label>Telefon (optional)<input name="tel" value="${esc(f.tel||'')}"></label>
+ <label>Unterzeile<input name="sub" value="${esc(f.sub||'Leasing')}"></label><label>Farbe<input name="ac" type="color" value="${esc(f.ac||'#94A3B8')}"></label></div>
+ ${ta('pak','Pakete · Leistungen · Preis für den Kunden',4)}
+ <div class="g2">${LQF.map(([k,n,t])=>t==='t'?`<label>${esc(n)}<select name="${k}"><option value="1"${f[k]===true?' selected':''}>✓ ja</option><option value="0"${f[k]===false?' selected':''}>✗ nein</option><option value=""${f[k]!==true&&f[k]!==false?' selected':''}>offen</option></select></label>`:`<label>${esc(n)}<input name="${k}" value="${esc(f[k]||'')}"></label>`).join('')}</div>
+ ${ta('zubJa','Leasingfähiges Zubehör',4)}${ta('zubNein','Nicht leasingfähig',3)}
  <label class="up">Logo hochladen (PNG/SVG/WebP, freigestellt – wird automatisch verkleinert)<input name="logo" type="file" accept="image/png,image/svg+xml,image/webp,image/jpeg"></label>
  ${f.logo?`<button class="btn" type="button" data-rmlogo="${i}">Eigenes Logo entfernen</button>`:''}
  <div class="acts"><button class="btn red" type="submit">Speichern</button><button class="btn" type="button" data-lcancel>Abbrechen</button><button class="btn del" type="button" data-ldel="${i}">Anbieter löschen</button></div></form></article>`;}
@@ -342,20 +354,19 @@ $('lgrid').addEventListener('click',async e=>{
  if(e.target.closest('[data-lcancel]')){if(L[lsEdit]&&L[lsEdit]._new)L.splice(lsEdit,1);lsEdit=-1;rl();return;}
  const dl=e.target.closest('[data-ldel]');if(dl){const i=+dl.dataset.ldel;if(!dl.dataset.sure){dl.dataset.sure=1;dl.textContent='Wirklich löschen?';return;}const f=L[i];L.splice(i,1);lsEdit=-1;rl();if(!f._new)del('L',f.id);toast(f.n+' gelöscht');return;}
  const rm=e.target.closest('[data-rmlogo]');if(rm){const f=Object.assign({},L[+rm.dataset.rmlogo]);delete f.logo;putL(f);toast('Eigenes Logo entfernt');return;}
- const b=e.target.closest('.cpy');if(!b)return;const t=L[+b.dataset.t].text;try{await navigator.clipboard.writeText(t);toast('Rechnungstext kopiert');}catch(_){toast('Kopieren nicht erlaubt – Text markieren und Strg+C');}});
-$('ltab').addEventListener('click',e=>{const c=e.target.closest('.tg');if(!c)return;const f=Object.assign({},L[+c.dataset.lt]);if(c.dataset.f==='drei')f.drei=f.drei===true?null:true;else{const o=['ja','nein','nur IS','–'];f.gs=o[(o.indexOf(f.gs||'–')+1)%o.length];}putL(f).then(()=>toast('Gespeichert'));});
+ const z=e.target.closest('[data-zub]');if(z){zubDlg(L[+z.dataset.zub]);return;}});
+$('ltab').addEventListener('click',e=>{const c=e.target.closest('.tg');if(!c)return;const f=Object.assign({},L[+c.dataset.lt]);const k=c.dataset.f;f[k]=f[k]===true?false:f[k]===false?null:true;putL(f).then(()=>toast('Gespeichert'));});
 $('ltab').addEventListener('keydown',e=>{const c=e.target.closest('.ce,.tg');if(!c)return;if(e.key==='Enter'){e.preventDefault();if(c.classList.contains('tg'))c.click();else c.blur();}});
 $('ltab').addEventListener('focusout',e=>{const c=e.target.closest('.ce');if(!c)return;const f=Object.assign({},L[+c.dataset.lt]),v=c.textContent.trim();if(v===(f[c.dataset.f]||''))return;f[c.dataset.f]=v;putL(f).then(()=>toast('Gespeichert'));});
 $('lgrid').addEventListener('submit',async e=>{if(!e.target.dataset.lf)return;e.preventDefault();const fm=e.target,i=+fm.dataset.lf,f=Object.assign({},L[i]),d=new FormData(fm);delete f._new;
- ['n','k','sub','ac','is','vs','gs','text','tel'].forEach(k=>f[k]=String(d.get(k)||'').trim());f.k=f.k.toUpperCase().replace(/[^A-Z0-9]/g,'')||'NEU';f.drei=d.get('drei')==='1'?true:null;
- ['abh','ser'].forEach(k=>f[k]=String(d.get(k)||'').split('\n').map(x=>x.trim()).filter(Boolean));
+ ['n','k','sub','ac'].concat(LQF.filter(q=>!q[2]).map(q=>q[0])).forEach(k=>f[k]=String(d.get(k)||'').trim());f.k=f.k.toUpperCase().replace(/[^A-Z0-9]/g,'')||'NEU';LQF.filter(q=>q[2]).forEach(([k])=>{const v=d.get(k);f[k]=v==='1'?true:v==='0'?false:null;});
+ ['pak','zubJa','zubNein'].forEach(k=>f[k]=String(d.get(k)||'').split('\n').map(x=>x.trim()).filter(Boolean));
  if(!f.id)f.id=f.k+Math.random().toString(36).slice(2,5).toUpperCase();
  const file=d.get('logo');if(file&&file.size){try{f.logo=await shrink(file);}catch(err){toast(err.message);return;}}
  if(await putL(f))toast('Gespeichert');});
-$('lsAdd').addEventListener('click',()=>{L.push({_new:1,k:'NEU',n:'Neuer Anbieter',sub:'Leasing',ac:'#94A3B8',drei:null,is:'',vs:'',gs:'–',abh:[],ser:[]});lsEdit=L.length-1;lsQ='';$('lsSearch').value='';rl();document.querySelector('.lc.editing')?.scrollIntoView({block:'start',behavior:'smooth'});});
+$('lsAdd').addEventListener('click',()=>{L.push({_new:1,k:'NEU',n:'Neuer Anbieter',sub:'Leasing',ac:'#94A3B8',drei:null,spe:null,pak:[],zubJa:[],zubNein:[]});lsEdit=L.length-1;lsQ='';$('lsSearch').value='';rl();document.querySelector('.lc.editing')?.scrollIntoView({block:'start',behavior:'smooth'});});
 $('lsSearch').addEventListener('input',e=>{lsQ=e.target.value.toLowerCase().trim();rl();});
 $('fDrei').addEventListener('click',e=>{lsDrei=!lsDrei;e.currentTarget.setAttribute('aria-pressed',lsDrei);rl();});
-document.querySelectorAll('.seg .btn').forEach(b=>b.addEventListener('click',()=>{lsM[b.dataset.m]=!lsM[b.dataset.m];if(!lsM.abh&&!lsM.ser)lsM[b.dataset.m]=true;document.querySelectorAll('.seg .btn').forEach(x=>x.setAttribute('aria-pressed',lsM[x.dataset.m]));rl();}));
 
 /* ================= LIEFERANTEN ================= */
 let sEdit=null,LOGINS=null;

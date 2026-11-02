@@ -181,3 +181,23 @@ body.navmini #switchUser{font-size:0;padding:6px 8px;margin:0}body.navmini #swit
 @container dt (max-width:540px){.dt .seg{padding:2px 8px}.dt .seg b{font-size:18px}.dt .sKw b{font-size:14px;padding:2px 9px}.dt .clock{font-size:24px!important;padding:3px 10px!important}.dt .live{font-size:0!important;gap:0;padding:6px!important}}
 @container dt (max-width:420px){.dt .sDate{padding-left:0}.dt .seg b{font-size:15.5px}.dt .clock{font-size:20px!important}.dt .sClock{gap:6px}.dt .mL{display:none}.dt .mS{display:inline}}
 @media (max-width:720px){.top{flex-wrap:wrap!important;gap:12px!important}.dt{width:100%;flex:none}}
+
+/* ===== Leasing-Karten: feste Fragen (1.1.9) ===== */
+.qa{display:grid;grid-template-columns:minmax(110px,40%) 1fr;gap:5px 10px;margin:0;font-size:12.8px;line-height:1.35}
+.qa dt{color:#9AA4B5;font:500 12px/1.35 "Outfit",sans-serif;padding:6px 0 6px 2px}
+.qa dd{margin:0;padding:6px 9px;border-radius:10px;background:rgba(255,255,255,.025);color:#F1F5F9;word-break:break-word}
+.qo{display:inline-block;font:600 10.5px "Outfit",sans-serif;letter-spacing:.05em;color:#FCD34D;background:rgba(251,191,36,.10);border:1px solid #5a4710;border-radius:99px;padding:1px 8px}
+.qy{color:var(--ok);font-weight:700}.qn{color:#FCA5A5;font-weight:700}
+.qe{margin:0}
+.zubbtn{all:unset;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:2px;padding:10px 14px;border-radius:14px;font:600 13.5px "Outfit",sans-serif;color:#fff;background:linear-gradient(135deg,color-mix(in srgb,var(--ac) 30%,#0b0e15),color-mix(in srgb,var(--ac) 10%,#0b0e15));border:1px solid color-mix(in srgb,var(--ac) 55%,transparent);box-shadow:0 0 18px -6px var(--ac)}
+.zubbtn:hover{background:color-mix(in srgb,var(--ac) 38%,#0b0e15)}.zubbtn:focus-visible{outline:2px solid var(--cyan)}
+.zubbtn span{font:500 11.5px "Outfit",sans-serif;color:#CBD5E1}
+.dlg-box.wide{width:min(760px,100%);max-height:88vh;overflow:auto}
+.zubd h3{margin:0 0 12px;color:color-mix(in srgb,var(--ac) 45%,#fff)}
+.zcols{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.zcols h4{margin:0 0 8px;font:700 13px "Outfit",sans-serif}.zj h4{color:var(--ok)}.zn h4{color:#FCA5A5}
+.zcols ul{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:4px}
+.zcols li{padding:6px 10px;border-radius:9px;font-size:13px;background:rgba(255,255,255,.03)}
+.zj li{border-left:3px solid var(--ok)}.zn li{border-left:3px solid var(--red)}
+.zubd .acts{margin-top:14px}
+@media (max-width:720px){.zcols{grid-template-columns:1fr}.qa{grid-template-columns:1fr}.qa dt{padding-bottom:0}}
