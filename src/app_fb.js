@@ -258,7 +258,7 @@ function stats(el,list,active){$(el).innerHTML=list.map(x=>`<button class="stat$
 
 /* ================= VERKAUF ================= */
 let FN={BL:'Bikeleasing',CB:'Company Bike',KM:'Kazenmaier',BB:'Businessbike',JR:'JobRad',DD:'Deutsche Dienstrad',LB:'Lease a Bike',RD:'RIDE',ER:'Eurorad'};
-let vkEdit=null,vkShowDone=false,vkF='',vkSort=ls.get('vc_vksort','neu');if(!['neu','lt','status'].includes(vkSort))vkSort='neu';
+let vkEdit=null,vkShowDone=false,vkF='',vkSort=ls.get('vc_vksort','dat:-1');vkSort={neu:'dat:-1',lt:'lt:1',status:'status:1'}[vkSort]||vkSort;if(!/^[a-z]+:-?1$/.test(vkSort))vkSort='dat:-1';
 const VF0=[['name','Kunde'],['marke','Marke'],['modell','Modell'],['dat','Vom Kunde bestellt am'],['firma','Leasing-Anbieter']],VF1=[['form','Form'],['gr','Größe'],['lt','Liefertermin'],['antrag','Antrag gestellt am'],['ok','Leasing genehmigt'],['lende','Leasingende'],['notiz','Notiz']];
 function rv(){
  const open=V.filter(b=>b.a!=='1'),F={nm:b=>b.a!=='1'&&b.m!=='1'&&b.b!=='1',mw:b=>b.a!=='1'&&b.m==='1'&&b.b!=='1',ok:b=>b.a!=='1'&&b.b==='1',lk:b=>b.a!=='1'&&b.firma&&!b.ok};
@@ -266,15 +266,26 @@ function rv(){
  list.sort(vkCmp);
   const form=vkEdit==='new'?vkForm({id:'new'}):vkEdit&&V.find(x=>x.id===vkEdit)?vkForm(V.find(x=>x.id===vkEdit)):'';
  if(document.querySelector('#cards [contenteditable]:focus, #cards .din'))return;
- {const hold=$('vkCtlHold');['vkSortSel','vkDone','vkAdd'].forEach(id=>hold.append($(id)));$('vkSortSel').value=vkSort;
- $('cards').className='vlist';$('cards').innerHTML=form+`<div class="tbl vtab"><table><thead><tr class="h1"><th colspan="7" class="hL"></th><th colspan="4" class="lgrp"><span>Leasing</span></th><th colspan="3" class="hR"></th></tr><tr class="h2"><th></th><th>Kunde · Modell</th><th class="thf">Form</th><th class="thf">Größe</th><th class="thb">Vom Kunde<br>bestellt am</th><th>LT</th><th class="thn">Notiz</th><th>Anbieter</th><th class="thl">Antrag<br>gestellt am</th><th class="thl">Leasing<br>genehmigt</th><th class="thl">Leasing&shy;ende</th><th>Beratung</th><th>Status</th><th></th></tr></thead><tbody>${list.length?list.map(vkRow).join(''):'<tr><td colspan="14" class="empty">Keine Räder in dieser Auswahl.</td></tr>'}</tbody></table></div>`;
+ {const hold=$('vkCtlHold');['vkSortSel','vkDone','vkAdd'].forEach(id=>hold.append($(id)));vkSelSync();
+ $('cards').className='vlist';$('cards').innerHTML=form+`<div class="tbl vtab"><table><thead><tr class="h1"><th colspan="7" class="hL"></th><th colspan="4" class="lgrp"><span>Leasing</span></th><th colspan="3" class="hR"></th></tr><tr class="h2">${vkHead()}</tr></thead><tbody>${list.length?list.map(vkRow).join(''):'<tr><td colspan="14" class="empty">Keine Räder in dieser Auswahl.</td></tr>'}</tbody></table></div>`;
  document.querySelector('#cards th.hL').append($('vkSortSel'),$('vkDone'));document.querySelector('#cards th.hR').append($('vkAdd'));}
  $('nOffen').textContent=V.filter(b=>b.a!=='1').length;}
 /* Sortierung: Datum „17.8.“ / „29.09.“ / LT „38“ „KW 38“ „Lager“ */
 function vkDate(s){const m=String(s||'').match(/(\d{1,2})\.(\d{1,2})\.?(\d{2,4})?/);if(!m)return 0;const now=new Date();let y=m[3]?+m[3]:now.getFullYear();if(y<100)y+=2000;let d=new Date(y,+m[2]-1,+m[1]);if(!m[3]&&d>new Date(now.getTime()+60*864e5))d=new Date(y-1,+m[2]-1,+m[1]);return d.getTime();}
 function vkLt(s){s=String(s||'').trim();if(/^sofort/i.test(s))return -1;if(/lager|^l$/i.test(s))return 0;const m=s.match(/(\d{1,2})/);if(!m)return 999;let k=+m[1];const ck=kw(new Date());if(k<ck-20)k+=53;return k;}
 const vkRank=b=>b.a==='1'?5:b.b==='1'?4:b.m==='1'?3:b.an==='1'?2:1;
-function vkCmp(a,b){if(vkSort==='lt')return vkLt(a.lt)-vkLt(b.lt)||vkDate(b.dat)-vkDate(a.dat);if(vkSort==='status')return vkRank(a)-vkRank(b)||vkDate(b.dat)-vkDate(a.dat);return vkDate(b.dat)-vkDate(a.dat);}
+// Sortieren: Klick auf Spaltenkopf (1. Klick aufsteigend, 2. Klick absteigend) oder Auswahl oben links; leere Felder immer unten
+const VKH=[['',''],['name','Kunde · Modell'],['form','Form','thf'],['gr','Größe','thf'],['dat','Vom Kunde<br>bestellt am','thb'],['lt','LT'],['notiz','Notiz','thn'],['firma','Anbieter'],['antrag','Antrag<br>gestellt am','thl'],['ok','Leasing<br>genehmigt','thl'],['lende','Leasing&shy;ende','thl'],['verk','Beratung'],['status','Status'],['','']];
+const VKSL=[['dat:-1','Neueste zuerst'],['dat:1','Am längsten wartend'],['lt:1','Nach Liefertermin'],['status:1','Nach Status']];
+const tx=v=>{v=String(v||'').trim().toLowerCase();return v||null;},dt=v=>vkDate(v)||null;
+const VKS={name:b=>tx(b.name),form:b=>tx(b.form),gr:b=>{const m=String(b.gr||'').match(/\d+/);return m?(/"/.test(b.gr)?+m[0]*2.54:+m[0]):null;},dat:b=>dt(b.dat),lt:b=>b.lt?vkLt(b.lt):null,notiz:b=>tx([b.notiz,b.montieren].filter(Boolean).join(' ')),
+ firma:b=>tx(FN[b.firma]||b.firma),antrag:b=>dt(b.antrag),ok:b=>dt(b.ok),lende:b=>dt(b.lende),verk:b=>b.verk?tx(U(b.verk).n):null,status:b=>vkRank(b)};
+function vkCmp(a,b){const [k,d]=vkSort.split(':'),f=VKS[k]||VKS.dat,x=f(a),y=f(b);if(x==null&&y==null)return vkDate(a.dat)-vkDate(b.dat);if(x==null)return 1;if(y==null)return -1;
+ const r=typeof x==='string'?x.localeCompare(y,'de'):x-y;return r*(+d||1)||vkDate(a.dat)-vkDate(b.dat);}
+function vkHead(){const [k,d]=vkSort.split(':');return VKH.map(([sk,n,c])=>sk?`<th class="${c||''} srt${sk===k?' on':''}" data-sk="${sk}" title="Klick = sortieren${sk===k?' (nochmal = umdrehen)':''}">${n}<i class="sar">${sk===k?(d==='-1'?'▼':'▲'):'⇅'}</i></th>`:'<th></th>').join('');}
+function vkSelSync(){const sel=$('vkSortSel'),hit=VKSL.find(x=>x[0]===vkSort);const lab=(VKH.find(x=>x[0]===vkSort.split(':')[0])||['','?'])[1].replace(/<br>|&shy;/g,' ');
+ sel.innerHTML=VKSL.map(([v,n])=>`<option value="${v}">${n}</option>`).join('')+(hit?'':`<option value="${vkSort}">Spalte: ${lab} ${vkSort.endsWith(':-1')?'▼':'▲'}</option>`);sel.value=vkSort;}
+function vkSetSort(v){vkSort=v;ls.set('vc_vksort',vkSort);rv();}
 function ltHot(lt){const k=vkLt(lt),ck=kw(new Date());return k===-1||(k!==999&&k!==0&&k<=ck+1);}
 // Herstellermarke aus dem Modelltext (Verkauf): Logo, sonst Marken-Schild, sonst 🚲
 const BRANDS=[{k:'KTM',n:'KTM',c:'#FF6A00',re:/\bktm\b|macina|gravelator|revelator|scarp|kapoho|myroon|lycan|chicago|\b(tour|city|sport|team|style|fun|cross|gran|aera|life)\s*(px|p|sx|cx)?\s*-?\d{3}\b|\bpx\s*\d{3}\b|\bsx[- ]?(master|elite|prime|pro)\b/i},
@@ -329,7 +340,8 @@ $('cards').addEventListener('click',e=>{const t=e.target.closest('.st');if(t){co
 $('cards').addEventListener('change',e=>{const s=e.target.closest('.ssel');if(s){const b=V.find(x=>x.id===s.dataset.vi);putV(Object.assign({},b,{verk:s.value}));toast('Verkauf/Beratung: '+(s.value?U(s.value).n:'–'));return;}
  const l=e.target.closest('.lsel');if(l){const b=V.find(x=>x.id===l.dataset.vi);putV(Object.assign({},b,{firma:l.value}));toast(l.value?'Leasing: '+(FN[l.value]||l.value):'Ohne Leasing');}});
 $('cards').addEventListener('submit',e=>{e.preventDefault();const f=e.target,id=f.dataset.vf,d=new FormData(f);const b=id==='new'?{id:nid('v'),m:'',b:'',a:'',verk:ME.id,firma:''}:Object.assign({},V.find(x=>x.id===id));VF0.concat(id==='new'?[]:VF1).forEach(([k])=>{let v=String(d.get(k)||'').trim();if(k==='dat'&&/^\d{4}-\d{2}-\d{2}$/.test(v)){const x=fromIso(v);v=String(x.getDate()).padStart(2,'0')+'.'+String(x.getMonth()+1).padStart(2,'0')+'.'+x.getFullYear();}b[k]=v;});vkEdit=null;putV(b);toast('Gespeichert');});
-$('vkSortSel').addEventListener('change',e=>{vkSort=e.target.value;ls.set('vc_vksort',vkSort);rv();});
+$('vkSortSel').addEventListener('change',e=>vkSetSort(e.target.value));
+$('cards').addEventListener('click',e=>{const h=e.target.closest('th[data-sk]');if(!h)return;const [k,d]=vkSort.split(':');vkSetSort(h.dataset.sk===k?k+':'+(d==='-1'?'1':'-1'):h.dataset.sk+':1');});
 function dshort(v){v=String(v||'').trim();const m=v.match(/^(\d{1,2})\.(\d{1,2})\.?(\d{2,4})?$/);return m?m[1].padStart(2,'0')+'.'+m[2].padStart(2,'0')+'.':v;}
 function toIsoDe(v){const m=String(v||'').match(/(\d{1,2})\.(\d{1,2})\.?(\d{2,4})?/);if(!m)return '';const t=vkDate(v);if(!t)return '';const d=new Date(t);return iso(d);}
 function dateEdit(td){const b=V.find(x=>x.id===td.dataset.vid),f=td.dataset.df;if(!b)return;const i=document.createElement('input');i.type='date';i.className='edit din';i.value=toIsoDe(b[f]);td.textContent='';td.append(i);i.focus();try{i.showPicker();}catch(_){}

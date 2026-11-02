@@ -307,3 +307,12 @@ body.navmini .navtog svg{transform:rotate(180deg)}
 .vtab td,.vtab thead tr.h2 th{padding-left:6px;padding-right:6px}
 .vtab .ssel.mini2{max-width:86px}
 .vtab td.vnote{min-width:110px}.lcell{min-width:118px}
+/* Sortierbare Spaltenköpfe */
+.vtab thead th.srt{cursor:pointer;user-select:none;transition:color .15s,background .15s}
+.vtab thead th.srt:hover{background:rgba(255,255,255,.05);color:#fff}
+.vtab thead th.srt .sar{font-style:normal;margin-left:4px;font-size:9px;opacity:.35}
+.vtab thead th.srt.on .sar{opacity:1;color:#FDE047;text-shadow:0 0 8px rgba(253,224,71,.6)}
+.vtab thead th.srt.on{color:#fff;box-shadow:inset 0 -2px 0 #FDE047}
+/* Namensfeld nicht mehr über die Zeile hinaus (wurde oben von der Kopfzeile abgeschnitten) */
+.who2 .wp{margin:-2px -8px;padding:5px 8px}
+.vtab tbody tr:first-child td{padding-top:10px}
