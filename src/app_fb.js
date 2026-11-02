@@ -564,7 +564,7 @@ $('v-rekla').addEventListener('submit',e=>{if(!e.target.dataset.rf)return;e.prev
    Gespeichert je Jahr in meta/kd_<Jahr> = {items:{id:{…}}} (bzw. meta/kd_x ohne Jahr) – wenige Lesevorgänge, Regel meta/* reicht.
    Felder: dat (TT.MM.JJJJ) · nr (Beleg-Nr.) · marke · modell · preis · leas · kunde · vers · rahmen · tel · k (Spalte ohne Überschrift) · y (Paket). */
 let KD={},KDIMP=false,kdDirty=true,kdList=[],kdYears=2,kdEdit=null;
-const kdAll=()=>{if(kdDirty){kdList=[];for(const y in KD)for(const id in KD[y]){const r=KD[y][id];if(r&&r.id){r._t=[r.kunde,r.marke,r.modell,r.rahmen,r.tel,r.nr,r.leas,r.vers,r.dat,r.preis].join(' ').toLowerCase();r._d=vkDate(r.dat)||0;r._o=(r.o!=null&&r.o!==''&&!isNaN(+r.o))?+r.o:r._d;kdList.push(r);}}kdList.sort((a,b)=>b._o-a._o||String(b.nr).localeCompare(String(a.nr),'de',{numeric:true}));kdDirty=false;}return kdList;};
+const kdAll=()=>{if(kdDirty){kdList=[];for(const y in KD)for(const id in KD[y]){const r=KD[y][id];if(r&&r.id){r._d=vkDate(r.dat)||0;r._t=[r.kunde,r.marke,r.modell,r.rahmen,r.tel,r.nr,kdNr(r),r.leas,r.vers,r.dat,r.preis].join(' ').toLowerCase();r._o=(r.o!=null&&r.o!==''&&!isNaN(+r.o))?+r.o:r._d;kdList.push(r);}}kdList.sort((a,b)=>b._o-a._o||String(b.nr).localeCompare(String(a.nr),'de',{numeric:true}));kdDirty=false;}return kdList;};
 /* Spalten wie in Excel: Reihenfolge per Ziehen am Kopf, Breite am rechten Rand des Kopfs (Doppelklick = Standard).
    Je Profil in meta/prefs[ID].kdlay = {o:[Spalten], w:{Spalte:px}} (+ localStorage). Zeilen: Griff ⋮⋮ links, nur innerhalb eines Jahres (Feld o). */
 const KDC=[{k:'dat',n:'Datum',w:98,c:'kd'},{k:'nr',n:'Beleg',w:66,c:'kn'},{k:'marke',n:'Marke',w:130,c:'km'},{k:'modell',n:'Modell',min:200,fr:1.6,c:'kmo'},{k:'preis',n:'Preis',w:96,c:'kp'},{k:'leas',n:'Leasing',w:92,c:'kl2'},{k:'kunde',n:'Kunde',min:170,fr:1.2,c:'kk'},{k:'vers',n:'Vers.',w:56,c:'kv'},{k:'rahmen',n:'Rahmen-Nr.',w:130,c:'krn'},{k:'tel',n:'Telefon',w:130,c:'kt'},{k:'k',n:'',w:34,c:'kx'}];
@@ -576,26 +576,36 @@ function kdLaySave(){if(!ME)return;ls.set('vc_kdlay_'+ME.id,kdLay);const p=db.do
 const kdCols=()=>{const o=(kdLay.o||[]).filter((k,i,a)=>KDC.some(c=>c.k===k)&&a.indexOf(k)===i);KDC.forEach(c=>{if(!o.includes(c.k))o.push(c.k);});return o.map(k=>KDC.find(c=>c.k===k));};
 function kdTpl(){const g=$('kdGrid');if(!g)return;let mw=66;const t=['26px'];kdCols().forEach(c=>{const w=kdLay.w&&kdLay.w[c.k];if(w){t.push(w+'px');mw+=w;}else if(c.fr){t.push(`minmax(${c.min}px,${c.fr}fr)`);mw+=c.min;}else{t.push(c.w+'px');mw+=c.w;}});t.push('40px');g.style.gridTemplateColumns=t.join(' ');g.style.minWidth=mw+'px';
  if($('kdRst'))$('kdRst').hidden=JSON.stringify({o:kdCols().map(c=>c.k),w:kdLay.w||{}})===JSON.stringify(kdDef());}
+// Beleg-Nr. mit Jahr: 20.12.2024 + 1422 -> R24-1422 (nur Anzeige; gespeichert bleibt die Nummer)
+function kdNr(r){const n=String(r.nr==null?'':r.nr).trim(),d=r._d||vkDate(r.dat);return /^\d+$/.test(n)&&d?'R'+String(new Date(d).getFullYear()).slice(2)+'-'+n:n;}
+// Versicherungs-Kürzel aus „Leasing-Infos“ (ENRA, Alteos, Fahrsicherung, Assona) + EP = ENRA PLUS (Tiry 02.11.)
+function kdVN(){const m={EP:'ENRA PLUS'};(L||[]).filter(isVers).forEach(f=>{if(f.k)m[f.k]=f.n;});return m;}
+const kdVal=(k,r)=>k==='nr'?kdNr(r):k==='preis'?kdPreis(r.preis):String(r[k]==null?'':r[k]).trim();
+const kdLab=(k,v)=>v===''?'(leer)':k==='leas'&&FN[v]?v+' · '+FN[v]:k==='vers'&&kdVN()[v]?v+' · '+kdVN()[v]:v;
+let kdF={};  // Filter je Spalte: {Spalte: Set(Werte)} wie der Excel-Autofilter
 const kdYear=r=>{const d=r._d?new Date(r._d):null;return d?d.getFullYear():'ohne Datum';};
 const kdPreis=v=>{v=String(v==null?'':v).trim();if(/^\d+([.,]\d+)?$/.test(v)){const n=parseFloat(v.replace(',','.'));return n.toLocaleString('de-DE',{maximumFractionDigits:2})+' €';}return v;};
 function rk(){const g=$('kdGrid');if(!g)return;const all=kdAll();{const cy=new Date().getFullYear();$('nKunden').textContent=all.length?all.filter(r=>r._d&&new Date(r._d).getFullYear()===cy).length:'–';$('nKunden').title=all.length.toLocaleString('de-DE')+' Einträge gesamt · Zahl = Verkäufe '+cy;}
  if(document.querySelector('#kdGrid [contenteditable]:focus'))return;
  const q=($('kdSearch').value||'').trim().toLowerCase();const now=new Date().getFullYear();
- let list=q?all.filter(r=>q.split(/\s+/).every(w=>r._t.includes(w))):all.filter(r=>!r._d||new Date(r._d).getFullYear()>now-kdYears);
- const more=q?list.length>600:all.some(r=>r._d&&new Date(r._d).getFullYear()<=now-kdYears);list=list.slice(0,600);
- $('kdMore').hidden=q||!more;$('kdMore').textContent='Ältere Jahre anzeigen (bis '+(now-kdYears-1)+')';
+ const fk=Object.keys(kdF),fo=r=>fk.every(k=>kdF[k].has(kdVal(k,r)));if($('kdFx')){$('kdFx').hidden=!fk.length;$('kdFx').textContent='✕ Filter aus ('+fk.length+')';}
+ let list=q||fk.length?all.filter(r=>(!q||q.split(/\s+/).every(w=>r._t.includes(w)))&&fo(r)):all.filter(r=>!r._d||new Date(r._d).getFullYear()>now-kdYears);
+ const more=q||fk.length?list.length>600:all.some(r=>r._d&&new Date(r._d).getFullYear()<=now-kdYears);list=list.slice(0,600);
+ $('kdMore').hidden=!!(q||fk.length)||!more;$('kdMore').textContent='Ältere Jahre anzeigen (bis '+(now-kdYears-1)+')';
  $('kdForm').innerHTML=kdEdit?kdFormH():'';
  if($('kdClr'))$('kdClr').hidden=!(ME&&ME.adm)||!all.length;
  const cols=kdCols();kdTpl();
- let h=`<div class="hd kdh kgh" style="--hc:${KDRB[0]}"></div>`+cols.map((c,i)=>`<div class="hd kdh${c.k==='kunde'?' kl':''}" draggable="true" data-kc="${c.k}" title="Ziehen = Spalte verschieben · rechter Rand = Breite" style="--hc:${KDRB[i%KDRB.length]}">${c.n||'·'}<span class="kres" data-kres="${c.k}" title="Ziehen = Breite ändern · Doppelklick = Standard"></span></div>`).join('')+`<div class="hd kdh" style="--hc:${KDRB[KDRB.length-1]}"></div>`;let yr=null;const cnt={};list.forEach(r=>{const y=kdYear(r);cnt[y]=(cnt[y]||0)+1;});
- if(!all.length){g.innerHTML=h+`<div class="kdempty">${ME&&ME.adm?'Noch keine Kunden – oben „📥 Kunden aus Sheet übernehmen“ und die .xlsx des Sheets wählen.':'Noch keine Kunden übernommen.'}</div>`;return;}
- for(const r of list){const y=kdYear(r);if(y!==yr){yr=y;h+=`<div class="kw kdy">${y}<span>${cnt[y]} ${cnt[y]===1?'Verkauf':'Verkäufe'}${q?' (Treffer)':''}</span></div>`;}
+ let h=`<div class="hd kdh kgh" style="--hc:${KDRB[0]}"></div>`+cols.map((c,i)=>`<div class="hd kdh${c.k==='kunde'?' kl':''}${kdF[c.k]?' kfon':''}" draggable="true" data-kc="${c.k}" title="Klick = filtern · Ziehen = Spalte verschieben · rechter Rand = Breite" style="--hc:${KDRB[i%KDRB.length]}">${c.n||'·'}<i class="kfi">${kdF[c.k]?'▼':'▾'}</i><span class="kres" data-kres="${c.k}" title="Ziehen = Breite ändern · Doppelklick = Standard"></span></div>`).join('')+`<div class="hd kdh" style="--hc:${KDRB[KDRB.length-1]}"></div>`;let yr=null;const cnt={};list.forEach(r=>{const y=kdYear(r);cnt[y]=(cnt[y]||0)+1;});
+ if(!all.length){kdPopClose();g.innerHTML=h+`<div class="kdempty">${ME&&ME.adm?'Noch keine Kunden – oben „📥 Kunden aus Sheet übernehmen“ und die .xlsx des Sheets wählen.':'Noch keine Kunden übernommen.'}</div>`;return;}
+ for(const r of list){const y=kdYear(r);if(y!==yr){yr=y;h+=`<div class="kw kdy">${y}<span>${cnt[y]} ${cnt[y]===1?'Verkauf':'Verkäufe'}${q||fk.length?' (Treffer)':''}</span></div>`;}
   const id=esc(r.id),ky=esc(r.y);
   h+=`<div class="row kr"><div class="c kc kgrip" draggable="true" data-kid="${id}" data-ky="${ky}" title="Ziehen = Zeile verschieben">⋮⋮</div>${cols.map(c=>kdCell(c,r,id,ky)).join('')}<div class="c kc kdel" data-kid="${id}" data-ky="${ky}"><button class="nx" type="button" data-kdel="${id}" data-ky="${ky}" title="Eintrag löschen">×</button></div></div>`;}
- g.innerHTML=h+(q&&!list.length?'<div class="kdempty">Nichts gefunden.</div>':'');}
+ g.innerHTML=h+((q||fk.length)&&!list.length?'<div class="kdempty">Nichts gefunden.</div>':'');}
 function kdCell(c,r,id,ky){if(c.k==='marke'){const b=brandOfB({marke:r.marke,modell:r.modell}),lg=b&&(BUSER.logos||{})[b.k];
-  return `<div class="c kc km" data-kid="${id}" data-ky="${ky}" data-kc="marke">${lg?`<img src="${lg}" alt="" class="kml" draggable="false">`:''}<span class="kmt" contenteditable="true" spellcheck="false" data-kid="${id}" data-ky="${ky}" data-kf="marke">${esc(r.marke||'')}</span></div>`;}
- const v=c.k==='preis'?kdPreis(r.preis):r[c.k];return `<div class="c kc ${c.c}" contenteditable="true" spellcheck="false" data-kid="${id}" data-ky="${ky}" data-kf="${c.k}" data-kc="${c.k}">${esc(v==null?'':v)}</div>`;}
+  return `<div class="c kc km${lg?' haslg':''}" data-kid="${id}" data-ky="${ky}" data-kc="marke" title="${esc(r.marke||'')}">${lg?`<img src="${lg}" alt="" class="kml" draggable="false">`:''}<span class="kmt" contenteditable="true" spellcheck="false" data-kid="${id}" data-ky="${ky}" data-kf="marke">${esc(r.marke||'')}</span></div>`;}
+ if(c.k==='dat'||c.k==='leas'||c.k==='vers'){const v=String(r[c.k]||''),t=c.k==='dat'?'Klick = Datum wählen':(kdLab(c.k,v)+' · Klick = auswählen');
+  return `<div class="c kc ${c.c} kpk" role="button" tabindex="0" data-kpick="${c.k}" data-kid="${id}" data-ky="${ky}" data-kc="${c.k}" title="${esc(t)}">${esc(v)}</div>`;}
+ const v=kdVal(c.k,r);return `<div class="c kc ${c.c}" contenteditable="true" spellcheck="false" data-kid="${id}" data-ky="${ky}" data-kf="${c.k}" data-kc="${c.k}">${esc(v==null?'':v)}</div>`;}
 async function kdPut(y,r){const c=Object.assign({},r);delete c._t;delete c._d;delete c._o;c.ts=stamp();c.tsVon=ME?ME.id:'';KD[y]=Object.assign({},KD[y]||{},{[r.id]:c});kdDirty=true;
  try{await db.doc('meta/kd_'+y).update({['items.'+r.id]:c});}catch(e){try{await db.doc('meta/kd_'+y).set({items:Object.assign({},KD[y])},{merge:true});}catch(e2){fail(e2);}}}
 function kdFormH(){const opt='<option value="">–</option>'+Object.entries(FN).map(([k,n])=>`<option value="${esc(k)}">${esc(k)} · ${esc(n)}</option>`).join('');
@@ -615,7 +625,8 @@ $('v-kunden').addEventListener('submit',async e=>{if(!e.target.dataset.kf2)retur
  kdEdit=null;await kdPut(y,r);rk();toast('Gespeichert');});
 $('kdGrid').addEventListener('keydown',e=>{const c=e.target.closest('[contenteditable]');if(c&&e.key==='Enter'){e.preventDefault();c.blur();}if(c&&e.key==='Escape'){c.blur();kdDirty=true;rk();}});
 $('kdGrid').addEventListener('focusout',e=>{const c=e.target.closest('[contenteditable][data-kf]');if(!c)return;const y=c.dataset.ky,id=c.dataset.kid,f=c.dataset.kf,r=KD[y]&&KD[y][id];if(!r)return;let v=c.innerText.trim();
- const cur=f==='preis'?kdPreis(r.preis):(r[f]||'');if(v===String(cur))return;if(f==='preis'&&/^[\d.]+(,\d+)?\s*€?$/.test(v))v=v.replace(/\s*€/,'').replace(/\./g,'');kdPut(y,Object.assign({},r,{[f]:v})).then(()=>{rk();});toast('Gespeichert');});
+ {const km=c.closest('.km');if(km)km.classList.remove('ked');}
+ const cur=f==='nr'?kdNr(r):f==='preis'?kdPreis(r.preis):(r[f]||'');if(v===String(cur))return;if(f==='nr'){const m=v.match(/^R(\d{2})-(.+)$/i);if(m&&r._d&&m[1]===String(new Date(r._d).getFullYear()).slice(2))v=m[2].trim();}if(f==='preis'&&/^[\d.]+(,\d+)?\s*€?$/.test(v))v=v.replace(/\s*€/,'').replace(/\./g,'');kdPut(y,Object.assign({},r,{[f]:v})).then(()=>{rk();});toast('Gespeichert');});
 {const KG=$('kdGrid');
  const mark=()=>KG.querySelectorAll('.dropL,.dropR,.dropT,.dropB').forEach(x=>x.classList.remove('dropL','dropR','dropT','dropB'));
  const end=()=>{mark();KG.querySelectorAll('.kdrag').forEach(x=>x.classList.remove('kdrag'));kdDrag=null;};
@@ -637,6 +648,44 @@ $('kdGrid').addEventListener('focusout',e=>{const c=e.target.closest('[contented
   const up=()=>{document.removeEventListener('pointermove',mv);document.removeEventListener('pointerup',up);document.body.classList.remove('nresizing');hd.draggable=true;kdLaySave();};
   document.addEventListener('pointermove',mv);document.addEventListener('pointerup',up);});
  KG.addEventListener('dblclick',e=>{const h=e.target.closest('.kres');if(!h)return;const w=Object.assign({},kdLay.w);delete w[h.dataset.kres];kdLay=Object.assign({},kdLay,{w});kdTpl();kdLaySave();});}
+// Kleines Fenster unter Kopf/Zelle: Filter (Kopf antippen) bzw. Auswahl (Datum, Leasing, Vers.)
+let kdPop=null;
+function kdPopClose(){if(kdPop){kdPop.el.remove();kdPop=null;}}
+function kdPopOpen(anchor,html,o){kdPopClose();const el=document.createElement('div');el.className='kdpop';el.innerHTML=html;document.body.appendChild(el);kdPop=Object.assign({el},o);kdPopPos(anchor);const i=el.querySelector('input:not([type=checkbox])');if(i)i.focus();return el;}
+function kdPopPos(anchor){const el=kdPop.el,rc=anchor.getBoundingClientRect(),W=el.offsetWidth,H=el.offsetHeight;el.style.left=Math.max(8,Math.min(innerWidth-W-8,rc.left))+'px';el.style.top=(rc.bottom+4+H>innerHeight-8?Math.max(8,rc.top-4-H):rc.bottom+4)+'px';}
+document.addEventListener('pointerdown',e=>{if(kdPop&&!kdPop.el.contains(e.target)&&!e.target.closest('[data-kpick],.kdh[data-kc]'))kdPopClose();},true);
+document.addEventListener('keydown',e=>{if(kdPop&&e.key==='Escape')kdPopClose();});
+document.addEventListener('scroll',e=>{if(kdPop&&!kdPop.el.contains(e.target))kdPopClose();},true);
+function kdFltOpen(hd){const k=hd.dataset.kc,c=KDC.find(x=>x.k===k);if(kdPop&&kdPop.t==='flt'&&kdPop.k===k){kdPopClose();return;}
+ const cnt=new Map();kdAll().forEach(r=>{const v=kdVal(k,r);cnt.set(v,(cnt.get(v)||0)+1);});
+ const vals=[...cnt].sort((a,b)=>k==='dat'||k==='nr'?0:(b[1]-a[1]||String(a[0]).localeCompare(String(b[0]),'de',{numeric:true}))),cur=new Set(kdF[k]||vals.map(x=>x[0]));
+ const el=kdPopOpen(hd,`<div class="kph">${esc(c.n||'Spalte')} filtern</div><input class="kpq" placeholder="Suchen …"><div class="kpl"></div><div class="kpa"><button type="button" class="btn" data-kpall>Alle</button><button type="button" class="btn" data-kpnone>Keine</button><button type="button" class="btn red" data-kpok>Filtern</button></div>`,{t:'flt',k});
+ const vis=()=>{const q=el.querySelector('.kpq').value.trim().toLowerCase();return q?vals.filter(([v])=>kdLab(k,v).toLowerCase().includes(q)):vals;};
+ const draw=()=>{const vv=vis();el.querySelector('.kpl').innerHTML=vv.slice(0,500).map(([v,n])=>`<label class="kpo"><input type="checkbox" data-kv="${esc(v)}"${cur.has(v)?' checked':''}><span>${esc(kdLab(k,v))}</span><em>${n.toLocaleString('de-DE')}</em></label>`).join('')+(vv.length>500?`<p class="kpm">… ${vv.length-500} weitere – oben suchen</p>`:'')+(vv.length?'':'<p class="kpm">Nichts gefunden</p>');};
+ const ok=()=>{const q=el.querySelector('.kpq').value.trim(),set=new Set((q?vis():vals).map(x=>x[0]).filter(v=>cur.has(v)));
+  if(!q&&set.size===vals.length)delete kdF[k];else kdF[k]=set;kdPopClose();rk();};
+ draw();el.querySelector('.kpq').addEventListener('input',draw);el.querySelector('.kpq').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();ok();}});
+ el.addEventListener('change',e=>{const b=e.target.closest('[data-kv]');if(b){if(b.checked)cur.add(b.dataset.kv);else cur.delete(b.dataset.kv);}});
+ el.addEventListener('click',e=>{if(e.target.closest('[data-kpall]')){vis().forEach(([v])=>cur.add(v));draw();}else if(e.target.closest('[data-kpnone]')){vis().forEach(([v])=>cur.delete(v));draw();}else if(e.target.closest('[data-kpok]'))ok();});}
+function kdPickOpen(cell){const f=cell.dataset.kpick,y=cell.dataset.ky,id=cell.dataset.kid,r=KD[y]&&KD[y][id];if(!r)return;if(kdPop&&kdPop.t==='pick'&&kdPop.id===id&&kdPop.f===f){kdPopClose();return;}
+ const save=v=>{kdPopClose();if(String(r[f]||'')===v)return;kdPut(y,Object.assign({},r,{[f]:v})).then(rk);toast('Gespeichert');};
+ if(f==='dat'){const d=vkDate(r.dat);const el=kdPopOpen(cell,`<div class="kph">Datum</div><input type="date" class="kpd" value="${d?iso(new Date(d)):''}"><div class="kpa"><button type="button" class="btn" data-kpclr>Leeren</button><button type="button" class="btn" data-kptoday>Heute</button><button type="button" class="btn red" data-kpok>OK</button></div>`,{t:'pick',id,f});
+  const inp=el.querySelector('.kpd'),put=()=>save(/^\d{4}-\d{2}-\d{2}$/.test(inp.value)?deDate(fromIso(inp.value)):r.dat||'');try{inp.showPicker();}catch(_){}
+  inp.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();put();}});
+  el.addEventListener('click',e=>{if(e.target.closest('[data-kpok]'))put();else if(e.target.closest('[data-kptoday]'))save(deDate(new Date()));else if(e.target.closest('[data-kpclr]'))save('');});return;}
+ const base=f==='leas'?Object.assign({},FN):kdVN(),cnt={};kdAll().forEach(x=>{const v=String(x[f]||'').trim();if(v&&v.length<=4&&/^[A-ZÄÖÜa-zäöü+]+$/.test(v))cnt[v]=(cnt[v]||0)+1;});
+ const opts=[...new Set([...Object.keys(base),...Object.keys(cnt).sort((a,b)=>cnt[b]-cnt[a])])];
+ const el=kdPopOpen(cell,`<div class="kph">${f==='leas'?'Leasing':'Versicherung'} wählen</div><input class="kpq" placeholder="Kürzel suchen oder eigenen Text + Enter"><div class="kpl kpch"></div>`,{t:'pick',id,f});
+ const vis=()=>{const q=el.querySelector('.kpq').value.trim().toLowerCase();return opts.filter(v=>!q||(v+' '+(base[v]||'')).toLowerCase().includes(q));};
+ const draw=()=>{el.querySelector('.kpl').innerHTML=`<button type="button" class="kpv" data-kpv=""><b>–</b><span>leer</span></button>`+vis().map(v=>`<button type="button" class="kpv${String(r[f]||'')===v?' on':''}" data-kpv="${esc(v)}"><b>${esc(v)}</b><span>${esc(base[v]||'')}</span></button>`).join('');};
+ draw();el.querySelector('.kpq').addEventListener('input',draw);
+ el.querySelector('.kpq').addEventListener('keydown',e=>{if(e.key!=='Enter')return;e.preventDefault();const q=e.target.value.trim(),vv=vis();save(vv.length===1?vv[0]:(opts.find(v=>v.toLowerCase()===q.toLowerCase())||q));});
+ el.addEventListener('click',e=>{const b=e.target.closest('[data-kpv]');if(b)save(b.dataset.kpv);});}
+$('kdGrid').addEventListener('click',e=>{const pk=e.target.closest('[data-kpick]');if(pk){kdPickOpen(pk);return;}
+ const hd=e.target.closest('.kdh[data-kc]');if(hd&&!e.target.closest('.kres')){kdFltOpen(hd);return;}
+ const km=e.target.closest('.km.haslg');if(km&&!e.target.closest('.kmt')){const t=km.querySelector('.kmt');km.classList.add('ked');t.focus();const s=getSelection(),rg=document.createRange();rg.selectNodeContents(t);rg.collapse(false);s.removeAllRanges();s.addRange(rg);}});
+$('kdGrid').addEventListener('keydown',e=>{const pk=e.target.closest('[data-kpick]');if(pk&&(e.key==='Enter'||e.key===' ')){e.preventDefault();kdPickOpen(pk);}});
+$('kdFx').addEventListener('click',()=>{kdF={};kdPopClose();rk();});
 // Zeile verschieben: ganze Jahresliste neu durchnummerieren (o ab 1. Januar, je Zeile 1 min) – ein Schreibvorgang je Jahres-Paket
 function kdMoveRow(d){const all=kdAll(),a=all.find(r=>r.id===d.id&&String(r.y)===d.y),t=all.find(r=>r.id===d.to&&String(r.y)===d.ty);if(!a||!t)return;
  const y=kdYear(a);if(kdYear(t)!==y){toast('Zeilen nur innerhalb eines Jahres verschieben');return;}
