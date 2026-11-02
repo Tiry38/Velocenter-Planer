@@ -294,7 +294,12 @@ function rv(){
  $('nOffen').textContent=V.filter(b=>b.a!=='1').length;}
 /* Sortierung: Datum „17.8.“ / „29.09.“ / LT „38“ „KW 38“ „Lager“ */
 function vkDate(s){const m=String(s||'').match(/(\d{1,2})\.(\d{1,2})\.?(\d{2,4})?/);if(!m)return 0;const now=new Date();let y=m[3]?+m[3]:now.getFullYear();if(y<100)y+=2000;let d=new Date(y,+m[2]-1,+m[1]);if(!m[3]&&d>new Date(now.getTime()+60*864e5))d=new Date(y-1,+m[2]-1,+m[1]);return d.getTime();}
-function vkLt(s){s=String(s||'').trim();if(/^sofort/i.test(s))return -1;if(/lager|^l$/i.test(s))return 0;const m=s.match(/(\d{1,2})/);if(!m)return 999;let k=+m[1];const ck=kw(new Date());if(k<ck-20)k+=53;return k;}
+// LT „KW 47/27“ (ab 1.6.3 mit Jahr); alte Einträge „KW 47“ ohne Jahr: Jahr wird geschätzt (bis 20 Wochen zurück = dieses Jahr, sonst nächstes)
+function ltParse(s){s=String(s||'').trim();const m=s.match(/(\d{1,2})(?:\s*\/\s*(\d{2,4}))?/);if(!m||/^sofort|lager|^l$/i.test(s))return null;const k=+m[1],cy=new Date().getFullYear(),ck=kw(new Date());
+ let y=m[2]?+m[2]:0;if(y&&y<100)y+=2000;if(!y){const d=k-ck;y=cy+(d<-20?1:d>32?-1:0);}return {k,y};}
+function vkLt(s){s=String(s||'').trim();if(/^sofort/i.test(s))return -1;if(/lager|^l$/i.test(s))return 0;const p=ltParse(s);if(!p)return 999;return p.k+(p.y-new Date().getFullYear())*53;}
+const ltNorm=s=>{const p=ltParse(s);return p?'KW '+p.k+'/'+String(p.y%100).padStart(2,'0'):String(s||'');};
+const ltShow=s=>{const p=ltParse(s);return p?'KW '+p.k+'<small class="lty">'+String(p.y%100).padStart(2,'0')+'</small>':esc(s||'');};
 const vkRank=b=>b.a==='1'?5:b.b==='1'?4:b.m==='1'?3:b.an==='1'?2:1;
 // Sortieren: Klick auf Spaltenkopf (1. Klick aufsteigend, 2. Klick absteigend) oder Auswahl oben links; leere Felder immer unten
 const VKH=[['',''],['name','Kunde · Modell'],['form','Form','thf'],['gr','Größe','thf'],['dat','Vom Kunde<br>bestellt am','thb'],['lt','LT'],['notiz','Notiz','thn'],['firma','Anbieter'],['antrag','Antrag<br>gestellt am','thl'],['ok','Leasing<br>genehmigt','thl'],['lende','Leasing&shy;ende','thl'],['verk','Beratung'],['status','Status'],['','']];
@@ -340,7 +345,7 @@ function vkRow(b){const st=b.a==='1'?'a':b.b==='1'?'b':b.m==='1'?'m':b.an==='1'?
  <td class="sdot" title="${{o:'offen',l:'angeliefert',m:'montiert',b:'O.K. – abholbereit',a:'abgeholt'}[st]}"><i></i></td>
  <td class="who2${vkSty(b)?' wfx':''}" style="${vkSty(b)}"><div class="wp"><b class="ef" contenteditable="true" spellcheck="false" data-vid="${esc(b.id)}" data-f="name" title="Klick = Kunde bearbeiten">${esc(b.name||'')}</b><small>${bModelE(b)}</small></div></td>
  <td class="pcell pf" data-vid="${esc(b.id)}" data-pf="form" title="Klick = Form wählen" tabindex="0">${esc(b.form||'')}</td><td class="pcell pg" data-vid="${esc(b.id)}" data-pf="gr" title="Klick = Größe wählen" tabindex="0">${esc(b.gr||'')}</td>
- ${dcD('dat',b.dat)}<td class="kcell${ltHot(b.lt)&&b.a!=='1'?' hot':''}" data-vid="${esc(b.id)}" title="Klick = Kalenderwoche wählen" tabindex="0">${esc(b.lt||'')}</td>${ce('notiz',[b.notiz,b.montieren?'Montieren: '+b.montieren:''].filter(Boolean).join(' · '),'vnote')}
+ ${dcD('dat',b.dat)}<td class="kcell${ltHot(b.lt)&&b.a!=='1'?' hot':''}" data-vid="${esc(b.id)}" title="Klick = Kalenderwoche wählen" tabindex="0">${ltShow(b.lt)}</td>${ce('notiz',[b.notiz,b.montieren?'Montieren: '+b.montieren:''].filter(Boolean).join(' · '),'vnote')}
 <td><div class="lcell">${leasLogo(b.firma)}<select class="lsel mini2${b.firma?'':' off'}" data-vi="${esc(b.id)}" aria-label="Leasing-Firma"><option value="">–</option>${Object.entries(FN).map(([k,n])=>`<option value="${esc(k)}"${b.firma===k?' selected':''}>${esc(k)} · ${esc(n)}</option>`).join('')}${b.firma&&!FN[b.firma]?`<option selected>${esc(b.firma)}</option>`:''}</select></div></td>
  ${b.firma?dc('antrag',b.antrag,'d-antrag'):'<td class="na">–</td>'}${b.firma?dc('ok',b.ok,b.ok?'d-ok':'d-ok miss'):'<td class="na">–</td>'}${b.firma?dc('lende',b.lende,'d-lende'):'<td class="na">–</td>'}
  <td><select class="ssel mini2" data-vi="${esc(b.id)}" aria-label="Verkauf/Beratung"><option value="">–</option>${USERS.map(u=>`<option value="${u.id}"${b.verk===u.id?' selected':''}>${esc(u.n)}</option>`).join('')}</select></td>
@@ -378,15 +383,15 @@ function ltOpts(cur){const now=new Date();now.setHours(12,0,0,0);const mo=new Da
  const op=(v,n,x)=>`<option value="${esc(v)}"${v===cur?' selected':''}${x||''}>${esc(n)}</option>`;
  let h=op('','–  kein LT')+op('Sofort','⚡ Sofort')+op('Lager','Lager');const vals=['','Sofort','Lager'];
  let a=w1(isoY(from)),y=-1;while(a<=end){const yy=isoY(a);if(yy!==y){if(y!==-1)h+='</optgroup>';h+=`<optgroup label="${yy}">`;y=yy;}
-  const e=new Date(a);e.setDate(e.getDate()+5);const v='KW '+kw(a),isNow=+a===+mo;vals.push(v);h+=op(v,v+'  ·  '+dd(a)+'–'+dd(e)+(isNow?'  ◀ diese Woche':''),isNow?' data-now="1"':'');a=new Date(a);a.setDate(a.getDate()+7);}
+  const e=new Date(a);e.setDate(e.getDate()+5);const v='KW '+kw(a)+'/'+String(yy%100).padStart(2,'0'),isNow=+a===+mo;vals.push(v);h+=op(v,'KW '+kw(a)+'  ·  '+dd(a)+'–'+dd(e)+(isNow?'  ◀ diese Woche':''),isNow?' data-now="1"':'');a=new Date(a);a.setDate(a.getDate()+7);}
  h+='</optgroup>';if(cur&&!vals.includes(cur))h=op(cur,cur)+h;return h;}
 const VKFORM=['US','H','TZ','MTB'],VKGR=['16"','18"','20"','22"','43cm','45cm','46cm','48cm','50cm','51cm','53cm','55cm','56cm','57cm','58cm','60cm','61cm','63cm'];
 function pickOpts(list,cur){const op=v=>`<option value="${esc(v)}"${v===cur?' selected':''}>${esc(v||'–  leer')}</option>`;return op('')+(cur&&!list.includes(cur)?op(cur):'')+list.map(op).join('');}
 function pEdit(td){const b=V.find(x=>x.id===td.dataset.vid);if(!b)return;const f=td.dataset.pf;popPick(td,b,f,pickOpts(f==='form'?VKFORM:VKGR,b[f]||''),f==='form'?'Form':'Größe');}
-function ltEdit(td){const b=V.find(x=>x.id===td.dataset.vid);if(!b)return;popPick(td,b,'lt',ltOpts(b.lt||''),'Liefertermin');}
-function popPick(td,b,f,html,lab){const cur=b[f]||'';const sl=document.createElement('select');sl.className='edit din ksel klist'+(f==='lt'?'':' ksm');sl.innerHTML=html;sl.size=Math.min(f==='lt'?14:20,sl.options.length+sl.querySelectorAll('optgroup').length);td.textContent='';td.append(sl);
+function ltEdit(td){const b=V.find(x=>x.id===td.dataset.vid);if(!b)return;popPick(td,b,'lt',ltOpts(ltNorm(b.lt)),'Liefertermin',ltNorm(b.lt));}
+function popPick(td,b,f,html,lab,sel){const cur=b[f]||'',cs=sel==null?cur:sel;const sl=document.createElement('select');sl.className='edit din ksel klist'+(f==='lt'?'':' ksm');sl.innerHTML=html;sl.size=Math.min(f==='lt'?14:20,sl.options.length+sl.querySelectorAll('optgroup').length);td.textContent='';td.append(sl);
  // zur eingetragenen bzw. aktuellen Woche springen (bei doppelten KW-Nummern die nächstliegende)
- const opts=[...sl.options],now=sl.querySelector('option[data-now]'),ni=now?opts.indexOf(now):0;const hit=cur?opts.map((o,i)=>[o,i]).filter(([o])=>o.value===cur).sort((p,q)=>Math.abs(p[1]-ni)-Math.abs(q[1]-ni))[0]:null;
+ const opts=[...sl.options],now=sl.querySelector('option[data-now]'),ni=now?opts.indexOf(now):0;const hit=cs?opts.map((o,i)=>[o,i]).filter(([o])=>o.value===cs).sort((p,q)=>Math.abs(p[1]-ni)-Math.abs(q[1]-ni))[0]:null;
  const tgt=hit?hit[0]:now;if(tgt)tgt.selected=true;const rc=td.getBoundingClientRect(),H=Math.min(f==='lt'?400:560,innerHeight-24,(sl.size)*27+10);sl.style.left=Math.min(rc.left,innerWidth-330)+'px';sl.style.top=Math.max(12,Math.min(rc.top,innerHeight-H-12))+'px';sl.style.height=H+'px';sl.focus({preventScroll:true});if(tgt)setTimeout(()=>{const rh=sl.scrollHeight/(opts.length+sl.querySelectorAll('optgroup').length||1);sl.scrollTop=Math.max(0,sl.scrollTop+sl.clientHeight/2-rh*1.5);},40);
  let done=false;const fin=(ok,v)=>{if(done)return;done=true;sl.remove();if(ok&&v!=null&&v!==cur){putV(Object.assign({},b,{[f]:v}));toast(v?lab+': '+v:lab+' entfernt');return;}rv();};
  sl.addEventListener('click',e=>{const o=e.target.closest('option');if(o)fin(true,o.value);});
