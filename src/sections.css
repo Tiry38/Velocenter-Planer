@@ -462,7 +462,8 @@ body.nresizing,body.nresizing *{cursor:col-resize!important;user-select:none!imp
 .navbtn[data-v=kunden] .lbl small{background:var(--rb);-webkit-background-clip:text;background-clip:text;color:transparent!important}
 .navbtn[data-v=kunden][aria-current="true"]{background:linear-gradient(90deg,rgba(255,59,92,.14),rgba(255,217,59,.1) 30%,rgba(34,211,238,.08) 55%,transparent 85%)}
 .navbtn[data-v=kunden][aria-current="true"]::before{background:linear-gradient(180deg,#FF3B5C,#FFD93B,#3DDC84,#22D3EE,#B15CFF);box-shadow:0 0 12px rgba(177,92,255,.8)}
-.navbtn[data-v=kunden] .n{background:linear-gradient(#0b0e15,#0b0e15) padding-box,var(--rb) border-box;border:1px solid transparent}
+.navbtn .n{flex:none;white-space:nowrap}.navbtn .lbl{min-width:0}
+.navbtn[data-v=kunden] .n{font-size:10px;padding:1px 6px;background:linear-gradient(#0b0e15,#0b0e15) padding-box,var(--rb) border-box;border:1px solid transparent}
 body[data-v=kunden] .top{background:linear-gradient(100deg,rgba(255,59,92,.42) 0%,rgba(255,138,31,.36) 12%,rgba(255,217,59,.28) 24%,rgba(61,220,132,.22) 34%,rgba(34,211,238,.16) 44%,rgba(79,123,255,.1) 54%,rgba(177,92,255,.05) 62%,rgba(14,18,26,.86) 72%),#0B0E15!important;border-color:rgba(177,92,255,.45)!important;box-shadow:0 18px 40px -28px #B15CFF,inset 0 1px 0 rgba(255,255,255,.06)!important}
 body[data-v=kunden] .top::after{background:var(--rb)!important;box-shadow:0 0 14px rgba(177,92,255,.7)}
 body[data-v=kunden] .tt .tile{background:conic-gradient(from 210deg,#FF3B5C,#FF8A1F,#FFD93B,#3DDC84,#22D3EE,#4F7BFF,#B15CFF,#FF4FD8,#FF3B5C)!important;border-color:rgba(255,255,255,.7)!important;box-shadow:0 0 0 1px rgba(0,0,0,.55),0 0 0 5px rgba(177,92,255,.22),0 8px 24px -6px rgba(0,0,0,.7),0 0 24px -4px #FF4FD8!important}

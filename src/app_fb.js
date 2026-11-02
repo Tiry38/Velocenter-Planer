@@ -122,7 +122,18 @@ function logoDark(o){let s=0,n=0;for(let p=0;p<o.length;p+=4){const a=o[p+3]/255
 function logoLight(o){for(let p=0;p<o.length;p+=4){if(o[p+3]<8)continue;const r=o[p],g=o[p+1],b=o[p+2],mx=Math.max(r,g,b),mn=Math.min(r,g,b),sat=mx?(mx-mn)/mx:0,l=(.2126*r+.7152*g+.0722*b)/255;if(sat<.25&&l<.55){const v=Math.round(240-l*40);o[p]=v;o[p+1]=v;o[p+2]=Math.min(255,v+8);}}}
 async function logoInvert(url){const i=new Image();await new Promise((r,j)=>{i.onload=r;i.onerror=j;i.src=url;});const c=cvs(i.width,i.height),x=c.getContext('2d');x.drawImage(i,0,0);const D=x.getImageData(0,0,c.width,c.height),o=D.data;
  for(let p=0;p<o.length;p+=4){if(o[p+3]<8)continue;const r=o[p],g=o[p+1],b=o[p+2],mx=Math.max(r,g,b),mn=Math.min(r,g,b);if(!mx||(mx-mn)/mx<.25){o[p]=255-r;o[p+1]=255-g;o[p+2]=255-b;}}x.putImageData(D,0,0);return c.toDataURL('image/png');}
-function brSave(){return db.doc('meta/brands').set({list:BUSER.list||[],logos:BUSER.logos||{},ts:stamp()}).catch(fail);}
+// Logos verteilt auf meta/blg_0..15 (Firestore: max. 1 MB je Dokument), meta/brands nur Liste (+ alte Logos)
+const BLN=16,blShard=k=>{let h=0;for(const c of String(k))h=(h*31+c.charCodeAt(0))>>>0;return h%BLN;};
+let BLEG={},BSH={};
+function blMerge(){const l=Object.assign({},BLEG);for(const n in BSH){const m=BSH[n]||{};for(const k in m){if(m[k])l[k]=m[k];else delete l[k];}}BUSER.logos=l;}
+function blPut(k,u){const n=blShard(k);BSH[n]=Object.assign({},BSH[n],{[k]:u||null});blMerge();return db.doc('meta/blg_'+n).set({l:{[k]:u||null},ts:stamp()},{merge:true});}
+let BLOK=new Set(),BLMIG=false;
+// Einmalig (Admin): alte Logos aus meta/brands in die Teil-Dokumente verschieben, danach meta/brands ohne Logos
+async function blMig(){if(BLMIG||BLOK.size<BLN||!Object.keys(BLEG).length||!ME||!ADMINS.includes(ME.id))return;BLMIG=true;
+ try{const g={};for(const k in BLEG){const n=blShard(k);if(BSH[n]&&k in BSH[n])continue;(g[n]=g[n]||{})[k]=BLEG[k];}
+  for(const n in g)await db.doc('meta/blg_'+n).set({l:g[n],ts:stamp()},{merge:true});
+  await db.doc('meta/brands').set({list:BUSER.list||[],ts:stamp()});}catch(e){console.warn('Logo-Umzug',e);BLMIG=false;}}
+function brSave(){return db.doc('meta/brands').set({list:BUSER.list||[],ts:stamp()},{merge:true});}
 function brandDlg(){const A0=allBrands(),A=A0.concat([...new Map(V.filter(b=>String(b.marke||'').trim()).map(b=>brandOfB(b)).filter(x=>!A0.some(a=>a.k===x.k)).map(x=>[x.k,Object.assign({own:true},x)])).values()]),LG=BUSER.logos||{},ul=BUSER.list||[];
  const miss=[...new Set(V.filter(b=>b.modell&&!brandOfB(b)).map(b=>String(b.modell).trim()))].slice(0,40);
  const row=b=>{const u=ul.find(x=>x.k===b.k)||{};const lg=LG[b.k];return `<div class="brow" data-bk="${esc(b.k)}">
@@ -137,12 +148,12 @@ function brandDlg(){const A0=allBrands(),A=A0.concat([...new Map(V.filter(b=>Str
  <div class="err" id="brE"></div><div class="acts"><button class="btn" type="button" data-close>Fertig</button></div>`);
  const box=$('dlgBox'),E=t=>{$('brE').textContent=t||'';};
  box.querySelectorAll('.brow').forEach(r=>{const k=r.dataset.bk;
-  r.querySelector('input[type=file]').addEventListener('change',async e=>{const f=e.target.files[0];if(!f)return;E('Logo wird aufbereitet …');try{const u=await procLogo(f);if(u.length>300000)throw new Error('Logo zu groß');BUSER.logos=Object.assign({},BUSER.logos,{[k]:u});await brSave();E('');toast('Logo gespeichert');brandDlg();}catch(err){E(err.message||String(err));}});
-  const inv=r.querySelector('[data-binv]');if(inv)inv.addEventListener('click',async()=>{BUSER.logos=Object.assign({},BUSER.logos,{[k]:await logoInvert(BUSER.logos[k])});await brSave();brandDlg();});
-  const del=r.querySelector('[data-bdel]');if(del)del.addEventListener('click',async()=>{const l=Object.assign({},BUSER.logos);delete l[k];BUSER.logos=l;await brSave();brandDlg();});
-  const kill=r.querySelector('[data-bkill]');if(kill)kill.addEventListener('click',async()=>{BUSER.list=(BUSER.list||[]).filter(x=>x.k!==k);const l=Object.assign({},BUSER.logos);delete l[k];BUSER.logos=l;await brSave();brandDlg();});
-  r.querySelector('.bw').addEventListener('change',async e=>{const w=e.target.value.trim(),b=A.find(x=>x.k===k),l=(BUSER.list||[]).filter(x=>x.k!==k);if(w||b.own)l.push({k,n:b.n,w});BUSER.list=l;await brSave();toast('Erkennung gespeichert');});});
- $('brNew').addEventListener('submit',async e=>{e.preventDefault();const n=e.target.n.value.trim(),w=e.target.w.value.trim();if(!n)return;const k=bKey(n);if(allBrands().some(b=>b.k===k||b.n.toLowerCase()===n.toLowerCase())){E('Marke gibt es schon');return;}BUSER.list=(BUSER.list||[]).concat([{k,n,w}]);await brSave();brandDlg();});}
+  r.querySelector('input[type=file]').addEventListener('change',async e=>{const f=e.target.files[0];if(!f)return;E('Logo wird aufbereitet …');try{const u=await procLogo(f);if(u.length>300000)throw new Error('Logo zu groß');await blPut(k,u);E('');toast('Logo gespeichert');brandDlg();}catch(err){E(err.message||String(err));}});
+  const inv=r.querySelector('[data-binv]');if(inv)inv.addEventListener('click',async()=>{try{await blPut(k,await logoInvert(BUSER.logos[k]));}catch(err){fail(err);}brandDlg();});
+  const del=r.querySelector('[data-bdel]');if(del)del.addEventListener('click',async()=>{try{await blPut(k,null);}catch(err){fail(err);}brandDlg();});
+  const kill=r.querySelector('[data-bkill]');if(kill)kill.addEventListener('click',async()=>{BUSER.list=(BUSER.list||[]).filter(x=>x.k!==k);try{await brSave();if(BUSER.logos[k])await blPut(k,null);}catch(err){fail(err);}brandDlg();});
+  r.querySelector('.bw').addEventListener('change',async e=>{const w=e.target.value.trim(),b=A.find(x=>x.k===k),l=(BUSER.list||[]).filter(x=>x.k!==k);if(w||b.own)l.push({k,n:b.n,w});BUSER.list=l;try{await brSave();toast('Erkennung gespeichert');}catch(err){fail(err);}});});
+ $('brNew').addEventListener('submit',async e=>{e.preventDefault();const n=e.target.n.value.trim(),w=e.target.w.value.trim();if(!n)return;const k=bKey(n);if(allBrands().some(b=>b.k===k||b.n.toLowerCase()===n.toLowerCase())){E('Marke gibt es schon');return;}BUSER.list=(BUSER.list||[]).concat([{k,n,w}]);try{await brSave();}catch(err){fail(err);}brandDlg();});}
 $('meSet').addEventListener('click',()=>{dlg(`<h3>Passwort ändern</h3><form id="pcF" autocomplete="off"><input id="pcO" type="password" placeholder="Altes Passwort"><input id="pcN" type="password" placeholder="Neues Passwort"><input id="pcN2" type="password" placeholder="Neues Passwort wiederholen"><div class="err" id="pcE"></div><div class="acts"><button class="btn" type="button" data-close>Abbrechen</button><button class="btn red" type="submit">Speichern</button></div></form>
  ${ME&&ME.adm?`<h3 style="margin-top:18px">Passwort eines Mitarbeiters zurücksetzen</h3><p class="hint">Passwort vergessen? So geht es (dauert 1 Minute):</p><p class="hint rsHint">Firebase-Konsole → Projekt <b>Velocenter Planer</b> → Authentication → Nutzer → Person (z. B. sascha@…) → ⋮ → <b>Konto löschen</b>. Dann hier unten auf ihren Namen klicken – beim nächsten Öffnen legt sie ein neues Passwort fest.</p><div class="acts">${USERS.filter(u=>u.id!==ME.id).map(u=>`<button class="btn" type="button" data-reset="${u.id}">${esc(u.n)}</button>`).join('')}</div>`:''}`);
  $('pcF').addEventListener('submit',async e=>{e.preventDefault();if($('pcN').value!==$('pcN2').value){$('pcE').textContent='Die neuen Eingaben sind nicht gleich.';return;}if(!$('pcN').value){$('pcE').textContent='Neues Passwort fehlt.';return;}
@@ -171,7 +182,8 @@ function startLive(){stopLive();const from=iso(new Date(Date.now()-35*864e5));
  unsubs.push(db.doc('meta/kd_x').onSnapshot(d=>{KD.x=(d.exists&&d.data().items)||{};kdDirty=true;scheduleRender();},()=>{}));
  unsubs.push(db.doc('meta/import').onSnapshot(d=>{KDIMP=!!(d.exists&&d.data().kunden);if($('kdImp'))$('kdImp').hidden=!(ME&&ME.adm)||KDIMP;},()=>{}));
  unsubs.push(db.doc('meta/reklam').onSnapshot(d=>{RKD=(d.exists&&d.data().items)||{};scheduleRender();},()=>{}));
- unsubs.push(db.doc('meta/brands').onSnapshot(d=>{const x=d.exists?d.data():{};BUSER={list:x.list||[],logos:x.logos||{}};scheduleRender();},()=>{}));
+ unsubs.push(db.doc('meta/brands').onSnapshot(d=>{const x=d.exists?d.data():{};BUSER.list=x.list||[];BLEG=x.logos||{};blMerge();scheduleRender();blMig();},()=>{}));
+ for(let n=0;n<BLN;n++)unsubs.push(db.doc('meta/blg_'+n).onSnapshot(d=>{BSH[n]=d.exists&&d.data().l||{};BLOK.add(n);blMerge();scheduleRender();blMig();},()=>{}));
  unsubs.push(db.doc('meta/import').onSnapshot(d=>{const x=d.exists?d.data():{};$('impBox').hidden=!(ME&&ME.adm)||x.tresor===true;},()=>{}));
  unsubs.push(db.doc('tresor/check').onSnapshot(d=>{TSET=d.exists;TCHECK=d.exists?d.data():null;$('lockHint').textContent=TSET?'PIN eingeben':'Noch keine PIN: Ein Admin legt sie jetzt mit der ersten Eingabe fest.';},()=>{}));
  rollover();}
@@ -698,8 +710,7 @@ $('kdGrid').addEventListener('click',e=>{const pk=e.target.closest('[data-kpick]
 $('kdGrid').addEventListener('keydown',e=>{const pk=e.target.closest('[data-kpick]');if(pk&&(e.key==='Enter'||e.key===' ')){e.preventDefault();kdPickOpen(pk);}});
 // Markenlogo aus der Kunden-Tabelle: gleiche Aufbereitung wie Einstellungen → Markenlogos (freistellen, zuschneiden, schärfen, skalieren), dort gespeichert
 async function kdLogoUp(mk,file){if(!file||!/^image\//.test(file.type||''))return toast('Bitte ein Bild wählen');const b=brandOfB({marke:mk});if(!b||!b.k)return;
- toast('Logo wird aufbereitet …');try{const u=await procLogo(file);if(u.length>300000)throw new Error('Logo zu groß');BUSER.logos=Object.assign({},BUSER.logos,{[b.k]:u});
-  if(!allBrands().some(x=>x.k===b.k))BUSER.list=(BUSER.list||[]).concat([{k:b.k,n:b.n,w:''}]);await brSave();kdDirty=true;rk();toast('Logo „'+b.n+'“ gespeichert – auch unter Einstellungen → Markenlogos');}catch(err){fail(err);}}
+ toast('Logo wird aufbereitet …');try{const u=await procLogo(file);if(u.length>300000)throw new Error('Logo zu groß');if(!allBrands().some(x=>x.k===b.k)){BUSER.list=(BUSER.list||[]).concat([{k:b.k,n:b.n,w:''}]);await brSave();}await blPut(b.k,u);kdDirty=true;rk();toast('Logo „'+b.n+'“ gespeichert – auch unter Einstellungen → Markenlogos');}catch(err){fail(err);}}
 $('kdGrid').addEventListener('change',e=>{const i=e.target.closest('[data-kmup]');if(i&&i.files[0])kdLogoUp(i.dataset.kmup,i.files[0]);});
 $('kdGrid').addEventListener('dragover',e=>{if(kdDrag||!e.dataTransfer||![...e.dataTransfer.types].includes('Files'))return;const km=e.target.closest('.km');if(!km||!km.querySelector('[data-kmup]'))return;e.preventDefault();km.classList.add('kmdrop');});
 $('kdGrid').addEventListener('dragleave',e=>{const km=e.target.closest('.km');if(km)km.classList.remove('kmdrop');});

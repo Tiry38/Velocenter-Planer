@@ -786,7 +786,8 @@ body.nresizing,body.nresizing *{cursor:col-resize!important;user-select:none!imp
 .navbtn[data-v=kunden] .lbl small{background:var(--rb);-webkit-background-clip:text;background-clip:text;color:transparent!important}
 .navbtn[data-v=kunden][aria-current="true"]{background:linear-gradient(90deg,rgba(255,59,92,.14),rgba(255,217,59,.1) 30%,rgba(34,211,238,.08) 55%,transparent 85%)}
 .navbtn[data-v=kunden][aria-current="true"]::before{background:linear-gradient(180deg,#FF3B5C,#FFD93B,#3DDC84,#22D3EE,#B15CFF);box-shadow:0 0 12px rgba(177,92,255,.8)}
-.navbtn[data-v=kunden] .n{background:linear-gradient(#0b0e15,#0b0e15) padding-box,var(--rb) border-box;border:1px solid transparent}
+.navbtn .n{flex:none;white-space:nowrap}.navbtn .lbl{min-width:0}
+.navbtn[data-v=kunden] .n{font-size:10px;padding:1px 6px;background:linear-gradient(#0b0e15,#0b0e15) padding-box,var(--rb) border-box;border:1px solid transparent}
 body[data-v=kunden] .top{background:linear-gradient(100deg,rgba(255,59,92,.42) 0%,rgba(255,138,31,.36) 12%,rgba(255,217,59,.28) 24%,rgba(61,220,132,.22) 34%,rgba(34,211,238,.16) 44%,rgba(79,123,255,.1) 54%,rgba(177,92,255,.05) 62%,rgba(14,18,26,.86) 72%),#0B0E15!important;border-color:rgba(177,92,255,.45)!important;box-shadow:0 18px 40px -28px #B15CFF,inset 0 1px 0 rgba(255,255,255,.06)!important}
 body[data-v=kunden] .top::after{background:var(--rb)!important;box-shadow:0 0 14px rgba(177,92,255,.7)}
 body[data-v=kunden] .tt .tile{background:conic-gradient(from 210deg,#FF3B5C,#FF8A1F,#FFD93B,#3DDC84,#22D3EE,#4F7BFF,#B15CFF,#FF4FD8,#FF3B5C)!important;border-color:rgba(255,255,255,.7)!important;box-shadow:0 0 0 1px rgba(0,0,0,.55),0 0 0 5px rgba(177,92,255,.22),0 8px 24px -6px rgba(0,0,0,.7),0 0 24px -4px #FF4FD8!important}
@@ -869,7 +870,7 @@ body[data-v=kunden] .tt small{background:var(--rb);-webkit-background-clip:text;
   <button class="navbtn" data-v="verkauf" style="--ac:#FBBF24"><span class="tile"><svg viewBox="0 0 24 24"><circle class="f" cx="6" cy="16.5" r="3.6"/><circle class="f" cx="18" cy="16.5" r="3.6"/><circle cx="6" cy="16.5" r="3.6"/><circle cx="18" cy="16.5" r="3.6"/><path d="M6 16.5 9.5 9h6.5L18 16.5M9.5 9 8.3 6H6.5M16 9l-4 7.5h-6M14 6h2.5"/><path d="M20.5 3.5l.6 1.4 1.4.6-1.4.6-.6 1.4-.6-1.4-1.4-.6 1.4-.6z"/></svg></span><span class="lbl">Verkauf<small>Räder · Leasing</small></span><span class="n" id="nOffen">–</span></button>
   <button class="navbtn" data-v="bestell" style="--ac:#39F26B"><span class="tile"><svg viewBox="0 0 24 24"><path class="f" d="M3 8l9-5 9 5-9 5z"/><path d="M3 8l9-5 9 5v8l-9 5-9-5z"/><path d="M3 8l9 5 9-5M12 13v8M7.5 5.5l9 5"/></svg></span><span class="lbl">Bestellungen<small>Teile · Kunden</small></span><span class="n" id="nBest">–</span></button>
   <button class="navbtn" data-v="rekla" style="--ac:#FB923C"><span class="tile"><svg viewBox="0 0 24 24"><path class="f" d="M4 7l8-4 8 4v10l-8 4-8-4z"/><path d="M4 7l8-4 8 4v10l-8 4-8-4z"/><path d="M15 10.5h-5l1.8-1.8M10 10.5l1.8 1.8M10 14.5h4"/></svg></span><span class="lbl">Reklamationen<small>Lieferanten · Ersatz</small></span><span class="n" id="nRekla">–</span></button>
-  <button class="navbtn" data-v="kunden" style="--ac:#B15CFF"><span class="tile"><svg viewBox="0 0 24 24"><circle class="f" cx="9" cy="8" r="3.5"/><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.6-3.6 3.3-5.5 6.5-5.5s5.9 1.9 6.5 5.5"/><path d="M16 4.6a3.4 3.4 0 0 1 0 6.8M18 14.6c2 .7 3.2 2.5 3.5 5.4"/></svg></span><span class="lbl">Kunden<small>Verkäufe seit 1995</small></span><span class="n" id="nKunden">–</span></button>
+  <button class="navbtn" data-v="kunden" style="--ac:#B15CFF"><span class="tile"><svg viewBox="0 0 24 24"><circle class="f" cx="9" cy="8" r="3.5"/><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.6-3.6 3.3-5.5 6.5-5.5s5.9 1.9 6.5 5.5"/><path d="M16 4.6a3.4 3.4 0 0 1 0 6.8M18 14.6c2 .7 3.2 2.5 3.5 5.4"/></svg></span><span class="lbl">Kunden<small>seit 1995</small></span><span class="n" id="nKunden">–</span></button>
   <div class="navsep"></div>
   <button class="navbtn" data-v="leasing" style="--ac:#C084FC"><span class="tile"><svg viewBox="0 0 24 24"><path class="f" d="M6 3h9l4 4v14H6z"/><path d="M6 3h9l4 4v14H6zM15 3v4h4"/><path d="M9 12h7M9 15.5h7M9 9h3"/></svg></span><span class="lbl">Leasing-Infos<small>Leasing · Versicherung</small></span></button>
   <button class="navbtn" data-v="lief" style="--ac:#22D3EE"><span class="tile"><svg viewBox="0 0 24 24"><rect class="f" x="2.5" y="6" width="11" height="9" rx="1.5"/><path d="M2.5 6h11v9h-11zM13.5 9.5h4l3.5 3.5v2h-7.5"/><circle cx="7" cy="17.5" r="2"/><circle cx="17" cy="17.5" r="2"/></svg></span><span class="lbl">Lieferanten<small>Kontakte · Logins</small></span></button>
@@ -1030,7 +1031,7 @@ body[data-v=kunden] .tt small{background:var(--rb);-webkit-background-clip:text;
 <script>
 const FB_CONFIG={apiKey:"AIzaSyC_uZPvc5rJETwlS4JbfCoTkkE4ckjtp0M",authDomain:"velocenter-planer.firebaseapp.com",projectId:"velocenter-planer",storageBucket:"velocenter-planer.firebasestorage.app",messagingSenderId:"1018330488700",appId:"1:1018330488700:web:262a4d1660353e6fde8ef9"};
 /* ================= Velocenter Werkstatt-Cockpit – Oberfläche ================= */
-const CLIENT_VERSION='1.5.6';
+const CLIENT_VERSION='1.5.7';
 const USERS=[{id:'kevin',n:'Kevin',c:'#E2232D'},{id:'stefan',n:'Stefan',c:'#F59E0B'},{id:'martina',n:'Martina',c:'#EC4899'},{id:'sascha',n:'Sascha',c:'#22D3EE'},{id:'rene',n:'René',c:'#34D399'}];
 const U=id=>USERS.find(u=>u.id===id)||{n:'',c:'#64748B',id:''};
 const $=id=>document.getElementById(id);
@@ -1153,7 +1154,18 @@ function logoDark(o){let s=0,n=0;for(let p=0;p<o.length;p+=4){const a=o[p+3]/255
 function logoLight(o){for(let p=0;p<o.length;p+=4){if(o[p+3]<8)continue;const r=o[p],g=o[p+1],b=o[p+2],mx=Math.max(r,g,b),mn=Math.min(r,g,b),sat=mx?(mx-mn)/mx:0,l=(.2126*r+.7152*g+.0722*b)/255;if(sat<.25&&l<.55){const v=Math.round(240-l*40);o[p]=v;o[p+1]=v;o[p+2]=Math.min(255,v+8);}}}
 async function logoInvert(url){const i=new Image();await new Promise((r,j)=>{i.onload=r;i.onerror=j;i.src=url;});const c=cvs(i.width,i.height),x=c.getContext('2d');x.drawImage(i,0,0);const D=x.getImageData(0,0,c.width,c.height),o=D.data;
  for(let p=0;p<o.length;p+=4){if(o[p+3]<8)continue;const r=o[p],g=o[p+1],b=o[p+2],mx=Math.max(r,g,b),mn=Math.min(r,g,b);if(!mx||(mx-mn)/mx<.25){o[p]=255-r;o[p+1]=255-g;o[p+2]=255-b;}}x.putImageData(D,0,0);return c.toDataURL('image/png');}
-function brSave(){return db.doc('meta/brands').set({list:BUSER.list||[],logos:BUSER.logos||{},ts:stamp()}).catch(fail);}
+// Logos verteilt auf meta/blg_0..15 (Firestore: max. 1 MB je Dokument), meta/brands nur Liste (+ alte Logos)
+const BLN=16,blShard=k=>{let h=0;for(const c of String(k))h=(h*31+c.charCodeAt(0))>>>0;return h%BLN;};
+let BLEG={},BSH={};
+function blMerge(){const l=Object.assign({},BLEG);for(const n in BSH){const m=BSH[n]||{};for(const k in m){if(m[k])l[k]=m[k];else delete l[k];}}BUSER.logos=l;}
+function blPut(k,u){const n=blShard(k);BSH[n]=Object.assign({},BSH[n],{[k]:u||null});blMerge();return db.doc('meta/blg_'+n).set({l:{[k]:u||null},ts:stamp()},{merge:true});}
+let BLOK=new Set(),BLMIG=false;
+// Einmalig (Admin): alte Logos aus meta/brands in die Teil-Dokumente verschieben, danach meta/brands ohne Logos
+async function blMig(){if(BLMIG||BLOK.size<BLN||!Object.keys(BLEG).length||!ME||!ADMINS.includes(ME.id))return;BLMIG=true;
+ try{const g={};for(const k in BLEG){const n=blShard(k);if(BSH[n]&&k in BSH[n])continue;(g[n]=g[n]||{})[k]=BLEG[k];}
+  for(const n in g)await db.doc('meta/blg_'+n).set({l:g[n],ts:stamp()},{merge:true});
+  await db.doc('meta/brands').set({list:BUSER.list||[],ts:stamp()});}catch(e){console.warn('Logo-Umzug',e);BLMIG=false;}}
+function brSave(){return db.doc('meta/brands').set({list:BUSER.list||[],ts:stamp()},{merge:true});}
 function brandDlg(){const A0=allBrands(),A=A0.concat([...new Map(V.filter(b=>String(b.marke||'').trim()).map(b=>brandOfB(b)).filter(x=>!A0.some(a=>a.k===x.k)).map(x=>[x.k,Object.assign({own:true},x)])).values()]),LG=BUSER.logos||{},ul=BUSER.list||[];
  const miss=[...new Set(V.filter(b=>b.modell&&!brandOfB(b)).map(b=>String(b.modell).trim()))].slice(0,40);
  const row=b=>{const u=ul.find(x=>x.k===b.k)||{};const lg=LG[b.k];return `<div class="brow" data-bk="${esc(b.k)}">
@@ -1168,12 +1180,12 @@ function brandDlg(){const A0=allBrands(),A=A0.concat([...new Map(V.filter(b=>Str
  <div class="err" id="brE"></div><div class="acts"><button class="btn" type="button" data-close>Fertig</button></div>`);
  const box=$('dlgBox'),E=t=>{$('brE').textContent=t||'';};
  box.querySelectorAll('.brow').forEach(r=>{const k=r.dataset.bk;
-  r.querySelector('input[type=file]').addEventListener('change',async e=>{const f=e.target.files[0];if(!f)return;E('Logo wird aufbereitet …');try{const u=await procLogo(f);if(u.length>300000)throw new Error('Logo zu groß');BUSER.logos=Object.assign({},BUSER.logos,{[k]:u});await brSave();E('');toast('Logo gespeichert');brandDlg();}catch(err){E(err.message||String(err));}});
-  const inv=r.querySelector('[data-binv]');if(inv)inv.addEventListener('click',async()=>{BUSER.logos=Object.assign({},BUSER.logos,{[k]:await logoInvert(BUSER.logos[k])});await brSave();brandDlg();});
-  const del=r.querySelector('[data-bdel]');if(del)del.addEventListener('click',async()=>{const l=Object.assign({},BUSER.logos);delete l[k];BUSER.logos=l;await brSave();brandDlg();});
-  const kill=r.querySelector('[data-bkill]');if(kill)kill.addEventListener('click',async()=>{BUSER.list=(BUSER.list||[]).filter(x=>x.k!==k);const l=Object.assign({},BUSER.logos);delete l[k];BUSER.logos=l;await brSave();brandDlg();});
-  r.querySelector('.bw').addEventListener('change',async e=>{const w=e.target.value.trim(),b=A.find(x=>x.k===k),l=(BUSER.list||[]).filter(x=>x.k!==k);if(w||b.own)l.push({k,n:b.n,w});BUSER.list=l;await brSave();toast('Erkennung gespeichert');});});
- $('brNew').addEventListener('submit',async e=>{e.preventDefault();const n=e.target.n.value.trim(),w=e.target.w.value.trim();if(!n)return;const k=bKey(n);if(allBrands().some(b=>b.k===k||b.n.toLowerCase()===n.toLowerCase())){E('Marke gibt es schon');return;}BUSER.list=(BUSER.list||[]).concat([{k,n,w}]);await brSave();brandDlg();});}
+  r.querySelector('input[type=file]').addEventListener('change',async e=>{const f=e.target.files[0];if(!f)return;E('Logo wird aufbereitet …');try{const u=await procLogo(f);if(u.length>300000)throw new Error('Logo zu groß');await blPut(k,u);E('');toast('Logo gespeichert');brandDlg();}catch(err){E(err.message||String(err));}});
+  const inv=r.querySelector('[data-binv]');if(inv)inv.addEventListener('click',async()=>{try{await blPut(k,await logoInvert(BUSER.logos[k]));}catch(err){fail(err);}brandDlg();});
+  const del=r.querySelector('[data-bdel]');if(del)del.addEventListener('click',async()=>{try{await blPut(k,null);}catch(err){fail(err);}brandDlg();});
+  const kill=r.querySelector('[data-bkill]');if(kill)kill.addEventListener('click',async()=>{BUSER.list=(BUSER.list||[]).filter(x=>x.k!==k);try{await brSave();if(BUSER.logos[k])await blPut(k,null);}catch(err){fail(err);}brandDlg();});
+  r.querySelector('.bw').addEventListener('change',async e=>{const w=e.target.value.trim(),b=A.find(x=>x.k===k),l=(BUSER.list||[]).filter(x=>x.k!==k);if(w||b.own)l.push({k,n:b.n,w});BUSER.list=l;try{await brSave();toast('Erkennung gespeichert');}catch(err){fail(err);}});});
+ $('brNew').addEventListener('submit',async e=>{e.preventDefault();const n=e.target.n.value.trim(),w=e.target.w.value.trim();if(!n)return;const k=bKey(n);if(allBrands().some(b=>b.k===k||b.n.toLowerCase()===n.toLowerCase())){E('Marke gibt es schon');return;}BUSER.list=(BUSER.list||[]).concat([{k,n,w}]);try{await brSave();}catch(err){fail(err);}brandDlg();});}
 $('meSet').addEventListener('click',()=>{dlg(`<h3>Passwort ändern</h3><form id="pcF" autocomplete="off"><input id="pcO" type="password" placeholder="Altes Passwort"><input id="pcN" type="password" placeholder="Neues Passwort"><input id="pcN2" type="password" placeholder="Neues Passwort wiederholen"><div class="err" id="pcE"></div><div class="acts"><button class="btn" type="button" data-close>Abbrechen</button><button class="btn red" type="submit">Speichern</button></div></form>
  ${ME&&ME.adm?`<h3 style="margin-top:18px">Passwort eines Mitarbeiters zurücksetzen</h3><p class="hint">Passwort vergessen? So geht es (dauert 1 Minute):</p><p class="hint rsHint">Firebase-Konsole → Projekt <b>Velocenter Planer</b> → Authentication → Nutzer → Person (z. B. sascha@…) → ⋮ → <b>Konto löschen</b>. Dann hier unten auf ihren Namen klicken – beim nächsten Öffnen legt sie ein neues Passwort fest.</p><div class="acts">${USERS.filter(u=>u.id!==ME.id).map(u=>`<button class="btn" type="button" data-reset="${u.id}">${esc(u.n)}</button>`).join('')}</div>`:''}`);
  $('pcF').addEventListener('submit',async e=>{e.preventDefault();if($('pcN').value!==$('pcN2').value){$('pcE').textContent='Die neuen Eingaben sind nicht gleich.';return;}if(!$('pcN').value){$('pcE').textContent='Neues Passwort fehlt.';return;}
@@ -1202,7 +1214,8 @@ function startLive(){stopLive();const from=iso(new Date(Date.now()-35*864e5));
  unsubs.push(db.doc('meta/kd_x').onSnapshot(d=>{KD.x=(d.exists&&d.data().items)||{};kdDirty=true;scheduleRender();},()=>{}));
  unsubs.push(db.doc('meta/import').onSnapshot(d=>{KDIMP=!!(d.exists&&d.data().kunden);if($('kdImp'))$('kdImp').hidden=!(ME&&ME.adm)||KDIMP;},()=>{}));
  unsubs.push(db.doc('meta/reklam').onSnapshot(d=>{RKD=(d.exists&&d.data().items)||{};scheduleRender();},()=>{}));
- unsubs.push(db.doc('meta/brands').onSnapshot(d=>{const x=d.exists?d.data():{};BUSER={list:x.list||[],logos:x.logos||{}};scheduleRender();},()=>{}));
+ unsubs.push(db.doc('meta/brands').onSnapshot(d=>{const x=d.exists?d.data():{};BUSER.list=x.list||[];BLEG=x.logos||{};blMerge();scheduleRender();blMig();},()=>{}));
+ for(let n=0;n<BLN;n++)unsubs.push(db.doc('meta/blg_'+n).onSnapshot(d=>{BSH[n]=d.exists&&d.data().l||{};BLOK.add(n);blMerge();scheduleRender();blMig();},()=>{}));
  unsubs.push(db.doc('meta/import').onSnapshot(d=>{const x=d.exists?d.data():{};$('impBox').hidden=!(ME&&ME.adm)||x.tresor===true;},()=>{}));
  unsubs.push(db.doc('tresor/check').onSnapshot(d=>{TSET=d.exists;TCHECK=d.exists?d.data():null;$('lockHint').textContent=TSET?'PIN eingeben':'Noch keine PIN: Ein Admin legt sie jetzt mit der ersten Eingabe fest.';},()=>{}));
  rollover();}
@@ -2223,8 +2236,7 @@ $('kdGrid').addEventListener('click',e=>{const pk=e.target.closest('[data-kpick]
 $('kdGrid').addEventListener('keydown',e=>{const pk=e.target.closest('[data-kpick]');if(pk&&(e.key==='Enter'||e.key===' ')){e.preventDefault();kdPickOpen(pk);}});
 // Markenlogo aus der Kunden-Tabelle: gleiche Aufbereitung wie Einstellungen → Markenlogos (freistellen, zuschneiden, schärfen, skalieren), dort gespeichert
 async function kdLogoUp(mk,file){if(!file||!/^image\//.test(file.type||''))return toast('Bitte ein Bild wählen');const b=brandOfB({marke:mk});if(!b||!b.k)return;
- toast('Logo wird aufbereitet …');try{const u=await procLogo(file);if(u.length>300000)throw new Error('Logo zu groß');BUSER.logos=Object.assign({},BUSER.logos,{[b.k]:u});
-  if(!allBrands().some(x=>x.k===b.k))BUSER.list=(BUSER.list||[]).concat([{k:b.k,n:b.n,w:''}]);await brSave();kdDirty=true;rk();toast('Logo „'+b.n+'“ gespeichert – auch unter Einstellungen → Markenlogos');}catch(err){fail(err);}}
+ toast('Logo wird aufbereitet …');try{const u=await procLogo(file);if(u.length>300000)throw new Error('Logo zu groß');if(!allBrands().some(x=>x.k===b.k)){BUSER.list=(BUSER.list||[]).concat([{k:b.k,n:b.n,w:''}]);await brSave();}await blPut(b.k,u);kdDirty=true;rk();toast('Logo „'+b.n+'“ gespeichert – auch unter Einstellungen → Markenlogos');}catch(err){fail(err);}}
 $('kdGrid').addEventListener('change',e=>{const i=e.target.closest('[data-kmup]');if(i&&i.files[0])kdLogoUp(i.dataset.kmup,i.files[0]);});
 $('kdGrid').addEventListener('dragover',e=>{if(kdDrag||!e.dataTransfer||![...e.dataTransfer.types].includes('Files'))return;const km=e.target.closest('.km');if(!km||!km.querySelector('[data-kmup]'))return;e.preventDefault();km.classList.add('kmdrop');});
 $('kdGrid').addEventListener('dragleave',e=>{const km=e.target.closest('.km');if(km)km.classList.remove('kmdrop');});
