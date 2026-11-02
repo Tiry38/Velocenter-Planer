@@ -28,7 +28,7 @@ Web-App für **Velocenter Hessert** (Fahrradgeschäft, Wörth am Rhein). Ersetzt
   - `logo_small.b64` – Velocenter-Logo · `fbconfig.js` – Firebase-Konfiguration (öffentlich, kein Geheimnis)
   - `firestore.rules` – Sicherheitsregeln (Kopie; aktiv sind sie in der Firebase-Konsole)
 - **Bauen:** `cd src && python3 build.py <neue Version>` → schreibt `../index.html`, `../version.txt` usw. und `tests/test_fb.html`.
-- **Ausliefern:** commit + `git push origin main`. GitHub Pages braucht ~1 Min. **Offene Geräte prüfen alle 30 s `version.txt` und laden sich selbst neu** (mit `?v=` am Cache vorbei). Version bei jeder Auslieferung hochzählen (zuletzt **1.1.5**).
+- **Ausliefern:** commit + `git push origin main`. GitHub Pages braucht ~1 Min. **Offene Geräte prüfen alle 30 s `version.txt` und laden sich selbst neu** (mit `?v=` am Cache vorbei). Version bei jeder Auslieferung hochzählen (zuletzt **1.1.6**).
 - **Tests (lokal, ohne Internet):** `src/tests/` – `fbmock.js` baut Firebase Auth + Firestore nach (localStorage, Live-Abgleich zwischen Tabs).
   - Einmalig: `cd src/tests && npm pack xlsx@0.18.5 && tar xzf xlsx-0.18.5.tgz package/dist/xlsx.full.min.js && mv package/dist/xlsx.full.min.js . && rm -rf package xlsx-0.18.5.tgz`
   - `node quick.js` (Kurztest, ~30 s) · `node tf.js` (Gesamttest, ~2 Min). Playwright/Chromium ist vorinstalliert.
@@ -37,7 +37,7 @@ Web-App für **Velocenter Hessert** (Fahrradgeschäft, Wörth am Rhein). Ersetzt
 
 - Projekt **`velocenter-planer`** („Velocenter Planer“), Spark-Tarif (kostenlos), **Firestore in Frankfurt (europe-west3)**, Auth: **E-Mail/Passwort**.
 - Besitzer: **Kevins Google-Konto**. In seinem Chrome am Mini-PC ist es das Konto **/u/1/** (`console.firebase.google.com/u/1/...`); /u/0/ ist Stefans Konto.
-- **Anmeldung in der App:** Name wählen (Kevin, Stefan, Martina, Sascha, René) → beim **ersten Mal eigenes Passwort festlegen** (alles erlaubt, auch „7“). Intern: E-Mail `<id>@velocenter-cockpit.app`, Firebase-Passwort = `'VC!'+pw+'#cockpit'` (wegen Mindestlänge 6). Sitzung bleibt pro Gerät gespeichert.
+- **Anmeldung in der App:** Name wählen (Kevin, Stefan, Martina, Sascha, René) → beim **ersten Mal eigenes Passwort festlegen** (alles erlaubt, auch „7“). Intern: E-Mail `<id>@velocenter-cockpit.app`, Firebase-Passwort = `'VC!'+pw+'#cockpit'` (wegen Mindestlänge 6). Sitzung bleibt pro Gerät gespeichert. **Login ohne OK-Klick:** nach dem Tippen wird automatisch angemeldet (falsche Eingabe beim Tippen ohne Fehlermeldung).
 - **Rollen:** Admins = kevin, stefan, martina → alles. Mitarbeiter = sascha, rene → **alles außer Reiter „Passwörter“** (Regeln sperren `tresor/pw` serverseitig). Lieferanten-Logins darf jeder sehen, der die Tresor-PIN kennt (so gewollt).
 - **Passwort vergessen:** Firebase-Konsole → Authentication → Nutzer → Konto löschen; Person legt beim nächsten Login neu fest.
 - **Offen:** Sobald alle 5 angemeldet sind, in Firebase **neue Registrierungen abschalten** (Authentication → Einstellungen → Nutzeraktionen). Stand 02.11.: nur Kevin angemeldet.
@@ -54,7 +54,8 @@ Web-App für **Velocenter Hessert** (Fahrradgeschäft, Wörth am Rhein). Ersetzt
 ## 6. Bereiche & feste Entscheidungen
 
 - **Navigation links:** leuchtende Farbkacheln je Bereich, **einklappbar** (Pfeil rechts an der Navi; eingeklappt nur Symbole). **Zustand pro Profil gemerkt** (`meta/prefs`, auf allen PCs). Unten: Profil (Passwort ändern, Wechseln ⇄) und „⛶ Vollbild“. **Kein** Import-Knopf und **kein** grünes Sicherheitsfeld mehr in der Navi.
-- **Kopfzeile** (jeder Reiter gleich): Symbol + Unterzeile + Titel im Farbverlauf der Reiterfarbe; rechts LIVE, Wochentag, KW, Datum, Uhr.
+- **Schrift:** runde Schrift **Outfit** für Kopfzeile, Titel, Datum, Uhr, Navi und Kacheln (Tiry: „zu eckig“ → keine Chakra-Petch/Mono-Großbuchstaben mehr in diesen Bereichen).
+- **Kopfzeile** (jeder Reiter gleich): Symbol + Unterzeile + Titel im Farbverlauf der Reiterfarbe; rechts LIVE, Datum ausgeschrieben („2. November 2026“), darunter Wochentag + KW, Uhr.
 - **Planer** (aus „Planer NEU“-Struktur): eine Zeile pro Tag (ohne Sonntage, RLP-Feiertage markiert), KW-Trenner rot, heute rot hinterlegt, Sa grün, Mi orange.
   - Spalten: Intern · **Anfr.** (nur leuchtender Punkt, Info beim Drüberfahren, Spalte so schmal wie der Punkt) · Zeit · 1. Termin · Zeit · 2. Termin · WhatsApp · Sonstiges Werkstatt · Bestellungen · Notiz. **Nico-Spalte entfernt.**
   - **Klick irgendwo ins Feld = eintragen.** Eintrag anklicken = bearbeiten, rotes × = löschen (6 s Rückgängig), Ziehen auf anderen Tag.
