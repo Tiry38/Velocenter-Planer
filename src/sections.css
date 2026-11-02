@@ -159,3 +159,25 @@ body.navmini #switchUser{font-size:0;padding:6px 8px;margin:0}body.navmini #swit
 .who-box h2,.pw b,.wt b,.lock h2,.dlg-box h3{font-family:"Outfit",sans-serif!important}
 @media (max-width:720px){.top h1{font-size:26px!important}.dt .day b{font-size:17px!important}.dt .clock{font-size:20px!important}}
 .merk .w,.merk .m,.atag{font-family:"Outfit",sans-serif!important;letter-spacing:.06em!important}
+
+/* ===== Kopfzeile über die ganze Breite (1.1.7) ===== */
+.top{flex-wrap:nowrap!important;gap:24px!important}
+.tt{flex:none}
+.dt{flex:1;min-width:0;display:flex;align-items:stretch;justify-content:flex-end;gap:0!important;container-type:inline-size;container-name:dt}
+.dt .seg{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:2px 16px;position:relative;text-align:center}
+.dt .seg+.seg::before{content:"";position:absolute;left:0;top:10%;bottom:10%;width:1px;background:linear-gradient(180deg,transparent,color-mix(in srgb,var(--ac,#E2232D) 60%,#2A3446),transparent)}
+.dt .seg small{font:500 12.5px/1 "Outfit",sans-serif;letter-spacing:.04em;color:#8D97A8;white-space:nowrap}
+.dt .seg b{font:700 27px/1.1 "Outfit",sans-serif;color:#fff;white-space:nowrap;font-variant-numeric:tabular-nums;letter-spacing:.005em;max-width:100%}
+.dt .sWd b{color:color-mix(in srgb,var(--ac,#E2232D) 38%,#fff);text-shadow:0 0 18px color-mix(in srgb,var(--ac,#E2232D) 55%,transparent)}
+.dt .sDate b{text-shadow:0 0 18px rgba(255,255,255,.18);overflow:hidden;text-overflow:ellipsis}
+.dt .sKw b{font-size:22px;color:#fff;background:linear-gradient(145deg,#F0333D,#B5121B);border:1px solid #FF6B72;border-radius:99px;padding:3px 16px;box-shadow:0 0 18px rgba(226,35,45,.55),inset 0 1px 0 rgba(255,255,255,.3)}
+.dt .sClock{flex:none;flex-direction:row;gap:14px;padding-right:0}
+.dt .sKw{flex-shrink:0}
+.dt .mS{display:none}
+.dt .clock{font-size:38px!important;line-height:1.1;padding:4px 18px!important}
+/* Stufen je nach freiem Platz (Titel-Länge, Navi ein-/ausgeklappt, Bildschirm) */
+@container dt (max-width:880px){.dt .seg{padding:2px 11px}.dt .seg b{font-size:22px}.dt .sKw b{font-size:18px;padding:2px 12px}.dt .clock{font-size:30px!important;padding:4px 14px!important}.dt .sClock{gap:10px}}
+@container dt (max-width:700px){.dt .sWd,.dt .seg small{display:none}.dt .sDate::before{display:none}}
+@container dt (max-width:540px){.dt .seg{padding:2px 8px}.dt .seg b{font-size:18px}.dt .sKw b{font-size:14px;padding:2px 9px}.dt .clock{font-size:24px!important;padding:3px 10px!important}.dt .live{font-size:0!important;gap:0;padding:6px!important}}
+@container dt (max-width:420px){.dt .sDate{padding-left:0}.dt .seg b{font-size:15.5px}.dt .clock{font-size:20px!important}.dt .sClock{gap:6px}.dt .mL{display:none}.dt .mS{display:inline}}
+@media (max-width:720px){.top{flex-wrap:wrap!important;gap:12px!important}.dt{width:100%;flex:none}}
