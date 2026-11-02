@@ -506,7 +506,6 @@ body.navmini #switchUser{font-size:0;padding:6px 8px;margin:0}body.navmini #swit
 @container dt (max-width:420px){.dt .sDate{padding-left:0}.dt .seg b{font-size:15.5px}.dt .clock{font-size:20px!important}.dt .sClock{gap:6px}.dt .mL{display:none}.dt .mS{display:inline}}
 @media (max-width:720px){.top{flex-wrap:wrap!important;gap:12px!important}.dt{width:100%;flex:none}}
 
-
 [hidden]{display:none!important}
 #sTab td.b{font-weight:700}#sTab .pwm.ed{outline:none;padding:2px 6px;border-radius:6px;font-family:var(--mono)}#sTab td{vertical-align:top}
 #sTab td.ce,#ltab td.ce{cursor:text;border-bottom:1px dashed #2A3446;outline:none}#sTab td.ce:focus,#sTab .pwm.ed:focus,#ltab td.ce:focus{box-shadow:inset 0 0 0 2px var(--cyan);background:var(--panel2)}#ltab td.tg{cursor:pointer;user-select:none}#sTab td.ce:hover,#ltab td.tg:hover,#ltab td.ce:hover{background:rgba(255,255,255,.04)}#ltab td.tg:focus-visible{outline:2px solid var(--cyan)}
@@ -758,7 +757,7 @@ function startLive(){stopLive();const from=iso(new Date(Date.now()-35*864e5));
  rollover();}
 async function seedLeasing(){if(!ME||!ME.adm)return;try{await db.runTransaction(async t=>{const f=db.doc('meta/seed');const d=await t.get(f);if(d.exists&&d.data().leasing)return;
   LSDEF.forEach(x=>t.set(db.collection('leasing').doc(x.k),Object.assign(clean(x),{ts:stamp()})));t.set(f,{leasing:true,rec:LSREC_VER},{merge:true});});}catch(e){fail(e);}}
-// Recherchierte Händler-Infos einmalig in bestehende Anbieter einspielen (überarbeitete Listen + Eckdaten; eigenes Logo bleibt)
+// Überarbeitete Leasing-Infos einmalig in die Datenbank übernehmen (eigenes Logo bleibt)
 let recDone=false;async function recLeasing(){if(recDone||!ME||!ME.adm||!L.length)return;recDone=true;try{await db.runTransaction(async t=>{const f=db.doc('meta/seed');const d=await t.get(f);if(d.exists&&(d.data().rec||0)>=LSREC_VER)return;
   LSREC.forEach(x=>{const o=L.find(l=>l.id===x.k)||L.find(l=>l.k===x.k);if(!o)return;t.set(db.collection('leasing').doc(o.id),Object.assign(clean(x),{k:o.k,ts:stamp()}),{merge:true});});t.set(f,{rec:LSREC_VER},{merge:true});});}catch(e){recDone=false;fail(e);}}
 async function rollover(){const t=TODAY();try{const go=await db.runTransaction(async tr=>{const f=db.doc('meta/rollover');const d=await tr.get(f);if(d.exists&&d.data().datum===t)return false;tr.set(f,{datum:t,von:ME.id});return true;});
@@ -984,17 +983,15 @@ let lsQ='',lsDrei=false,lsM={abh:true,ser:true},lsEdit=-1;
 const hl=t=>{let x=esc(t);if(lsQ){const i=x.toLowerCase().indexOf(esc(lsQ));if(i>=0)x=x.slice(0,i)+'<mark>'+x.slice(i,i+esc(lsQ).length)+'</mark>'+x.slice(i+esc(lsQ).length);}return x;};
 const li=t=>`<li class="${t[0]==='!'?'w':''}">${hl(t.replace(/^!/,''))}</li>`;
 const logoOf=f=>f.logo||LOGOS[f.k]||'';
-const TRI=[['drei','Dreirad'],['last','Lastenrad'],['spe','S-Pedelec']];
-const triFx=f=>TRI.map(([k,n])=>f[k]===true?`<span class="fx y">${n} ✓</span>`:f[k]===false?`<span class="fx n">${n} ✗</span>`:'').join('');
 function rl(){
- $('lgrid').innerHTML=L.map((f,i)=>[f,i]).filter(([f,i])=>i===lsEdit||((!lsDrei||f.drei===true)&&(!lsQ||JSON.stringify(Object.assign({},f,{logo:''})).toLowerCase().includes(lsQ)))).map(([f,i])=>i===lsEdit?editCard(f,i):`
+ $('lgrid').innerHTML=L.map((f,i)=>[f,i]).filter(([f,i])=>i===lsEdit||((!lsDrei||f.drei)&&(!lsQ||JSON.stringify(Object.assign({},f,{logo:''})).toLowerCase().includes(lsQ)))).map(([f,i])=>i===lsEdit?editCard(f,i):`
  <article class="lc" style="--ac:${esc(f.ac||'#94A3B8')}"><div class="lh">${logoOf(f)?`<div class="logo"><img src="${esc(logoOf(f))}" alt="${esc(f.n)} Logo"></div>`:`<div class="mono">${esc(f.k)}</div>`}<div style="min-width:0">${logoOf(f)?'':`<b>${esc(f.n)}</b>`}<small>${esc(f.sub||'Leasing')} · ${esc(f.k)}</small></div><button class="edbtn" type="button" data-led="${i}" aria-label="${esc(f.n)} bearbeiten">✎ Bearbeiten</button></div>
- <div class="facts">${triFx(f)}${f.is&&f.is!=='–'?`<span class="fx">IS: ${esc(f.is)}</span>`:''}${f.vs&&f.vs!=='–'?`<span class="fx">Verschleiß: ${esc(f.vs)}</span>`:''}${f.gs==='nein'?'<span class="fx n">Keine Gutschrift</span>':f.gs==='nur IS'?'<span class="fx e">Gutschrift nur IS</span>':f.gs==='ja'?'<span class="fx y">Gutschrift</span>':''}</div>
+ <div class="facts">${f.drei===true?'<span class="fx y">Dreirad ✓</span>':''}${f.is&&f.is!=='–'?`<span class="fx">IS: ${esc(f.is)}</span>`:''}${f.vs&&f.vs!=='–'?`<span class="fx">Verschleiß: ${esc(f.vs)}</span>`:''}${f.gs==='nein'?'<span class="fx n">Keine Gutschrift</span>':f.gs==='nur IS'?'<span class="fx e">Gutschrift nur IS</span>':f.gs==='ja'?'<span class="fx y">Gutschrift</span>':''}</div>
  ${lsM.abh&&(f.abh||[]).length?`<div class="blk"><h4>🚲 Neurad-Abholung</h4><ul>${f.abh.map(li).join('')}</ul>${f.text?`<div class="rt">${esc(f.text)}</div><button class="cpy" type="button" data-t="${i}">Text kopieren</button>`:''}</div>`:''}
  ${lsM.ser&&(f.ser||[]).length?`<div class="blk"><h4>🔧 Inspektion &amp; Reparatur</h4><ul>${f.ser.map(li).join('')}</ul></div>`:''}
  ${f.tel?`<div>Arbeitnehmer-Support: <a class="tel" href="tel:${esc(f.tel.replace(/[^0-9+]/g,''))}">${esc(f.tel)}</a></div>`:''}
  </article>`).join('')||'<p class="hint">Nichts gefunden.</p>';
- if(!document.querySelector('#ltab [contenteditable]:focus'))$('ltab').innerHTML='<thead><tr><th>Anbieter</th>'+TRI.map(([k,n])=>'<th>'+n+'</th>').join('')+'<th>IS-Zahlung</th><th>Verschleiß</th><th>Gutschrift</th></tr></thead><tbody>'+L.map((f,i)=>`<tr><td><b style="color:${esc(f.ac)}">●</b> ${esc(f.n)}</td>${TRI.map(([k])=>`<td class="tg ${f[k]===true?'y':f[k]===false?'n':''}" data-lt="${i}" data-f="${k}" role="button" tabindex="0" title="Klick = ✓ / ✗ / –">${f[k]===true?'✓':f[k]===false?'✗':'–'}</td>`).join('')}<td class="ce" contenteditable="true" spellcheck="false" data-lt="${i}" data-f="is">${esc(f.is||'')}</td><td class="ce" contenteditable="true" spellcheck="false" data-lt="${i}" data-f="vs">${esc(f.vs||'')}</td><td class="tg ${f.gs==='nein'?'n':f.gs==='ja'?'y':''}" data-lt="${i}" data-f="gs" role="button" tabindex="0" title="Klick = ja / nein / nur IS / –">${esc(f.gs||'–')}</td></tr>`).join('')+'</tbody>';
+ if(!document.querySelector('#ltab [contenteditable]:focus'))$('ltab').innerHTML='<thead><tr><th>Anbieter</th><th>Dreirad</th><th>IS-Zahlung</th><th>Verschleiß</th><th>Gutschrift</th></tr></thead><tbody>'+L.map((f,i)=>`<tr><td><b style="color:${esc(f.ac)}">●</b> ${esc(f.n)}</td><td class="tg ${f.drei===true?'y':''}" data-lt="${i}" data-f="drei" role="button" tabindex="0" title="Klick = umschalten">${f.drei===true?'✓':'–'}</td><td class="ce" contenteditable="true" spellcheck="false" data-lt="${i}" data-f="is">${esc(f.is||'')}</td><td class="ce" contenteditable="true" spellcheck="false" data-lt="${i}" data-f="vs">${esc(f.vs||'')}</td><td class="tg ${f.gs==='nein'?'n':f.gs==='ja'?'y':''}" data-lt="${i}" data-f="gs" role="button" tabindex="0" title="Klick = ja / nein / nur IS / –">${esc(f.gs||'–')}</td></tr>`).join('')+'</tbody>';
  FN=Object.assign({BL:'Bikeleasing',CB:'Company Bike',KM:'Kazenmaier',BB:'Businessbike',JR:'JobRad',DD:'Deutsche Dienstrad',LB:'Lease a Bike',RD:'RIDE',ER:'Eurorad'},Object.fromEntries(L.filter(f=>!/versicherung|schäden/i.test(f.sub||'')).map(f=>[f.k,f.n])));}
 function editCard(f,i){return `<article class="lc editing" style="--ac:${esc(f.ac||'#94A3B8')}"><form class="edf" data-lf="${i}" autocomplete="off">
  <div class="lh">${logoOf(f)?`<div class="logo"><img src="${esc(logoOf(f))}" alt=""></div>`:`<div class="mono">${esc(f.k)}</div>`}<div style="flex:1;min-width:0"><b>Bearbeiten</b><small>Änderungen gelten sofort für alle</small></div></div>
@@ -1002,7 +999,7 @@ function editCard(f,i){return `<article class="lc editing" style="--ac:${esc(f.a
  <label>Unterzeile<input name="sub" value="${esc(f.sub||'Leasing')}"></label><label>Farbe<input name="ac" type="color" value="${esc(f.ac||'#94A3B8')}"></label>
  <label>IS-Zahlung<input name="is" value="${esc(f.is||'')}"></label><label>Verschleiß<input name="vs" value="${esc(f.vs||'')}"></label>
  <label>Gutschrift<select name="gs">${['ja','nein','nur IS','–'].map(o=>`<option${f.gs===o?' selected':''}>${o}</option>`).join('')}</select></label>
- ${TRI.map(([k,n])=>`<label>${n}<select name="${k}"><option value="1"${f[k]===true?' selected':''}>möglich</option><option value="0"${f[k]===false?' selected':''}>nicht möglich</option><option value=""${f[k]!==true&&f[k]!==false?' selected':''}>nicht angegeben</option></select></label>`).join('')}</div>
+ <label>Dreirad<select name="drei"><option value="1"${f.drei===true?' selected':''}>möglich</option><option value="0"${f.drei!==true?' selected':''}>nicht angegeben</option></select></label></div>
  <label>Neurad-Abholung <em>(eine Zeile pro Punkt · ! am Anfang = rot)</em><textarea name="abh" rows="4">${esc((f.abh||[]).join('\n'))}</textarea></label>
  <label>Inspektion &amp; Reparatur<textarea name="ser" rows="5">${esc((f.ser||[]).join('\n'))}</textarea></label>
  <label>Rechnungstext (optional)<textarea name="text" rows="3">${esc(f.text||'')}</textarea></label>
@@ -1019,11 +1016,11 @@ $('lgrid').addEventListener('click',async e=>{
  const dl=e.target.closest('[data-ldel]');if(dl){const i=+dl.dataset.ldel;if(!dl.dataset.sure){dl.dataset.sure=1;dl.textContent='Wirklich löschen?';return;}const f=L[i];L.splice(i,1);lsEdit=-1;rl();if(!f._new)del('L',f.id);toast(f.n+' gelöscht');return;}
  const rm=e.target.closest('[data-rmlogo]');if(rm){const f=Object.assign({},L[+rm.dataset.rmlogo]);delete f.logo;putL(f);toast('Eigenes Logo entfernt');return;}
  const b=e.target.closest('.cpy');if(!b)return;const t=L[+b.dataset.t].text;try{await navigator.clipboard.writeText(t);toast('Rechnungstext kopiert');}catch(_){toast('Kopieren nicht erlaubt – Text markieren und Strg+C');}});
-$('ltab').addEventListener('click',e=>{const c=e.target.closest('.tg');if(!c)return;const f=Object.assign({},L[+c.dataset.lt]);const k=c.dataset.f;if(TRI.some(x=>x[0]===k))f[k]=f[k]===true?false:f[k]===false?null:true;else{const o=['ja','nein','nur IS','–'];f.gs=o[(o.indexOf(f.gs||'–')+1)%o.length];}putL(f).then(()=>toast('Gespeichert'));});
+$('ltab').addEventListener('click',e=>{const c=e.target.closest('.tg');if(!c)return;const f=Object.assign({},L[+c.dataset.lt]);if(c.dataset.f==='drei')f.drei=f.drei===true?null:true;else{const o=['ja','nein','nur IS','–'];f.gs=o[(o.indexOf(f.gs||'–')+1)%o.length];}putL(f).then(()=>toast('Gespeichert'));});
 $('ltab').addEventListener('keydown',e=>{const c=e.target.closest('.ce,.tg');if(!c)return;if(e.key==='Enter'){e.preventDefault();if(c.classList.contains('tg'))c.click();else c.blur();}});
 $('ltab').addEventListener('focusout',e=>{const c=e.target.closest('.ce');if(!c)return;const f=Object.assign({},L[+c.dataset.lt]),v=c.textContent.trim();if(v===(f[c.dataset.f]||''))return;f[c.dataset.f]=v;putL(f).then(()=>toast('Gespeichert'));});
 $('lgrid').addEventListener('submit',async e=>{if(!e.target.dataset.lf)return;e.preventDefault();const fm=e.target,i=+fm.dataset.lf,f=Object.assign({},L[i]),d=new FormData(fm);delete f._new;
- ['n','k','sub','ac','is','vs','gs','text','tel'].forEach(k=>f[k]=String(d.get(k)||'').trim());f.k=f.k.toUpperCase().replace(/[^A-Z0-9]/g,'')||'NEU';TRI.forEach(([k])=>{const v=d.get(k);f[k]=v==='1'?true:v==='0'?false:null;});
+ ['n','k','sub','ac','is','vs','gs','text','tel'].forEach(k=>f[k]=String(d.get(k)||'').trim());f.k=f.k.toUpperCase().replace(/[^A-Z0-9]/g,'')||'NEU';f.drei=d.get('drei')==='1'?true:null;
  ['abh','ser'].forEach(k=>f[k]=String(d.get(k)||'').split('\n').map(x=>x.trim()).filter(Boolean));
  if(!f.id)f.id=f.k+Math.random().toString(36).slice(2,5).toUpperCase();
  const file=d.get('logo');if(file&&file.size){try{f.logo=await shrink(file);}catch(err){toast(err.message);return;}}
