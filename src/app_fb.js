@@ -190,17 +190,17 @@ document.querySelectorAll('[data-i]').forEach(el=>{el.addEventListener('keydown'
 const COLS=[
  {k:'int',n:'Intern',c:'var(--cyan)',w:'2fr'},{k:'anf',n:'Anfr.',c:'var(--violet)',w:'.3fr',dot:1},
  {k:'z1',n:'Zeit',c:'var(--warn)',of:'t1'},{k:'t1',n:'1. Termin',c:'var(--warn)',w:'1.2fr'},{k:'z2',n:'Zeit',c:'var(--warn)',of:'t2'},{k:'t2',n:'2. Termin',c:'var(--warn)',w:'1.2fr'},
- {k:'wa',n:'WhatsApp',c:'var(--ok)',w:'.9fr'},{k:'ws',n:'Sonstiges Werkstatt',c:'var(--blue)',w:'1.3fr'},{k:'not',n:'Notiz',c:'var(--muted)',w:'.9fr'}];
+ {k:'wa',n:'WhatsApp',c:'#25D366',w:'.9fr',fix:'92px',ico:'<svg class="waico" viewBox="0 0 24 24" role="img" aria-label="WhatsApp"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>'},{k:'ws',n:'Sonstiges Werkstatt',c:'var(--blue)',w:'1.3fr'},{k:'not',n:'Notiz',c:'var(--muted)',w:'.9fr'}];
 const vis=Object.fromEntries(COLS.map(c=>[c.k,true]));
 let showPast=false,openOnly=false,q='',weeks=10;
 function daysList(){const t=fromIso(TODAY()),start=new Date(t);if(showPast)start.setDate(start.getDate()-28);const end=new Date(t);end.setDate(end.getDate()+weeks*7);const lim=new Date('2027-12-31T12:00:00');const out=[];
  for(const d=new Date(start);d<=end&&d<=lim;d.setDate(d.getDate()+1)){if(d.getDay()===0)continue;out.push(iso(d));}return out;}
 const tmSort=(a,b)=>(a.zeit||'99').localeCompare(b.zeit||'99');
 function render(){const g=$('grid');if(document.querySelector('#grid .edit'))return;const cols=COLS.filter(c=>vis[c.of||c.k]);const today=TODAY();
- g.style.setProperty('--cols','144px '+cols.map(c=>c.of?'80px':c.dot?'34px':'minmax('+(/^t[12]$/.test(c.k)?180:150)+'px,'+c.w+')').join(' '));
+ g.style.setProperty('--cols','144px '+cols.map(c=>c.of?'80px':c.dot?'34px':c.fix?c.fix:'minmax('+(/^t[12]$/.test(c.k)?180:150)+'px,'+c.w+')').join(' '));
  g.style.setProperty('--minw',(132+cols.reduce((a,c)=>a+(c.of?80:c.dot?34:/^t[12]$/.test(c.k)?180:150),0))+'px');
  const by={};P.forEach(e=>{(by[e.datum]=by[e.datum]||[]).push(e);});
- let h='<div class="hd d">Tag</div>'+cols.map(c=>c.dot?`<div class="hd hdot" style="--cc:${c.c}" title="Anfragen Abholung/Reparatur"><i style="background:${c.c}"></i></div>`:`<div class="hd" style="--cc:${c.c}"><i style="background:${c.c}"></i>${c.n}</div>`).join('');
+ let h='<div class="hd d">Tag</div>'+cols.map(c=>c.dot?`<div class="hd hdot" style="--cc:${c.c}" title="Anfragen Abholung/Reparatur"><i style="background:${c.c}"></i></div>`:(c.ico?`<div class="hd hico" style="--cc:${c.c}" title="${c.n}">${c.ico}</div>`:`<div class="hd" style="--cc:${c.c}"><i style="background:${c.c}"></i>${c.n}</div>`)).join('');
  let lastKw=null;
  daysList().forEach(ds=>{const d=fromIso(ds),items=(by[ds]||[]),past=ds<today,k=kw(d),wd=WDS[d.getDay()];
   if(k!==lastKw){h+=`<div class="kw">KW ${k}</div>`;lastKw=k;}
