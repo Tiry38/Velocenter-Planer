@@ -4,6 +4,7 @@
   <button class="navbtn" data-v="planer" aria-current="true" style="--ac:#E2232D"><span class="tile"><svg viewBox="0 0 24 24"><rect class="f" x="3" y="5" width="18" height="5" rx="2"/><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M8 3v4M16 3v4M7.5 15l2.5 2.5 5-5"/></svg></span><span class="lbl">Planer<small>Tagesplanung</small></span></button>
   <button class="navbtn" data-v="verkauf" style="--ac:#FBBF24"><span class="tile"><svg viewBox="0 0 24 24"><circle class="f" cx="6" cy="16.5" r="3.6"/><circle class="f" cx="18" cy="16.5" r="3.6"/><circle cx="6" cy="16.5" r="3.6"/><circle cx="18" cy="16.5" r="3.6"/><path d="M6 16.5 9.5 9h6.5L18 16.5M9.5 9 8.3 6H6.5M16 9l-4 7.5h-6M14 6h2.5"/><path d="M20.5 3.5l.6 1.4 1.4.6-1.4.6-.6 1.4-.6-1.4-1.4-.6 1.4-.6z"/></svg></span><span class="lbl">Verkauf<small>Räder · Leasing</small></span><span class="n" id="nOffen">–</span></button>
   <button class="navbtn" data-v="bestell" style="--ac:#39F26B"><span class="tile"><svg viewBox="0 0 24 24"><path class="f" d="M3 8l9-5 9 5-9 5z"/><path d="M3 8l9-5 9 5v8l-9 5-9-5z"/><path d="M3 8l9 5 9-5M12 13v8M7.5 5.5l9 5"/></svg></span><span class="lbl">Bestellungen<small>Teile · Kunden</small></span><span class="n" id="nBest">–</span></button>
+  <button class="navbtn" data-v="rekla" style="--ac:#FB923C"><span class="tile"><svg viewBox="0 0 24 24"><path class="f" d="M4 7l8-4 8 4v10l-8 4-8-4z"/><path d="M4 7l8-4 8 4v10l-8 4-8-4z"/><path d="M15 10.5h-5l1.8-1.8M10 10.5l1.8 1.8M10 14.5h4"/></svg></span><span class="lbl">Reklamationen<small>Lieferanten · Ersatz</small></span><span class="n" id="nRekla">–</span></button>
   <div class="navsep"></div>
   <button class="navbtn" data-v="leasing" style="--ac:#C084FC"><span class="tile"><svg viewBox="0 0 24 24"><path class="f" d="M6 3h9l4 4v14H6z"/><path d="M6 3h9l4 4v14H6zM15 3v4h4"/><path d="M9 12h7M9 15.5h7M9 9h3"/></svg></span><span class="lbl">Leasing-Infos<small>Leasing · Versicherung</small></span></button>
   <button class="navbtn" data-v="lief" style="--ac:#22D3EE"><span class="tile"><svg viewBox="0 0 24 24"><rect class="f" x="2.5" y="6" width="11" height="9" rx="1.5"/><path d="M2.5 6h11v9h-11zM13.5 9.5h4l3.5 3.5v2h-7.5"/><circle cx="7" cy="17.5" r="2"/><circle cx="17" cy="17.5" r="2"/></svg></span><span class="lbl">Lieferanten<small>Kontakte · Logins</small></span></button>
@@ -58,6 +59,17 @@
       <button class="vkAdd" type="button" id="vkAdd">+ Verkauftes Rad</button>
     </div>
     <div class="cards" id="cards"></div>
+  </section>
+
+  <!-- REKLAMATIONEN -->
+  <section class="view" id="v-rekla">
+    <div class="toolbar rktools">
+      <label class="search"><svg class="ico" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg><input id="rkSearch" placeholder="Suchen in allen Reklamationen (auch erledigte): Lieferant, Marke, Artikel, Kunde, Vorgangs-Nr. …"></label>
+      <button class="btn" type="button" id="rkDone" aria-pressed="false">Erledigte zeigen</button>
+      <button class="btn red" type="button" id="rkAdd">+ Reklamation</button>
+    </div>
+    <div id="rkForm"></div>
+    <div class="tbl rktab"><table id="rkTab"></table></div>
   </section>
 
   <!-- BESTELLUNGEN -->
