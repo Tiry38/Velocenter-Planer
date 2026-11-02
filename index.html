@@ -1081,7 +1081,7 @@ body[data-v=kunden] .tt small{background:var(--rb);-webkit-background-clip:text;
 <script>
 const FB_CONFIG={apiKey:"AIzaSyC_uZPvc5rJETwlS4JbfCoTkkE4ckjtp0M",authDomain:"velocenter-planer.firebaseapp.com",projectId:"velocenter-planer",storageBucket:"velocenter-planer.firebasestorage.app",messagingSenderId:"1018330488700",appId:"1:1018330488700:web:262a4d1660353e6fde8ef9"};
 /* ================= Velocenter Werkstatt-Cockpit – Oberfläche ================= */
-const CLIENT_VERSION='1.6.8';
+const CLIENT_VERSION='1.6.9';
 const USERS=[{id:'kevin',n:'Kevin',c:'#E2232D'},{id:'stefan',n:'Stefan',c:'#F59E0B'},{id:'martina',n:'Martina',c:'#EC4899'},{id:'sascha',n:'Sascha',c:'#22D3EE'},{id:'rene',n:'René',c:'#34D399'}];
 const U=id=>USERS.find(u=>u.id===id)||{n:'',c:'#64748B',id:''};
 const $=id=>document.getElementById(id);
@@ -1485,8 +1485,9 @@ $('cards').addEventListener('click',e=>{const h=e.target.closest('th[data-sk]');
 function dshort(v){v=String(v||'').trim();const m=v.match(/^(\d{1,2})\.(\d{1,2})\.?(\d{2,4})?$/);return m?m[1].padStart(2,'0')+'.'+m[2].padStart(2,'0')+'.':v;}
 function toIsoDe(v){const m=String(v||'').match(/(\d{1,2})\.(\d{1,2})\.?(\d{2,4})?/);if(!m)return '';const t=vkDate(v);if(!t)return '';const d=new Date(t);return iso(d);}
 function dateEdit(td){const b=V.find(x=>x.id===td.dataset.vid),f=td.dataset.df;if(!b)return;const i=document.createElement('input');i.type='date';i.className='edit din';i.value=toIsoDe(b[f]);td.textContent='';td.append(i);i.focus();try{i.showPicker();}catch(_){}
- let done=false;const fin=ok=>{if(done)return;done=true;const v=i.value;i.remove();if(ok&&v){const d=fromIso(v);const out=String(d.getDate()).padStart(2,'0')+'.'+String(d.getMonth()+1).padStart(2,'0')+'.'+d.getFullYear();if(out!==b[f]){putV(Object.assign({},b,{[f]:out}));toast({dat:'Bestellt am',antrag:'Antrag gestellt am',ok:'Leasing genehmigt',lende:'Leasingende'}[f]+': '+dshort(out));return;}}rv();};
- i.addEventListener('change',()=>{if(i.value)fin(true);});i.addEventListener('keydown',k=>{if(k.key==='Enter'){k.preventDefault();fin(true);}if(k.key==='Escape')fin(false);});i.addEventListener('blur',()=>setTimeout(()=>fin(false),200));}
+ let done=false;const fin=ok=>{if(done)return;done=true;const v=i.value;i.remove();if(ok&&v){const d=fromIso(v);const out=String(d.getDate()).padStart(2,'0')+'.'+String(d.getMonth()+1).padStart(2,'0')+'.'+d.getFullYear();if(out!==b[f]){putV(Object.assign({},b,{[f]:out}));toast({dat:'Bestellt am',antrag:'Antrag gestellt am',ok:'Leasing genehmigt',lende:'Leasingende'}[f]+': '+dshort(out));return;}}
+ if(ok==='clr'&&b[f]){putV(Object.assign({},b,{[f]:''}));toast({dat:'Bestellt am',antrag:'Antrag gestellt am',ok:'Leasing genehmigt',lende:'Leasingende'}[f]+' gelöscht',()=>{const bb=V.find(x=>x.id===b.id);if(bb)putV(Object.assign({},bb,{[f]:b[f],[f+'Von']:b[f+'Von']||''}));toast('Wiederhergestellt');});return;}rv();};
+ /* 1.6.9: „Löschen“ im Kalender = Feld leeren */i.addEventListener('change',()=>{fin(i.value?true:'clr');});i.addEventListener('keydown',k=>{if(k.key==='Enter'){k.preventDefault();fin(true);}if(k.key==='Escape')fin(false);});i.addEventListener('blur',()=>setTimeout(()=>fin(false),200));}
 $('cards').addEventListener('click',e=>{const td=e.target.closest('td.dcell');if(td&&!td.querySelector('input'))dateEdit(td);const tk=e.target.closest('td.kcell');if(tk&&!tk.querySelector('select'))ltEdit(tk);const tp=e.target.closest('td.pcell');if(tp&&!tp.querySelector('select'))pEdit(tp);});
 // LT: Klick → Kalenderwoche wählen (Lager, KW −4 … +30 mit Datum Mo–Sa), gespeichert als „KW 47“
 function ltOpts(cur){const now=new Date();now.setHours(12,0,0,0);const mo=new Date(now);mo.setDate(mo.getDate()-((mo.getDay()+6)%7));const dd=d=>String(d.getDate()).padStart(2,'0')+'.'+String(d.getMonth()+1).padStart(2,'0')+'.';
