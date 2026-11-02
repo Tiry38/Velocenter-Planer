@@ -669,6 +669,24 @@ body{background-color:#090B10;background-image:
 #sTab td.slogo:hover .sldel{display:grid}
 #sTab td.mbw{font-variant-numeric:tabular-nums;color:#FDE68A}
 #sTab td.mbw{white-space:normal;max-width:240px;min-width:110px;line-height:1.3}
+/* ===== Planer: angenehme runde Schrift überall (wie Verkauf), ruhiges „Heute“, dünne KW-Trenner mit Verlauf bis zur Mitte ===== */
+#v-planer,#v-planer *{font-family:"Outfit",var(--body),sans-serif!important}
+#v-planer .e .tx{font-family:var(--body)!important;font-weight:500}
+#v-planer .hd{font-size:12px!important;font-weight:600!important;letter-spacing:.03em!important;text-transform:none!important}
+#v-planer .date b{font-size:17px!important;font-weight:700!important;letter-spacing:.01em}
+#v-planer .date span{font-size:15px!important;font-weight:600!important;letter-spacing:.01em!important;text-transform:none!important}
+#v-planer .date em{font-size:10.5px!important;font-weight:700!important;letter-spacing:.03em!important}
+#v-planer .e .tm{font-size:11.5px!important;font-weight:700!important}
+/* Heute: kein knalliges Rot mehr – ruhiger Türkis-Schimmer passend zur „Heute“-Pille */
+.row.today .c{background:rgba(34,211,238,.06)!important}
+.row.today .date{background:linear-gradient(90deg,rgba(34,211,238,.20),rgba(34,211,238,.06) 70%,#0b0e15)!important;box-shadow:inset 3px 0 0 #22D3EE!important}
+/* KW-Trenner: dünner, weicher, Farbverlauf bis zur Mitte */
+.kw{padding:4px 12px 3px!important;border-top:0!important;border-bottom:1px solid transparent!important;border-image:linear-gradient(90deg,rgba(248,113,113,.6),rgba(248,113,113,.18) 420px,transparent 680px) 1!important;background:linear-gradient(90deg,rgba(226,35,45,.30),rgba(226,35,45,.12) 300px,rgba(226,35,45,.04) 520px,transparent 680px)!important;color:#FCA5A5!important;font-size:11.5px!important;font-weight:700!important;letter-spacing:.08em!important}
+.kw::after{display:none}
+#v-planer .date{gap:6px!important;padding:6px 8px!important}#v-planer .date em{font-size:9.5px!important;padding:2px 5px!important;letter-spacing:.02em!important}
+#v-planer .date b{font-size:18px!important;font-weight:700!important;letter-spacing:0!important}
+#v-planer .date em{text-transform:none!important;font-size:10.5px!important;font-weight:600!important}
+#v-planer .date b{font-size:17px!important}#v-planer .date em{padding:1px 5px!important;font-size:10px!important}#v-planer .date{gap:5px!important;padding:6px 6px 6px 9px!important}
 
 [hidden]{display:none!important}
 #sTab td.b{font-weight:700}#sTab .pwm.ed{outline:none;padding:2px 6px;border-radius:6px;font-family:var(--mono)}#sTab td{vertical-align:top}
@@ -807,7 +825,7 @@ body{background-color:#090B10;background-image:
 <script>
 const FB_CONFIG={apiKey:"AIzaSyC_uZPvc5rJETwlS4JbfCoTkkE4ckjtp0M",authDomain:"velocenter-planer.firebaseapp.com",projectId:"velocenter-planer",storageBucket:"velocenter-planer.firebasestorage.app",messagingSenderId:"1018330488700",appId:"1:1018330488700:web:262a4d1660353e6fde8ef9"};
 /* ================= Velocenter Werkstatt-Cockpit – Oberfläche ================= */
-const CLIENT_VERSION='1.3.7';
+const CLIENT_VERSION='1.3.8';
 const USERS=[{id:'kevin',n:'Kevin',c:'#E2232D'},{id:'stefan',n:'Stefan',c:'#F59E0B'},{id:'martina',n:'Martina',c:'#EC4899'},{id:'sascha',n:'Sascha',c:'#22D3EE'},{id:'rene',n:'René',c:'#34D399'}];
 const U=id=>USERS.find(u=>u.id===id)||{n:'',c:'#64748B',id:''};
 const $=id=>document.getElementById(id);
@@ -1012,7 +1030,7 @@ function render(){const g=$('grid');if(document.querySelector('#grid .edit'))ret
  let lastKw=null;
  daysList().forEach(ds=>{const d=fromIso(ds),items=(by[ds]||[]),past=ds<today,k=kw(d),wd=WDS[d.getDay()];
   if(k!==lastKw){h+=`<div class="kw">KW ${k}</div>`;lastKw=k;}
-  h+=`<div class="row ${wd==='SA'?'sa':''} ${wd==='MI'?'mi':''} ${ds===today?'today':''} ${past?'past':''} ${HOL[ds]?'hol':''}" data-iso="${ds}"><div class="c date"><b>${String(d.getDate()).padStart(2,'0')}.${String(d.getMonth()+1).padStart(2,'0')}</b><span>${wd}</span>${ds===today?'<em>HEUTE</em>':HOL[ds]?`<em>${esc(HOL[ds])}</em>`:''}</div>`;
+  h+=`<div class="row ${wd==='SA'?'sa':''} ${wd==='MI'?'mi':''} ${ds===today?'today':''} ${past?'past':''} ${HOL[ds]?'hol':''}" data-iso="${ds}"><div class="c date"><b>${String(d.getDate()).padStart(2,'0')}.${String(d.getMonth()+1).padStart(2,'0')}</b><span>${wd[0]+wd.slice(1).toLowerCase()}</span>${ds===today?'<em>Heute</em>':HOL[ds]?`<em>${esc(HOL[ds])}</em>`:''}</div>`;
   cols.forEach(c=>{
    if(c.of){const t=items.filter(e=>e.spalte===c.of&&(!openOnly||e.erledigt!=='1')).sort(tmSort);h+=`<div class="c zt" style="--cc:${c.c}" data-iso="${ds}" data-of="${c.of}" title="Klick = Uhrzeit wählen">${t.map(e=>`<button class="tchip${e.zeit?'':' empty'}" type="button" data-tm="${esc(e.id)}" title="Uhrzeit für: ${esc(e.text)}">${e.zeit?esc(e.zeit):'––:––'}</button>`).join('')}</div>`;return;}
    let its=items.filter(e=>e.spalte===c.k&&(!openOnly||e.erledigt!=='1'));if(/^t[12]$/.test(c.k))its=its.sort(tmSort);
