@@ -298,12 +298,12 @@ function vkLt(s){s=String(s||'').trim();if(/^sofort/i.test(s))return -1;if(/lage
 const vkRank=b=>b.a==='1'?5:b.b==='1'?4:b.m==='1'?3:b.an==='1'?2:1;
 // Sortieren: Klick auf Spaltenkopf (1. Klick aufsteigend, 2. Klick absteigend) oder Auswahl oben links; leere Felder immer unten
 const VKH=[['',''],['name','Kunde · Modell'],['form','Form','thf'],['gr','Größe','thf'],['dat','Vom Kunde<br>bestellt am','thb'],['lt','LT'],['notiz','Notiz','thn'],['firma','Anbieter'],['antrag','Antrag<br>gestellt am','thl'],['ok','Leasing<br>genehmigt','thl'],['lende','Leasing&shy;ende','thl'],['verk','Beratung'],['status','Status'],['','']];
-const VKSL=[['dat:-1','Neueste zuerst (frische Aufträge)'],['dat:1','Älteste zuerst (wartet am längsten)'],['lt:1','Nach Liefertermin'],['status:1','Nach Status']];
+const VKSL=[['dat:-1','Neueste zuerst (frische Aufträge)'],['dat:1','Älteste zuerst (wartet am längsten)'],['okf:1','Genehmigung fehlt zuerst'],['lt:1','Nach Liefertermin'],['status:1','Nach Status']];
 const tx=v=>{v=String(v||'').trim().toLowerCase();return v||null;},dt=v=>vkDate(v)||null;
 const VKS={name:b=>tx(b.name),form:b=>tx(b.form),gr:b=>{const m=String(b.gr||'').match(/\d+/);return m?(/"/.test(b.gr)?+m[0]*2.54:+m[0]):null;},dat:b=>dt(b.dat),lt:b=>b.lt?vkLt(b.lt):null,notiz:b=>tx([b.notiz,b.montieren].filter(Boolean).join(' ')),
- firma:b=>tx(FN[b.firma]||b.firma),antrag:b=>dt(b.antrag),ok:b=>dt(b.ok),lende:b=>dt(b.lende),verk:b=>b.verk?tx(U(b.verk).n):null,status:b=>vkRank(b)};
+ firma:b=>tx(FN[b.firma]||b.firma),antrag:b=>dt(b.antrag),ok:b=>dt(b.ok),lende:b=>dt(b.lende),verk:b=>b.verk?tx(U(b.verk).n):null,status:b=>vkRank(b),okf:b=>b.firma&&!b.ok?0:1};
 function vkCmp(a,b){const [k,d]=vkSort.split(':'),f=VKS[k]||VKS.dat,x=f(a),y=f(b);if(x==null&&y==null)return vkDate(a.dat)-vkDate(b.dat);if(x==null)return 1;if(y==null)return -1;
- const r=typeof x==='string'?x.localeCompare(y,'de'):x-y;return r*(+d||1)||vkDate(a.dat)-vkDate(b.dat);}
+ const r=typeof x==='string'?x.localeCompare(y,'de'):x-y;return r*(+d||1)||(k==='okf'?vkDate(b.dat)-vkDate(a.dat):vkDate(a.dat)-vkDate(b.dat));}
 function vkHead(){const [k,d]=vkSort.split(':');return VKH.map(([sk,n,c])=>sk?`<th class="${c||''} srt${sk===k?' on':''}" data-sk="${sk}" title="Klick = sortieren${sk===k?' (nochmal = umdrehen)':''}">${n}<i class="sar">${sk===k?(d==='-1'?'▼':'▲'):'⇅'}</i></th>`:'<th></th>').join('');}
 function vkSelSync(){const sel=$('vkSortSel'),hit=VKSL.find(x=>x[0]===vkSort);const lab=(VKH.find(x=>x[0]===vkSort.split(':')[0])||['','?'])[1].replace(/<br>|&shy;/g,' ');
  sel.innerHTML=VKSL.map(([v,n])=>`<option value="${v}">${n}</option>`).join('')+(hit?'':`<option value="${vkSort}">Spalte: ${lab} ${vkSort.endsWith(':-1')?'▼':'▲'}</option>`);sel.value=vkSort;}
