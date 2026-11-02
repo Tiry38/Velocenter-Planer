@@ -119,7 +119,7 @@ async function seedLeasing(){if(!ME||!ME.adm)return;try{await db.runTransaction(
   LSDEF.forEach(x=>t.set(db.collection('leasing').doc(x.k),Object.assign(clean(x),{ts:stamp()})));t.set(f,{leasing:true,rec:LSREC_VER},{merge:true});});}catch(e){fail(e);}}
 // Überarbeitete Leasing-Infos einmalig in die Datenbank übernehmen (eigenes Logo bleibt)
 let recDone=false;async function recLeasing(){if(recDone||!ME||!ME.adm||!L.length)return;recDone=true;try{await db.runTransaction(async t=>{const f=db.doc('meta/seed');const d=await t.get(f);if(d.exists&&(d.data().rec||0)>=LSREC_VER)return;
-  LSREC.forEach(x=>{const o=L.find(l=>l.id===x.k)||L.find(l=>l.k===x.k);if(!o)return;t.set(db.collection('leasing').doc(o.id),Object.assign(clean(x),{k:o.k,ts:stamp()}),{merge:true});});t.set(f,{rec:LSREC_VER},{merge:true});});}catch(e){recDone=false;fail(e);}}
+  LSREC.forEach(x=>{const o=L.find(l=>l.id===x.k)||L.find(l=>l.k===x.k);if(!o)return;const u=recMerge(o,x);u.ts=stamp();t.set(db.collection('leasing').doc(o.id),u,{merge:true});});t.set(f,{rec:LSREC_VER},{merge:true});});}catch(e){recDone=false;fail(e);}}
 async function rollover(){const t=TODAY();try{const go=await db.runTransaction(async tr=>{const f=db.doc('meta/rollover');const d=await tr.get(f);if(d.exists&&d.data().datum===t)return false;tr.set(f,{datum:t,von:ME.id});return true;});
   if(!go)return;const snap=await db.collection('planer').where('datum','<',t).get();const b=db.batch();let n=0;
   snap.forEach(d=>{const o=d.data();if((o.spalte==='ws'||o.spalte==='best')&&o.erledigt!=='1'){b.update(d.ref,{datum:t,ts:stamp(),tsVon:ME.id});n++;}});if(n)await b.commit();}catch(e){}}
@@ -303,7 +303,8 @@ $('bDone').addEventListener('click',e=>{bShowDone=!bShowDone;e.currentTarget.set
 /* ================= LEASING ================= */
 __LSDEF__
 __LSREC__
-const LSDEF=LS.map(x=>Object.assign({},x,LSREC.find(r=>r.k===x.k)||{}));
+function recMerge(o,x){const u={};['abh','ser'].forEach(k=>{const a=(o[k]||[]).slice();(x[k]||[]).forEach(t=>{if(!a.includes(t))a.push(t);});u[k]=a;});Object.entries(x.set||{}).forEach(([k,v])=>{if(o[k]===undefined||o[k]===null||o[k]===''||o[k]==='–')u[k]=v;});return u;}
+const LSDEF=LS.map(x=>{const r=LSREC.find(r=>r.k===x.k);return r?Object.assign({},x,recMerge(x,r)):Object.assign({},x);});
 __LOGOS__
 let lsQ='',lsDrei=false,lsM={abh:true,ser:true},lsEdit=-1;
 const hl=t=>{let x=esc(t);if(lsQ){const i=x.toLowerCase().indexOf(esc(lsQ));if(i>=0)x=x.slice(0,i)+'<mark>'+x.slice(i,i+esc(lsQ).length)+'</mark>'+x.slice(i+esc(lsQ).length);}return x;};
