@@ -580,3 +580,6 @@ body[data-v=kunden] .tt small{background:var(--rb);-webkit-background-clip:text;
 .vtab .ltbar{position:absolute;left:calc(-1*var(--lbx,0px));bottom:0;height:3px;width:var(--lbw,600px);pointer-events:none;z-index:1;border-radius:0 2px 2px 0;
  background:linear-gradient(90deg,var(--lc) 0 calc(var(--lp)*100%),rgba(255,255,255,.05) calc(var(--lp)*100%) 100%);
  filter:drop-shadow(0 0 4px color-mix(in srgb,var(--lc) 60%,transparent))}
+/* 1.6.8: Monat über der KW */
+.vtab td.kcell .ltm{display:block;width:0;white-space:nowrap;overflow:visible;font:600 10px/1.1 var(--body);color:#93C5FD;letter-spacing:.01em;margin-bottom:2px;text-shadow:0 0 6px rgba(147,197,253,.35)}
+.vtab td.kcell{min-width:100px;padding-right:14px}
