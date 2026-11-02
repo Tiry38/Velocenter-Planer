@@ -83,7 +83,7 @@ $('pwForm').addEventListener('submit',async e=>{e.preventDefault();clearTimeout(
  finally{go.disabled=false;}});
 $('switchUser').addEventListener('click',async()=>{relock();await auth.signOut();});
 async function start(me){if(ME&&ME.id===me.id)return;ME=me;const u=U(me.id);$('meName').textContent=u.n;$('meRole').textContent=me.adm?'Admin':'Team';$('meAv').style.setProperty('--uc',u.c);$('meAv').textContent=u.n[0];
- document.querySelector('.navbtn[data-v=tresor]').hidden=!me.adm;document.querySelector('.navbtn[data-v=notes]').hidden=!me.adm;$('whoOv').hidden=true;navForUser();startLive();show(ls.get('vc_view','planer'));toast('Hallo '+u.n+' 👋');}
+ document.querySelector('.navbtn[data-v=tresor]').hidden=true;/* Reiter Passwörter abgeschaltet (1.5.9, Tiry) – Daten bleiben unberührt */document.querySelector('.navbtn[data-v=notes]').hidden=!me.adm;$('whoOv').hidden=true;navForUser();startLive();show(ls.get('vc_view','planer'));toast('Hallo '+u.n+' 👋');}
 
 /* Passwort ändern / zurücksetzen */
 function dlg(html){$('dlgBox').innerHTML=html;$('dlg').hidden=false;const f=$('dlgBox').querySelector('input');if(f)f.focus();}
@@ -777,17 +777,17 @@ function euro(v){const t=String(v||'').trim();const m=t.match(/^(\d{1,3}(?:[.\s]
 // Lieferanten-Logo: eigenes (Feld „logo“) oder gleichnamige Marke aus ⚙ Einstellungen
 function sLogo(o){if(o.logo)return o.logo;const n=String(o.name||'').trim().toLowerCase();const b=n&&allBrands().find(x=>x.n.toLowerCase()===n);return b&&(BUSER.logos||{})[b.k]||'';}
 function rs(){const s1=($('sSearch').value||'').toLowerCase();
- stats('sStats',[{n:'Lieferanten',v:S.length,c:'#22D3EE',i:'truck'},{n:'mit Login hinterlegt',v:LOGINS?LOGINS.filter(l=>l.login||l.pass).length:S.filter(o=>o.hasLogin!==false).length,c:'#A78BFA',i:'key'},{n:'mit Mindestbestellwert',v:S.filter(o=>String(o.mbw||'').trim()).length,c:'#FBBF24',i:'sum'}]);
+ stats('sStats',[{n:'Lieferanten',v:S.length,c:'#22D3EE',i:'truck'},{n:'mit Mindestbestellwert',v:S.filter(o=>String(o.mbw||'').trim()).length,c:'#FBBF24',i:'sum'}]);
  const letters=[...new Set(S.map(o=>String(o.name||'').trim()[0]).filter(Boolean).map(c=>c.toUpperCase()))].sort();$('sAZ').innerHTML=['Alle',...letters].map(c=>`<button type="button" class="az${(c==='Alle'?!sAZ:sAZ===c)?' on':''}" data-az="${c==='Alle'?'':esc(c)}">${esc(c)}</button>`).join('');const lg=id=>LOGINS&&LOGINS.find(x=>x.id===id);
  $('sForm').innerHTML=sEdit?sFormH(sEdit==='new'?{id:'new'}:S.find(x=>x.id===sEdit)||{id:'new'}):'';
  if(document.querySelector('#sTab [contenteditable]:focus'))return;
- $('sTab').innerHTML='<thead><tr><th class="thlg">Logo</th><th>Lieferant</th><th>Kunden-Nr.</th><th>Mindestbestellwert</th><th>Login</th><th>Passwort</th><th>Notiz</th><th></th></tr></thead><tbody>'+
+ $('sTab').innerHTML='<thead><tr><th class="thlg">Logo</th><th>Lieferant</th><th>Kunden-Nr.</th><th>Mindestbestellwert</th><th>Notiz</th><th></th></tr></thead><tbody>'+
   S.filter(o=>(!s1||(o.name+' '+o.kdnr+' '+o.notiz).toLowerCase().includes(s1))&&(!sAZ||String(o.name||'').trim().toUpperCase().startsWith(sAZ))).sort((a,b)=>a.name.localeCompare(b.name)).map(o=>{const l=lg(o.id);
   const ce=(f,v,cls)=>`<td class="ce ${cls||''}" contenteditable="true" spellcheck="false" data-sid="${esc(o.id)}" data-f="${f}">${esc(v||'')}</td>`;
-  const lgo=sLogo(o);return `<tr><td class="slogo${lgo?' has':''}" data-slogo="${esc(o.id)}" title="${lgo?'Klick = Logo ersetzen':'Klick = Logo hochladen (wird automatisch freigestellt + geschärft)'}">${lgo?`<img src="${lgo}" alt="">`:'<span>＋ Logo</span>'}${o.logo?`<button class="sldel" type="button" data-sldel="${esc(o.id)}" title="Logo entfernen">×</button>`:''}</td>${ce('name',o.name,'b')}${ce('kdnr',o.kdnr)}${ce('mbw',euro(o.mbw),'mbw')}${LOGINS?`<td class="ce" contenteditable="true" spellcheck="false" data-sid="${esc(o.id)}" data-f="login">${esc(l?l.login:'')}</td>`:`<td>${o.hasLogin===false?'–':'<button class=\"lockb\" type=\"button\" data-unlock title=\"Mit Tresor-PIN entsperren\">🔒</button>'}</td>`}<td>${LOGINS?`<span class="pwm" data-sid="${esc(o.id)}">${l&&l.pass?'••••••':'–'}</span> <button class="mini" type="button" data-pedit="${esc(o.id)}">ändern</button>${l&&l.pass?` <button class="mini" type="button" data-cp="${esc(l.pass)}">kopieren</button>`:''}`:'<button class=\"lockb\" type=\"button\" data-unlock title=\"Mit Tresor-PIN entsperren\">🔒</button>'}</td>${ce('notiz',o.notiz,'wrap')}<td>${LOGINS&&l&&l.login?`<button class="mini" type="button" data-cp="${esc(l.login)}" title="Login kopieren">Login ⧉</button> `:''}<button class="mini" type="button" data-sedit="${esc(o.id)}" title="Formular / Löschen">✎</button></td></tr>`;}).join('')+'</tbody>';
- $('sUnlock').textContent=LOGINS?'🔒 Logins sperren':'🔓 Logins zeigen (PIN)';}
+  const lgo=sLogo(o);return `<tr><td class="slogo${lgo?' has':''}" data-slogo="${esc(o.id)}" title="${lgo?'Klick = Logo ersetzen':'Klick = Logo hochladen (wird automatisch freigestellt + geschärft)'}">${lgo?`<img src="${lgo}" alt="">`:'<span>＋ Logo</span>'}${o.logo?`<button class="sldel" type="button" data-sldel="${esc(o.id)}" title="Logo entfernen">×</button>`:''}</td>${ce('name',o.name,'b')}${ce('kdnr',o.kdnr)}${ce('mbw',euro(o.mbw),'mbw')}${ce('notiz',o.notiz,'wrap')}<td><button class="mini" type="button" data-sedit="${esc(o.id)}" title="Formular / Löschen">✎</button></td></tr>`;}).join('')+'</tbody>';
+ }
 function sFormH(o){const l=LOGINS&&LOGINS.find(x=>x.id===o.id)||{};return `<form class="edf card" data-sf="${esc(o.id)}" autocomplete="off"><b>${o.id==='new'?'Neuer Lieferant':'Lieferant bearbeiten'}</b><div class="g2">${SF.map(([k,n])=>`<label>${n}<input name="${k}" value="${esc(o[k]||'')}"${k==='name'?' required':''}></label>`).join('')}
- ${LOGINS?`<label>Login<input name="login" value="${esc(l.login||'')}"></label><label>Passwort<input name="pass" value="${esc(l.pass||'')}"></label>`:'<p class="hint">Login/Passwort ändern: erst „Logins zeigen (PIN)“.</p>'}</div>
+ </div>
  <div class="acts"><button class="btn red" type="submit">Speichern</button><button class="btn" type="button" data-scancel>Abbrechen</button>${o.id!=='new'?`<button class="btn del" type="button" data-sdel="${esc(o.id)}">Löschen</button>`:''}</div></form>`;}
 $('v-lief').addEventListener('click',async e=>{const cp=e.target.closest('[data-cp]');if(cp){try{await navigator.clipboard.writeText(cp.dataset.cp);toast('Kopiert');}catch(_){toast('Kopieren nicht erlaubt');}arm();return;}
  const ed=e.target.closest('[data-sedit]');if(ed){sEdit=ed.dataset.sedit;rs();$('sForm').scrollIntoView({block:'start'});return;}
@@ -808,7 +808,7 @@ $('sTab').addEventListener('click',e=>{if(e.target.closest('[data-unlock]')){pin
  const sl=e.target.closest('[data-slogo]');if(sl){const o=S.find(x=>x.id===sl.dataset.slogo);if(!o)return;const inp=document.createElement('input');inp.type='file';inp.accept='image/*';
   inp.addEventListener('change',async()=>{const f=inp.files[0];if(!f)return;toast('Logo wird aufbereitet …');try{const u=await procLogo(f,64);if(u.length>200000)throw new Error('Logo zu groß');const n=Object.assign({},o,{logo:u});delete n.hasLogin;S[S.indexOf(o)]=Object.assign({},n,{hasLogin:o.hasLogin});await save('S',n);rs();toast('Logo gespeichert – '+(o.name||''));}catch(err){toast(err.message||String(err));}});inp.click();return;}const b=e.target.closest('[data-pedit]');if(!b)return;const id=b.dataset.pedit,l=(LOGINS||[]).find(x=>x.id===id)||{};const sp=document.querySelector(`.pwm[data-sid="${id}"]`);if(!sp)return;sp.textContent=l.pass||'';sp.contentEditable='true';sp.dataset.f='pass';sp.classList.add('ed');sp.focus();arm();});
 $('sAdd').addEventListener('click',()=>{sEdit='new';rs();const f=document.querySelector('[data-sf=new] input');if(f)f.focus();});
-$('sUnlock').addEventListener('click',()=>{if(LOGINS){relock();return;}pinDlg();});
+
 $('meImport').addEventListener('click',importDlg);
 $('meFull').addEventListener('click',()=>{try{if(document.fullscreenElement)document.exitFullscreen();else document.documentElement.requestFullscreen();}catch(_){toast('Vollbild: F11 drücken');}});
 
