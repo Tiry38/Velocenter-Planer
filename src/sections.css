@@ -201,3 +201,5 @@ body.navmini #switchUser{font-size:0;padding:6px 8px;margin:0}body.navmini #swit
 .zj li{border-left:3px solid var(--ok)}.zn li{border-left:3px solid var(--red)}
 .zubd .acts{margin-top:14px}
 @media (max-width:720px){.zcols{grid-template-columns:1fr}.qa{grid-template-columns:1fr}.qa dt{padding-bottom:0}}
+.lctop{display:flex;justify-content:flex-end;margin:-4px -2px -6px}
+.lctop .edbtn{margin-left:0}
