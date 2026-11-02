@@ -451,6 +451,8 @@ body.navmini #switchUser{font-size:0;padding:6px 8px;margin:0}body.navmini #swit
 .edit.din{width:132px;padding:3px 4px;font:700 12px var(--mono);color-scheme:dark;background:var(--panel2);color:#fff;border:1px solid var(--cyan);border-radius:7px}
 .vtab thead th:nth-child(6){color:#C4B5FD}.vtab thead th:nth-child(7){color:#34D399}.vtab thead th:nth-child(8){color:#67E8F9}
 
+.vtab td.vnote{font-family:var(--body);font-size:12.5px;color:#FDE68A;min-width:180px;max-width:280px;white-space:normal}.vtab td.vnote:empty::before{content:"📝 –";color:var(--muted)}.vtab thead th.thn{color:#FDE68A}
+
 [hidden]{display:none!important}
 #sTab td.b{font-weight:700}#sTab .pwm.ed{outline:none;padding:2px 6px;border-radius:6px;font-family:var(--mono)}#sTab td{vertical-align:top}
 #sTab td.ce,#ltab td.ce{cursor:text;border-bottom:1px dashed #2A3446;outline:none}#sTab td.ce:focus,#sTab .pwm.ed:focus,#ltab td.ce:focus{box-shadow:inset 0 0 0 2px var(--cyan);background:var(--panel2)}#ltab td.tg{cursor:pointer;user-select:none}#sTab td.ce:hover,#ltab td.tg:hover,#ltab td.ce:hover{background:rgba(255,255,255,.04)}#ltab td.tg:focus-visible{outline:2px solid var(--cyan)}
@@ -579,7 +581,7 @@ body.navmini #switchUser{font-size:0;padding:6px 8px;margin:0}body.navmini #swit
 <script>
 const FB_CONFIG={apiKey:"AIzaSyC_uZPvc5rJETwlS4JbfCoTkkE4ckjtp0M",authDomain:"velocenter-planer.firebaseapp.com",projectId:"velocenter-planer",storageBucket:"velocenter-planer.firebasestorage.app",messagingSenderId:"1018330488700",appId:"1:1018330488700:web:262a4d1660353e6fde8ef9"};
 /* ================= Velocenter Werkstatt-Cockpit – Oberfläche ================= */
-const CLIENT_VERSION='1.0.8';
+const CLIENT_VERSION='1.0.9';
 const USERS=[{id:'kevin',n:'Kevin',c:'#E2232D'},{id:'stefan',n:'Stefan',c:'#F59E0B'},{id:'martina',n:'Martina',c:'#EC4899'},{id:'sascha',n:'Sascha',c:'#22D3EE'},{id:'rene',n:'René',c:'#34D399'}];
 const U=id=>USERS.find(u=>u.id===id)||{n:'',c:'#64748B',id:''};
 const $=id=>document.getElementById(id);
@@ -774,7 +776,7 @@ function stats(el,list,active){$(el).innerHTML=list.map(x=>`<button class="stat$
 /* ================= VERKAUF ================= */
 let FN={BL:'Bikeleasing',CB:'Company Bike',KM:'Kazenmaier',BB:'Businessbike',JR:'JobRad',DD:'Deutsche Dienstrad',LB:'Lease a Bike',RD:'RIDE',ER:'Eurorad'};
 let vkEdit=null,vkShowDone=false,vkF='',vkView=ls.get('vc_vkview','liste'),vkSort=ls.get('vc_vksort','neu');
-const VF=[['dat','Verkauft am'],['modell','Modell'],['name','Kunde'],['lt','Liefertermin'],['antrag','Antrag'],['ok','O.K.'],['lende','Leasing-Ende'],['montieren','Montieren'],['notiz','Notiz']];
+const VF=[['dat','Verkauft am'],['modell','Modell'],['name','Kunde'],['lt','Liefertermin'],['antrag','Antrag'],['ok','O.K.'],['lende','Leasing-Ende'],['notiz','Notiz']];
 function rv(){const s1=($('vkSearch').value||'').toLowerCase();
  const open=V.filter(b=>b.a!=='1'),F={nm:b=>b.a!=='1'&&b.m!=='1'&&b.b!=='1',mw:b=>b.a!=='1'&&b.m==='1'&&b.b!=='1',ok:b=>b.a!=='1'&&b.b==='1',lk:b=>b.a!=='1'&&b.firma&&!b.ok};
  stats('vkStats',[{k:'nm',n:'Noch montieren',v:V.filter(F.nm).length,c:'#FBBF24',i:'wrench'},{k:'mw',n:'Montiert · wartet auf O.K.',v:V.filter(F.mw).length,c:'#60A5FA',i:'clock'},{k:'ok',n:'O.K. · abholbereit',v:V.filter(F.ok).length,c:'#34D399',i:'check'},{k:'lk',n:'Leasing ohne O.K.',v:V.filter(F.lk).length,c:'#F87171',i:'alert'}],vkF);
@@ -783,7 +785,7 @@ function rv(){const s1=($('vkSearch').value||'').toLowerCase();
  document.querySelectorAll('#vkViewSeg .btn').forEach(x=>x.setAttribute('aria-pressed',x.dataset.vv===vkView));$('vkSortSel').value=vkSort;
  const form=vkEdit==='new'?vkForm({id:'new'}):vkEdit&&V.find(x=>x.id===vkEdit)?vkForm(V.find(x=>x.id===vkEdit)):'';
  if(document.querySelector('#cards [contenteditable]:focus, #cards .din'))return;
- if(vkView==='liste'){$('cards').className='vlist';$('cards').innerHTML=form+(list.length?`<div class="tbl vtab"><table><thead><tr><th></th><th>Kunde · Modell</th><th>Leasing</th><th>Verkauft</th><th>LT</th><th>Antrag</th><th>O.K.</th><th>L.-Ende</th><th>Montieren</th><th>Beratung</th><th>Status</th><th></th></tr></thead><tbody>${list.map(vkRow).join('')}</tbody></table></div>`:'<p class="empty">Keine Räder in dieser Auswahl.</p>');}
+ if(vkView==='liste'){$('cards').className='vlist';$('cards').innerHTML=form+(list.length?`<div class="tbl vtab"><table><thead><tr><th></th><th>Kunde · Modell</th><th>Leasing</th><th>Verkauft</th><th>LT</th><th>Antrag</th><th>O.K.</th><th>L.-Ende</th><th class="thn">Notiz</th><th>Beratung</th><th>Status</th><th></th></tr></thead><tbody>${list.map(vkRow).join('')}</tbody></table></div>`:'<p class="empty">Keine Räder in dieser Auswahl.</p>');}
  else{$('cards').className='cards';$('cards').innerHTML=form+(list.filter(b=>b.id!==vkEdit).map(vkCard).join('')||'<p class="empty">Keine Räder in dieser Auswahl.</p>');}
  $('nOffen').textContent=V.filter(b=>b.a!=='1').length;}
 /* Sortierung: Datum „17.8.“ / „29.09.“ / LT „38“ „KW 38“ „Lager“ */
@@ -797,9 +799,9 @@ function vkRow(b){const st=b.a==='1'?'a':b.b==='1'?'b':b.m==='1'?'m':'o';const c
  const dc=(f,v,cls)=>`<td class="dcell ${cls}" data-vid="${esc(b.id)}" data-df="${f}" title="Klick = Datum wählen" tabindex="0">${esc(v||'')}</td>`;
  return `<tr class="vr st-${st}">
  <td class="sdot" title="${{o:'offen',m:'montiert',b:'O.K. – abholbereit',a:'abgeholt'}[st]}"><i></i></td>
- <td class="who2"><b>${esc(b.name||'–')}</b><small>🚲 ${esc(b.modell||'')}</small>${b.notiz?`<small class="nt" title="${esc(b.notiz)}">📝 ${esc(b.notiz)}</small>`:''}</td>
+ <td class="who2"><b>${esc(b.name||'–')}</b><small>🚲 ${esc(b.modell||'')}</small></td>
  <td><div class="lcell">${leasLogo(b.firma)}<select class="lsel mini2${b.firma?'':' off'}" data-vi="${esc(b.id)}" aria-label="Leasing-Firma"><option value="">–</option>${Object.entries(FN).map(([k,n])=>`<option value="${esc(k)}"${b.firma===k?' selected':''}>${esc(k)} · ${esc(n)}</option>`).join('')}${b.firma&&!FN[b.firma]?`<option selected>${esc(b.firma)}</option>`:''}</select></div></td>
- ${ce('dat',b.dat)}${ce('lt',b.lt,ltHot(b.lt)&&b.a!=='1'?'hot':'')}${b.firma?dc('antrag',b.antrag,'d-antrag'):'<td class="na">–</td>'}${b.firma?dc('ok',b.ok,b.ok?'d-ok':'d-ok miss'):'<td class="na">–</td>'}${b.firma?dc('lende',b.lende,'d-lende'):'<td class="na">–</td>'}${ce('montieren',b.montieren)}
+ ${ce('dat',b.dat)}${ce('lt',b.lt,ltHot(b.lt)&&b.a!=='1'?'hot':'')}${b.firma?dc('antrag',b.antrag,'d-antrag'):'<td class="na">–</td>'}${b.firma?dc('ok',b.ok,b.ok?'d-ok':'d-ok miss'):'<td class="na">–</td>'}${b.firma?dc('lende',b.lende,'d-lende'):'<td class="na">–</td>'}${ce('notiz',[b.notiz,b.montieren?'Montieren: '+b.montieren:''].filter(Boolean).join(' · '),'vnote')}
  <td><select class="ssel mini2" data-vi="${esc(b.id)}" aria-label="Verkauf/Beratung"><option value="">–</option>${USERS.map(u=>`<option value="${u.id}"${b.verk===u.id?' selected':''}>${esc(u.n)}</option>`).join('')}</select></td>
  <td class="stb"><button class="st m" type="button" aria-pressed="${b.m==='1'}" data-vi="${esc(b.id)}" data-k="m" title="${b.mVon?'montiert von '+esc(U(b.mVon).n)+' '+esc(b.mAm):'montiert'}">🔧</button><button class="st b" type="button" aria-pressed="${b.b==='1'}" data-vi="${esc(b.id)}" data-k="b" title="${b.bVon?'O.K. von '+esc(U(b.bVon).n)+' '+esc(b.bAm):'O.K.'}">O.K.</button><button class="st a" type="button" aria-pressed="${b.a==='1'}" data-vi="${esc(b.id)}" data-k="a" title="${b.aVon?'abgeholt von '+esc(U(b.aVon).n)+' '+esc(b.aAm):'abgeholt'}">✓</button></td>
  <td><button class="mini" type="button" data-vedit="${esc(b.id)}" title="Alle Felder / Löschen">✎</button></td></tr>`;}
@@ -808,7 +810,7 @@ function vkCard(b){const L1=!!b.firma,st=b.a==='1'?'abgeholt':b.b==='1'?'bereit'
  return `<article class="bike" data-s="${st}"><div class="h"><div style="min-width:0"><div class="name">${esc(b.name||'–')}</div><div class="model">🚲 ${esc(b.modell)}</div></div>${b.firma?`<div class="clogo">${leasLogo(b.firma)}</div>`:''}
  <select class="lsel${L1?'':' off'}" data-vi="${esc(b.id)}" aria-label="Leasing-Firma wählen"><option value="">ohne Leasing</option>${Object.entries(FN).map(([k,n])=>`<option value="${esc(k)}"${b.firma===k?' selected':''}>${esc(k)} · ${esc(n)}</option>`).join('')}${b.firma&&!FN[b.firma]?`<option selected>${esc(b.firma)}</option>`:''}</select></div>
  <div class="seller"><span>Verkauf / Beratung</span><select class="ssel" data-vi="${esc(b.id)}" aria-label="Verkauft von"><option value="">– wählen –</option>${USERS.map(u=>`<option value="${u.id}"${b.verk===u.id?' selected':''}>${esc(u.n)}</option>`).join('')}</select>${av(b.verk,'verkauft von')}</div>
- <div class="meta"><div><small>Verkauft</small><b>${esc(b.dat||'–')}</b></div><div><small>LT</small><b>${esc(b.lt||'–')}</b></div><div><small>Montieren</small><b>${esc(b.montieren||'–')}</b></div>
+ <div class="meta"><div><small>Verkauft</small><b>${esc(b.dat||'–')}</b></div><div><small>LT</small><b>${esc(b.lt||'–')}</b></div>
  ${L1?`<div><small>Antrag</small><b>${esc(b.antrag||'–')}</b></div><div><small>O.K.</small><b style="color:${b.ok?'var(--ok)':'var(--warn)'}">${esc(b.ok||'fehlt')}</b></div><div><small>L.-Ende</small><b>${esc(b.lende||'–')}</b></div>`:''}</div>
  <div><div class="flow">${steps.map(x=>`<i class="${x[1]?'on':''}"></i>`).join('')}</div><div class="flowl">${steps.map(x=>`<span>${x[0]}</span>`).join('')}</div></div>
  ${b.notiz?`<div class="note">📝 ${esc(b.notiz)}</div>`:''}
@@ -834,7 +836,7 @@ function dateEdit(td){const b=V.find(x=>x.id===td.dataset.vid),f=td.dataset.df;i
  i.addEventListener('change',()=>{if(i.value)fin(true);});i.addEventListener('keydown',k=>{if(k.key==='Enter'){k.preventDefault();fin(true);}if(k.key==='Escape')fin(false);});i.addEventListener('blur',()=>setTimeout(()=>fin(false),200));}
 $('cards').addEventListener('click',e=>{const td=e.target.closest('td.dcell');if(td&&!td.querySelector('input'))dateEdit(td);});
 $('cards').addEventListener('keydown',e=>{const td=e.target.closest('td.dcell');if(td&&e.key==='Enter'&&!td.querySelector('input')){e.preventDefault();dateEdit(td);return;}const c=e.target.closest('[contenteditable]');if(c&&e.key==='Enter'){e.preventDefault();c.blur();}if(c&&e.key==='Escape'){c.blur();rv();}});
-$('cards').addEventListener('focusout',e=>{const c=e.target.closest('td[contenteditable]');if(!c)return;const b=V.find(x=>x.id===c.dataset.vid),f=c.dataset.f,v=c.textContent.trim();if(!b||v===(b[f]||''))return;putV(Object.assign({},b,{[f]:v}));toast('Gespeichert');});
+$('cards').addEventListener('focusout',e=>{const c=e.target.closest('td[contenteditable]');if(!c)return;const b=V.find(x=>x.id===c.dataset.vid),f=c.dataset.f,v=c.textContent.trim();const cur=f==='notiz'?[b&&b.notiz,b&&b.montieren?'Montieren: '+b.montieren:''].filter(Boolean).join(' · '):(b&&b[f]||'');if(!b||v===cur)return;putV(Object.assign({},b,{[f]:v},f==='notiz'?{montieren:''}:{}));toast('Gespeichert');});
 $('vkStats').addEventListener('click',e=>{const b=e.target.closest('[data-sf]');if(!b)return;vkF=vkF===b.dataset.sf?'':b.dataset.sf;rv();});
 $('vkAdd').addEventListener('click',()=>{vkEdit='new';rv();$('cards').scrollIntoView({block:'start'});const f=document.querySelector('[data-vf=new] input');if(f)f.focus();});
 $('vkDone').addEventListener('click',e=>{vkShowDone=!vkShowDone;e.currentTarget.setAttribute('aria-pressed',vkShowDone);rv();});
