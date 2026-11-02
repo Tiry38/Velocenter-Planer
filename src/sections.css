@@ -94,23 +94,17 @@ td.r{text-align:right}.amt{color:color-mix(in srgb,var(--ac) 50%,#fff);font-fami
 
 /* ===== Einklappbare Navigation ===== */
 .app{transition:grid-template-columns .25s ease}
-.navtog{all:unset;cursor:pointer;position:fixed;left:206px;top:50%;transform:translateY(-50%);z-index:30;width:26px;height:52px;border-radius:0 12px 12px 0;display:grid;place-items:center;
- background:linear-gradient(180deg,#1a2130,#0e121a);border:1px solid #2A3446;border-left:0;box-shadow:4px 0 14px -6px rgba(226,35,45,.6);transition:left .25s ease,background .2s}
-.navtog:hover{background:linear-gradient(180deg,var(--red),#7f1d24)}.navtog:focus-visible{outline:2px solid var(--cyan)}
-.navtog svg{width:16px;height:16px;fill:none;stroke:#fff;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round;transition:transform .25s}
 body.navmini .app{grid-template-columns:84px 1fr}
-body.navmini .navtog{left:70px}
-body.navmini .navtog svg{transform:rotate(180deg)}
 body.navmini nav{padding:14px 10px;align-items:center}
 body.navmini .brand{padding:6px 0 12px}
 body.navmini .brand{width:64px;margin:0 auto 6px;align-self:center}body.navmini .brand img{width:58px;margin:0 auto}
-body.navmini .brand .tag,body.navmini .brand .halo,body.navmini .navbtn .lbl,body.navmini #meFull,body.navmini .secure,body.navmini .me>div{display:none!important}
+body.navmini .brand .tag,body.navmini .brand .halo,body.navmini .navbtn .lbl,body.navmini .secure,body.navmini .me>div{display:none!important}
 body.navmini .navbtn{padding:6px;justify-content:center;width:52px;box-sizing:border-box}
 body.navmini .navbtn[aria-current="true"]::before{left:-10px}
 body.navmini .navbtn .n{position:absolute;top:0;right:-2px;margin:0;font-size:9.5px;padding:0 5px}
 body.navmini .navsep{width:40px;margin:8px auto}
-body.navmini .me{flex-direction:column;gap:6px;padding:8px 6px;width:60px;box-sizing:border-box}
-body.navmini #switchUser{font-size:0;padding:6px 8px;margin:0}body.navmini #switchUser::before{content:"⇄";font-size:15px}
+
+
 @media (max-width:720px){.navtog{display:none}body.navmini .app{grid-template-columns:1fr}}
 
 .impbox{max-width:520px;margin:14px auto 0;padding:16px 18px;border-radius:18px;border:1px dashed color-mix(in srgb,var(--ac) 45%,var(--line));background:var(--panel);text-align:center}.impbox p{color:#C7CEDA;font-size:13px;margin:6px 0 12px}
@@ -240,7 +234,6 @@ body.navmini #switchUser{font-size:0;padding:6px 8px;margin:0}body.navmini #swit
 .vtab thead th.hL .btn{font:600 12.5px var(--body)}
 .vtab thead th.hR{padding-right:12px}
 /* ⚙ Einstellungen · Markenlogos */
-.me .lnk{display:block}
 .blist{display:flex;flex-direction:column;gap:8px;margin:10px 0}
 .brow{display:grid;grid-template-columns:190px 1fr auto;gap:12px;align-items:center;padding:10px 12px;border-radius:12px;background:var(--panel2);border:1px solid var(--line)}
 .bprev{height:58px;border-radius:9px;background:#070a10;border:1px solid #1f2735;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:4px 8px}
@@ -257,12 +250,27 @@ body.navmini #switchUser{font-size:0;padding:6px 8px;margin:0}body.navmini #swit
 body{background-color:#0A0C10;background-image:radial-gradient(760px 420px at 0% 0%,rgba(70,95,190,.26),transparent 70%),radial-gradient(820px 440px at 100% 0%,rgba(190,30,45,.22),transparent 70%),radial-gradient(900px 520px at 100% 100%,rgba(120,80,200,.16),transparent 70%),radial-gradient(820px 520px at 0% 100%,rgba(90,60,140,.10),transparent 70%);background-attachment:fixed}
 /* Navi: feines Karomuster, unten links roter Schimmer, oben blauer Hauch */
 nav{background-color:#101116;background-image:radial-gradient(300px 340px at 0% 100%,rgba(160,32,52,.50),transparent 72%),radial-gradient(260px 200px at 100% 0%,rgba(60,80,150,.22),transparent 70%),repeating-conic-gradient(rgba(255,255,255,.03) 0 25%,transparent 0 50%);background-size:auto,auto,14px 14px;border-right:1px solid rgba(70,90,150,.30)}
-/* Ein-/Ausklappen: Knopf unten in der Navi neben „Vollbild“ (statt Lasche am Rand) */
-.metools{display:flex;gap:6px;align-items:stretch;margin-top:6px}
-.navtog{all:unset;cursor:pointer;position:static!important;transform:none!important;flex:none;width:38px;height:auto;min-height:26px;border-radius:8px;display:grid;place-items:center;background:var(--panel);border:1px solid var(--line);box-shadow:none;transition:background .2s,border-color .2s,box-shadow .2s}
-.navtog:hover{background:linear-gradient(180deg,rgba(226,35,45,.9),#7f1d24);border-color:rgba(248,113,113,.7);box-shadow:0 0 14px rgba(226,35,45,.45)}
-.navtog:focus-visible{outline:2px solid var(--cyan);outline-offset:2px}
-.navtog svg{width:16px;height:16px;fill:none;stroke:#E2E8F0;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round;transition:transform .25s}
-body.navmini .metools{justify-content:center;width:52px;margin:6px auto 0}
-body.navmini .navtog{width:52px;min-height:30px;left:auto!important}
+/* Profil + Werkzeuge unten in der Navi (modern: Glas-Karte, Avatar-Kachel, Symbol-Leiste) */
+nav{overflow-x:hidden}
+.me{position:relative;display:flex;align-items:center;gap:11px;margin-top:auto;padding:11px 10px 11px 11px;border-radius:18px;background:linear-gradient(145deg,rgba(255,255,255,.075),rgba(255,255,255,.02));border:1px solid rgba(255,255,255,.09);box-shadow:inset 0 1px 0 rgba(255,255,255,.07),0 10px 28px -12px rgba(0,0,0,.7);backdrop-filter:blur(10px)}
+.me .av.big{width:40px;height:40px;border-radius:13px;font:800 17px/1 Outfit,var(--display),sans-serif;color:#fff;background:linear-gradient(145deg,color-mix(in srgb,var(--uc) 88%,#fff 12%),color-mix(in srgb,var(--uc) 70%,#000 30%));box-shadow:0 0 0 1px rgba(255,255,255,.14) inset,0 6px 18px -4px color-mix(in srgb,var(--uc) 70%,transparent)}
+.me .mi{flex:1;min-width:0}
+.me .mi b{display:block;font:700 15px/1.15 Outfit,var(--display),sans-serif;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.me .mi small span{overflow:hidden;text-overflow:ellipsis}.me .mi small{overflow:hidden;display:flex;align-items:center;gap:6px;margin-top:3px;font:500 11.5px/1 Outfit,var(--body),sans-serif;letter-spacing:0;text-transform:none;color:#9AA4B6;white-space:nowrap}
+.me .mi small i{width:7px;height:7px;border-radius:50%;background:#34D399;box-shadow:0 0 8px #34D399;flex:none}
+.mico,.tico{all:unset;cursor:pointer;display:grid;place-items:center;box-sizing:border-box;transition:background .2s,border-color .2s,box-shadow .2s,transform .15s,color .2s;color:#CBD5E1}
+.mico svg,.tico svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;transition:transform .3s}
+.mico{width:34px;height:34px;border-radius:11px;flex:none}
+.mico:hover{background:rgba(255,255,255,.08);color:#fff}.mico:hover svg{transform:rotate(60deg)}
+.metools{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:8px;padding:5px;border-radius:15px;background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.07)}
+.tico{height:34px;border-radius:10px;position:static!important;width:100%;justify-self:stretch;transform:none!important;background:transparent;border:0;box-shadow:none}
+.tico:hover{background:rgba(255,255,255,.08);color:#fff;transform:translateY(-1px)!important}
+.tico.navtog:hover{background:linear-gradient(180deg,rgba(226,35,45,.95),#8b1c25);box-shadow:0 0 16px rgba(226,35,45,.45);color:#fff}
+#switchUser:hover{background:rgba(96,165,250,.16);color:#BFDBFE}
+.mico:focus-visible,.tico:focus-visible{outline:2px solid var(--cyan);outline-offset:1px}
+body.navmini .me{flex-direction:column;gap:8px;padding:9px 6px;width:60px;align-self:center}
+body.navmini .me .mi{display:none}body.navmini .mico{width:32px;height:28px}
+body.navmini .metools{grid-template-columns:1fr 1fr;width:64px;align-self:center;gap:3px;padding:4px}
+body.navmini .tico{height:28px}
+body.navmini .navtog svg{transform:rotate(180deg)}
 body.navmini .navtog svg{transform:rotate(180deg)}

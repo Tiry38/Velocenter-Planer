@@ -82,7 +82,7 @@ $('pwForm').addEventListener('submit',async e=>{e.preventDefault();clearTimeout(
  catch(err){const c=err.code||'';if(silent&&/password|credential|user-not-found/.test(c)){$('pwErr').textContent='';return;}pwErr(c==='auth/too-many-requests'?'Zu viele Versuche – bitte kurz warten.':/password|credential|user-not-found/.test(c)?'Passwort falsch.':c==='auth/network-request-failed'?'Keine Internetverbindung.':err.message);}
  finally{go.disabled=false;}});
 $('switchUser').addEventListener('click',async()=>{relock();await auth.signOut();});
-async function start(me){if(ME&&ME.id===me.id)return;ME=me;const u=U(me.id);$('meName').textContent=u.n;$('meAv').style.setProperty('--uc',u.c);$('meAv').textContent=u.n[0];
+async function start(me){if(ME&&ME.id===me.id)return;ME=me;const u=U(me.id);$('meName').textContent=u.n;$('meRole').textContent=me.adm?'Admin':'Team';$('meAv').style.setProperty('--uc',u.c);$('meAv').textContent=u.n[0];
  document.querySelector('.navbtn[data-v=tresor]').hidden=!me.adm;$('whoOv').hidden=true;navForUser();startLive();show(ls.get('vc_view','planer'));toast('Hallo '+u.n+' 👋');}
 
 /* Passwort ändern / zurücksetzen */
