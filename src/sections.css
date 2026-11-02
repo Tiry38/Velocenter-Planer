@@ -104,7 +104,7 @@ body.navmini .navtog svg{transform:rotate(180deg)}
 body.navmini nav{padding:14px 10px;align-items:center}
 body.navmini .brand{padding:6px 0 12px}
 body.navmini .brand{width:64px;margin:0 auto 6px;align-self:center}body.navmini .brand img{width:58px;margin:0 auto}
-body.navmini .brand .tag,body.navmini .brand .halo,body.navmini .navbtn .lbl,body.navmini .metools,body.navmini .secure,body.navmini .me>div{display:none!important}
+body.navmini .brand .tag,body.navmini .brand .halo,body.navmini .navbtn .lbl,body.navmini #meFull,body.navmini .secure,body.navmini .me>div{display:none!important}
 body.navmini .navbtn{padding:6px;justify-content:center;width:52px;box-sizing:border-box}
 body.navmini .navbtn[aria-current="true"]::before{left:-10px}
 body.navmini .navbtn .n{position:absolute;top:0;right:-2px;margin:0;font-size:9.5px;padding:0 5px}
@@ -257,3 +257,12 @@ body.navmini #switchUser{font-size:0;padding:6px 8px;margin:0}body.navmini #swit
 body{background-color:#0A0C10;background-image:radial-gradient(760px 420px at 0% 0%,rgba(70,95,190,.26),transparent 70%),radial-gradient(820px 440px at 100% 0%,rgba(190,30,45,.22),transparent 70%),radial-gradient(900px 520px at 100% 100%,rgba(120,80,200,.16),transparent 70%),radial-gradient(820px 520px at 0% 100%,rgba(90,60,140,.10),transparent 70%);background-attachment:fixed}
 /* Navi: feines Karomuster, unten links roter Schimmer, oben blauer Hauch */
 nav{background-color:#101116;background-image:radial-gradient(300px 340px at 0% 100%,rgba(160,32,52,.50),transparent 72%),radial-gradient(260px 200px at 100% 0%,rgba(60,80,150,.22),transparent 70%),repeating-conic-gradient(rgba(255,255,255,.03) 0 25%,transparent 0 50%);background-size:auto,auto,14px 14px;border-right:1px solid rgba(70,90,150,.30)}
+/* Ein-/Ausklappen: Knopf unten in der Navi neben „Vollbild“ (statt Lasche am Rand) */
+.metools{display:flex;gap:6px;align-items:stretch;margin-top:6px}
+.navtog{all:unset;cursor:pointer;position:static!important;transform:none!important;flex:none;width:38px;height:auto;min-height:26px;border-radius:8px;display:grid;place-items:center;background:var(--panel);border:1px solid var(--line);box-shadow:none;transition:background .2s,border-color .2s,box-shadow .2s}
+.navtog:hover{background:linear-gradient(180deg,rgba(226,35,45,.9),#7f1d24);border-color:rgba(248,113,113,.7);box-shadow:0 0 14px rgba(226,35,45,.45)}
+.navtog:focus-visible{outline:2px solid var(--cyan);outline-offset:2px}
+.navtog svg{width:16px;height:16px;fill:none;stroke:#E2E8F0;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round;transition:transform .25s}
+body.navmini .metools{justify-content:center;width:52px;margin:6px auto 0}
+body.navmini .navtog{width:52px;min-height:30px;left:auto!important}
+body.navmini .navtog svg{transform:rotate(180deg)}
