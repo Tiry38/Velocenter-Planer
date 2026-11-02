@@ -502,7 +502,7 @@ body.navmini #switchUser{font-size:0;padding:6px 8px;margin:0}body.navmini #swit
     </div>
     <div class="board" id="board"><div class="grid" id="grid"></div></div>
     <div class="more"><button class="btn" type="button" id="moreWeeks">+ 8 Wochen weiter anzeigen</button></div>
-    <p class="hint">Klick auf <kbd>+</kbd> trägt ein (bei Terminen Uhrzeit vorne: „10:30 Abholung Müller“) · Eintrag anklicken = bearbeiten · Kästchen = erledigt · <kbd>×</kbd> = löschen (mit Rückgängig) · Einträge auf einen anderen Tag ziehen · Offenes aus Werkstatt &amp; Bestellungen wandert jeden Tag automatisch auf heute</p>
+    <p class="hint">Klick auf <kbd>+</kbd> trägt ein (bei Terminen Uhrzeit vorne: „10:30 Abholung Müller“) · Eintrag anklicken = bearbeiten · <kbd>×</kbd> = löschen (mit Rückgängig) · Einträge auf einen anderen Tag ziehen · Offenes aus Werkstatt &amp; Bestellungen wandert jeden Tag automatisch auf heute</p>
   </section>
 
   <!-- VERKAUF -->
@@ -588,7 +588,7 @@ body.navmini #switchUser{font-size:0;padding:6px 8px;margin:0}body.navmini #swit
 <script>
 const FB_CONFIG={apiKey:"AIzaSyC_uZPvc5rJETwlS4JbfCoTkkE4ckjtp0M",authDomain:"velocenter-planer.firebaseapp.com",projectId:"velocenter-planer",storageBucket:"velocenter-planer.firebasestorage.app",messagingSenderId:"1018330488700",appId:"1:1018330488700:web:262a4d1660353e6fde8ef9"};
 /* ================= Velocenter Werkstatt-Cockpit – Oberfläche ================= */
-const CLIENT_VERSION='1.1.3';
+const CLIENT_VERSION='1.1.4';
 const USERS=[{id:'kevin',n:'Kevin',c:'#E2232D'},{id:'stefan',n:'Stefan',c:'#F59E0B'},{id:'martina',n:'Martina',c:'#EC4899'},{id:'sascha',n:'Sascha',c:'#22D3EE'},{id:'rene',n:'René',c:'#34D399'}];
 const U=id=>USERS.find(u=>u.id===id)||{n:'',c:'#64748B',id:''};
 const $=id=>document.getElementById(id);
@@ -734,8 +734,8 @@ function render(){const g=$('grid');if(document.querySelector('#grid .edit'))ret
    if(c.of){const t=items.filter(e=>e.spalte===c.of&&(!openOnly||e.erledigt!=='1')).sort(tmSort);h+=`<div class="c zt" style="--cc:${c.c}" data-iso="${ds}" data-of="${c.of}" title="Klick = Uhrzeit wählen">${t.map(e=>`<button class="tchip${e.zeit?'':' empty'}" type="button" data-tm="${esc(e.id)}" title="Uhrzeit für: ${esc(e.text)}">${e.zeit?esc(e.zeit):'––:––'}</button>`).join('')}</div>`;return;}
    let its=items.filter(e=>e.spalte===c.k&&(!openOnly||e.erledigt!=='1'));if(/^t[12]$/.test(c.k))its=its.sort(tmSort);
    const hit=e=>q&&(e.text+' '+e.zeit).toLowerCase().includes(q);
-   h+=`<div class="c" style="--cc:${c.c}" data-iso="${ds}" data-col="${c.k}">`+(c.dot?its.map(e=>`<button class="dot${e.erledigt==='1'?' done':''}${hit(e)?' hit':''}" type="button" data-dot="${esc(e.id)}" aria-label="Anfrage: ${esc(e.text)}"><span class="tip"><b>Anfrage Abholung/Reparatur</b>${esc(e.text)}<small>${U(e.von).n?'von '+esc(U(e.von).n)+' · ':''}Klick = bearbeiten</small></span></button>`).join(''):
-    its.map(e=>`<div class="e k-${c.k}${e.erledigt==='1'?' done':''}${hit(e)?' hit':''}" draggable="true" data-id="${esc(e.id)}"><button class="ck" type="button" aria-label="erledigt" data-ck="${esc(e.id)}"></button>${e.zeit&&!/^t[12]$/.test(c.k)?`<span class="tm">${esc(e.zeit)}</span>`:''}<span class="tx" data-ed="${esc(e.id)}">${esc(e.text)}</span><button class="x" type="button" data-x="${esc(e.id)}" aria-label="Eintrag löschen" title="Löschen">×</button>${e.erledigt==='1'&&e.erledigtVon?av(e.erledigtVon,'erledigt von'):av(e.von,'eingetragen von')}</div>`).join(''))+`<button class="plus" type="button" aria-label="Eintrag hinzufügen" data-add="1">+</button></div>`;});
+   h+=`<div class="c" style="--cc:${c.c}" data-iso="${ds}" data-col="${c.k}">`+(c.dot?its.map(e=>`<button class="dot${hit(e)?' hit':''}" type="button" data-dot="${esc(e.id)}" aria-label="Anfrage: ${esc(e.text)}"><span class="tip"><b>Anfrage Abholung/Reparatur</b>${esc(e.text)}<small>${U(e.von).n?'von '+esc(U(e.von).n)+' · ':''}Klick = bearbeiten</small></span></button>`).join(''):
+    its.map(e=>`<div class="e k-${c.k}${hit(e)?' hit':''}" draggable="true" data-id="${esc(e.id)}">${e.zeit&&!/^t[12]$/.test(c.k)?`<span class="tm">${esc(e.zeit)}</span>`:''}<span class="tx" data-ed="${esc(e.id)}">${esc(e.text)}</span><button class="x" type="button" data-x="${esc(e.id)}" aria-label="Eintrag löschen" title="Löschen">×</button>${av(e.von,'eingetragen von')}</div>`).join(''))+`<button class="plus" type="button" aria-label="Eintrag hinzufügen" data-add="1">+</button></div>`;});
   h+='</div>';});
  g.innerHTML=h;
  const wk=kw(fromIso(today));$('cToday').textContent=P.filter(e=>e.datum===today).length;
