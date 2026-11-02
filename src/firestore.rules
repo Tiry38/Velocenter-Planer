@@ -1,0 +1,26 @@
+rules_version = '2';
+// Velocenter Werkstatt-Cockpit – nur die 5 freigegebenen Personen haben Zugriff.
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function mail() { return request.auth != null ? request.auth.token.email : ''; }
+    function team() { return mail() in ['kevin@velocenter-cockpit.app','stefan@velocenter-cockpit.app','martina@velocenter-cockpit.app','sascha@velocenter-cockpit.app','rene@velocenter-cockpit.app']; }
+    function admin() { return mail() in ['kevin@velocenter-cockpit.app','stefan@velocenter-cockpit.app','martina@velocenter-cockpit.app']; }
+
+    // Nur die Info, wer schon ein Passwort hat (für den Login-Bildschirm)
+    match /meta/users { allow read: if true; allow write: if team(); }
+    match /meta/{doc} { allow read, write: if team(); }
+
+    match /planer/{id}      { allow read, write: if team(); }
+    match /verkauf/{id}     { allow read, write: if team(); }
+    match /bestell/{id}     { allow read, write: if team(); }
+    match /trinkgeld/{id}   { allow read, write: if team(); }
+    match /leasing/{id}     { allow read, write: if team(); }
+    match /lieferanten/{id} { allow read, write: if team(); }
+    match /info/{id}        { allow read, write: if team(); }
+
+    // Tresor: verschlüsselt (Schlüssel = PIN). Lieferanten-Logins für alle, Passwortliste nur Admins.
+    match /tresor/logins    { allow read, write: if team(); }
+    match /tresor/check     { allow read: if team(); allow write: if admin(); }
+    match /tresor/pw        { allow read, write: if admin(); }
+  }
+}

@@ -8,3 +8,7 @@ Web-App für Velocenter Hessert: Planer, Verkauf, Bestellungen, Leasing-Infos, L
 - Neue Version: `version.txt` hochzählen – offene Geräte laden sich innerhalb 1 Minute selbst neu.
 
 Hier liegen **keine Daten und keine Passwörter**, nur der Programmcode.
+
+## Entwicklung
+
+Quellcode in `src/`, bauen mit `cd src && python3 build.py <Version>`, Tests in `src/tests/`. Details für Claude Code: `CLAUDE.md`.
