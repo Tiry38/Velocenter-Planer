@@ -334,3 +334,14 @@ body{background-color:#090B10;background-image:
  radial-gradient(900px 620px at 100% 100%,rgba(150,85,235,.30),transparent 68%),
  radial-gradient(900px 620px at 0% 100%,rgba(30,170,190,.20),transparent 68%),
  radial-gradient(700px 420px at 40% 100%,rgba(225,45,120,.16),transparent 70%);background-size:auto;background-attachment:fixed}
+/* Lieferanten: Logo-Spalte (Upload per Klick, automatisch freigestellt) + € */
+#sTab th.thlg{width:96px}
+#sTab td.slogo{position:relative;width:96px;min-width:96px;height:38px;padding:6px 8px;cursor:pointer;text-align:center;vertical-align:middle}
+#sTab td.slogo img{display:block;margin:0 auto;height:auto;width:auto;max-height:20px;max-width:78px;object-fit:contain}
+#sTab td.slogo span{display:inline-block;font:600 10.5px var(--mono);color:var(--muted);border:1px dashed #334155;border-radius:8px;padding:4px 7px;transition:color .15s,border-color .15s}
+#sTab td.slogo:hover span{color:#67E8F9;border-color:#67E8F9}
+#sTab td.slogo.has:hover{background:rgba(255,255,255,.05)}
+#sTab .sldel{all:unset;cursor:pointer;position:absolute;top:2px;right:3px;width:16px;height:16px;border-radius:50%;display:none;place-items:center;font:700 12px/1 var(--body);color:#fff;background:rgba(239,68,68,.85)}
+#sTab td.slogo:hover .sldel{display:grid}
+#sTab td.mbw{font-variant-numeric:tabular-nums;color:#FDE68A}
+#sTab td.mbw{white-space:normal;max-width:240px;min-width:110px;line-height:1.3}

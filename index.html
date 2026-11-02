@@ -658,6 +658,17 @@ body{background-color:#090B10;background-image:
  radial-gradient(900px 620px at 100% 100%,rgba(150,85,235,.30),transparent 68%),
  radial-gradient(900px 620px at 0% 100%,rgba(30,170,190,.20),transparent 68%),
  radial-gradient(700px 420px at 40% 100%,rgba(225,45,120,.16),transparent 70%);background-size:auto;background-attachment:fixed}
+/* Lieferanten: Logo-Spalte (Upload per Klick, automatisch freigestellt) + € */
+#sTab th.thlg{width:96px}
+#sTab td.slogo{position:relative;width:96px;min-width:96px;height:38px;padding:6px 8px;cursor:pointer;text-align:center;vertical-align:middle}
+#sTab td.slogo img{display:block;margin:0 auto;height:auto;width:auto;max-height:20px;max-width:78px;object-fit:contain}
+#sTab td.slogo span{display:inline-block;font:600 10.5px var(--mono);color:var(--muted);border:1px dashed #334155;border-radius:8px;padding:4px 7px;transition:color .15s,border-color .15s}
+#sTab td.slogo:hover span{color:#67E8F9;border-color:#67E8F9}
+#sTab td.slogo.has:hover{background:rgba(255,255,255,.05)}
+#sTab .sldel{all:unset;cursor:pointer;position:absolute;top:2px;right:3px;width:16px;height:16px;border-radius:50%;display:none;place-items:center;font:700 12px/1 var(--body);color:#fff;background:rgba(239,68,68,.85)}
+#sTab td.slogo:hover .sldel{display:grid}
+#sTab td.mbw{font-variant-numeric:tabular-nums;color:#FDE68A}
+#sTab td.mbw{white-space:normal;max-width:240px;min-width:110px;line-height:1.3}
 
 [hidden]{display:none!important}
 #sTab td.b{font-weight:700}#sTab .pwm.ed{outline:none;padding:2px 6px;border-radius:6px;font-family:var(--mono)}#sTab td{vertical-align:top}
@@ -796,7 +807,7 @@ body{background-color:#090B10;background-image:
 <script>
 const FB_CONFIG={apiKey:"AIzaSyC_uZPvc5rJETwlS4JbfCoTkkE4ckjtp0M",authDomain:"velocenter-planer.firebaseapp.com",projectId:"velocenter-planer",storageBucket:"velocenter-planer.firebasestorage.app",messagingSenderId:"1018330488700",appId:"1:1018330488700:web:262a4d1660353e6fde8ef9"};
 /* ================= Velocenter Werkstatt-Cockpit – Oberfläche ================= */
-const CLIENT_VERSION='1.3.6';
+const CLIENT_VERSION='1.3.7';
 const USERS=[{id:'kevin',n:'Kevin',c:'#E2232D'},{id:'stefan',n:'Stefan',c:'#F59E0B'},{id:'martina',n:'Martina',c:'#EC4899'},{id:'sascha',n:'Sascha',c:'#22D3EE'},{id:'rene',n:'René',c:'#34D399'}];
 const U=id=>USERS.find(u=>u.id===id)||{n:'',c:'#64748B',id:''};
 const $=id=>document.getElementById(id);
@@ -960,7 +971,7 @@ function listen(k,setter,q){let first=true;const ref=q||db.collection(COL[k]);un
 function stopLive(){unsubs.forEach(u=>{try{u();}catch(_){}});unsubs=[];}
 function startLive(){stopLive();const from=iso(new Date(Date.now()-35*864e5));
  listen('P',x=>P=x,db.collection('planer').where('datum','>=',from));
- listen('V',x=>V=x);listen('B',x=>B=x);listen('T',x=>T=x);listen('S',x=>S=x);
+ listen('V',x=>V=x);listen('B',x=>B=x);listen('T',x=>T=x);listen('S',x=>{S=x;smbwSeed();});
  listen('L',x=>{L=x.map(o=>Object.assign({},o,{k:o.k||o.id}));if(!x.length)seedLeasing();else recLeasing();});
  listen('I',x=>{I={};x.forEach(o=>I[o.id]=o.wert);});
  unsubs.push(db.doc('meta/brands').onSnapshot(d=>{const x=d.exists?d.data():{};BUSER={list:x.list||[],logos:x.logos||{}};scheduleRender();},()=>{}));
@@ -1779,15 +1790,23 @@ $('fDrei').addEventListener('click',e=>{lsDrei=!lsDrei;e.currentTarget.setAttrib
 let sEdit=null,LOGINS=null;
 const SF=[['name','Lieferant'],['kdnr','Kunden-Nr.'],['mbw','Mindestbestellwert'],['notiz','Notiz']];
 let sAZ='';
+// Recherchierte Mindestbestellwerte (Websuche 02.11.2026, nur Belegtes) – einmalig, nur in LEERE Felder, sobald ein Admin angemeldet ist
+const SMBW_VER=1,SMBW={'böttcher':'kein Mindestbestellwert (B2B-Shop)','bbf':'kein fester MBW · unter 50 € netto +6,95 € Mindermenge · ab 50 € netto 9,90 € Fracht'};
+let smbwDone=false;async function smbwSeed(){if(smbwDone||!ME||!ME.adm||!S.length)return;smbwDone=true;try{const f=db.doc('meta/seed');const d=await f.get();if(d.exists&&(d.data().smbw||0)>=SMBW_VER)return;
+ for(const o of S){const v=SMBW[String(o.name||'').trim().toLowerCase()];if(v&&!String(o.mbw||'').trim()){const n=Object.assign({},o,{mbw:v});delete n.hasLogin;await save('S',n);}}await f.set({smbw:SMBW_VER},{merge:true});}catch(e){smbwDone=false;}}
+// Mindestbestellwert immer in €: „500“ → „500 €“ (Text wie „frachtfrei ab 300“ bleibt unverändert)
+function euro(v){const t=String(v||'').trim();const m=t.match(/^(\d{1,3}(?:[.\s]\d{3})*|\d+)(?:,(\d{1,2}))?\s*(?:€|eur|euro)?$/i);return m?m[1].replace(/\s/g,'.')+(m[2]?','+m[2].padEnd(2,'0'):'')+' €':t;}
+// Lieferanten-Logo: eigenes (Feld „logo“) oder gleichnamige Marke aus ⚙ Einstellungen
+function sLogo(o){if(o.logo)return o.logo;const n=String(o.name||'').trim().toLowerCase();const b=n&&allBrands().find(x=>x.n.toLowerCase()===n);return b&&(BUSER.logos||{})[b.k]||'';}
 function rs(){const s1=($('sSearch').value||'').toLowerCase();
  stats('sStats',[{n:'Lieferanten',v:S.length,c:'#22D3EE',i:'truck'},{n:'mit Login hinterlegt',v:LOGINS?LOGINS.filter(l=>l.login||l.pass).length:S.filter(o=>o.hasLogin!==false).length,c:'#A78BFA',i:'key'},{n:'mit Mindestbestellwert',v:S.filter(o=>String(o.mbw||'').trim()).length,c:'#FBBF24',i:'sum'}]);
  const letters=[...new Set(S.map(o=>String(o.name||'').trim()[0]).filter(Boolean).map(c=>c.toUpperCase()))].sort();$('sAZ').innerHTML=['Alle',...letters].map(c=>`<button type="button" class="az${(c==='Alle'?!sAZ:sAZ===c)?' on':''}" data-az="${c==='Alle'?'':esc(c)}">${esc(c)}</button>`).join('');const lg=id=>LOGINS&&LOGINS.find(x=>x.id===id);
  $('sForm').innerHTML=sEdit?sFormH(sEdit==='new'?{id:'new'}:S.find(x=>x.id===sEdit)||{id:'new'}):'';
  if(document.querySelector('#sTab [contenteditable]:focus'))return;
- $('sTab').innerHTML='<thead><tr><th>Lieferant</th><th>Kunden-Nr.</th><th>Mindestbestellwert</th><th>Login</th><th>Passwort</th><th>Notiz</th><th></th></tr></thead><tbody>'+
+ $('sTab').innerHTML='<thead><tr><th class="thlg">Logo</th><th>Lieferant</th><th>Kunden-Nr.</th><th>Mindestbestellwert</th><th>Login</th><th>Passwort</th><th>Notiz</th><th></th></tr></thead><tbody>'+
   S.filter(o=>(!s1||(o.name+' '+o.kdnr+' '+o.notiz).toLowerCase().includes(s1))&&(!sAZ||String(o.name||'').trim().toUpperCase().startsWith(sAZ))).sort((a,b)=>a.name.localeCompare(b.name)).map(o=>{const l=lg(o.id);
   const ce=(f,v,cls)=>`<td class="ce ${cls||''}" contenteditable="true" spellcheck="false" data-sid="${esc(o.id)}" data-f="${f}">${esc(v||'')}</td>`;
-  return `<tr>${ce('name',o.name,'b')}${ce('kdnr',o.kdnr)}${ce('mbw',o.mbw)}${LOGINS?`<td class="ce" contenteditable="true" spellcheck="false" data-sid="${esc(o.id)}" data-f="login">${esc(l?l.login:'')}</td>`:`<td>${o.hasLogin===false?'–':'<button class=\"lockb\" type=\"button\" data-unlock title=\"Mit Tresor-PIN entsperren\">🔒</button>'}</td>`}<td>${LOGINS?`<span class="pwm" data-sid="${esc(o.id)}">${l&&l.pass?'••••••':'–'}</span> <button class="mini" type="button" data-pedit="${esc(o.id)}">ändern</button>${l&&l.pass?` <button class="mini" type="button" data-cp="${esc(l.pass)}">kopieren</button>`:''}`:'<button class=\"lockb\" type=\"button\" data-unlock title=\"Mit Tresor-PIN entsperren\">🔒</button>'}</td>${ce('notiz',o.notiz,'wrap')}<td>${LOGINS&&l&&l.login?`<button class="mini" type="button" data-cp="${esc(l.login)}" title="Login kopieren">Login ⧉</button> `:''}<button class="mini" type="button" data-sedit="${esc(o.id)}" title="Formular / Löschen">✎</button></td></tr>`;}).join('')+'</tbody>';
+  const lgo=sLogo(o);return `<tr><td class="slogo${lgo?' has':''}" data-slogo="${esc(o.id)}" title="${lgo?'Klick = Logo ersetzen':'Klick = Logo hochladen (wird automatisch freigestellt + geschärft)'}">${lgo?`<img src="${lgo}" alt="">`:'<span>＋ Logo</span>'}${o.logo?`<button class="sldel" type="button" data-sldel="${esc(o.id)}" title="Logo entfernen">×</button>`:''}</td>${ce('name',o.name,'b')}${ce('kdnr',o.kdnr)}${ce('mbw',euro(o.mbw),'mbw')}${LOGINS?`<td class="ce" contenteditable="true" spellcheck="false" data-sid="${esc(o.id)}" data-f="login">${esc(l?l.login:'')}</td>`:`<td>${o.hasLogin===false?'–':'<button class=\"lockb\" type=\"button\" data-unlock title=\"Mit Tresor-PIN entsperren\">🔒</button>'}</td>`}<td>${LOGINS?`<span class="pwm" data-sid="${esc(o.id)}">${l&&l.pass?'••••••':'–'}</span> <button class="mini" type="button" data-pedit="${esc(o.id)}">ändern</button>${l&&l.pass?` <button class="mini" type="button" data-cp="${esc(l.pass)}">kopieren</button>`:''}`:'<button class=\"lockb\" type=\"button\" data-unlock title=\"Mit Tresor-PIN entsperren\">🔒</button>'}</td>${ce('notiz',o.notiz,'wrap')}<td>${LOGINS&&l&&l.login?`<button class="mini" type="button" data-cp="${esc(l.login)}" title="Login kopieren">Login ⧉</button> `:''}<button class="mini" type="button" data-sedit="${esc(o.id)}" title="Formular / Löschen">✎</button></td></tr>`;}).join('')+'</tbody>';
  $('sUnlock').textContent=LOGINS?'🔒 Logins sperren':'🔓 Logins zeigen (PIN)';}
 function sFormH(o){const l=LOGINS&&LOGINS.find(x=>x.id===o.id)||{};return `<form class="edf card" data-sf="${esc(o.id)}" autocomplete="off"><b>${o.id==='new'?'Neuer Lieferant':'Lieferant bearbeiten'}</b><div class="g2">${SF.map(([k,n])=>`<label>${n}<input name="${k}" value="${esc(o[k]||'')}"${k==='name'?' required':''}></label>`).join('')}
  ${LOGINS?`<label>Login<input name="login" value="${esc(l.login||'')}"></label><label>Passwort<input name="pass" value="${esc(l.pass||'')}"></label>`:'<p class="hint">Login/Passwort ändern: erst „Logins zeigen (PIN)“.</p>'}</div>
@@ -1796,7 +1815,7 @@ $('v-lief').addEventListener('click',async e=>{const cp=e.target.closest('[data-
  const ed=e.target.closest('[data-sedit]');if(ed){sEdit=ed.dataset.sedit;rs();$('sForm').scrollIntoView({block:'start'});return;}
  if(e.target.closest('[data-scancel]')){sEdit=null;rs();return;}
  const dl=e.target.closest('[data-sdel]');if(dl){if(!dl.dataset.sure){dl.dataset.sure=1;dl.textContent='Wirklich löschen?';return;}const id=dl.dataset.sdel;S=S.filter(x=>x.id!==id);sEdit=null;rs();del('S',id);toast('Gelöscht');}});
-$('v-lief').addEventListener('submit',async e=>{if(!e.target.dataset.sf)return;e.preventDefault();const f=e.target,id=f.dataset.sf,d=new FormData(f);const o=id==='new'?{id:nid('s')}:Object.assign({},S.find(x=>x.id===id));SF.forEach(([k])=>o[k]=String(d.get(k)||'').trim());
+$('v-lief').addEventListener('submit',async e=>{if(!e.target.dataset.sf)return;e.preventDefault();const f=e.target,id=f.dataset.sf,d=new FormData(f);const o=id==='new'?{id:nid('s')}:Object.assign({},S.find(x=>x.id===id));SF.forEach(([k])=>o[k]=String(d.get(k)||'').trim());o.mbw=euro(o.mbw);
  if(LOGINS){const lg={id:o.id,login:String(d.get('login')||''),pass:String(d.get('pass')||'')};const i=LOGINS.findIndex(x=>x.id===o.id);if(i<0)LOGINS.push(lg);else LOGINS[i]=lg;try{await saveLogins();}catch(e){fail(e);}}
  delete o.login;delete o.pass;sEdit=null;try{await save('S',o);const i=S.findIndex(x=>x.id===o.id);if(i<0)S.push(o);else S[i]=o;rs();toast('Gespeichert');}catch(_){}});
 $('sSearch').addEventListener('input',rs);
@@ -1805,8 +1824,11 @@ async function setLogin(id,f,v){if(!LOGINS)return;let l=LOGINS.find(x=>x.id===id
 $('sTab').addEventListener('keydown',e=>{const c=e.target.closest('[contenteditable]');if(c&&e.key==='Enter'&&!e.shiftKey){e.preventDefault();c.blur();}if(c&&e.key==='Escape'){c.blur();rs();}});
 $('sTab').addEventListener('focusout',async e=>{const c=e.target.closest('[contenteditable]');if(!c)return;const id=c.dataset.sid,f=c.dataset.f,v=c.textContent.trim();
  if(f==='login'||f==='pass'){const l=(LOGINS||[]).find(x=>x.id===id)||{};if(v!==(l[f]||''))await setLogin(id,f,v);setTimeout(rs,50);return;}
- const o=S.find(x=>x.id===id);if(!o||v===(o[f]||''))return;const n=Object.assign({},o,{[f]:v});delete n.hasLogin;const i=S.indexOf(o);S[i]=Object.assign({},n,{hasLogin:o.hasLogin});try{await save('S',n);toast('Gespeichert');}catch(_){}});
-$('sTab').addEventListener('click',e=>{if(e.target.closest('[data-unlock]')){pinDlg();return;}const b=e.target.closest('[data-pedit]');if(!b)return;const id=b.dataset.pedit,l=(LOGINS||[]).find(x=>x.id===id)||{};const sp=document.querySelector(`.pwm[data-sid="${id}"]`);if(!sp)return;sp.textContent=l.pass||'';sp.contentEditable='true';sp.dataset.f='pass';sp.classList.add('ed');sp.focus();arm();});
+ const o=S.find(x=>x.id===id);const vv=f==='mbw'?euro(v):v;if(!o||vv===(o[f]||''))return;const n=Object.assign({},o,{[f]:vv});delete n.hasLogin;const i=S.indexOf(o);S[i]=Object.assign({},n,{hasLogin:o.hasLogin});try{await save('S',n);toast('Gespeichert');}catch(_){}});
+$('sTab').addEventListener('click',e=>{if(e.target.closest('[data-unlock]')){pinDlg();return;}
+ const sd=e.target.closest('[data-sldel]');if(sd){const o=S.find(x=>x.id===sd.dataset.sldel);if(o){const n=Object.assign({},o);delete n.logo;delete n.hasLogin;S[S.indexOf(o)]=Object.assign({},n,{hasLogin:o.hasLogin});save('S',n).then(()=>{rs();toast('Logo entfernt');}).catch(()=>{});}return;}
+ const sl=e.target.closest('[data-slogo]');if(sl){const o=S.find(x=>x.id===sl.dataset.slogo);if(!o)return;const inp=document.createElement('input');inp.type='file';inp.accept='image/*';
+  inp.addEventListener('change',async()=>{const f=inp.files[0];if(!f)return;toast('Logo wird aufbereitet …');try{const u=await procLogo(f,64);if(u.length>200000)throw new Error('Logo zu groß');const n=Object.assign({},o,{logo:u});delete n.hasLogin;S[S.indexOf(o)]=Object.assign({},n,{hasLogin:o.hasLogin});await save('S',n);rs();toast('Logo gespeichert – '+(o.name||''));}catch(err){toast(err.message||String(err));}});inp.click();return;}const b=e.target.closest('[data-pedit]');if(!b)return;const id=b.dataset.pedit,l=(LOGINS||[]).find(x=>x.id===id)||{};const sp=document.querySelector(`.pwm[data-sid="${id}"]`);if(!sp)return;sp.textContent=l.pass||'';sp.contentEditable='true';sp.dataset.f='pass';sp.classList.add('ed');sp.focus();arm();});
 $('sAdd').addEventListener('click',()=>{sEdit='new';rs();const f=document.querySelector('[data-sf=new] input');if(f)f.focus();});
 $('sUnlock').addEventListener('click',()=>{if(LOGINS){relock();return;}pinDlg();});
 $('meImport').addEventListener('click',importDlg);

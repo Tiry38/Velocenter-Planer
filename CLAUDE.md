@@ -28,7 +28,7 @@ Web-App für **Velocenter Hessert** (Fahrradgeschäft, Wörth am Rhein). Ersetzt
   - `logo_small.b64` – Velocenter-Logo · `fbconfig.js` – Firebase-Konfiguration (öffentlich, kein Geheimnis)
   - `firestore.rules` – Sicherheitsregeln (Kopie; aktiv sind sie in der Firebase-Konsole)
 - **Bauen:** `cd src && python3 build.py <neue Version>` → schreibt `../index.html`, `../version.txt` usw. und `tests/test_fb.html`.
-- **Ausliefern:** commit + `git push origin main`. GitHub Pages braucht ~1 Min. **Offene Geräte prüfen alle 30 s `version.txt` und laden sich selbst neu** (mit `?v=` am Cache vorbei). Version bei jeder Auslieferung hochzählen (zuletzt **1.3.6**).
+- **Ausliefern:** commit + `git push origin main`. GitHub Pages braucht ~1 Min. **Offene Geräte prüfen alle 30 s `version.txt` und laden sich selbst neu** (mit `?v=` am Cache vorbei). Version bei jeder Auslieferung hochzählen (zuletzt **1.3.7**).
 - **Tests (lokal, ohne Internet):** `src/tests/` – `fbmock.js` baut Firebase Auth + Firestore nach (localStorage, Live-Abgleich zwischen Tabs).
   - Einmalig: `cd src/tests && npm pack xlsx@0.18.5 && tar xzf xlsx-0.18.5.tgz package/dist/xlsx.full.min.js && mv package/dist/xlsx.full.min.js . && rm -rf package xlsx-0.18.5.tgz`
   - `node quick.js` (Kurztest, ~30 s) · `node tf.js` (Gesamttest, ~2 Min). Playwright/Chromium ist vorinstalliert.
@@ -78,7 +78,7 @@ Web-App für **Velocenter Hessert** (Fahrradgeschäft, Wörth am Rhein). Ersetzt
 - **+ Verkauftes Rad:** schnell erfassen, keine Pflichtfelder: Kunde · Marke (`marke`, hat Vorrang vor der Erkennung aus dem Modell) · Modell · Vom Kunde bestellt am (Kalender, heute vorbelegt) · Leasing-Anbieter. Rest später in der Liste; ✎ zeigt zusätzlich Form, Größe, LT, Antrag, O.K., L.-Ende, Notiz.
 - **⚙ Einstellungen** (Profil unten in der Navi): Markenlogos selbst hochladen → App stellt frei, schneidet zu, schärft, Einheitshöhe 80 px, dunkle Logos automatisch hell (Knopf „Hell ⇄“). Eigene Marken mit Modellwörtern; beim Rad eingetippte Marken (Feld `marke`) erscheinen dort automatisch zum Logo-Hochladen. Gespeichert in `meta/brands` ({list, logos}). Eingebaute Erkennung: KTM, i:SY, Gudereit (`BRANDS`).
 - **Kopfzeile:** keine LIVE-Pille mehr. **Hintergrund** wie KI-Zentrale (Hauptfläche kräftige mehrfarbige Verläufe ohne Muster: blau oben links, rot oben rechts, violett unten rechts, türkis unten links, magenta unten; Navi Karomuster + roter Schimmer unten links).
-- **Lieferanten:** Kacheln, A–Z-Leiste, Tabelle direkt bearbeitbar; 🔒 anklicken → Tresor-PIN → Login/Passwort sichtbar und änderbar (verschlüsselt).
+- **Lieferanten:** Kacheln, A–Z-Leiste, Tabelle direkt bearbeitbar; **Logo-Spalte** (Klick = hochladen, automatisch freigestellt/geschärft, Feld `logo` im Lieferanten-Doc; sonst Logo der gleichnamigen Marke aus ⚙); **Mindestbestellwert immer in €** (`euro()`); recherchierte Werte (`SMBW`, `meta/seed.smbw`) nur in leere Felder: Böttcher kein MBW, BBF kein fester MBW (<50 € netto +6,95 €). Absolut Bikes laut AGB 250 € netto (frachtfrei ab 500) – nicht überschrieben; 🔒 anklicken → Tresor-PIN → Login/Passwort sichtbar und änderbar (verschlüsselt).
 - **Trinkgeld EC:** Kacheln (Monat, Vormonat, Jahr, Einträge), Balken 6 Monate, Liste nach Monat gruppiert, Konto 1371 steuerfrei.
 - **Passwörter** (nur Admins): PIN-Schloss; darunter einmalig „Aus Sheet übernehmen“ (xlsx-Download des Sheets) für PW-Liste + Lieferanten-Logins – verschwindet nach Übernahme.
 
