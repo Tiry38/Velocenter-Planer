@@ -51,7 +51,7 @@ await p.click('#navTog');await wait(350);ok('Navi ausklappen',await p.isVisible(
 await p.click('.navbtn[data-v=verkauf]');await wait(300);ok('Verkauf Liste: 2 offen',(await p.$$eval('.vr',b=>b.length))===2);
 await p.click('.vr .st.m[aria-pressed=false]');await wait(500);ok('montiert + wer',await p.evaluate(()=>V.some(v=>v.m==='1'&&v.mVon==='kevin')));
 await p.selectOption('.vr .ssel','rene');await wait(400);ok('Verkauf/Beratung',await p.evaluate(()=>V.some(v=>v.verk==='rene')));
-await p.click('.vr td.kcell');await wait(200);await p.selectOption('.vr td.kcell select',{index:8});await wait(500);ok('LT per KW-Auswahl',await p.evaluate(()=>V.some(v=>/^KW \d+$/.test(v.lt||''))));
+await p.click('.vr td.kcell');await wait(200);await p.click('.vr td.kcell select option[data-now]');await wait(500);ok('LT per KW-Auswahl',await p.evaluate(()=>V.some(v=>/^KW \d+$/.test(v.lt||''))));
 await p.selectOption('#vkSortSel','lt');await wait(200);ok('Sortieren nach Liefertermin',(await p.$$eval('.vr',r=>r.length))===2);
 ok('Kacheln weg, Steuerung im Tabellenkopf',!(await p.$('#vkStats'))&&!!(await p.$('th.hL #vkSortSel'))&&!!(await p.$('th.hL #vkDone'))&&!!(await p.$('th.hR #vkAdd')));
 ok('Keine Suche/Karten-Knöpfe mehr',!(await p.$('#vkSearch'))&&!(await p.$('#vkViewSeg'))&&!(await p.$('#live')));

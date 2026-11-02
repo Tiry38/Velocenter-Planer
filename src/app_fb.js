@@ -272,10 +272,10 @@ function rv(){
  $('nOffen').textContent=V.filter(b=>b.a!=='1').length;}
 /* Sortierung: Datum „17.8.“ / „29.09.“ / LT „38“ „KW 38“ „Lager“ */
 function vkDate(s){const m=String(s||'').match(/(\d{1,2})\.(\d{1,2})\.?(\d{2,4})?/);if(!m)return 0;const now=new Date();let y=m[3]?+m[3]:now.getFullYear();if(y<100)y+=2000;let d=new Date(y,+m[2]-1,+m[1]);if(!m[3]&&d>new Date(now.getTime()+60*864e5))d=new Date(y-1,+m[2]-1,+m[1]);return d.getTime();}
-function vkLt(s){s=String(s||'').trim();if(/lager|^l$/i.test(s))return 0;const m=s.match(/(\d{1,2})/);if(!m)return 999;let k=+m[1];const ck=kw(new Date());if(k<ck-20)k+=53;return k;}
-const vkRank=b=>b.a==='1'?4:b.b==='1'?3:b.m==='1'?2:1;
+function vkLt(s){s=String(s||'').trim();if(/^sofort/i.test(s))return -1;if(/lager|^l$/i.test(s))return 0;const m=s.match(/(\d{1,2})/);if(!m)return 999;let k=+m[1];const ck=kw(new Date());if(k<ck-20)k+=53;return k;}
+const vkRank=b=>b.a==='1'?5:b.b==='1'?4:b.m==='1'?3:b.an==='1'?2:1;
 function vkCmp(a,b){if(vkSort==='lt')return vkLt(a.lt)-vkLt(b.lt)||vkDate(b.dat)-vkDate(a.dat);if(vkSort==='status')return vkRank(a)-vkRank(b)||vkDate(b.dat)-vkDate(a.dat);return vkDate(b.dat)-vkDate(a.dat);}
-function ltHot(lt){const k=vkLt(lt),ck=kw(new Date());return k!==999&&k!==0&&k<=ck+1;}
+function ltHot(lt){const k=vkLt(lt),ck=kw(new Date());return k===-1||(k!==999&&k!==0&&k<=ck+1);}
 // Herstellermarke aus dem Modelltext (Verkauf): Logo, sonst Marken-Schild, sonst 🚲
 const BRANDS=[{k:'KTM',n:'KTM',c:'#FF6A00',re:/\bktm\b|macina|gravelator|revelator|scarp|kapoho|myroon|lycan|chicago|\b(tour|city|sport|team|style|fun|cross|gran|aera|life)\s*(px|p|sx|cx)?\s*-?\d{3}\b|\bpx\s*\d{3}\b|\bsx[- ]?(master|elite|prime|pro)\b/i},
  {k:'ISY',n:'i:SY',re:/\bi[:\s]?sy\b|\bp\s?12\b|\bzr\b/i},
@@ -289,24 +289,27 @@ const brandOf=m=>{m=String(m||'');if(!m)return null;const A=allBrands();return A
 function bModel(m){m=String(m||'');const b=brandOf(m);let t=m;if(b){const r=new RegExp('^\\s*'+reEsc(b.n)+'\\s+','i');if(r.test(t))t=t.replace(r,'');}return bIco(m)+esc(t);}
 function bIco(m){const b=brandOf(m);if(!b)return'🚲 ';const lg=(BUSER.logos||{})[b.k];return lg?`<img class="blg" src="${lg}" alt="${b.n}" title="${b.n}">`:`<span class="bchip" title="${b.n}"${b.c?` style="color:${b.c}"`:''}>${b.n}</span>`;}
 function leasLogo(f){if(!f)return'';const x=L.find(l=>l.k===f);const lg=x?logoOf(x):(LOGOS[f]||'');return lg?`<img class="llg" src="${esc(lg)}" alt="${esc(FN[f]||f)}" title="${esc(FN[f]||f)}">`:`<span class="lchip">${esc(f)}</span>`;}
-// Status-Farbe am Namen: montiert = gelb, O.K. = grün, beides = Verlauf gelb → grün
-const vkFx=b=>b.m==='1'&&b.b==='1'?' fx-mb':b.b==='1'?' fx-b':b.m==='1'?' fx-m':'';
-function vkRow(b){const st=b.a==='1'?'a':b.b==='1'?'b':b.m==='1'?'m':'o';const ce=(f,v,cls)=>`<td class="ce ${cls||''}" contenteditable="true" spellcheck="false" data-vid="${esc(b.id)}" data-f="${f}">${esc(v||'')}</td>`;
+// Status-Farbe am Namen: angeliefert = blau, montiert = rot, O.K. = grün – mehrere = Verlauf in dieser Reihenfolge
+const VKC=[['an','96,165,250','#BFDBFE'],['m','239,68,68','#FECACA'],['b','52,211,153','#A7F3D0']];
+function vkSty(b){const c=VKC.filter(x=>b[x[0]]==='1');if(!c.length)return'';const L=c[c.length-1];
+ const bg=c.length===1?`linear-gradient(90deg,rgba(${L[1]},.32),rgba(${L[1]},.07))`:`linear-gradient(90deg,${c.map(x=>`rgba(${x[1]},.36)`).join(',')})`;
+ return `--wpbg:${bg};--wpbd:rgba(${L[1]},.5);--wpgl:rgba(${L[1]},.16);--wpfg:${c.length===1?L[2]:'#fff'}`;}
+function vkRow(b){const st=b.a==='1'?'a':b.b==='1'?'b':b.m==='1'?'m':b.an==='1'?'l':'o';const ce=(f,v,cls)=>`<td class="ce ${cls||''}" contenteditable="true" spellcheck="false" data-vid="${esc(b.id)}" data-f="${f}">${esc(v||'')}</td>`;
  const dcD=(f,v)=>`<td class="dcell d-dat" data-vid="${esc(b.id)}" data-df="${f}" title="Klick = Datum wählen" tabindex="0">${esc(dshort(v))}</td>`;
  const dc=(f,v,cls)=>`<td class="dcell ${cls}" data-vid="${esc(b.id)}" data-df="${f}" title="${esc(v||'')} · Klick = Datum wählen" tabindex="0">${esc(dshort(v))}</td>`;
  return `<tr class="vr st-${st}">
- <td class="sdot" title="${{o:'offen',m:'montiert',b:'O.K. – abholbereit',a:'abgeholt'}[st]}"><i></i></td>
- <td class="who2${vkFx(b)}"><div class="wp"><b>${esc(b.name||'–')}</b><small>${bModel(b.modell)}</small></div></td>
+ <td class="sdot" title="${{o:'offen',l:'angeliefert',m:'montiert',b:'O.K. – abholbereit',a:'abgeholt'}[st]}"><i></i></td>
+ <td class="who2${vkSty(b)?' wfx':''}" style="${vkSty(b)}"><div class="wp"><b>${esc(b.name||'–')}</b><small>${bModel(b.modell)}</small></div></td>
  ${dcD('dat',b.dat)}<td class="kcell${ltHot(b.lt)&&b.a!=='1'?' hot':''}" data-vid="${esc(b.id)}" title="Klick = Kalenderwoche wählen" tabindex="0">${esc(b.lt||'')}</td>${ce('notiz',[b.notiz,b.montieren?'Montieren: '+b.montieren:''].filter(Boolean).join(' · '),'vnote')}
 <td><div class="lcell">${leasLogo(b.firma)}<select class="lsel mini2${b.firma?'':' off'}" data-vi="${esc(b.id)}" aria-label="Leasing-Firma"><option value="">–</option>${Object.entries(FN).map(([k,n])=>`<option value="${esc(k)}"${b.firma===k?' selected':''}>${esc(k)} · ${esc(n)}</option>`).join('')}${b.firma&&!FN[b.firma]?`<option selected>${esc(b.firma)}</option>`:''}</select></div></td>
  ${b.firma?dc('antrag',b.antrag,'d-antrag'):'<td class="na">–</td>'}${b.firma?dc('ok',b.ok,b.ok?'d-ok':'d-ok miss'):'<td class="na">–</td>'}${b.firma?dc('lende',b.lende,'d-lende'):'<td class="na">–</td>'}
  <td><select class="ssel mini2" data-vi="${esc(b.id)}" aria-label="Verkauf/Beratung"><option value="">–</option>${USERS.map(u=>`<option value="${u.id}"${b.verk===u.id?' selected':''}>${esc(u.n)}</option>`).join('')}</select></td>
- <td class="stb"><button class="st m" type="button" aria-pressed="${b.m==='1'}" data-vi="${esc(b.id)}" data-k="m" title="${b.mVon?'montiert von '+esc(U(b.mVon).n)+' '+esc(b.mAm):'montiert'}">🔧</button><button class="st b" type="button" aria-pressed="${b.b==='1'}" data-vi="${esc(b.id)}" data-k="b" title="${b.bVon?'O.K. von '+esc(U(b.bVon).n)+' '+esc(b.bAm):'O.K.'}">O.K.</button><button class="st a" type="button" aria-pressed="${b.a==='1'}" data-vi="${esc(b.id)}" data-k="a" title="${b.aVon?'abgeholt von '+esc(U(b.aVon).n)+' '+esc(b.aAm):'abgeholt'}">✓</button></td>
+ <td class="stb"><button class="st an" type="button" aria-pressed="${b.an==='1'}" data-vi="${esc(b.id)}" data-k="an" title="${b.anVon?'angeliefert, eingetragen von '+esc(U(b.anVon).n)+' '+esc(b.anAm):'angeliefert'}">📦</button><button class="st m" type="button" aria-pressed="${b.m==='1'}" data-vi="${esc(b.id)}" data-k="m" title="${b.mVon?'montiert von '+esc(U(b.mVon).n)+' '+esc(b.mAm):'montiert'}">🔧</button><button class="st b" type="button" aria-pressed="${b.b==='1'}" data-vi="${esc(b.id)}" data-k="b" title="${b.bVon?'O.K. von '+esc(U(b.bVon).n)+' '+esc(b.bAm):'O.K.'}">O.K.</button><button class="st a" type="button" aria-pressed="${b.a==='1'}" data-vi="${esc(b.id)}" data-k="a" title="${b.aVon?'abgeholt von '+esc(U(b.aVon).n)+' '+esc(b.aAm):'abgeholt'}">✓</button></td>
  <td><button class="mini" type="button" data-vedit="${esc(b.id)}" title="Alle Felder / Löschen">✎</button></td></tr>`;}
 function vkForm(b){return `<article class="bike editing"><form class="edf" data-vf="${esc(b.id)}" autocomplete="off"><b>${b.id==='new'?'Neues verkauftes Rad':'Rad bearbeiten'}</b><div class="g2">${VF.map(([k,n])=>`<label>${n}<input name="${k}" value="${esc(b[k]||'')}"${k==='modell'?' required':''}></label>`).join('')}</div>
  <div class="acts"><button class="btn red" type="submit">Speichern</button><button class="btn" type="button" data-vcancel>Abbrechen</button>${b.id!=='new'?`<button class="btn del" type="button" data-vdel="${esc(b.id)}">Löschen</button>`:''}</div></form></article>`;}
 async function putV(b){const i=V.findIndex(x=>x.id===b.id);if(i<0)V.unshift(b);else V[i]=b;rv();try{await save('V',b);}catch(_){}}
-$('cards').addEventListener('click',e=>{const t=e.target.closest('.st');if(t){const b=V.find(x=>x.id===t.dataset.vi);if(!b)return;const k=t.dataset.k,n=Object.assign({},b);n[k]=b[k]==='1'?'':'1';if(n[k]){n[k+'Von']=ME.id;n[k+'Am']=new Date().toLocaleDateString('de-DE',{day:'2-digit',month:'2-digit'})+'.';if(k==='b'&&!n.ok)n.ok=n.bAm;}else{n[k+'Von']='';n[k+'Am']='';}putV(n);if(n[k]){if(k==='a')toast('Abgeholt – '+(b.name||b.modell)+' (unter „Abgeholte zeigen“)',()=>{putV(Object.assign({},b));toast('Wieder offen');});else toast({m:'Montiert',b:'O.K.'}[k]+' – '+U(ME.id).n);}return;}
+$('cards').addEventListener('click',e=>{const t=e.target.closest('.st');if(t){const b=V.find(x=>x.id===t.dataset.vi);if(!b)return;const k=t.dataset.k,n=Object.assign({},b);n[k]=b[k]==='1'?'':'1';if(n[k]){n[k+'Von']=ME.id;const _d=new Date(),_s=String(_d.getDate()).padStart(2,'0')+'.'+String(_d.getMonth()+1).padStart(2,'0')+'.';n[k+'Am']=_s;if(k==='b'&&!n.ok)n.ok=_s+_d.getFullYear();}else{n[k+'Von']='';n[k+'Am']='';}putV(n);if(n[k]){if(k==='a')toast('Abgeholt – '+(b.name||b.modell)+' (unter „Abgeholte zeigen“)',()=>{putV(Object.assign({},b));toast('Wieder offen');});else toast({an:'Angeliefert',m:'Montiert',b:'O.K.'}[k]+' – '+U(ME.id).n);}return;}
  const ed=e.target.closest('[data-vedit]');if(ed){vkEdit=ed.dataset.vedit;rv();return;}
  if(e.target.closest('[data-vcancel]')){vkEdit=null;rv();return;}
  const dl=e.target.closest('[data-vdel]');if(dl){if(!dl.dataset.sure){dl.dataset.sure=1;dl.textContent='Wirklich löschen?';return;}const id=dl.dataset.vdel,b=V.find(x=>x.id===id);V=V.filter(x=>x.id!==id);vkEdit=null;rv();del('V',id);toast('Gelöscht: '+(b&&b.modell||''),()=>{V.unshift(b);rv();save('V',b).catch(()=>{});});}});
@@ -321,15 +324,23 @@ function dateEdit(td){const b=V.find(x=>x.id===td.dataset.vid),f=td.dataset.df;i
  i.addEventListener('change',()=>{if(i.value)fin(true);});i.addEventListener('keydown',k=>{if(k.key==='Enter'){k.preventDefault();fin(true);}if(k.key==='Escape')fin(false);});i.addEventListener('blur',()=>setTimeout(()=>fin(false),200));}
 $('cards').addEventListener('click',e=>{const td=e.target.closest('td.dcell');if(td&&!td.querySelector('input'))dateEdit(td);const tk=e.target.closest('td.kcell');if(tk&&!tk.querySelector('select'))ltEdit(tk);});
 // LT: Klick → Kalenderwoche wählen (Lager, KW −4 … +30 mit Datum Mo–Sa), gespeichert als „KW 47“
-function ltOpts(cur){const mo=new Date();mo.setHours(12,0,0,0);mo.setDate(mo.getDate()-((mo.getDay()+6)%7));const dd=d=>String(d.getDate()).padStart(2,'0')+'.'+String(d.getMonth()+1).padStart(2,'0')+'.';
- const wk=i=>{const a=new Date(mo);a.setDate(a.getDate()+7*i);const e=new Date(a);e.setDate(e.getDate()+5);const v='KW '+kw(a);return [v,v+'  ·  '+dd(a)+'–'+dd(e)+(i===0?'  (diese Woche)':'')];};
- const op=([v,n])=>`<option value="${esc(v)}"${v===cur?' selected':''}>${esc(n)}</option>`;
- const fut=[],past=[];for(let i=0;i<=30;i++)fut.push(wk(i));for(let i=-1;i>=-26;i--)past.push(wk(i));
- const known=[['',''],['Lager','']].concat(fut,past).some(x=>x[0]===cur);
- return op(['','–  kein LT'])+op(['Lager','Lager'])+(cur&&!known?op([cur,cur]):'')+`<optgroup label="▼ Ab dieser Woche">${fut.map(op).join('')}</optgroup><optgroup label="◀ Vergangene Wochen (zurück)">${past.map(op).join('')}</optgroup>`;}
-function ltEdit(td){const b=V.find(x=>x.id===td.dataset.vid);if(!b)return;const sl=document.createElement('select');sl.className='edit din ksel';sl.innerHTML=ltOpts(b.lt||'');td.textContent='';td.append(sl);sl.focus();try{sl.showPicker();}catch(_){}
- let done=false;const fin=ok=>{if(done)return;done=true;const v=sl.value;sl.remove();if(ok&&v!==(b.lt||'')){putV(Object.assign({},b,{lt:v}));toast(v?'Liefertermin: '+v:'Liefertermin entfernt');return;}rv();};
- sl.addEventListener('change',()=>fin(true));sl.addEventListener('keydown',k=>{if(k.key==='Escape')fin(false);});sl.addEventListener('blur',()=>setTimeout(()=>fin(false),150));}
+function ltOpts(cur){const now=new Date();now.setHours(12,0,0,0);const mo=new Date(now);mo.setDate(mo.getDate()-((mo.getDay()+6)%7));const dd=d=>String(d.getDate()).padStart(2,'0')+'.'+String(d.getMonth()+1).padStart(2,'0')+'.';
+ const isoY=d=>{const t=new Date(d);t.setDate(t.getDate()+3);return t.getFullYear();};
+ const w1=y=>{const j=new Date(y,0,4,12);j.setDate(j.getDate()-((j.getDay()+6)%7));return j;};
+ const from=new Date(mo);from.setDate(from.getDate()-7*26);const end=new Date(mo);end.setDate(end.getDate()+7*30);
+ const op=(v,n,x)=>`<option value="${esc(v)}"${v===cur?' selected':''}${x||''}>${esc(n)}</option>`;
+ let h=op('','–  kein LT')+op('Sofort','⚡ Sofort')+op('Lager','Lager');const vals=['','Sofort','Lager'];
+ let a=w1(isoY(from)),y=-1;while(a<=end){const yy=isoY(a);if(yy!==y){if(y!==-1)h+='</optgroup>';h+=`<optgroup label="${yy}">`;y=yy;}
+  const e=new Date(a);e.setDate(e.getDate()+5);const v='KW '+kw(a),isNow=+a===+mo;vals.push(v);h+=op(v,v+'  ·  '+dd(a)+'–'+dd(e)+(isNow?'  ◀ diese Woche':''),isNow?' data-now="1"':'');a=new Date(a);a.setDate(a.getDate()+7);}
+ h+='</optgroup>';if(cur&&!vals.includes(cur))h=op(cur,cur)+h;return h;}
+function ltEdit(td){const b=V.find(x=>x.id===td.dataset.vid);if(!b)return;const cur=b.lt||'';const sl=document.createElement('select');sl.className='edit din ksel klist';sl.size=14;sl.innerHTML=ltOpts(cur);td.textContent='';td.append(sl);
+ // zur eingetragenen bzw. aktuellen Woche springen (bei doppelten KW-Nummern die nächstliegende)
+ const opts=[...sl.options],now=sl.querySelector('option[data-now]'),ni=now?opts.indexOf(now):0;const hit=cur?opts.map((o,i)=>[o,i]).filter(([o])=>o.value===cur).sort((p,q)=>Math.abs(p[1]-ni)-Math.abs(q[1]-ni))[0]:null;
+ const tgt=hit?hit[0]:now;if(tgt)tgt.selected=true;const rc=td.getBoundingClientRect(),H=Math.min(400,innerHeight-24);sl.style.left=Math.min(rc.left,innerWidth-330)+'px';sl.style.top=Math.max(12,Math.min(rc.top,innerHeight-H-12))+'px';sl.style.height=H+'px';sl.focus({preventScroll:true});setTimeout(()=>{const rh=sl.scrollHeight/(opts.length+sl.querySelectorAll('optgroup').length||1);sl.scrollTop=Math.max(0,sl.scrollTop+sl.clientHeight/2-rh*1.5);},40);
+ let done=false;const fin=(ok,v)=>{if(done)return;done=true;sl.remove();if(ok&&v!=null&&v!==cur){putV(Object.assign({},b,{lt:v}));toast(v?'Liefertermin: '+v:'Liefertermin entfernt');return;}rv();};
+ sl.addEventListener('click',e=>{const o=e.target.closest('option');if(o)fin(true,o.value);});
+ sl.addEventListener('keydown',k=>{if(k.key==='Escape'){k.preventDefault();fin(false);}if(k.key==='Enter'){k.preventDefault();fin(true,sl.value);}});
+ sl.addEventListener('blur',()=>setTimeout(()=>fin(false),150));}
 $('cards').addEventListener('keydown',e=>{const td=e.target.closest('td.dcell');if(td&&e.key==='Enter'&&!td.querySelector('input')){e.preventDefault();dateEdit(td);return;}const tk=e.target.closest('td.kcell');if(tk&&e.key==='Enter'&&!tk.querySelector('select')){e.preventDefault();ltEdit(tk);return;}const c=e.target.closest('[contenteditable]');if(c&&e.key==='Enter'){e.preventDefault();c.blur();}if(c&&e.key==='Escape'){c.blur();rv();}});
 $('cards').addEventListener('focusout',e=>{const c=e.target.closest('td[contenteditable]');if(!c)return;const b=V.find(x=>x.id===c.dataset.vid),f=c.dataset.f,v=c.textContent.trim();const cur=f==='notiz'?[b&&b.notiz,b&&b.montieren?'Montieren: '+b.montieren:''].filter(Boolean).join(' · '):(b&&b[f]||'');if(!b||v===cur)return;putV(Object.assign({},b,{[f]:v},f==='notiz'?{montieren:''}:{}));toast('Gespeichert');});
 $('vkAdd').addEventListener('click',()=>{vkEdit='new';rv();$('cards').scrollIntoView({block:'start'});const f=document.querySelector('[data-vf=new] input');if(f)f.focus();});
