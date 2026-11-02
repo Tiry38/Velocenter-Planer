@@ -450,7 +450,7 @@ body.nresizing,body.nresizing *{cursor:col-resize!important;user-select:none!imp
 .kdgrid .kx{font:700 12px var(--mono);color:#94A3B8;text-align:center}
 .kdgrid .kc:empty::before{content:"–";color:#475569}
 .kdgrid .kdel{align-items:center;cursor:default;opacity:0;transition:opacity .15s}.kdgrid .row.kr:hover .kdel,.kdgrid .kdel:focus-within{opacity:1}
-.kdgrid .row.kr:hover .kc{background:rgba(244,114,182,.05)}
+.kdgrid .row.kr:hover .kc:not(.kk){background:rgba(244,114,182,.05)}
 .kdempty{grid-column:1/-1;text-align:center;color:var(--muted);padding:30px}
 .kdf .g4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
 @media (max-width:900px){.kdf .g4{grid-template-columns:1fr 1fr}}
@@ -489,3 +489,25 @@ body[data-v=kunden] .tt small{background:var(--rb);-webkit-background-clip:text;
 .kdgrid .row.kr:hover .kgrip{color:#C4B5FD}.kdgrid .kgrip:active{cursor:grabbing}
 .kdgrid .row.kr.kdrag>.kc{opacity:.4}
 .kdgrid .row.kr.dropT>.kc{box-shadow:inset 0 3px 0 #22D3EE}.kdgrid .row.kr.dropB>.kc{box-shadow:inset 0 -3px 0 #B15CFF}
+
+/* Kunden: Filter im Spaltenkopf (wie Excel), Auswahl für Datum/Leasing/Vers., Marke nur als Logo */
+.kdgrid .kdh .kfi{font-style:normal;font-size:10px;margin-left:5px;opacity:.45;transition:opacity .15s}
+.kdgrid .kdh:hover .kfi{opacity:.9}.kdgrid .kdh.kfon{background:color-mix(in srgb,var(--hc) 22%,#0C0F16)!important}.kdgrid .kdh.kfon .kfi{opacity:1;color:#fff}
+.kdfx{border-color:rgba(34,211,238,.6)!important;color:#67E8F9!important}
+.kdpop{position:fixed;z-index:9999;width:290px;max-width:calc(100vw - 16px);padding:12px;border-radius:14px;background:#0F131C;border:1px solid transparent;
+ background:linear-gradient(#0F131C,#0F131C) padding-box,linear-gradient(135deg,#FF3B5C,#FFD93B,#3DDC84,#22D3EE,#B15CFF,#FF4FD8) border-box;box-shadow:0 18px 50px -12px rgba(0,0,0,.85),0 0 30px -12px #B15CFF;font-family:Outfit,var(--body),sans-serif}
+.kdpop .kph{font-weight:800;font-size:13px;color:#fff;margin-bottom:8px}
+.kdpop input.kpq,.kdpop input.kpd{width:100%;box-sizing:border-box;padding:8px 10px;border-radius:9px;border:1px solid #2A3344;background:#0A0D13;color:#fff;font:500 13px var(--body);outline:none;color-scheme:dark}
+.kdpop input.kpq:focus,.kdpop input.kpd:focus{border-color:#22D3EE;box-shadow:0 0 0 2px rgba(34,211,238,.2)}
+.kdpop .kpl{max-height:280px;overflow:auto;margin:8px 0;display:flex;flex-direction:column;gap:1px}
+.kdpop .kpo{display:flex;align-items:center;gap:8px;padding:5px 6px;border-radius:7px;cursor:pointer;font-size:13px;color:#E2E8F0}
+.kdpop .kpo:hover{background:rgba(255,255,255,.06)}.kdpop .kpo span{flex:1;min-width:0;overflow-wrap:anywhere}.kdpop .kpo em{font:600 11px var(--mono);color:#64748B;font-style:normal}
+.kdpop .kpo input{accent-color:#B15CFF;width:15px;height:15px;flex:none}
+.kdpop .kpm{color:#64748B;font-size:12px;margin:6px}
+.kdpop .kpa{display:flex;gap:6px;justify-content:flex-end;margin-top:8px}.kdpop .kpa .btn{padding:6px 11px;font-size:12.5px}
+.kdpop .kpv{display:flex;align-items:center;gap:10px;width:100%;padding:7px 8px;border:0;border-radius:8px;background:none;color:#E2E8F0;font:500 13px var(--body);text-align:left;cursor:pointer}
+.kdpop .kpv:hover,.kdpop .kpv:focus-visible{background:rgba(255,255,255,.07);outline:none}.kdpop .kpv.on{background:rgba(177,92,255,.2)}
+.kdpop .kpv b{min-width:38px;font:800 12.5px var(--mono);color:#fff}.kdpop .kpv span{color:#94A3B8}
+.kdgrid .kpk{cursor:pointer}.kdgrid .kpk:hover{box-shadow:inset 0 0 0 1px rgba(177,92,255,.55)}.kdgrid .kpk:focus-visible{outline:none;box-shadow:inset 0 0 0 2px var(--cyan)}
+.kdgrid .km.haslg{cursor:pointer;justify-content:center}.kdgrid .km.haslg .kmt{display:none}.kdgrid .km.haslg .kml{height:20px;max-width:108px}
+.kdgrid .km.haslg.ked{justify-content:flex-start}.kdgrid .km.haslg.ked .kmt{display:inline}.kdgrid .km.haslg.ked .kml{display:none}
