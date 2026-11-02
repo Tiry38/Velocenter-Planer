@@ -28,7 +28,7 @@ Web-App für **Velocenter Hessert** (Fahrradgeschäft, Wörth am Rhein). Ersetzt
   - `logo_small.b64` – Velocenter-Logo · `fbconfig.js` – Firebase-Konfiguration (öffentlich, kein Geheimnis)
   - `firestore.rules` – Sicherheitsregeln (Kopie; aktiv sind sie in der Firebase-Konsole)
 - **Bauen:** `cd src && python3 build.py <neue Version>` → schreibt `../index.html`, `../version.txt` usw. und `tests/test_fb.html`.
-- **Ausliefern:** commit + `git push origin main`. GitHub Pages braucht ~1 Min. **Offene Geräte prüfen alle 30 s `version.txt` und laden sich selbst neu** (mit `?v=` am Cache vorbei). Version bei jeder Auslieferung hochzählen (zuletzt **1.3.2**).
+- **Ausliefern:** commit + `git push origin main`. GitHub Pages braucht ~1 Min. **Offene Geräte prüfen alle 30 s `version.txt` und laden sich selbst neu** (mit `?v=` am Cache vorbei). Version bei jeder Auslieferung hochzählen (zuletzt **1.3.3**).
 - **Tests (lokal, ohne Internet):** `src/tests/` – `fbmock.js` baut Firebase Auth + Firestore nach (localStorage, Live-Abgleich zwischen Tabs).
   - Einmalig: `cd src/tests && npm pack xlsx@0.18.5 && tar xzf xlsx-0.18.5.tgz package/dist/xlsx.full.min.js && mv package/dist/xlsx.full.min.js . && rm -rf package xlsx-0.18.5.tgz`
   - `node quick.js` (Kurztest, ~30 s) · `node tf.js` (Gesamttest, ~2 Min). Playwright/Chromium ist vorinstalliert.

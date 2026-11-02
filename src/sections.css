@@ -316,3 +316,5 @@ body.navmini .navtog svg{transform:rotate(180deg)}
 /* Namensfeld nicht mehr über die Zeile hinaus (wurde oben von der Kopfzeile abgeschnitten) */
 .who2 .wp{margin:-2px -8px;padding:5px 8px}
 .vtab tbody tr:first-child td{padding-top:10px}
+/* Notiz: feste Breite, langer Text bricht in die nächste Zeile um (Zeile bleibt mittig) statt die Spalte zu verbreitern */
+.vtab td.vnote{width:170px;min-width:170px;max-width:170px;white-space:normal;overflow-wrap:anywhere;line-height:1.3;vertical-align:middle}
