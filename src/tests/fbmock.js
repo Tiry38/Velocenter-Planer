@@ -23,7 +23,7 @@ function snapDoc(path){const d=ST.docs[path];return{id:path.split('/').pop(),exi
 function docRef(path){return{path,
  async get(){await tick();ST=ld();if(!rules(path))throw deny(path);return snapDoc(path);},
  async set(o,opt){await tick();ST=ld();if(!rules(path,1))throw deny(path);ST.docs[path]=opt&&opt.merge?Object.assign({},ST.docs[path]||{},o):JSON.parse(JSON.stringify(o));sv();},
- async update(o){await tick();ST=ld();if(!rules(path,1))throw deny(path);ST.docs[path]=Object.assign({},ST.docs[path]||{},o);sv();},
+ async update(o){await tick();ST=ld();if(!rules(path,1))throw deny(path);if(!ST.docs[path]){const e=new Error('No document to update: '+path);e.code='not-found';throw e;}const d=JSON.parse(JSON.stringify(ST.docs[path]));for(const k in o){const ks=k.split('.');let t=d;for(let i=0;i<ks.length-1;i++){t[ks[i]]=t[ks[i]]&&typeof t[ks[i]]==='object'?t[ks[i]]:{};t=t[ks[i]];}t[ks[ks.length-1]]=o[k];}ST.docs[path]=d;sv();},
  async delete(){await tick();ST=ld();if(!rules(path,1))throw deny(path);delete ST.docs[path];sv();},
  onSnapshot(cb,ecb){const f=()=>{if(!rules(path)){ecb&&ecb(deny(path));return;}cb(snapDoc(path));};listeners.add(f);f();return()=>listeners.delete(f);}};}
 function query(col,conds){const run=()=>Object.keys(ST.docs).filter(p=>p.startsWith(col+'/')&&p.split('/').length===2).filter(p=>conds.every(([f,op,v])=>{const x=ST.docs[p][f];return op==='>='?x>=v:op==='<'?x<v:op==='=='?x===v:true;})).map(snapDoc);

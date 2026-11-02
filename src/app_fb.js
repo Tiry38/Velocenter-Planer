@@ -39,7 +39,7 @@ function tick(){const d=new Date();$('clock').innerHTML=String(d.getHours()).pad
 tick();setInterval(tick,15000);
 
 /* ---------- Navigation ---------- */
-const titles={planer:'Planer',verkauf:'Verkaufte Räder',bestell:'Bestellungen',leasing:'Leasing-Infos',lief:'Lieferanten',kasse:'Trinkgeld EC',tresor:'Passwörter'};
+const titles={planer:'Planer',verkauf:'Verkaufte Räder',bestell:'Bestellungen',rekla:'Reklamationen',leasing:'Leasing-Infos',lief:'Lieferanten',kasse:'Trinkgeld EC',tresor:'Passwörter'};
 function show(v){const nb=document.querySelector(`.navbtn[data-v=${v}]`);if(!nb||nb.hidden)v='planer';const b=document.querySelector(`.navbtn[data-v=${v}]`),top=document.querySelector('.top');
  top.style.setProperty('--ac',b.style.getPropertyValue('--ac'));document.querySelector('main').style.setProperty('--ac',b.style.getPropertyValue('--ac'));$('tIco').innerHTML=b.querySelector('.tile').innerHTML;$('tSub').textContent=b.querySelector('.lbl small').textContent;
  document.querySelectorAll('.view').forEach(s=>s.classList.toggle('on',s.id==='v-'+v));document.querySelectorAll('.navbtn').forEach(x=>x.setAttribute('aria-current',x.dataset.v===v));$('title').textContent=titles[v];
@@ -152,7 +152,7 @@ $('meSet').addEventListener('click',()=>{dlg(`<h3>Passwort ändern</h3><form id=
 /* ---------- Live-Daten (Firestore, sofort auf allen Geräten) ---------- */
 let unsubs=[],rTimer=null,dirty=false;
 const editing=()=>!!document.querySelector('#grid .edit, .edf, #dlg:not([hidden])')||(document.activeElement&&document.activeElement.isContentEditable);
-function renderAll(){renderInfo();render();rv();rb();rl();rs();rtg();}
+function renderAll(){renderInfo();render();rv();rb();rr();rl();rs();rtg();}
 function scheduleRender(){clearTimeout(rTimer);rTimer=setTimeout(()=>{if(editing()){dirty=true;return;}dirty=false;renderAll();},60);}
 document.addEventListener('focusout',()=>setTimeout(()=>{if(dirty&&!editing()){dirty=false;renderAll();}},120));
 function ping(fromOther){const l=$('live');if(l&&fromOther){l.classList.remove('ping');void l.offsetWidth;l.classList.add('ping');}}
@@ -166,6 +166,7 @@ function startLive(){stopLive();const from=iso(new Date(Date.now()-35*864e5));
  listen('V',x=>V=x);listen('B',x=>B=x);listen('T',x=>T=x);listen('S',x=>{S=x;smbwSeed();});
  listen('L',x=>{L=x.map(o=>Object.assign({},o,{k:o.k||o.id}));if(!x.length)seedLeasing();else recLeasing();});
  listen('I',x=>{I={};x.forEach(o=>I[o.id]=o.wert);});
+ unsubs.push(db.doc('meta/reklam').onSnapshot(d=>{RKD=(d.exists&&d.data().items)||{};scheduleRender();},()=>{}));
  unsubs.push(db.doc('meta/brands').onSnapshot(d=>{const x=d.exists?d.data():{};BUSER={list:x.list||[],logos:x.logos||{}};scheduleRender();},()=>{}));
  unsubs.push(db.doc('meta/import').onSnapshot(d=>{const x=d.exists?d.data():{};$('impBox').hidden=!(ME&&ME.adm)||x.tresor===true;},()=>{}));
  unsubs.push(db.doc('tresor/check').onSnapshot(d=>{TSET=d.exists;TCHECK=d.exists?d.data():null;$('lockHint').textContent=TSET?'PIN eingeben':'Noch keine PIN: Ein Admin legt sie jetzt mit der ersten Eingabe fest.';},()=>{}));
@@ -480,6 +481,88 @@ $('lgrid').addEventListener('submit',async e=>{if(!e.target.dataset.lf)return;e.
 $('lsAdd').addEventListener('click',()=>{L.push({_new:1,k:'NEU',n:'Neuer Anbieter',sub:'Leasing',ac:'#94A3B8',drei:null,spe:null,pak:[],zubJa:[],zubNein:[]});lsEdit=L.length-1;lsQ='';$('lsSearch').value='';rl();document.querySelector('.lc.editing')?.scrollIntoView({block:'start',behavior:'smooth'});});
 $('lsSearch').addEventListener('input',e=>{lsQ=e.target.value.toLowerCase().trim();rl();});
 $('fDrei').addEventListener('click',e=>{lsDrei=!lsDrei;e.currentTarget.setAttribute('aria-pressed',lsDrei);rl();});
+
+/* ================= REKLAMATIONEN =================
+   Gespeichert in meta/reklam {items:{id:{…}}} (Regel meta/* ist schon freigegeben – keine Konsolen-Änderung nötig).
+   Status: offen (reklamiert) → eing (eingeschickt) → erl (Ersatz/Gutschrift erhalten = erledigt). */
+let RKD={},rkEdit=null,rkShowDone=false;
+const RKART=['Garantie / Gewährleistung','Defekt bei Lieferung','Transportschaden','Falschlieferung','Fehlmenge','Sonstiges'];
+const RKLOES=['Ersatz','Gutschrift','Reparatur','Austausch vor Ort','noch offen'];
+const RKST={offen:['Reklamiert','#FB923C'],eing:['Eingeschickt','#60A5FA'],erl:['Erledigt','#34D399']};
+const rkAll=()=>Object.values(RKD).filter(x=>x&&x.id);
+const rkDays=r=>{const t=vkDate(r.dat);return t?Math.floor((Date.now()-t)/864e5):null;};
+const rkLief=r=>S.find(x=>x.id===r.lid)||S.find(x=>String(x.name||'').trim().toLowerCase()===String(r.lief||'').trim().toLowerCase())||null;
+const deDate=d=>String(d.getDate()).padStart(2,'0')+'.'+String(d.getMonth()+1).padStart(2,'0')+'.'+d.getFullYear();
+async function putR(o){o=clean(o);o.ts=stamp();o.tsVon=ME?ME.id:'';RKD=Object.assign({},RKD,{[o.id]:o});rr();
+ try{await db.doc('meta/reklam').update({['items.'+o.id]:o});}catch(e){try{const d=await db.doc('meta/reklam').get();const it=Object.assign({},(d.exists&&d.data().items)||{},{[o.id]:o});await db.doc('meta/reklam').set({items:it},{merge:true});}catch(e2){fail(e2);}}}
+async function delR(id){const n=Object.assign({},RKD);delete n[id];RKD=n;rr();try{await db.doc('meta/reklam').update({['items.'+id]:null});}catch(e){fail(e);}}
+function rkTxt(r){const l=rkLief(r);return [r.lief,l&&l.name,r.marke,r.artikel,r.artnr,r.kunde,r.rahmen,r.art,r.grund,r.loes,r.rma,r.sendnr,r.notiz,r.dat,r.erlAm,(RKST[r.st||'offen']||[''])[0]].join(' ').toLowerCase();}
+function rr(){if(!$('rkTab'))return;const q=($('rkSearch').value||'').trim().toLowerCase(),all=rkAll();
+ $('nRekla').textContent=all.filter(r=>(r.st||'offen')!=='erl').length;
+ const rank={offen:0,eing:1,erl:2};
+ const list=all.filter(r=>q?rkTxt(r).includes(q):(rkShowDone||(r.st||'offen')!=='erl')||r.id===rkEdit)
+  .sort((a,b)=>rank[a.st||'offen']-rank[b.st||'offen']||((a.st==='erl')?vkDate(b.erlAm)-vkDate(a.erlAm):vkDate(a.dat)-vkDate(b.dat)));
+ $('rkDone').setAttribute('aria-pressed',rkShowDone);
+ $('rkForm').innerHTML=rkEdit?rkFormH(rkEdit==='new'?{id:'new',st:'offen'}:RKD[rkEdit]||{id:'new',st:'offen'}):'';
+ $('rkTab').innerHTML='<thead><tr><th></th><th>Reklamiert am</th><th>Lieferant</th><th>Artikel</th><th>Grund</th><th>Kunde</th><th>Vorgangs-Nr.</th><th>Rücksendung</th><th>Lösung</th><th>Status</th><th></th></tr></thead><tbody>'+
+  (list.length?list.map(rkRow).join(''):`<tr><td colspan="11" class="empty">${q?'Nichts gefunden – gesucht wird in allen Reklamationen inkl. erledigter.':'Keine offenen Reklamationen 👍'}</td></tr>`)+'</tbody>';}
+function rkRow(r){const st=r.st||'offen',[stn,stc]=RKST[st],l=rkLief(r),lg=l?sLogo(l):'',d=rkDays(r);
+ const age=st!=='erl'&&d!=null?`<small class="rkage${d>30?' hot':d>14?' warm':''}">${d<=0?'heute':'seit '+d+' '+(d===1?'Tag':'Tagen')}</small>`:'';
+ return `<tr class="rkr st-${st}" style="--rc:${stc}">
+ <td class="sdot" title="${stn}"><i></i></td>
+ <td class="rkd"><b>${esc(dshort(r.dat)||'–')}</b>${age}</td>
+ <td class="rkl">${lg?`<img src="${lg}" alt="">`:''}<div><b>${esc(l?l.name:(r.lief||'–'))}</b>${l&&l.kdnr?`<small>Kd-Nr. ${esc(l.kdnr)}</small>`:''}${l?`<button class="lnk" type="button" data-golief="${esc(l.name)}">→ Lieferant</button>`:''}</div></td>
+ <td class="rka"><b>${esc(r.artikel||'–')}</b><small>${[r.marke,r.artnr?'Art.-Nr. '+r.artnr:'',r.menge?r.menge+'×':'',r.rahmen?'Rahmen/Serie '+r.rahmen:''].filter(Boolean).map(esc).join(' · ')}</small></td>
+ <td class="rkg">${r.art?`<span class="rkchip">${esc(r.art)}</span>`:''}<small>${esc(r.grund||'')}</small></td>
+ <td>${esc(r.kunde||'–')}</td>
+ <td class="rkm">${esc(r.rma||'–')}</td>
+ <td class="rks">${r.rueck?`<b>${esc(dshort(r.rueck))}</b>`:'<span class="na">–</span>'}${r.sendnr?`<small class="rkm">${esc(r.sendnr)}</small>`:''}</td>
+ <td>${r.loes?`<span class="rkchip l">${esc(r.loes)}</span>`:'–'}${r.betrag?`<small>${esc(euro(r.betrag))}</small>`:''}</td>
+ <td class="rkst"><button class="st rk1" type="button" data-rkst="eing" data-rid="${esc(r.id)}" aria-pressed="${st==='eing'}" title="Ware eingeschickt">📤</button><button class="st rk2" type="button" data-rkst="erl" data-rid="${esc(r.id)}" aria-pressed="${st==='erl'}" title="${r.erlAm?'erledigt '+esc(r.erlAm)+(r.erlVon?' · '+esc(U(r.erlVon).n):''):'Ersatz/Gutschrift erhalten = erledigt'}">✓ erhalten</button></td>
+ <td><button class="mini" type="button" data-redit="${esc(r.id)}" title="Bearbeiten / Löschen">✎</button></td></tr>`;}
+function rkFormH(r){const nw=r.id==='new',iso2=v=>toIsoDe(v)||'';const opt=(arr,v)=>'<option value="">–</option>'+arr.map(x=>`<option${x===v?' selected':''}>${esc(x)}</option>`).join('');const l=rkLief(r);
+ return `<form class="edf card rkf" data-rf="${esc(r.id)}" autocomplete="off" novalidate><b>${nw?'Neue Reklamation':'Reklamation bearbeiten'}</b>
+ <datalist id="rkLiefL">${S.slice().sort((a,b)=>String(a.name).localeCompare(String(b.name))).map(x=>`<option value="${esc(x.name)}">`).join('')}</datalist><datalist id="rkBrandL">${allBrands().map(x=>`<option value="${esc(x.n)}">`).join('')}</datalist>
+ <div class="g4">
+  <label>Reklamiert am<input name="dat" type="date" value="${esc(nw?iso(new Date()):iso2(r.dat))}"></label>
+  <label>Lieferant (Ansprechpartner)<input name="lief" list="rkLiefL" value="${esc(l?l.name:(r.lief||''))}" placeholder="aus Lieferanten wählen"></label>
+  <label>Marke<input name="marke" list="rkBrandL" value="${esc(r.marke||'')}" placeholder="z. B. i:SY"></label>
+  <label>Status<select name="st">${Object.entries(RKST).map(([k,[n]])=>`<option value="${k}"${(r.st||'offen')===k?' selected':''}>${n}</option>`).join('')}</select></label>
+  <label class="w2">Artikel / Teil<input name="artikel" value="${esc(r.artikel||'')}" placeholder="z. B. Bosch PowerTube 750"></label>
+  <label>Artikel-Nr. / EAN<input name="artnr" value="${esc(r.artnr||'')}"></label>
+  <label>Menge<input name="menge" value="${esc(r.menge||'')}" placeholder="1"></label>
+  <label>Rahmen- / Serien-Nr.<input name="rahmen" value="${esc(r.rahmen||'')}"></label>
+  <label>Kunde (falls Kundenrad)<input name="kunde" value="${esc(r.kunde||'')}"></label>
+  <label>Art<select name="art">${opt(RKART,r.art)}</select></label>
+  <label>Lösung erwartet<select name="loes">${opt(RKLOES,r.loes)}</select></label>
+  <label class="w4">Fehler / Grund<textarea name="grund" rows="2">${esc(r.grund||'')}</textarea></label>
+  <label>Vorgangs-/RMA-Nr. Lieferant<input name="rma" value="${esc(r.rma||'')}"></label>
+  <label>Eingeschickt am<input name="rueck" type="date" value="${esc(iso2(r.rueck))}"></label>
+  <label>Sendungs-Nr.<input name="sendnr" value="${esc(r.sendnr||'')}"></label>
+  <label>Gutschrift-Betrag<input name="betrag" value="${esc(r.betrag||'')}" placeholder="z. B. 49,90"></label>
+  <label class="w4">Notiz<input name="notiz" value="${esc(r.notiz||'')}"></label>
+ </div>${r.erlAm?`<p class="hint">Erledigt am ${esc(r.erlAm)}${r.erlVon?' von '+esc(U(r.erlVon).n):''} · angelegt von ${esc(r.von?U(r.von).n:'–')}</p>`:''}
+ <div class="acts"><button class="btn red" type="submit">${nw?'Reklamation anlegen':'Speichern'}</button><button class="btn" type="button" data-rcancel>Abbrechen</button>${!nw?`<button class="btn del" type="button" data-rdel="${esc(r.id)}">Löschen</button>`:''}</div></form>`;}
+$('rkSearch').addEventListener('input',rr);
+$('rkDone').addEventListener('click',()=>{rkShowDone=!rkShowDone;rr();});
+$('rkAdd').addEventListener('click',()=>{rkEdit='new';rr();$('rkForm').scrollIntoView({block:'start'});const f=document.querySelector('[data-rf=new] input[name=lief]');if(f)f.focus();});
+$('v-rekla').addEventListener('click',e=>{
+ const g=e.target.closest('[data-golief]');if(g){show('lief');$('sSearch').value=g.dataset.golief;rs();return;}
+ const s1=e.target.closest('[data-rkst]');if(s1){const r=RKD[s1.dataset.rid];if(!r)return;const k=s1.dataset.rkst,cur=r.st||'offen',n=Object.assign({},r);
+  if(k==='eing'){n.st=cur==='eing'?'offen':'eing';if(n.st==='eing'&&!n.rueck)n.rueck=deDate(new Date());}
+  else{if(cur==='erl'){n.st=n.rueck?'eing':'offen';n.erlAm='';n.erlVon='';}else{n.st='erl';n.erlAm=deDate(new Date());n.erlVon=ME.id;}}
+  putR(n);if(n.st==='erl')toast('Erledigt – '+(r.artikel||'Reklamation')+' (unter „Erledigte zeigen“)',()=>{putR(Object.assign({},r));toast('Wieder offen');});return;}
+ const ed=e.target.closest('[data-redit]');if(ed){rkEdit=ed.dataset.redit;rr();$('rkForm').scrollIntoView({block:'start'});return;}
+ if(e.target.closest('[data-rcancel]')){rkEdit=null;rr();return;}
+ const dl=e.target.closest('[data-rdel]');if(dl){if(!dl.dataset.sure){dl.dataset.sure=1;dl.textContent='Wirklich löschen?';return;}rkEdit=null;delR(dl.dataset.rdel);toast('Gelöscht');}});
+$('v-rekla').addEventListener('submit',e=>{if(!e.target.dataset.rf)return;e.preventDefault();const f=e.target,id=f.dataset.rf,d=new FormData(f);
+ const r=id==='new'?{id:nid('r'),von:ME.id}:Object.assign({},RKD[id]);
+ ['lief','marke','artikel','artnr','menge','rahmen','kunde','art','loes','grund','rma','sendnr','notiz','st'].forEach(k=>r[k]=String(d.get(k)||'').trim());
+ ['dat','rueck'].forEach(k=>{const v=String(d.get(k)||'');r[k]=/^\d{4}-\d{2}-\d{2}$/.test(v)?deDate(fromIso(v)):'';});
+ r.betrag=String(d.get('betrag')||'').trim()?euro(String(d.get('betrag')).trim()):'';
+ const l=S.find(x=>String(x.name||'').trim().toLowerCase()===r.lief.toLowerCase());r.lid=l?l.id:'';
+ if(r.st==='erl'&&!r.erlAm){r.erlAm=deDate(new Date());r.erlVon=ME.id;}if(r.st!=='erl'){r.erlAm='';r.erlVon='';}
+ rkEdit=null;putR(r);toast('Gespeichert');});
 
 /* ================= LIEFERANTEN ================= */
 let sEdit=null,LOGINS=null;
