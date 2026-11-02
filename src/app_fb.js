@@ -321,9 +321,12 @@ function dateEdit(td){const b=V.find(x=>x.id===td.dataset.vid),f=td.dataset.df;i
  i.addEventListener('change',()=>{if(i.value)fin(true);});i.addEventListener('keydown',k=>{if(k.key==='Enter'){k.preventDefault();fin(true);}if(k.key==='Escape')fin(false);});i.addEventListener('blur',()=>setTimeout(()=>fin(false),200));}
 $('cards').addEventListener('click',e=>{const td=e.target.closest('td.dcell');if(td&&!td.querySelector('input'))dateEdit(td);const tk=e.target.closest('td.kcell');if(tk&&!tk.querySelector('select'))ltEdit(tk);});
 // LT: Klick → Kalenderwoche wählen (Lager, KW −4 … +30 mit Datum Mo–Sa), gespeichert als „KW 47“
-function ltOpts(cur){const mo=new Date();mo.setHours(12,0,0,0);mo.setDate(mo.getDate()-((mo.getDay()+6)%7));const dd=d=>String(d.getDate()).padStart(2,'0')+'.'+String(d.getMonth()+1).padStart(2,'0')+'.';const o=[['','–  kein LT'],['Lager','Lager']];
- for(let i=-4;i<=30;i++){const a=new Date(mo);a.setDate(a.getDate()+7*i);const e=new Date(a);e.setDate(e.getDate()+5);const v='KW '+kw(a);o.push([v,v+'  ·  '+dd(a)+'–'+dd(e)+(i===0?'  (diese Woche)':'')]);}
- if(cur&&!o.some(x=>x[0]===cur))o.splice(2,0,[cur,cur]);return o.map(([v,n])=>`<option value="${esc(v)}"${v===cur?' selected':''}>${esc(n)}</option>`).join('');}
+function ltOpts(cur){const mo=new Date();mo.setHours(12,0,0,0);mo.setDate(mo.getDate()-((mo.getDay()+6)%7));const dd=d=>String(d.getDate()).padStart(2,'0')+'.'+String(d.getMonth()+1).padStart(2,'0')+'.';
+ const wk=i=>{const a=new Date(mo);a.setDate(a.getDate()+7*i);const e=new Date(a);e.setDate(e.getDate()+5);const v='KW '+kw(a);return [v,v+'  ·  '+dd(a)+'–'+dd(e)+(i===0?'  (diese Woche)':'')];};
+ const op=([v,n])=>`<option value="${esc(v)}"${v===cur?' selected':''}>${esc(n)}</option>`;
+ const fut=[],past=[];for(let i=0;i<=30;i++)fut.push(wk(i));for(let i=-1;i>=-26;i--)past.push(wk(i));
+ const known=[['',''],['Lager','']].concat(fut,past).some(x=>x[0]===cur);
+ return op(['','–  kein LT'])+op(['Lager','Lager'])+(cur&&!known?op([cur,cur]):'')+`<optgroup label="▼ Ab dieser Woche">${fut.map(op).join('')}</optgroup><optgroup label="◀ Vergangene Wochen (zurück)">${past.map(op).join('')}</optgroup>`;}
 function ltEdit(td){const b=V.find(x=>x.id===td.dataset.vid);if(!b)return;const sl=document.createElement('select');sl.className='edit din ksel';sl.innerHTML=ltOpts(b.lt||'');td.textContent='';td.append(sl);sl.focus();try{sl.showPicker();}catch(_){}
  let done=false;const fin=ok=>{if(done)return;done=true;const v=sl.value;sl.remove();if(ok&&v!==(b.lt||'')){putV(Object.assign({},b,{lt:v}));toast(v?'Liefertermin: '+v:'Liefertermin entfernt');return;}rv();};
  sl.addEventListener('change',()=>fin(true));sl.addEventListener('keydown',k=>{if(k.key==='Escape')fin(false);});sl.addEventListener('blur',()=>setTimeout(()=>fin(false),150));}
