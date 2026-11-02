@@ -299,3 +299,10 @@ body.navmini .navtog svg{transform:rotate(180deg)}
 .edf.vnew .g5 label,.edf.vnew .g2 label{display:flex;flex-direction:column;gap:5px}
 .edf.vnew select,.edf.vnew input[type=date]{width:100%;box-sizing:border-box}
 @media (max-width:900px){.edf.vnew .g5{grid-template-columns:1fr 1fr}}
+.vtab thead th.thl{white-space:normal;line-height:1.25;min-width:0;width:78px;font-size:10.5px;letter-spacing:.06em}
+.vtab td.dcell{min-width:70px}
+.vtab td.vnote{min-width:130px}
+.lcell{min-width:128px}
+.vtab td,.vtab thead tr.h2 th{padding-left:6px;padding-right:6px}
+.vtab .ssel.mini2{max-width:86px}
+.vtab td.vnote{min-width:110px}.lcell{min-width:118px}
