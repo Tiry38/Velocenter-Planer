@@ -583,3 +583,5 @@ body[data-v=kunden] .tt small{background:var(--rb);-webkit-background-clip:text;
 /* 1.6.8: Monat über der KW */
 .vtab td.kcell .ltm{display:block;width:0;white-space:nowrap;overflow:visible;font:600 10px/1.1 var(--body);color:#93C5FD;letter-spacing:.01em;margin-bottom:2px;text-shadow:0 0 6px rgba(147,197,253,.35)}
 .vtab td.kcell{min-width:100px;padding-right:14px}
+/* 1.7.1: Fenster immer scrollbar, wenn höher als der Bildschirm */
+.dlg-box{max-height:calc(100dvh - 32px);overflow-y:auto;overscroll-behavior:contain}
