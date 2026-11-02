@@ -589,3 +589,5 @@ body[data-v=kunden] .tt small{background:var(--rb);-webkit-background-clip:text;
 /* 1.7.3: Spaltenköpfe Verkauf in Outfit wie der Rest */
 .vtab thead tr.h2 th,.vtab thead tr.h2 th *{font-family:"Outfit",var(--body),sans-serif!important;font-weight:700;letter-spacing:.02em}
 .vtab thead tr.h2 th{font-size:11px}
+/* 1.7.4: leeres Leasingende = nur Strich (Kunde hatte vorher kein Leasing) */
+.vtab td.d-lende:empty::before{content:"–";color:var(--muted);font-weight:400}
