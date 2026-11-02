@@ -39,7 +39,7 @@ function tick(){const d=new Date();$('clock').innerHTML=String(d.getHours()).pad
 tick();setInterval(tick,15000);
 
 /* ---------- Navigation ---------- */
-const titles={planer:'Planer',verkauf:'Verkaufte Räder',bestell:'Bestellungen',rekla:'Reklamationen',leasing:'Leasing-Infos',lief:'Lieferanten',kasse:'Trinkgeld EC',tresor:'Passwörter',notes:'Notizen'};
+const titles={planer:'Planer',verkauf:'Verkaufte Räder',bestell:'Bestellungen',rekla:'Reklamationen',kunden:'Kunden',leasing:'Leasing-Infos',lief:'Lieferanten',kasse:'Trinkgeld EC',tresor:'Passwörter',notes:'Notizen'};
 function show(v){const nb=document.querySelector(`.navbtn[data-v=${v}]`);if(!nb||nb.hidden)v='planer';const b=document.querySelector(`.navbtn[data-v=${v}]`),top=document.querySelector('.top');
  top.style.setProperty('--ac',b.style.getPropertyValue('--ac'));document.querySelector('main').style.setProperty('--ac',b.style.getPropertyValue('--ac'));$('tIco').innerHTML=b.querySelector('.tile').innerHTML;$('tSub').textContent=b.querySelector('.lbl small').textContent;
  document.querySelectorAll('.view').forEach(s=>s.classList.toggle('on',s.id==='v-'+v));document.querySelectorAll('.navbtn').forEach(x=>x.setAttribute('aria-current',x.dataset.v===v));$('title').textContent=titles[v];
@@ -152,7 +152,7 @@ $('meSet').addEventListener('click',()=>{dlg(`<h3>Passwort ändern</h3><form id=
 /* ---------- Live-Daten (Firestore, sofort auf allen Geräten) ---------- */
 let unsubs=[],rTimer=null,dirty=false;
 const editing=()=>!!document.querySelector('#grid .edit, .edf, #dlg:not([hidden])')||(document.activeElement&&document.activeElement.isContentEditable);
-function renderAll(){renderInfo();render();rv();rb();rr();rl();rs();rtg();}
+function renderAll(){renderInfo();render();rv();rb();rr();rk();rl();rs();rtg();}
 function scheduleRender(){clearTimeout(rTimer);rTimer=setTimeout(()=>{if(editing()){dirty=true;return;}dirty=false;renderAll();},60);}
 document.addEventListener('focusout',()=>setTimeout(()=>{if(dirty&&!editing()){dirty=false;renderAll();}},120));
 function ping(fromOther){const l=$('live');if(l&&fromOther){l.classList.remove('ping');void l.offsetWidth;l.classList.add('ping');}}
@@ -167,6 +167,9 @@ function startLive(){stopLive();const from=iso(new Date(Date.now()-35*864e5));
  listen('L',x=>{L=x.map(o=>Object.assign({},o,{k:o.k||o.id}));if(!x.length)seedLeasing();else recLeasing();});
  listen('I',x=>{I={};x.forEach(o=>I[o.id]=o.wert);});
  if(ME&&ME.adm)unsubs.push(db.doc('tresor/pw').onSnapshot(d=>{if(KEY&&NOTES&&d.exists&&d.data().ct&&d.data().tsVon!==ME.id&&!document.querySelector('#nGrid [contenteditable]:focus'))open_(KEY,d.data()).then(x=>{if(!Array.isArray(x)){NOTES=x.notes||[];PWGRID=x.grid||PWGRID;rn();}}).catch(()=>{});},()=>{}));
+ for(let y=1995;y<=new Date().getFullYear()+1;y++)unsubs.push(db.doc('meta/kd_'+y).onSnapshot(d=>{KD[y]=(d.exists&&d.data().items)||{};kdDirty=true;scheduleRender();},()=>{}));
+ unsubs.push(db.doc('meta/kd_x').onSnapshot(d=>{KD.x=(d.exists&&d.data().items)||{};kdDirty=true;scheduleRender();},()=>{}));
+ unsubs.push(db.doc('meta/import').onSnapshot(d=>{KDIMP=!!(d.exists&&d.data().kunden);if($('kdImp'))$('kdImp').hidden=!(ME&&ME.adm)||KDIMP;},()=>{}));
  unsubs.push(db.doc('meta/reklam').onSnapshot(d=>{RKD=(d.exists&&d.data().items)||{};scheduleRender();},()=>{}));
  unsubs.push(db.doc('meta/brands').onSnapshot(d=>{const x=d.exists?d.data():{};BUSER={list:x.list||[],logos:x.logos||{}};scheduleRender();},()=>{}));
  unsubs.push(db.doc('meta/import').onSnapshot(d=>{const x=d.exists?d.data():{};$('impBox').hidden=!(ME&&ME.adm)||x.tresor===true;},()=>{}));
@@ -556,6 +559,65 @@ $('v-rekla').addEventListener('submit',e=>{if(!e.target.dataset.rf)return;e.prev
  {const v=String(d.get('dat')||'');r.dat=/^\d{4}-\d{2}-\d{2}$/.test(v)?deDate(fromIso(v)):'';}
  const l=S.find(x=>String(x.name||'').trim().toLowerCase()===r.lief.toLowerCase());r.lid=l?l.id:'';
  rkEdit=null;putR(r);toast('Gespeichert');});
+
+/* ================= KUNDEN (Verkaufshistorie seit 1995, aus Sheet-Reiter „Kunden“) =================
+   Gespeichert je Jahr in meta/kd_<Jahr> = {items:{id:{…}}} (bzw. meta/kd_x ohne Jahr) – wenige Lesevorgänge, Regel meta/* reicht.
+   Felder: dat (TT.MM.JJJJ) · nr (Beleg-Nr.) · marke · modell · preis · leas · kunde · vers · rahmen · tel · k (Spalte ohne Überschrift) · y (Paket). */
+let KD={},KDIMP=false,kdDirty=true,kdList=[],kdYears=2,kdEdit=null;
+const kdAll=()=>{if(kdDirty){kdList=[];for(const y in KD)for(const id in KD[y]){const r=KD[y][id];if(r&&r.id){r._t=[r.kunde,r.marke,r.modell,r.rahmen,r.tel,r.nr,r.leas,r.vers,r.dat,r.preis].join(' ').toLowerCase();r._d=vkDate(r.dat)||0;kdList.push(r);}}kdList.sort((a,b)=>b._d-a._d||String(b.nr).localeCompare(String(a.nr),'de',{numeric:true}));kdDirty=false;}return kdList;};
+const kdYear=r=>{const d=r._d?new Date(r._d):null;return d?d.getFullYear():'ohne Datum';};
+const kdPreis=v=>{v=String(v==null?'':v).trim();if(/^\d+([.,]\d+)?$/.test(v)){const n=parseFloat(v.replace(',','.'));return n.toLocaleString('de-DE',{maximumFractionDigits:2})+' €';}return v;};
+function rk(){const g=$('kdGrid');if(!g)return;const all=kdAll();{const cy=new Date().getFullYear();$('nKunden').textContent=all.length?all.filter(r=>r._d&&new Date(r._d).getFullYear()===cy).length:'–';$('nKunden').title=all.length.toLocaleString('de-DE')+' Einträge gesamt · Zahl = Verkäufe '+cy;}
+ if(document.querySelector('#kdGrid [contenteditable]:focus'))return;
+ const q=($('kdSearch').value||'').trim().toLowerCase();const now=new Date().getFullYear();
+ let list=q?all.filter(r=>q.split(/\s+/).every(w=>r._t.includes(w))):all.filter(r=>!r._d||new Date(r._d).getFullYear()>now-kdYears);
+ const more=q?list.length>600:all.some(r=>r._d&&new Date(r._d).getFullYear()<=now-kdYears);list=list.slice(0,600);
+ $('kdMore').hidden=q||!more;$('kdMore').textContent='Ältere Jahre anzeigen (bis '+(now-kdYears-1)+')';
+ $('kdForm').innerHTML=kdEdit?kdFormH():'';
+ const H=['Datum','Beleg','Marke','Modell','Preis','Leasing','Kunde','Vers.','Rahmen-Nr.','Telefon','',''];
+ let h=H.map((n,i)=>`<div class="hd kdh${i===6?' kl':''}">${n}</div>`).join('');let yr=null;const cnt={};list.forEach(r=>{const y=kdYear(r);cnt[y]=(cnt[y]||0)+1;});
+ if(!all.length){g.innerHTML=h+`<div class="kdempty">${ME&&ME.adm?'Noch keine Kunden – oben „📥 Kunden aus Sheet übernehmen“ und die .xlsx des Sheets wählen.':'Noch keine Kunden übernommen.'}</div>`;return;}
+ for(const r of list){const y=kdYear(r);if(y!==yr){yr=y;h+=`<div class="kw kdy">${y}<span>${cnt[y]} ${cnt[y]===1?'Verkauf':'Verkäufe'}${q?' (Treffer)':''}</span></div>`;}
+  const b=brandOfB({marke:r.marke,modell:r.modell}),lg=b&&(BUSER.logos||{})[b.k];
+  const ce=(f,v,cls)=>`<div class="c kc ${cls||''}" contenteditable="true" spellcheck="false" data-kid="${esc(r.id)}" data-ky="${esc(r.y)}" data-kf="${f}">${esc(v==null?'':v)}</div>`;
+  h+=`<div class="row kr">${ce('dat',dshort(r.dat)===r.dat?r.dat:r.dat,'kd')}${ce('nr',r.nr,'kn')}<div class="c kc km" data-kid="${esc(r.id)}">${lg?`<img src="${lg}" alt="" class="kml">`:''}<span class="kmt" contenteditable="true" spellcheck="false" data-kid="${esc(r.id)}" data-ky="${esc(r.y)}" data-kf="marke">${esc(r.marke||'')}</span></div>${ce('modell',r.modell,'kmo')}${ce('preis',kdPreis(r.preis),'kp')}${ce('leas',r.leas,'kl2')}${ce('kunde',r.kunde,'kk')}${ce('vers',r.vers,'kv')}${ce('rahmen',r.rahmen,'krn')}${ce('tel',r.tel,'kt')}${ce('k',r.k,'kx')}<div class="c kc kdel"><button class="nx" type="button" data-kdel="${esc(r.id)}" data-ky="${esc(r.y)}" title="Eintrag löschen">×</button></div></div>`;}
+ g.innerHTML=h+(q&&!list.length?'<div class="kdempty">Nichts gefunden.</div>':'');}
+async function kdPut(y,r){const c=Object.assign({},r);delete c._t;delete c._d;c.ts=stamp();c.tsVon=ME?ME.id:'';KD[y]=Object.assign({},KD[y]||{},{[r.id]:c});kdDirty=true;
+ try{await db.doc('meta/kd_'+y).update({['items.'+r.id]:c});}catch(e){try{await db.doc('meta/kd_'+y).set({items:Object.assign({},KD[y])},{merge:true});}catch(e2){fail(e2);}}}
+function kdFormH(){const opt='<option value="">–</option>'+Object.entries(FN).map(([k,n])=>`<option value="${esc(k)}">${esc(k)} · ${esc(n)}</option>`).join('');
+ return `<form class="edf card kdf" data-kf2="new" autocomplete="off" novalidate><b>Neuer Verkauf / Kunde</b><datalist id="kdBrandL">${allBrands().map(x=>`<option value="${esc(x.n)}">`).join('')}</datalist><div class="g4">
+ <label>Datum<input name="dat" type="date" value="${iso(new Date())}"></label><label>Beleg-Nr.<input name="nr"></label><label>Marke<input name="marke" list="kdBrandL"></label><label>Modell<input name="modell"></label>
+ <label>Preis<input name="preis" placeholder="z. B. 3499"></label><label>Leasing<select name="leas">${opt}</select></label><label>Kunde<input name="kunde"></label><label>Vers.<input name="vers" placeholder="z. B. E, EP, FS"></label>
+ <label>Rahmen-Nr.<input name="rahmen"></label><label>Telefon<input name="tel"></label></div>
+ <div class="acts"><button class="btn red" type="submit">Speichern</button><button class="btn" type="button" data-kcancel>Abbrechen</button></div></form>`;}
+$('kdSearch').addEventListener('input',()=>{clearTimeout(window._kdT);window._kdT=setTimeout(rk,150);});
+$('kdMore').addEventListener('click',()=>{kdYears+=3;rk();});
+$('kdAdd').addEventListener('click',()=>{kdEdit='new';rk();$('kdForm').scrollIntoView({block:'start'});});
+$('v-kunden').addEventListener('click',e=>{if(e.target.closest('[data-kcancel]')){kdEdit=null;rk();return;}
+ const dl=e.target.closest('[data-kdel]');if(dl){const y=dl.dataset.ky,id=dl.dataset.kdel,old=KD[y]&&KD[y][id];if(!old)return;if(!dl.dataset.sure){dl.dataset.sure=1;dl.textContent='?';dl.title='Nochmal klicken = löschen';return;}
+  const n=Object.assign({},KD[y]);delete n[id];KD[y]=n;kdDirty=true;rk();db.doc('meta/kd_'+y).update({['items.'+id]:null}).catch(fail);toast('Gelöscht',()=>{kdPut(y,old).then(rk);toast('Wiederhergestellt');});}});
+$('v-kunden').addEventListener('submit',async e=>{if(!e.target.dataset.kf2)return;e.preventDefault();const d=new FormData(e.target),y=String(new Date().getFullYear());const r={id:nid('k'),y};
+ ['nr','marke','modell','preis','leas','kunde','vers','rahmen','tel'].forEach(k=>r[k]=String(d.get(k)||'').trim());const v=String(d.get('dat')||'');r.dat=/^\d{4}-\d{2}-\d{2}$/.test(v)?deDate(fromIso(v)):'';
+ kdEdit=null;await kdPut(y,r);rk();toast('Gespeichert');});
+$('kdGrid').addEventListener('keydown',e=>{const c=e.target.closest('[contenteditable]');if(c&&e.key==='Enter'){e.preventDefault();c.blur();}if(c&&e.key==='Escape'){c.blur();kdDirty=true;rk();}});
+$('kdGrid').addEventListener('focusout',e=>{const c=e.target.closest('[contenteditable][data-kf]');if(!c)return;const y=c.dataset.ky,id=c.dataset.kid,f=c.dataset.kf,r=KD[y]&&KD[y][id];if(!r)return;let v=c.innerText.trim();
+ const cur=f==='preis'?kdPreis(r.preis):(r[f]||'');if(v===String(cur))return;if(f==='preis'&&/^[\d.]+(,\d+)?\s*€?$/.test(v))v=v.replace(/\s*€/,'').replace(/\./g,'');kdPut(y,Object.assign({},r,{[f]:v})).then(()=>{rk();});toast('Gespeichert');});
+// Einmalige Übernahme aus der Sheet-.xlsx (Reiter „Kunden“) – Daten gehen direkt in die Datenbank, nie ins Repo
+$('kdImp').addEventListener('click',()=>{if(!ME.adm)return;dlg(`<h3>📥 Kunden aus dem Sheet übernehmen</h3><p class="hint">Im Google-Sheet „Abhol-Werkstattplaner“: <b>Datei → Herunterladen → Microsoft Excel (.xlsx)</b>, dann die Datei hier wählen. Übernommen wird der Reiter <b>„Kunden“</b> komplett (alle Jahre).</p><form id="kiF"><input id="kiFile" type="file" accept=".xlsx"><div class="err" id="kiE"></div><div class="acts"><button class="btn" type="button" data-close>Abbrechen</button><button class="btn red" type="submit">Übernehmen</button></div></form>`);
+ $('kiF').addEventListener('submit',async ev=>{ev.preventDefault();const f=$('kiFile').files[0];if(!f){$('kiE').textContent='Bitte die .xlsx-Datei wählen.';return;}try{$('kiE').textContent='Lädt …';const n=await importKunden(f);dlgClose();toast(n.toLocaleString('de-DE')+' Kunden übernommen');}catch(err){$('kiE').textContent=err.message||String(err);}});});
+function kdParse(rows){const out=[];let lastTel='';const xd=n=>{const d=new Date(Math.round((n-25569)*864e5));return deDate(new Date(d.getUTCFullYear(),d.getUTCMonth(),d.getUTCDate()));};
+ const str=v=>v==null?'':(typeof v==='number'?(Number.isInteger(v)?String(v):String(v).replace('.',',')):String(v)).trim();
+ rows.forEach((r,i)=>{if(i===0)return;r=r||[];if(!r.some(v=>v!=null&&String(v).trim()!==''))return;const B=r[1];if(String(B||'').trim()==='xxx'&&!r[8])return;
+  let dat='',y='x';if(B instanceof Date&&!isNaN(B)){dat=deDate(B);y=String(B.getFullYear());}else if(typeof B==='number'&&B>20000){dat=xd(B);y=dat.slice(-4);}else{dat=str(B);const c=str(r[2]).replace(/\D/g,'');if(c.length===2)y=String(+c>50?1900+ +c:2000+ +c);}
+  {const yy=+y;if(y!=='x'&&(!(yy>=1995)||yy>new Date().getFullYear()+1))y='x';}
+  let leas=r[7];leas=typeof leas==='number'?(leas>30000?xd(leas):(leas?str(leas):'')):str(leas);
+  let tel=str(r[12]);if(tel==='"'||tel==='“'||tel==='„')tel=lastTel;else if(tel)lastTel=tel;
+  const nr=str(r[0]);out.push({id:'k'+(i+1),y,dat,nr:/^-+$/.test(nr)?'':nr,marke:str(r[3]),modell:str(r[5])||str(r[4]),preis:str(r[6]),leas,kunde:str(r[8]),vers:str(r[9]),k:str(r[10]),rahmen:str(r[11]),tel});});return out;}
+async function importKunden(file){await loadXLSX();const wb=XLSX.read(await file.arrayBuffer(),{cellDates:true});const ws=wb.Sheets['Kunden'];if(!ws)throw new Error('Reiter „Kunden“ nicht gefunden.');
+ const rows=XLSX.utils.sheet_to_json(ws,{header:1,raw:true,defval:null});const list=kdParse(rows);if(!list.length)throw new Error('Keine Einträge gefunden.');
+ const by={};list.forEach(r=>{(by[r.y]=by[r.y]||{})[r.id]=Object.assign(r,{ts:stamp(),tsVon:ME.id});});
+ for(const y in by)await db.doc('meta/kd_'+y).set({items:by[y]});
+ await db.doc('meta/import').set({kunden:true,kundenAm:stamp(),kundenN:list.length,kundenVon:ME.id},{merge:true});return list.length;}
 
 /* ================= LIEFERANTEN ================= */
 let sEdit=null,LOGINS=null;
