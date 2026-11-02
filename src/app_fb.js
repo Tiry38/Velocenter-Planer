@@ -47,7 +47,7 @@ function show(v){const nb=document.querySelector(`.navbtn[data-v=${v}]`);if(!nb|
 document.querySelectorAll('.navbtn').forEach(b=>b.addEventListener('click',()=>show(b.dataset.v)));
 /* Navigation einklappen */
 document.querySelectorAll('.navbtn').forEach(b=>{b.title=b.querySelector('.lbl').childNodes[0].textContent.trim();});
-function navMini(on,keep){document.body.classList.toggle('navmini',on);$('navTog').setAttribute('aria-label',on?'Navigation ausklappen':'Navigation einklappen');
+function navMini(on,keep){document.body.classList.toggle('navmini',on);$('navTog').setAttribute('aria-label',on?'Navigation ausklappen':'Navigation einklappen');$('navTog').title=on?'Navigation ausklappen':'Navigation einklappen';
  if(keep||!ME)return;ls.set('vc_navmini_'+ME.id,on);db.doc('meta/prefs').set({[ME.id]:{navmini:on}},{merge:true}).catch(()=>{});}
 async function navForUser(){if(!ME)return;navMini(!!ls.get('vc_navmini_'+ME.id,false),true);try{const d=await db.doc('meta/prefs').get();const x=d.exists&&d.data()[ME.id];if(x&&typeof x.navmini==='boolean'){navMini(x.navmini,true);ls.set('vc_navmini_'+ME.id,x.navmini);}}catch(_){}}
 $('navTog').addEventListener('click',()=>navMini(!document.body.classList.contains('navmini')));
