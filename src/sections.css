@@ -326,5 +326,11 @@ body.navmini .navtog svg{transform:rotate(180deg)}
 .tt .tile svg{filter:drop-shadow(0 1px 1.5px rgba(0,0,0,.55))}
 .top h1{text-shadow:none!important;filter:drop-shadow(0 2px 6px rgba(0,0,0,.55))}
 .tt small{color:color-mix(in srgb,var(--ac) 35%,#fff)!important;text-shadow:0 1px 6px rgba(0,0,0,.6)}
-/* Hauptfläche: feines Wabenmuster über den Farbschimmern (Navi bleibt Karomuster) */
-body{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='97' viewBox='0 0 56 97'%3E%3Cpath d='M28 0L56 16.17V48.5L28 64.67L0 48.5V16.17ZM28 64.67V97' fill='none' stroke='%23ffffff' stroke-opacity='.075' stroke-width='1'/%3E%3C/svg%3E"),radial-gradient(760px 420px at 0% 0%,rgba(70,95,190,.26),transparent 70%),radial-gradient(820px 440px at 100% 0%,rgba(190,30,45,.22),transparent 70%),radial-gradient(900px 520px at 100% 100%,rgba(120,80,200,.16),transparent 70%),radial-gradient(820px 520px at 0% 100%,rgba(90,60,140,.10),transparent 70%);background-size:56px 97px,auto,auto,auto,auto;background-attachment:fixed}
+/* Hauptfläche: kräftigere, mehrfarbige Farbverläufe (kein Muster) */
+body{background-color:#090B10;background-image:
+ radial-gradient(900px 560px at 0% 0%,rgba(70,100,220,.38),transparent 68%),
+ radial-gradient(1000px 560px at 100% 0%,rgba(215,35,55,.34),transparent 68%),
+ radial-gradient(800px 600px at 55% 45%,rgba(140,60,200,.14),transparent 70%),
+ radial-gradient(900px 620px at 100% 100%,rgba(150,85,235,.30),transparent 68%),
+ radial-gradient(900px 620px at 0% 100%,rgba(30,170,190,.20),transparent 68%),
+ radial-gradient(700px 420px at 40% 100%,rgba(225,45,120,.16),transparent 70%);background-size:auto;background-attachment:fixed}
