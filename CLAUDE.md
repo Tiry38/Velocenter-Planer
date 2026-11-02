@@ -28,7 +28,7 @@ Web-App für **Velocenter Hessert** (Fahrradgeschäft, Wörth am Rhein). Ersetzt
   - `logo_small.b64` – Velocenter-Logo · `fbconfig.js` – Firebase-Konfiguration (öffentlich, kein Geheimnis)
   - `firestore.rules` – Sicherheitsregeln (Kopie; aktiv sind sie in der Firebase-Konsole)
 - **Bauen:** `cd src && python3 build.py <neue Version>` → schreibt `../index.html`, `../version.txt` usw. und `tests/test_fb.html`.
-- **Ausliefern:** commit + `git push origin main`. GitHub Pages braucht ~1 Min. **Offene Geräte prüfen alle 30 s `version.txt` und laden sich selbst neu** (mit `?v=` am Cache vorbei). Version bei jeder Auslieferung hochzählen (zuletzt **1.3.8**).
+- **Ausliefern:** commit + `git push origin main`. GitHub Pages braucht ~1 Min. **Offene Geräte prüfen alle 30 s `version.txt` und laden sich selbst neu** (mit `?v=` am Cache vorbei). Version bei jeder Auslieferung hochzählen (zuletzt **1.3.9**).
 - **Tests (lokal, ohne Internet):** `src/tests/` – `fbmock.js` baut Firebase Auth + Firestore nach (localStorage, Live-Abgleich zwischen Tabs).
   - Einmalig: `cd src/tests && npm pack xlsx@0.18.5 && tar xzf xlsx-0.18.5.tgz package/dist/xlsx.full.min.js && mv package/dist/xlsx.full.min.js . && rm -rf package xlsx-0.18.5.tgz`
   - `node quick.js` (Kurztest, ~30 s) · `node tf.js` (Gesamttest, ~2 Min). Playwright/Chromium ist vorinstalliert.
@@ -57,11 +57,11 @@ Web-App für **Velocenter Hessert** (Fahrradgeschäft, Wörth am Rhein). Ersetzt
 - **Schrift:** runde Schrift **Outfit** für Kopfzeile, Titel, Datum, Uhr, Navi und Kacheln (Tiry: „zu eckig“ → keine Chakra-Petch/Mono-Großbuchstaben mehr in diesen Bereichen).
 - **Kopfzeile** (jeder Reiter gleich, **über die ganze Breite**, kräftiger Verlauf der Reiterfarbe bis zur Mitte, Symbol mit dunklem Rand abgesetzt): links Symbol + Unterzeile + Titel im Farbverlauf der Reiterfarbe; daneben verteilt eigene Felder **Heute (Wochentag) · Datum ausgeschrieben („2. November 2026“) · Kalenderwoche (rote Pille) · LIVE + große Uhr**, getrennt durch leuchtende Linien. Passt sich per Container-Query dem freien Platz an (kleiner → ohne Beschriftung/Wochentag → Handy: Monat kurz).
 - **Planer** (aus „Planer NEU“-Struktur): eine Zeile pro Tag (ohne Sonntage, RLP-Feiertage markiert), Schrift im ganzen Planer Outfit (Einträge Sora), Wochentage groß „Mo/Di…“, KW-Trenner dünn mit rotem Verlauf bis zur Mitte, heute ruhig türkis (kein knalliges Rot), Sa grün, Mi orange.
-  - Spalten: Intern · **Anfr.** (nur leuchtender Punkt, Info beim Drüberfahren, Spalte so schmal wie der Punkt) · Zeit · 1. Termin · Zeit · 2. Termin · WhatsApp · Sonstiges Werkstatt · Bestellungen · Notiz. **Nico-Spalte entfernt.**
+  - Spalten: Intern · **Anfr.** (nur leuchtender Punkt, Info beim Drüberfahren, Spalte so schmal wie der Punkt) · Zeit · 1. Termin · Zeit · 2. Termin · WhatsApp · Sonstiges Werkstatt · Notiz. **Nico- und Bestellungen-Spalte entfernt** (Bestellungen hat eigenen Reiter; alte `best`-Einträge bleiben in der DB, unsichtbar).
   - **Klick irgendwo ins Feld = eintragen.** Eintrag anklicken = bearbeiten, rotes × = löschen (6 s Rückgängig), Ziehen auf anderen Tag.
   - **Uhrzeit:** Klick ins Zeit-Feld → Auswahl **nur 09:00–12:00 und 14:30–17:45 in 15-Min-Schritten**, danach Termin-Text. Gelbe Zeit-Chips anklicken = Zeit ändern.
   - **Kein Abhak-Kästchen mehr** (nur löschen oder stehen lassen). **Keine** Such-/Filterleiste, **keine** Zähler-Leiste. Oben nur WICHTIG/MERKER (anklickbar).
-  - Offenes in Werkstatt/Bestellungen wandert täglich auf heute (`rollover`).
+  - Offenes in Werkstatt wandert täglich auf heute (`rollover`).
   - Jeder Eintrag zeigt Kürzel des Erstellers.
 - **Verkauf:** Standard **Liste** (umschaltbar Karten), Kennzahlen-Kacheln als Filter (Noch montieren · Montiert/wartet O.K. · O.K./abholbereit · Leasing ohne O.K.), Sortierung (Neueste, Liefertermin, Status, Name).
   - Spalten: Status-Punkt · Kunde/Modell · Leasing (Logo + Auswahl) · Verkauft · LT · Antrag · O.K. · L.-Ende · **Notiz** (ersetzt „Montieren“) · Beratung (Person) · Status 🔧 / O.K. / ✓ · ✎.

@@ -177,7 +177,7 @@ let recDone=false;async function recLeasing(){if(recDone||!ME||!ME.adm||!L.lengt
   LSREC.forEach(x=>{const o=L.find(l=>l.id===x.k)||L.find(l=>l.k===x.k);if(!o)return;const u=recMerge(o,x);u.ts=stamp();t.set(db.collection('leasing').doc(o.id),u,{merge:true});});t.set(f,{rec:LSREC_VER},{merge:true});});}catch(e){recDone=false;fail(e);}}
 async function rollover(){const t=TODAY();try{const go=await db.runTransaction(async tr=>{const f=db.doc('meta/rollover');const d=await tr.get(f);if(d.exists&&d.data().datum===t)return false;tr.set(f,{datum:t,von:ME.id});return true;});
   if(!go)return;const snap=await db.collection('planer').where('datum','<',t).get();const b=db.batch();let n=0;
-  snap.forEach(d=>{const o=d.data();if((o.spalte==='ws'||o.spalte==='best')&&o.erledigt!=='1'){b.update(d.ref,{datum:t,ts:stamp(),tsVon:ME.id});n++;}});if(n)await b.commit();}catch(e){}}
+  snap.forEach(d=>{const o=d.data();if(o.spalte==='ws'&&o.erledigt!=='1'){b.update(d.ref,{datum:t,ts:stamp(),tsVon:ME.id});n++;}});if(n)await b.commit();}catch(e){}}
 /* Auto-Update: neue Version auf GitHub → Seite lädt sich selbst neu (nicht während einer Eingabe) */
 async function verCheck(){try{const v=(await (await fetch('version.txt?'+Date.now(),{cache:'no-store'})).text()).trim();if(v&&v!==CLIENT_VERSION){if(editing()){$('upd').hidden=false;return;}location.replace(location.pathname+'?v='+encodeURIComponent(v));}}catch(_){}}
 setInterval(verCheck,30000);setTimeout(verCheck,3000);
@@ -190,7 +190,7 @@ document.querySelectorAll('[data-i]').forEach(el=>{el.addEventListener('keydown'
 const COLS=[
  {k:'int',n:'Intern',c:'var(--cyan)',w:'2fr'},{k:'anf',n:'Anfr.',c:'var(--violet)',w:'.3fr',dot:1},
  {k:'z1',n:'Zeit',c:'var(--warn)',of:'t1'},{k:'t1',n:'1. Termin',c:'var(--warn)',w:'1.2fr'},{k:'z2',n:'Zeit',c:'var(--warn)',of:'t2'},{k:'t2',n:'2. Termin',c:'var(--warn)',w:'1.2fr'},
- {k:'wa',n:'WhatsApp',c:'var(--ok)',w:'.9fr'},{k:'ws',n:'Sonstiges Werkstatt',c:'var(--blue)',w:'1.3fr'},{k:'best',n:'Bestellungen',c:'var(--pink)',w:'1.3fr'},{k:'not',n:'Notiz',c:'var(--muted)',w:'.9fr'}];
+ {k:'wa',n:'WhatsApp',c:'var(--ok)',w:'.9fr'},{k:'ws',n:'Sonstiges Werkstatt',c:'var(--blue)',w:'1.3fr'},{k:'not',n:'Notiz',c:'var(--muted)',w:'.9fr'}];
 const vis=Object.fromEntries(COLS.map(c=>[c.k,true]));
 let showPast=false,openOnly=false,q='',weeks=10;
 function daysList(){const t=fromIso(TODAY()),start=new Date(t);if(showPast)start.setDate(start.getDate()-28);const end=new Date(t);end.setDate(end.getDate()+weeks*7);const lim=new Date('2027-12-31T12:00:00');const out=[];
