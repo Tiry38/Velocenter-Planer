@@ -339,7 +339,7 @@ td.wrap{white-space:normal;max-width:380px}
   <button class="navbtn" data-v="kasse" style="--ac:#34D399"><span class="tile"><svg viewBox="0 0 24 24"><circle class="f" cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="9"/><path d="M15.5 8.5a4 4 0 1 0 0 7M7.5 10.8h6M7.5 13.2h6"/></svg></span><span class="lbl">Trinkgeld EC<small>Kasse</small></span></button>
   <button class="navbtn" data-v="tresor" style="--ac:#60A5FA"><span class="tile"><svg viewBox="0 0 24 24"><path class="f" d="M12 3l7.5 3v5.5c0 4.6-3.2 8.3-7.5 9.5-4.3-1.2-7.5-4.9-7.5-9.5V6z"/><path d="M12 3l7.5 3v5.5c0 4.6-3.2 8.3-7.5 9.5-4.3-1.2-7.5-4.9-7.5-9.5V6z"/><rect x="9" y="11" width="6" height="5" rx="1"/><path d="M10.3 11V9.6a1.7 1.7 0 0 1 3.4 0V11"/></svg></span><span class="lbl">Passwörter<small>PIN-geschützt</small></span></button>
   <div class="me" id="meChip"><span class="av big" id="meAv"></span><div><b id="meName">–</b><button class="lnk" type="button" id="meSet">Passwort ändern</button></div><button class="btn" type="button" id="switchUser">Wechseln</button></div>
-  <div class="metools"><button class="mini" type="button" id="meFull">⛶ Vollbild</button><button class="mini" type="button" id="meImport" hidden>📥 Daten übernehmen</button></div>
+  <div class="metools"><button class="mini" type="button" id="meFull">⛶ Vollbild</button><button class="mini" type="button" id="meImport" hidden>🔐 Passwörter übernehmen</button></div>
   <div class="secure">🔒 Eigenes Login · Tresor mit PIN verschlüsselt · Auto-Sperre 60 s</div>
 </nav>
 
@@ -444,7 +444,7 @@ td.wrap{white-space:normal;max-width:380px}
 <script>
 const FB_CONFIG={apiKey:"AIzaSyC_uZPvc5rJETwlS4JbfCoTkkE4ckjtp0M",authDomain:"velocenter-planer.firebaseapp.com",projectId:"velocenter-planer",storageBucket:"velocenter-planer.firebasestorage.app",messagingSenderId:"1018330488700",appId:"1:1018330488700:web:262a4d1660353e6fde8ef9"};
 /* ================= Velocenter Werkstatt-Cockpit – Oberfläche ================= */
-const CLIENT_VERSION='1.0.0';
+const CLIENT_VERSION='1.0.1';
 const USERS=[{id:'kevin',n:'Kevin',c:'#E2232D'},{id:'stefan',n:'Stefan',c:'#F59E0B'},{id:'martina',n:'Martina',c:'#EC4899'},{id:'sascha',n:'Sascha',c:'#22D3EE'},{id:'rene',n:'René',c:'#34D399'}];
 const U=id=>USERS.find(u=>u.id===id)||{n:'',c:'#64748B',id:''};
 const $=id=>document.getElementById(id);
@@ -827,15 +827,16 @@ function pinDlg(after){dlg(`<h3>🔓 Tresor öffnen</h3><p class="hint">${TSET?'
 /* ================= DATEN AUS DEM GOOGLE-SHEET ÜBERNEHMEN (einmalig, nur Admin) ================= */
 function importDlg(){if(!ME.adm){toast('Nur für Admins');return;}
  if(!KEY){pinDlg(importDlg);return;}
- dlg(`<h3>📥 Daten aus dem Sheet übernehmen</h3><p class="hint">1. Im Google-Sheet „Abhol-Werkstattplaner“: <b>Datei → Herunterladen → Microsoft Excel (.xlsx)</b>.<br>2. Die Datei hier auswählen. Übernommen werden: Planer NEU (Planer + Verkauf), TG, Lieferanten (Logins verschlüsselt), PW (verschlüsselt) und die Bestell-Notiz.</p>
+ dlg(`<h3>📥 Daten aus dem Sheet übernehmen</h3><p class="hint">1. Im Google-Sheet „Abhol-Werkstattplaner“: <b>Datei → Herunterladen → Microsoft Excel (.xlsx)</b>.<br>2. Die Datei hier auswählen. Planer, Verkauf, Trinkgeld und Lieferanten sind schon übernommen – jetzt kommen nur noch die <b>Passwortliste (PW)</b> und die <b>Lieferanten-Logins</b> dazu, beides mit deiner PIN verschlüsselt.</p>
  <form id="imF"><input id="imFile" type="file" accept=".xlsx"><div class="err" id="imE"></div><div class="acts"><button class="btn" type="button" data-close>Abbrechen</button><button class="btn red" type="submit">Übernehmen</button></div></form>`);
  $('imF').addEventListener('submit',async e=>{e.preventDefault();const f=$('imFile').files[0];if(!f){$('imE').textContent='Bitte die .xlsx-Datei wählen.';return;}
   try{$('imE').textContent='Lädt …';const n=await importXlsx(f);dlgClose();toast('Übernommen: '+n);}catch(err){$('imE').textContent=err.message;}});}
 async function loadXLSX(){if(window.XLSX)return;await new Promise((res,rej)=>{const s=document.createElement('script');s.src='https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';s.onload=res;s.onerror=()=>rej(new Error('Excel-Leser konnte nicht geladen werden'));document.head.append(s);});}
 async function importXlsx(file){await loadXLSX();const wb=XLSX.read(await file.arrayBuffer(),{cellDates:true});
+ const done=(await db.doc('meta/import').get()).exists;
  const sh=n=>wb.Sheets[n]||wb.Sheets[n.trim()]||null;
  const rg=ws=>{const r=XLSX.utils.decode_range(ws['!ref']||'A1');r.s.r=0;r.s.c=0;return r;};const disp=ws=>ws&&ws['!ref']?XLSX.utils.sheet_to_json(ws,{header:1,raw:false,defval:'',blankrows:true,range:rg(ws)}):[],raw=ws=>ws&&ws['!ref']?XLSX.utils.sheet_to_json(ws,{header:1,raw:true,defval:'',blankrows:true,range:rg(ws)}):[];
- const ops=[];const put=(c,o)=>ops.push([c,o]);const ts=stamp();let cP=0,cV=0,cT=0,cS=0;
+ const ops=[];const put=(c,o)=>{if(!done)ops.push([c,o]);};const ts=stamp();let cP=0,cV=0,cT=0,cS=0;
  const pn=sh('Planer NEU');if(pn){const D=disp(pn),Rw=raw(pn);const map={2:'int',4:'anf',6:'t1',8:'t2',9:'wa',10:'ws',11:'best',12:'not'};
   for(let i=0;i<D.length;i++){const d=(Rw[i]||[])[0];if(!(d instanceof Date))continue;{const ds=iso(new Date(d.getFullYear(),d.getMonth(),d.getDate(),12));
     for(const ci in map){const lines=String(D[i][ci]||'').split('\n').map(x=>x.trim()).filter(Boolean);const tms=ci==6?String(D[i][5]||'').split('\n'):ci==8?String(D[i][7]||'').split('\n'):[];
@@ -845,12 +846,13 @@ async function importXlsx(file){await loadXLSX();const wb=XLSX.read(await file.a
     put('verkauf',{id:nid('v'),dat:v[14],modell:v[15],name:v[16],lt:v[17],antrag:v[18],firma:v[19],ok:v[20],lende:v[21],montieren:v[22],notiz:v[23],m:tf(rv[24])?'1':'',mVon:'',mAm:'',b:(tf(rv[25])||String(v[20]||'').trim())?'1':'',bVon:'',bAm:'',a:tf(rv[26])?'1':'',aVon:'',aAm:'',verk:''});cV++;}}}
  const tg=sh('TG');if(tg){disp(tg).slice(1).forEach(r=>{const d=String(r[0]||'').trim(),b=String(r[1]||'').trim(),n=String(r[2]||'').trim();if(!d||!b||/gesamt/i.test(n))return;put('trinkgeld',{id:nid('t'),datum:d,betrag:b.replace(/\s*€/,''),notiz:n,von:''});cT++;});}
  const lf=sh('Lieferanten');const logins={};if(lf){disp(lf).slice(2).forEach(r=>{if(!String(r[0]||'').trim())return;const id=nid('s');const extra=r.filter((x,j)=>[0,1,3,5,7].indexOf(j)<0&&String(x).trim()).join(' · ');
-   put('lieferanten',{id,name:r[0],kdnr:r[1],mbw:r[3],notiz:extra});if(String(r[5]||'').trim()||String(r[7]||'').trim())logins[id]={login:r[5],pass:r[7]};cS++;});}
+   const ex=done?S.find(x=>String(x.name).trim().toLowerCase()===String(r[0]).trim().toLowerCase()):null;const lid=ex?ex.id:id;put('lieferanten',{id,name:r[0],kdnr:r[1],mbw:r[3],notiz:extra});if(String(r[5]||'').trim()||String(r[7]||'').trim())logins[lid]={login:r[5],pass:r[7]};cS++;});}
  const bo=sh('Bestell+OP ')||sh('Bestell+OP');if(bo){const D=disp(bo);const note=String((D[0]||[])[0]||'').trim();if(note)put('info',{id:'bnotiz',wert:note});
   D.slice(2).forEach(r=>{if(!String(r[1]||'').trim()&&!String(r[3]||'').trim())return;put('bestell',{id:nid('b'),datum:r[0],kunde:r[1],telefon:r[2],artikel:r[3],bezahlt:String(r[4]).trim()?'ja':'',status:String(r[6]).trim()?'bestellt':'offen',lieferant:r[7],lieferzeit:r[8],notiz:'',von:ME.id});});}
  const pw=sh('PW');const grid=pw?disp(pw).filter(r=>r.some(c=>String(c).trim())).map(r=>{let k=r.length;while(k>0&&!String(r[k-1]).trim())k--;return r.slice(0,k).map(String);}):null;
  for(let i=0;i<ops.length;i+=400){const b=db.batch();ops.slice(i,i+400).forEach(([c,o])=>b.set(db.collection(c).doc(String(o.id)),Object.assign(clean(o),{ts,tsVon:ME.id})));await b.commit();}
  await db.doc('tresor/logins').set(await seal(KEY,logins));if(grid)await db.doc('tresor/pw').set(await seal(KEY,grid));
+ if(done){await db.doc('meta/import').set({tresor:true,tresorAm:ts},{merge:true});LOGINS=Object.entries(logins).map(([id,v])=>({id,login:v.login,pass:v.pass}));if(grid){PWGRID=grid;showVault();}rs();return 'Passwortliste und '+Object.keys(logins).length+' Lieferanten-Logins (verschlüsselt)';}
  await db.doc('meta/import').set({am:ts,von:ME.id});try{await db.doc('meta/rollover').delete();}catch(_){}await rollover();LOGINS=Object.entries(logins).map(([id,v])=>({id,login:v.login,pass:v.pass}));if(grid){PWGRID=grid;showVault();}
  return cP+' Planer-Einträge, '+cV+' Räder, '+cT+' Trinkgeld, '+cS+' Lieferanten'+(grid?', Passwortliste':'');}
 
