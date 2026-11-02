@@ -440,6 +440,17 @@ body.navmini #switchUser{font-size:0;padding:6px 8px;margin:0}body.navmini #swit
 .impbox{max-width:520px;margin:14px auto 0;padding:16px 18px;border-radius:18px;border:1px dashed color-mix(in srgb,var(--ac) 45%,var(--line));background:var(--panel);text-align:center}.impbox p{color:#C7CEDA;font-size:13px;margin:6px 0 12px}
 .metools .mini{flex:1}
 
+/* Verkauf: Datumsfelder mit eigener Farbe */
+.vtab td.dcell{cursor:pointer;font-family:var(--mono);font-size:12.5px;font-weight:700;min-width:92px;border-bottom:1px dashed #2A3446}
+.vtab td.dcell:hover{background:rgba(255,255,255,.05)}.vtab td.dcell:focus-visible{outline:2px solid var(--cyan)}
+.vtab td.dcell:empty::before{content:"📅 –";color:var(--muted);font-weight:400}
+.vtab td.d-antrag{color:#C4B5FD}
+.vtab td.d-ok{color:#34D399}
+.vtab td.d-ok.miss:empty::before{content:"fehlt";color:#FCA5A5;font-weight:700}
+.vtab td.d-lende{color:#67E8F9}
+.edit.din{width:132px;padding:3px 4px;font:700 12px var(--mono);color-scheme:dark;background:var(--panel2);color:#fff;border:1px solid var(--cyan);border-radius:7px}
+.vtab thead th:nth-child(6){color:#C4B5FD}.vtab thead th:nth-child(7){color:#34D399}.vtab thead th:nth-child(8){color:#67E8F9}
+
 [hidden]{display:none!important}
 #sTab td.b{font-weight:700}#sTab .pwm.ed{outline:none;padding:2px 6px;border-radius:6px;font-family:var(--mono)}#sTab td{vertical-align:top}
 #sTab td.ce,#ltab td.ce{cursor:text;border-bottom:1px dashed #2A3446;outline:none}#sTab td.ce:focus,#sTab .pwm.ed:focus,#ltab td.ce:focus{box-shadow:inset 0 0 0 2px var(--cyan);background:var(--panel2)}#ltab td.tg{cursor:pointer;user-select:none}#sTab td.ce:hover,#ltab td.tg:hover,#ltab td.ce:hover{background:rgba(255,255,255,.04)}#ltab td.tg:focus-visible{outline:2px solid var(--cyan)}
@@ -568,7 +579,7 @@ body.navmini #switchUser{font-size:0;padding:6px 8px;margin:0}body.navmini #swit
 <script>
 const FB_CONFIG={apiKey:"AIzaSyC_uZPvc5rJETwlS4JbfCoTkkE4ckjtp0M",authDomain:"velocenter-planer.firebaseapp.com",projectId:"velocenter-planer",storageBucket:"velocenter-planer.firebasestorage.app",messagingSenderId:"1018330488700",appId:"1:1018330488700:web:262a4d1660353e6fde8ef9"};
 /* ================= Velocenter Werkstatt-Cockpit – Oberfläche ================= */
-const CLIENT_VERSION='1.0.7';
+const CLIENT_VERSION='1.0.8';
 const USERS=[{id:'kevin',n:'Kevin',c:'#E2232D'},{id:'stefan',n:'Stefan',c:'#F59E0B'},{id:'martina',n:'Martina',c:'#EC4899'},{id:'sascha',n:'Sascha',c:'#22D3EE'},{id:'rene',n:'René',c:'#34D399'}];
 const U=id=>USERS.find(u=>u.id===id)||{n:'',c:'#64748B',id:''};
 const $=id=>document.getElementById(id);
@@ -771,7 +782,7 @@ function rv(){const s1=($('vkSearch').value||'').toLowerCase();
  list.sort(vkCmp);
  document.querySelectorAll('#vkViewSeg .btn').forEach(x=>x.setAttribute('aria-pressed',x.dataset.vv===vkView));$('vkSortSel').value=vkSort;
  const form=vkEdit==='new'?vkForm({id:'new'}):vkEdit&&V.find(x=>x.id===vkEdit)?vkForm(V.find(x=>x.id===vkEdit)):'';
- if(document.querySelector('#cards [contenteditable]:focus'))return;
+ if(document.querySelector('#cards [contenteditable]:focus, #cards .din'))return;
  if(vkView==='liste'){$('cards').className='vlist';$('cards').innerHTML=form+(list.length?`<div class="tbl vtab"><table><thead><tr><th></th><th>Kunde · Modell</th><th>Leasing</th><th>Verkauft</th><th>LT</th><th>Antrag</th><th>O.K.</th><th>L.-Ende</th><th>Montieren</th><th>Beratung</th><th>Status</th><th></th></tr></thead><tbody>${list.map(vkRow).join('')}</tbody></table></div>`:'<p class="empty">Keine Räder in dieser Auswahl.</p>');}
  else{$('cards').className='cards';$('cards').innerHTML=form+(list.filter(b=>b.id!==vkEdit).map(vkCard).join('')||'<p class="empty">Keine Räder in dieser Auswahl.</p>');}
  $('nOffen').textContent=V.filter(b=>b.a!=='1').length;}
@@ -783,11 +794,12 @@ function vkCmp(a,b){if(vkSort==='lt')return vkLt(a.lt)-vkLt(b.lt);if(vkSort==='s
 function ltHot(lt){const k=vkLt(lt),ck=kw(new Date());return k!==999&&k!==0&&k<=ck+1;}
 function leasLogo(f){if(!f)return'';const x=L.find(l=>l.k===f);const lg=x?logoOf(x):(LOGOS[f]||'');return lg?`<img class="llg" src="${esc(lg)}" alt="${esc(FN[f]||f)}" title="${esc(FN[f]||f)}">`:`<span class="lchip">${esc(f)}</span>`;}
 function vkRow(b){const st=b.a==='1'?'a':b.b==='1'?'b':b.m==='1'?'m':'o';const ce=(f,v,cls)=>`<td class="ce ${cls||''}" contenteditable="true" spellcheck="false" data-vid="${esc(b.id)}" data-f="${f}">${esc(v||'')}</td>`;
+ const dc=(f,v,cls)=>`<td class="dcell ${cls}" data-vid="${esc(b.id)}" data-df="${f}" title="Klick = Datum wählen" tabindex="0">${esc(v||'')}</td>`;
  return `<tr class="vr st-${st}">
  <td class="sdot" title="${{o:'offen',m:'montiert',b:'O.K. – abholbereit',a:'abgeholt'}[st]}"><i></i></td>
  <td class="who2"><b>${esc(b.name||'–')}</b><small>🚲 ${esc(b.modell||'')}</small>${b.notiz?`<small class="nt" title="${esc(b.notiz)}">📝 ${esc(b.notiz)}</small>`:''}</td>
  <td><div class="lcell">${leasLogo(b.firma)}<select class="lsel mini2${b.firma?'':' off'}" data-vi="${esc(b.id)}" aria-label="Leasing-Firma"><option value="">–</option>${Object.entries(FN).map(([k,n])=>`<option value="${esc(k)}"${b.firma===k?' selected':''}>${esc(k)} · ${esc(n)}</option>`).join('')}${b.firma&&!FN[b.firma]?`<option selected>${esc(b.firma)}</option>`:''}</select></div></td>
- ${ce('dat',b.dat)}${ce('lt',b.lt,ltHot(b.lt)&&b.a!=='1'?'hot':'')}${b.firma?ce('antrag',b.antrag):'<td class="na">–</td>'}${b.firma?ce('ok',b.ok,b.ok?'okv':'miss'):'<td class="na">–</td>'}${b.firma?ce('lende',b.lende):'<td class="na">–</td>'}${ce('montieren',b.montieren)}
+ ${ce('dat',b.dat)}${ce('lt',b.lt,ltHot(b.lt)&&b.a!=='1'?'hot':'')}${b.firma?dc('antrag',b.antrag,'d-antrag'):'<td class="na">–</td>'}${b.firma?dc('ok',b.ok,b.ok?'d-ok':'d-ok miss'):'<td class="na">–</td>'}${b.firma?dc('lende',b.lende,'d-lende'):'<td class="na">–</td>'}${ce('montieren',b.montieren)}
  <td><select class="ssel mini2" data-vi="${esc(b.id)}" aria-label="Verkauf/Beratung"><option value="">–</option>${USERS.map(u=>`<option value="${u.id}"${b.verk===u.id?' selected':''}>${esc(u.n)}</option>`).join('')}</select></td>
  <td class="stb"><button class="st m" type="button" aria-pressed="${b.m==='1'}" data-vi="${esc(b.id)}" data-k="m" title="${b.mVon?'montiert von '+esc(U(b.mVon).n)+' '+esc(b.mAm):'montiert'}">🔧</button><button class="st b" type="button" aria-pressed="${b.b==='1'}" data-vi="${esc(b.id)}" data-k="b" title="${b.bVon?'O.K. von '+esc(U(b.bVon).n)+' '+esc(b.bAm):'O.K.'}">O.K.</button><button class="st a" type="button" aria-pressed="${b.a==='1'}" data-vi="${esc(b.id)}" data-k="a" title="${b.aVon?'abgeholt von '+esc(U(b.aVon).n)+' '+esc(b.aAm):'abgeholt'}">✓</button></td>
  <td><button class="mini" type="button" data-vedit="${esc(b.id)}" title="Alle Felder / Löschen">✎</button></td></tr>`;}
@@ -816,7 +828,12 @@ $('cards').addEventListener('submit',e=>{e.preventDefault();const f=e.target,id=
 $('vkSearch').addEventListener('input',rv);
 document.querySelectorAll('#vkViewSeg .btn').forEach(b=>b.addEventListener('click',()=>{vkView=b.dataset.vv;ls.set('vc_vkview',vkView);rv();}));
 $('vkSortSel').addEventListener('change',e=>{vkSort=e.target.value;ls.set('vc_vksort',vkSort);rv();});
-$('cards').addEventListener('keydown',e=>{const c=e.target.closest('[contenteditable]');if(c&&e.key==='Enter'){e.preventDefault();c.blur();}if(c&&e.key==='Escape'){c.blur();rv();}});
+function toIsoDe(v){const m=String(v||'').match(/(\d{1,2})\.(\d{1,2})\.?(\d{2,4})?/);if(!m)return '';const t=vkDate(v);if(!t)return '';const d=new Date(t);return iso(d);}
+function dateEdit(td){const b=V.find(x=>x.id===td.dataset.vid),f=td.dataset.df;if(!b)return;const i=document.createElement('input');i.type='date';i.className='edit din';i.value=toIsoDe(b[f]);td.textContent='';td.append(i);i.focus();try{i.showPicker();}catch(_){}
+ let done=false;const fin=ok=>{if(done)return;done=true;const v=i.value;i.remove();if(ok&&v){const d=fromIso(v);const out=String(d.getDate()).padStart(2,'0')+'.'+String(d.getMonth()+1).padStart(2,'0')+'.'+d.getFullYear();if(out!==b[f]){putV(Object.assign({},b,{[f]:out}));toast({antrag:'Antrag',ok:'O.K.',lende:'Leasing-Ende'}[f]+': '+out);return;}}rv();};
+ i.addEventListener('change',()=>{if(i.value)fin(true);});i.addEventListener('keydown',k=>{if(k.key==='Enter'){k.preventDefault();fin(true);}if(k.key==='Escape')fin(false);});i.addEventListener('blur',()=>setTimeout(()=>fin(false),200));}
+$('cards').addEventListener('click',e=>{const td=e.target.closest('td.dcell');if(td&&!td.querySelector('input'))dateEdit(td);});
+$('cards').addEventListener('keydown',e=>{const td=e.target.closest('td.dcell');if(td&&e.key==='Enter'&&!td.querySelector('input')){e.preventDefault();dateEdit(td);return;}const c=e.target.closest('[contenteditable]');if(c&&e.key==='Enter'){e.preventDefault();c.blur();}if(c&&e.key==='Escape'){c.blur();rv();}});
 $('cards').addEventListener('focusout',e=>{const c=e.target.closest('td[contenteditable]');if(!c)return;const b=V.find(x=>x.id===c.dataset.vid),f=c.dataset.f,v=c.textContent.trim();if(!b||v===(b[f]||''))return;putV(Object.assign({},b,{[f]:v}));toast('Gespeichert');});
 $('vkStats').addEventListener('click',e=>{const b=e.target.closest('[data-sf]');if(!b)return;vkF=vkF===b.dataset.sf?'':b.dataset.sf;rv();});
 $('vkAdd').addEventListener('click',()=>{vkEdit='new';rv();$('cards').scrollIntoView({block:'start'});const f=document.querySelector('[data-vf=new] input');if(f)f.focus();});
