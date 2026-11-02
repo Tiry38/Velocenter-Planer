@@ -567,7 +567,7 @@ let KD={},KDIMP=false,kdDirty=true,kdList=[],kdYears=2,kdEdit=null;
 const kdAll=()=>{if(kdDirty){kdList=[];for(const y in KD)for(const id in KD[y]){const r=KD[y][id];if(r&&r.id){r._d=vkDate(r.dat)||0;r._t=[r.kunde,r.marke,r.modell,r.rahmen,r.tel,r.nr,kdNr(r),r.leas,r.vers,r.dat,r.preis].join(' ').toLowerCase();r._o=(r.o!=null&&r.o!==''&&!isNaN(+r.o))?+r.o:r._d;kdList.push(r);}}kdList.sort((a,b)=>b._o-a._o||String(b.nr).localeCompare(String(a.nr),'de',{numeric:true}));kdDirty=false;}return kdList;};
 /* Spalten wie in Excel: Reihenfolge per Ziehen am Kopf, Breite am rechten Rand des Kopfs (Doppelklick = Standard).
    Je Profil in meta/prefs[ID].kdlay = {o:[Spalten], w:{Spalte:px}} (+ localStorage). Zeilen: Griff ⋮⋮ links, nur innerhalb eines Jahres (Feld o). */
-const KDC=[{k:'dat',n:'Datum',w:98,c:'kd'},{k:'nr',n:'Beleg',w:66,c:'kn'},{k:'marke',n:'Marke',w:130,c:'km'},{k:'modell',n:'Modell',min:200,fr:1.6,c:'kmo'},{k:'preis',n:'Preis',w:96,c:'kp'},{k:'leas',n:'Leasing',w:92,c:'kl2'},{k:'kunde',n:'Kunde',min:170,fr:1.2,c:'kk'},{k:'vers',n:'Vers.',w:56,c:'kv'},{k:'rahmen',n:'Rahmen-Nr.',w:130,c:'krn'},{k:'tel',n:'Telefon',w:130,c:'kt'},{k:'k',n:'',w:34,c:'kx'}];
+const KDC=[{k:'dat',n:'Datum',w:98,c:'kd'},{k:'nr',n:'Beleg',w:66,c:'kn'},{k:'marke',n:'Marke',w:130,c:'km'},{k:'modell',n:'Modell',min:200,fr:1.6,c:'kmo'},{k:'preis',n:'Preis',w:96,c:'kp'},{k:'leas',n:'Leasing',w:92,c:'kl2'},{k:'kunde',n:'Kunde',min:170,fr:1.2,c:'kk'},{k:'vers',n:'Vers.',w:80,c:'kv'},{k:'rahmen',n:'Rahmen-Nr.',w:130,c:'krn'},{k:'tel',n:'Telefon',w:130,c:'kt'},{k:'k',n:'',w:34,c:'kx'}];
 const KDRB=['#FF3B5C','#FF6B2C','#FF9F1C','#FFD93B','#A3E635','#3DDC84','#22D3EE','#38BDF8','#4F7BFF','#8B5CF6','#D946EF'];
 const kdDef=()=>({o:KDC.map(c=>c.k),w:{}});
 let kdLay=kdDef(),kdDrag=null;
@@ -579,19 +579,29 @@ function kdTpl(){const g=$('kdGrid');if(!g)return;let mw=66;const t=['26px'];kdC
 // Beleg-Nr. mit Jahr: 20.12.2024 + 1422 -> R24-1422 (nur Anzeige; gespeichert bleibt die Nummer)
 function kdNr(r){const n=String(r.nr==null?'':r.nr).trim(),d=r._d||vkDate(r.dat);return /^\d+$/.test(n)&&d?'R'+String(new Date(d).getFullYear()).slice(2)+'-'+n:n;}
 // Versicherungs-Kürzel aus „Leasing-Infos“ (ENRA, Alteos, Fahrsicherung, Assona) + EP = ENRA PLUS (Tiry 02.11.)
-function kdVN(){const m={EP:'ENRA PLUS'};(L||[]).filter(isVers).forEach(f=>{if(f.k)m[f.k]=f.n;});return m;}
+function kdVN(){const m={E:'ENRA',EP:'ENRA PLUS'};(L||[]).filter(isVers).forEach(f=>{if(f.k)m[f.k]=f.n;});return m;}
+// Logos der Leasing-/Versicherungsfirmen aus „Leasing-Infos“ (EP = ENRA PLUS -> ENRA-Logo + „PLUS“)
+// Kürzel wird erkannt, egal wie geschrieben („jr“, „J.R.“); E/ENRA = ENRA, EP/ENRA PLUS/E+ = ENRA-Logo + „+“ (2 Tarife)
+const kdKey=v=>{let k=String(v||'').toUpperCase().replace(/PLUS/g,'P').replace(/\+/g,'P').replace(/[^A-ZÄÖÜ]/g,'');if(k==='ENRAP'||k==='ENP')k='EP';if(k==='ENRA'||k==='E')k='EN';return k;};
+function kdLogo(v){let k=kdKey(v);if(!k)return'';if(k==='EP')k='EN';const x=(L||[]).find(l=>l.k===k)||(L||[]).find(l=>kdKey(l.n)===k);return x?logoOf(x):(LOGOS[k]||'');}
+const kdLogoH=v=>{const lg=kdLogo(v);return lg?`<img class="llg kll" src="${esc(lg)}" alt="${esc(v)}" draggable="false">${kdKey(v)==='EP'?'<i class="kplus" title="ENRA PLUS">+</i>':''}`:'';};
 const kdVal=(k,r)=>k==='nr'?kdNr(r):k==='preis'?kdPreis(r.preis):String(r[k]==null?'':r[k]).trim();
 const kdLab=(k,v)=>v===''?'(leer)':k==='leas'&&FN[v]?v+' · '+FN[v]:k==='vers'&&kdVN()[v]?v+' · '+kdVN()[v]:v;
-let kdF={};  // Filter je Spalte: {Spalte: Set(Werte)} wie der Excel-Autofilter
+let kdF={},kdYr=String(ls.get('vc_kdyr','')||'');  // Filter je Spalte: {Spalte: Set(Werte)} wie der Excel-Autofilter
 const kdYear=r=>{const d=r._d?new Date(r._d):null;return d?d.getFullYear():'ohne Datum';};
 const kdPreis=v=>{v=String(v==null?'':v).trim();if(/^\d+([.,]\d+)?$/.test(v)){const n=parseFloat(v.replace(',','.'));return n.toLocaleString('de-DE',{maximumFractionDigits:2})+' €';}return v;};
 function rk(){const g=$('kdGrid');if(!g)return;const all=kdAll();{const cy=new Date().getFullYear();$('nKunden').textContent=all.length?all.filter(r=>r._d&&new Date(r._d).getFullYear()===cy).length:'–';$('nKunden').title=all.length.toLocaleString('de-DE')+' Einträge gesamt · Zahl = Verkäufe '+cy;}
  if(document.querySelector('#kdGrid [contenteditable]:focus'))return;
  const q=($('kdSearch').value||'').trim().toLowerCase();const now=new Date().getFullYear();
  const fk=Object.keys(kdF),fo=r=>fk.every(k=>kdF[k].has(kdVal(k,r)));if($('kdFx')){$('kdFx').hidden=!fk.length;$('kdFx').textContent='✕ Filter aus ('+fk.length+')';}
- let list=q||fk.length?all.filter(r=>(!q||q.split(/\s+/).every(w=>r._t.includes(w)))&&fo(r)):all.filter(r=>!r._d||new Date(r._d).getFullYear()>now-kdYears);
- const more=q||fk.length?list.length>600:all.some(r=>r._d&&new Date(r._d).getFullYear()<=now-kdYears);list=list.slice(0,600);
- $('kdMore').hidden=!!(q||fk.length)||!more;$('kdMore').textContent='Ältere Jahre anzeigen (bis '+(now-kdYears-1)+')';
+ // Jahres-Leiste: Klick auf einen Jahrgang zeigt nur dieses Jahr (Suche/Filter wirken dann innerhalb des Jahres)
+ const yc={};all.forEach(r=>{const y=String(kdYear(r));yc[y]=(yc[y]||0)+1;});if(kdYr&&!yc[kdYr]&&all.length)kdYr='';
+ const ys=Object.keys(yc).sort((a,b)=>(+b||0)-(+a||0)),de=n=>n.toLocaleString('de-DE');
+ $('kdYrs').innerHTML=all.length?`<button type="button" class="kyc${kdYr?'':' on'}" data-kyr="">Alle Jahre<em>${de(all.length)}</em></button>`+ys.map(y=>`<button type="button" class="kyc${kdYr===y?' on':''}" data-kyr="${esc(y)}">${esc(y)}<em>${de(yc[y])}</em></button>`).join(''):'';
+ const qOk=r=>(!q||q.split(/\s+/).every(w=>r._t.includes(w)))&&fo(r);
+ let list=kdYr?all.filter(r=>String(kdYear(r))===kdYr&&qOk(r)):q||fk.length?all.filter(qOk):all.filter(r=>!r._d||new Date(r._d).getFullYear()>now-kdYears);
+ const cap=kdYr?3000:600,more=kdYr?false:q||fk.length?list.length>cap:all.some(r=>r._d&&new Date(r._d).getFullYear()<=now-kdYears);list=list.slice(0,cap);
+ $('kdMore').hidden=!!(kdYr||q||fk.length)||!more;$('kdMore').textContent='Ältere Jahre anzeigen (bis '+(now-kdYears-1)+')';
  $('kdForm').innerHTML=kdEdit?kdFormH():'';
  if($('kdClr'))$('kdClr').hidden=!(ME&&ME.adm)||!all.length;
  const cols=kdCols();kdTpl();
@@ -602,9 +612,9 @@ function rk(){const g=$('kdGrid');if(!g)return;const all=kdAll();{const cy=new D
   h+=`<div class="row kr"><div class="c kc kgrip" draggable="true" data-kid="${id}" data-ky="${ky}" title="Ziehen = Zeile verschieben">⋮⋮</div>${cols.map(c=>kdCell(c,r,id,ky)).join('')}<div class="c kc kdel" data-kid="${id}" data-ky="${ky}"><button class="nx" type="button" data-kdel="${id}" data-ky="${ky}" title="Eintrag löschen">×</button></div></div>`;}
  g.innerHTML=h+((q||fk.length)&&!list.length?'<div class="kdempty">Nichts gefunden.</div>':'');}
 function kdCell(c,r,id,ky){if(c.k==='marke'){const b=brandOfB({marke:r.marke,modell:r.modell}),lg=b&&(BUSER.logos||{})[b.k];
-  return `<div class="c kc km${lg?' haslg':''}" data-kid="${id}" data-ky="${ky}" data-kc="marke" title="${esc(r.marke||'')}">${lg?`<img src="${lg}" alt="" class="kml" draggable="false">`:''}<span class="kmt" contenteditable="true" spellcheck="false" data-kid="${id}" data-ky="${ky}" data-kf="marke">${esc(r.marke||'')}</span></div>`;}
+  return `<div class="c kc km${lg?' haslg':''}" data-kid="${id}" data-ky="${ky}" data-kc="marke" title="${esc(r.marke||'')}">${lg?`<img src="${lg}" alt="" class="kml" draggable="false">`:''}<span class="kmt" contenteditable="true" spellcheck="false" data-kid="${id}" data-ky="${ky}" data-kf="marke">${esc(r.marke||'')}</span>${String(r.marke||'').trim()?`<label class="kmup" title="${lg?'Logo ersetzen':'Markenlogo hochladen'} (oder Bild hierher ziehen)">${lg?'⟳':'⬆'}<input type="file" accept="image/*" hidden data-kmup="${esc(r.marke)}"></label>`:''}</div>`;}
  if(c.k==='dat'||c.k==='leas'||c.k==='vers'){const v=String(r[c.k]||''),t=c.k==='dat'?'Klick = Datum wählen':(kdLab(c.k,v)+' · Klick = auswählen');
-  return `<div class="c kc ${c.c} kpk" role="button" tabindex="0" data-kpick="${c.k}" data-kid="${id}" data-ky="${ky}" data-kc="${c.k}" title="${esc(t)}">${esc(v)}</div>`;}
+  const lg=c.k!=='dat'&&kdLogoH(v);return `<div class="c kc ${c.c} kpk${lg?' kplg':''}" role="button" tabindex="0" data-kpick="${c.k}" data-kid="${id}" data-ky="${ky}" data-kc="${c.k}" title="${esc(t)}">${lg||esc(v)}</div>`;}
  const v=kdVal(c.k,r);return `<div class="c kc ${c.c}" contenteditable="true" spellcheck="false" data-kid="${id}" data-ky="${ky}" data-kf="${c.k}" data-kc="${c.k}">${esc(v==null?'':v)}</div>`;}
 async function kdPut(y,r){const c=Object.assign({},r);delete c._t;delete c._d;delete c._o;c.ts=stamp();c.tsVon=ME?ME.id:'';KD[y]=Object.assign({},KD[y]||{},{[r.id]:c});kdDirty=true;
  try{await db.doc('meta/kd_'+y).update({['items.'+r.id]:c});}catch(e){try{await db.doc('meta/kd_'+y).set({items:Object.assign({},KD[y])},{merge:true});}catch(e2){fail(e2);}}}
@@ -677,14 +687,24 @@ function kdPickOpen(cell){const f=cell.dataset.kpick,y=cell.dataset.ky,id=cell.d
  const opts=[...new Set([...Object.keys(base),...Object.keys(cnt).sort((a,b)=>cnt[b]-cnt[a])])];
  const el=kdPopOpen(cell,`<div class="kph">${f==='leas'?'Leasing':'Versicherung'} wählen</div><input class="kpq" placeholder="Kürzel suchen oder eigenen Text + Enter"><div class="kpl kpch"></div>`,{t:'pick',id,f});
  const vis=()=>{const q=el.querySelector('.kpq').value.trim().toLowerCase();return opts.filter(v=>!q||(v+' '+(base[v]||'')).toLowerCase().includes(q));};
- const draw=()=>{el.querySelector('.kpl').innerHTML=`<button type="button" class="kpv" data-kpv=""><b>–</b><span>leer</span></button>`+vis().map(v=>`<button type="button" class="kpv${String(r[f]||'')===v?' on':''}" data-kpv="${esc(v)}"><b>${esc(v)}</b><span>${esc(base[v]||'')}</span></button>`).join('');};
+ const draw=()=>{el.querySelector('.kpl').innerHTML=`<button type="button" class="kpv" data-kpv=""><b>–</b><span>leer</span></button>`+vis().map(v=>`<button type="button" class="kpv${String(r[f]||'')===v?' on':''}" data-kpv="${esc(v)}"><b>${esc(v)}</b><span>${esc(base[v]||'')}</span>${kdLogo(v)?`<img class="kpl2" src="${esc(kdLogo(v))}" alt="">`:''}</button>`).join('');};
  draw();el.querySelector('.kpq').addEventListener('input',draw);
  el.querySelector('.kpq').addEventListener('keydown',e=>{if(e.key!=='Enter')return;e.preventDefault();const q=e.target.value.trim(),vv=vis();save(vv.length===1?vv[0]:(opts.find(v=>v.toLowerCase()===q.toLowerCase())||q));});
  el.addEventListener('click',e=>{const b=e.target.closest('[data-kpv]');if(b)save(b.dataset.kpv);});}
 $('kdGrid').addEventListener('click',e=>{const pk=e.target.closest('[data-kpick]');if(pk){kdPickOpen(pk);return;}
  const hd=e.target.closest('.kdh[data-kc]');if(hd&&!e.target.closest('.kres')){kdFltOpen(hd);return;}
+ if(e.target.closest('.kmup'))return;
  const km=e.target.closest('.km.haslg');if(km&&!e.target.closest('.kmt')){const t=km.querySelector('.kmt');km.classList.add('ked');t.focus();const s=getSelection(),rg=document.createRange();rg.selectNodeContents(t);rg.collapse(false);s.removeAllRanges();s.addRange(rg);}});
 $('kdGrid').addEventListener('keydown',e=>{const pk=e.target.closest('[data-kpick]');if(pk&&(e.key==='Enter'||e.key===' ')){e.preventDefault();kdPickOpen(pk);}});
+// Markenlogo aus der Kunden-Tabelle: gleiche Aufbereitung wie Einstellungen → Markenlogos (freistellen, zuschneiden, schärfen, skalieren), dort gespeichert
+async function kdLogoUp(mk,file){if(!file||!/^image\//.test(file.type||''))return toast('Bitte ein Bild wählen');const b=brandOfB({marke:mk});if(!b||!b.k)return;
+ toast('Logo wird aufbereitet …');try{const u=await procLogo(file);if(u.length>300000)throw new Error('Logo zu groß');BUSER.logos=Object.assign({},BUSER.logos,{[b.k]:u});
+  if(!allBrands().some(x=>x.k===b.k))BUSER.list=(BUSER.list||[]).concat([{k:b.k,n:b.n,w:''}]);await brSave();kdDirty=true;rk();toast('Logo „'+b.n+'“ gespeichert – auch unter Einstellungen → Markenlogos');}catch(err){fail(err);}}
+$('kdGrid').addEventListener('change',e=>{const i=e.target.closest('[data-kmup]');if(i&&i.files[0])kdLogoUp(i.dataset.kmup,i.files[0]);});
+$('kdGrid').addEventListener('dragover',e=>{if(kdDrag||!e.dataTransfer||![...e.dataTransfer.types].includes('Files'))return;const km=e.target.closest('.km');if(!km||!km.querySelector('[data-kmup]'))return;e.preventDefault();km.classList.add('kmdrop');});
+$('kdGrid').addEventListener('dragleave',e=>{const km=e.target.closest('.km');if(km)km.classList.remove('kmdrop');});
+$('kdGrid').addEventListener('drop',e=>{if(kdDrag)return;const km=e.target.closest('.km'),i=km&&km.querySelector('[data-kmup]');if(!i||!e.dataTransfer.files[0])return;e.preventDefault();km.classList.remove('kmdrop');kdLogoUp(i.dataset.kmup,e.dataTransfer.files[0]);});
+$('kdYrs').addEventListener('click',e=>{const b=e.target.closest('[data-kyr]');if(!b)return;kdYr=b.dataset.kyr;ls.set('vc_kdyr',kdYr);kdPopClose();rk();const bd=document.querySelector('.kdboard');if(bd)bd.scrollTop=0;});
 $('kdFx').addEventListener('click',()=>{kdF={};kdPopClose();rk();});
 // Zeile verschieben: ganze Jahresliste neu durchnummerieren (o ab 1. Januar, je Zeile 1 min) – ein Schreibvorgang je Jahres-Paket
 function kdMoveRow(d){const all=kdAll(),a=all.find(r=>r.id===d.id&&String(r.y)===d.y),t=all.find(r=>r.id===d.to&&String(r.y)===d.ty);if(!a||!t)return;

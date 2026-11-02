@@ -511,3 +511,24 @@ body[data-v=kunden] .tt small{background:var(--rb);-webkit-background-clip:text;
 .kdgrid .kpk{cursor:pointer}.kdgrid .kpk:hover{box-shadow:inset 0 0 0 1px rgba(177,92,255,.55)}.kdgrid .kpk:focus-visible{outline:none;box-shadow:inset 0 0 0 2px var(--cyan)}
 .kdgrid .km.haslg{cursor:pointer;justify-content:center}.kdgrid .km.haslg .kmt{display:none}.kdgrid .km.haslg .kml{height:20px;max-width:108px}
 .kdgrid .km.haslg.ked{justify-content:flex-start}.kdgrid .km.haslg.ked .kmt{display:inline}.kdgrid .km.haslg.ked .kml{display:none}
+
+/* Kunden: Jahres-Leiste (Klick = nur dieser Jahrgang) */
+.kdyrs{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 12px}.kdyrs:empty{display:none}
+.kyc{display:inline-flex;align-items:baseline;gap:6px;padding:6px 11px;border-radius:99px;border:1px solid #273042;background:#0E121A;color:#CBD5E1;font:700 13px Outfit,var(--body),sans-serif;cursor:pointer;transition:border-color .15s,background .15s,transform .15s}
+.kyc em{font:600 10.5px var(--mono);font-style:normal;color:#64748B}
+.kyc:hover{border-color:#B15CFF;color:#fff;transform:translateY(-1px)}
+.kyc.on{background:var(--rb);border-color:transparent;color:#0B0E15;box-shadow:0 4px 16px -6px #B15CFF}.kyc.on em{color:rgba(11,14,21,.7)}
+@media (hover:none) and (pointer:coarse){.kdyrs{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch}.kdyrs::-webkit-scrollbar{display:none}.kyc{flex:none}}
+
+/* Kunden: Leasing-/Versicherungs-Logos in den Zellen und in der Auswahl */
+.kdgrid .kpk.kplg{flex-direction:row;align-items:center;justify-content:center;gap:4px;padding:4px 6px}
+.kdgrid .kll{height:20px;max-width:100%;min-width:0;object-fit:contain}
+.kdgrid .kplus{font:900 16px/1 Outfit,var(--body),sans-serif;font-style:normal;color:#fff;flex:none;text-shadow:0 0 8px rgba(177,92,255,.9)}
+.kdpop .kpv .kpl2{height:18px;max-width:70px;object-fit:contain;margin-left:auto;flex:none}
+
+/* Kunden: Markenlogo direkt in der Zelle hochladen (Knopf beim Drüberfahren oder Bild in die Zelle ziehen) */
+.kdgrid .km{position:relative}
+.kdgrid .kmup{position:absolute;top:50%;right:4px;transform:translateY(-50%);width:22px;height:22px;border-radius:7px;display:grid;place-items:center;font:700 12px/1 var(--body);color:#0B0E15;background:var(--rb);cursor:pointer;opacity:0;transition:opacity .15s;z-index:2;box-shadow:0 2px 8px rgba(0,0,0,.6)}
+.kdgrid .row.kr:hover .kmup,.kdgrid .kmup:focus-within{opacity:1}
+.kdgrid .km.kmdrop{box-shadow:inset 0 0 0 2px #B15CFF;background:rgba(177,92,255,.12)}
+@media (hover:none){.kdgrid .kmup{opacity:.7}}
