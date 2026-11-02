@@ -204,7 +204,7 @@ function render(){const g=$('grid');if(document.querySelector('#grid .edit'))ret
  let lastKw=null;
  daysList().forEach(ds=>{const d=fromIso(ds),items=(by[ds]||[]),past=ds<today,k=kw(d),wd=WDS[d.getDay()];
   if(k!==lastKw){h+=`<div class="kw">KW ${k}</div>`;lastKw=k;}
-  h+=`<div class="row ${wd==='SA'?'sa':''} ${wd==='MI'?'mi':''} ${ds===today?'today':''} ${past?'past':''} ${HOL[ds]?'hol':''}" data-iso="${ds}"><div class="c date"><b>${String(d.getDate()).padStart(2,'0')}.${String(d.getMonth()+1).padStart(2,'0')}</b><span>${wd}</span>${ds===today?'<em>HEUTE</em>':HOL[ds]?`<em>${esc(HOL[ds])}</em>`:''}</div>`;
+  h+=`<div class="row ${wd==='SA'?'sa':''} ${wd==='MI'?'mi':''} ${ds===today?'today':''} ${past?'past':''} ${HOL[ds]?'hol':''}" data-iso="${ds}"><div class="c date"><b>${String(d.getDate()).padStart(2,'0')}.${String(d.getMonth()+1).padStart(2,'0')}</b><span>${wd[0]+wd.slice(1).toLowerCase()}</span>${ds===today?'<em>Heute</em>':HOL[ds]?`<em>${esc(HOL[ds])}</em>`:''}</div>`;
   cols.forEach(c=>{
    if(c.of){const t=items.filter(e=>e.spalte===c.of&&(!openOnly||e.erledigt!=='1')).sort(tmSort);h+=`<div class="c zt" style="--cc:${c.c}" data-iso="${ds}" data-of="${c.of}" title="Klick = Uhrzeit wählen">${t.map(e=>`<button class="tchip${e.zeit?'':' empty'}" type="button" data-tm="${esc(e.id)}" title="Uhrzeit für: ${esc(e.text)}">${e.zeit?esc(e.zeit):'––:––'}</button>`).join('')}</div>`;return;}
    let its=items.filter(e=>e.spalte===c.k&&(!openOnly||e.erledigt!=='1'));if(/^t[12]$/.test(c.k))its=its.sort(tmSort);

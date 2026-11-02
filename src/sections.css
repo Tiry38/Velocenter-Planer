@@ -345,3 +345,21 @@ body{background-color:#090B10;background-image:
 #sTab td.slogo:hover .sldel{display:grid}
 #sTab td.mbw{font-variant-numeric:tabular-nums;color:#FDE68A}
 #sTab td.mbw{white-space:normal;max-width:240px;min-width:110px;line-height:1.3}
+/* ===== Planer: angenehme runde Schrift überall (wie Verkauf), ruhiges „Heute“, dünne KW-Trenner mit Verlauf bis zur Mitte ===== */
+#v-planer,#v-planer *{font-family:"Outfit",var(--body),sans-serif!important}
+#v-planer .e .tx{font-family:var(--body)!important;font-weight:500}
+#v-planer .hd{font-size:12px!important;font-weight:600!important;letter-spacing:.03em!important;text-transform:none!important}
+#v-planer .date b{font-size:17px!important;font-weight:700!important;letter-spacing:.01em}
+#v-planer .date span{font-size:15px!important;font-weight:600!important;letter-spacing:.01em!important;text-transform:none!important}
+#v-planer .date em{font-size:10.5px!important;font-weight:700!important;letter-spacing:.03em!important}
+#v-planer .e .tm{font-size:11.5px!important;font-weight:700!important}
+/* Heute: kein knalliges Rot mehr – ruhiger Türkis-Schimmer passend zur „Heute“-Pille */
+.row.today .c{background:rgba(34,211,238,.06)!important}
+.row.today .date{background:linear-gradient(90deg,rgba(34,211,238,.20),rgba(34,211,238,.06) 70%,#0b0e15)!important;box-shadow:inset 3px 0 0 #22D3EE!important}
+/* KW-Trenner: dünner, weicher, Farbverlauf bis zur Mitte */
+.kw{padding:4px 12px 3px!important;border-top:0!important;border-bottom:1px solid transparent!important;border-image:linear-gradient(90deg,rgba(248,113,113,.6),rgba(248,113,113,.18) 420px,transparent 680px) 1!important;background:linear-gradient(90deg,rgba(226,35,45,.30),rgba(226,35,45,.12) 300px,rgba(226,35,45,.04) 520px,transparent 680px)!important;color:#FCA5A5!important;font-size:11.5px!important;font-weight:700!important;letter-spacing:.08em!important}
+.kw::after{display:none}
+#v-planer .date{gap:6px!important;padding:6px 8px!important}#v-planer .date em{font-size:9.5px!important;padding:2px 5px!important;letter-spacing:.02em!important}
+#v-planer .date b{font-size:18px!important;font-weight:700!important;letter-spacing:0!important}
+#v-planer .date em{text-transform:none!important;font-size:10.5px!important;font-weight:600!important}
+#v-planer .date b{font-size:17px!important}#v-planer .date em{padding:1px 5px!important;font-size:10px!important}#v-planer .date{gap:5px!important;padding:6px 6px 6px 9px!important}
