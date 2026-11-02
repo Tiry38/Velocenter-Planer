@@ -313,6 +313,8 @@ function ltBarPos(){requestAnimationFrame(()=>{const t=document.querySelector('#
 addEventListener('resize',()=>ltBarPos());
 function vkLt(s){s=String(s||'').trim();if(/^sofort/i.test(s))return -1;if(/lager|^l$/i.test(s))return 0;const p=ltParse(s);if(!p)return 999;return p.k+(p.y-new Date().getFullYear())*53;}
 const ltNorm=s=>{const p=ltParse(s);return p?'KW '+p.k+'/'+String(p.y%100).padStart(2,'0'):String(s||'');};
+/* 1.6.8: „Anfang Dezember“ über der KW (Donnerstag der KW bestimmt den Monat, wie ISO) */
+const ltMon=s=>{const p=ltParse(s);if(!p)return '';const d=kwMon(p.k,p.y);d.setDate(d.getDate()+3);const t=d.getDate();return `<span class="ltm">${t<=10?'Anfang':t<=20?'Mitte':'Ende'} ${d.toLocaleDateString('de-DE',{month:'long'})}</span>`;};
 const ltShow=s=>{const p=ltParse(s);return p?'KW '+p.k+'<small class="lty">'+String(p.y%100).padStart(2,'0')+'</small>':esc(s||'');};
 const vkRank=b=>b.a==='1'?5:b.b==='1'?4:b.m==='1'?3:b.an==='1'?2:1;
 // Sortieren: Klick auf Spaltenkopf (1. Klick aufsteigend, 2. Klick absteigend) oder Auswahl oben links; leere Felder immer unten
@@ -360,7 +362,7 @@ function vkRow(b){const st=b.a==='1'?'a':b.b==='1'?'b':b.m==='1'?'m':b.an==='1'?
  <td class="sdot" title="${{o:'offen',l:'angeliefert',m:'montiert',b:'O.K. – abholbereit',a:'abgeholt'}[st]}"><i></i></td>
  <td class="who2${vkSty(b)?' wfx':''}" style="${vkSty(b)}">${lb?'<i class="ltbar"></i>':''}<div class="wp"><b class="ef" contenteditable="true" spellcheck="false" data-vid="${esc(b.id)}" data-f="name" title="Klick = Kunde bearbeiten">${esc(b.name||'')}</b><small>${bModelE(b)}</small></div></td>
  <td class="pcell pf" data-vid="${esc(b.id)}" data-pf="form" title="Klick = Form wählen" tabindex="0">${esc(b.form||'')}</td><td class="pcell pg" data-vid="${esc(b.id)}" data-pf="gr" title="Klick = Größe wählen" tabindex="0">${esc(b.gr||'')}</td>
- ${dcD('dat',b.dat)}<td class="kcell${ltHot(b.lt)&&b.a!=='1'?' hot':''}" data-vid="${esc(b.id)}" title="Klick = Kalenderwoche wählen" tabindex="0">${ltShow(b.lt)}</td>${ce('notiz',[b.notiz,b.montieren?'Montieren: '+b.montieren:''].filter(Boolean).join(' · '),'vnote'+(b.notiz&&U(b.notizVon).n?'" data-von="'+esc(U(b.notizVon).n[0])+'" style="--uc:'+U(b.notizVon).c+'" title="Notiz von '+esc(U(b.notizVon).n):''))}
+ ${dcD('dat',b.dat)}<td class="kcell${ltHot(b.lt)&&b.a!=='1'?' hot':''}" data-vid="${esc(b.id)}" title="Klick = Kalenderwoche wählen" tabindex="0">${ltMon(b.lt)}${ltShow(b.lt)}</td>${ce('notiz',[b.notiz,b.montieren?'Montieren: '+b.montieren:''].filter(Boolean).join(' · '),'vnote'+(b.notiz&&U(b.notizVon).n?'" data-von="'+esc(U(b.notizVon).n[0])+'" style="--uc:'+U(b.notizVon).c+'" title="Notiz von '+esc(U(b.notizVon).n):''))}
 <td><div class="lcell">${leasLogo(b.firma)}<select class="lsel mini2${b.firma?'':' off'}" data-vi="${esc(b.id)}" aria-label="Leasing-Firma"><option value="">–</option>${Object.entries(FN).map(([k,n])=>`<option value="${esc(k)}"${b.firma===k?' selected':''}>${esc(k)} · ${esc(n)}</option>`).join('')}${b.firma&&!FN[b.firma]?`<option selected>${esc(b.firma)}</option>`:''}</select>${b.firma?lvB(b,'firma'):''}</div></td>
  ${b.firma?dc('antrag',b.antrag,'d-antrag'):'<td class="na">–</td>'}${b.firma?dc('ok',b.ok,b.ok?'d-ok':'d-ok miss'):'<td class="na">–</td>'}${b.firma?dc('lende',b.lende,'d-lende'):'<td class="na">–</td>'}
  <td><select class="ssel mini2" data-vi="${esc(b.id)}" aria-label="Verkauf/Beratung"><option value="">–</option>${USERS.map(u=>`<option value="${u.id}"${b.verk===u.id?' selected':''}>${esc(u.n)}</option>`).join('')}</select></td>
