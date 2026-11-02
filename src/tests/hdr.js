@@ -1,0 +1,2 @@
+const {chromium}=require('playwright');(async()=>{const b=await chromium.launch();const p=await b.newPage({viewport:{width:1400,height:500}});await p.route(/gstatic|cdnjs/,r=>r.abort());
+await p.goto('file://'+process.cwd()+'/test_fb.html');await p.waitForTimeout(400);await p.click('.wt[data-u=kevin]');await p.fill('#pw1','1');await p.fill('#pw2','1');await p.waitForTimeout(1500);await p.waitForTimeout(1500);await p.screenshot({path:'hdr.png',clip:{x:0,y:0,width:1400,height:260}});await b.close();})();

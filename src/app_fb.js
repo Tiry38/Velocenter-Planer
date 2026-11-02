@@ -35,7 +35,7 @@ function kw(d){const t=new Date(Date.UTC(d.getFullYear(),d.getMonth(),d.getDate(
 function easter(y){const a=y%19,b=Math.floor(y/100),c=y%100,d=Math.floor(b/4),e=b%4,f=Math.floor((b+8)/25),g=Math.floor((b-f+1)/3),h=(19*a+b-d-g+15)%30,i=Math.floor(c/4),k=c%4,l=(32+2*e+2*i-h-k)%7,m=Math.floor((a+11*h+22*l)/451),mo=Math.floor((h+l-7*m+114)/31),da=((h+l-7*m+114)%31)+1;return new Date(y,mo-1,da,12);}
 const HOL={};[2026,2027,2028].forEach(y=>{const e=easter(y),add=(d,n)=>{HOL[iso(d)]=n;},off=n=>{const d=new Date(e);d.setDate(d.getDate()+n);return d;};
  add(new Date(y,0,1,12),'Neujahr');add(off(-2),'Karfreitag');add(off(1),'Ostermontag');add(new Date(y,4,1,12),'1. Mai');add(off(39),'Himmelfahrt');add(off(50),'Pfingstmontag');add(off(60),'Fronleichnam');add(new Date(y,9,3,12),'Dt. Einheit');add(new Date(y,10,1,12),'Allerheiligen');add(new Date(y,11,24,12),'Heiligabend');add(new Date(y,11,25,12),'1. Weihnachtstag');add(new Date(y,11,26,12),'2. Weihnachtstag');add(new Date(y,11,31,12),'Silvester');});
-function tick(){const d=new Date();$('clock').innerHTML=String(d.getHours()).padStart(2,'0')+'<i>:</i>'+String(d.getMinutes()).padStart(2,'0');$('dWd').textContent=WD[d.getDay()];$('dKw').textContent='KW '+kw(d);$('dDate').textContent=dmy(iso(d));}
+function tick(){const d=new Date();$('clock').innerHTML=String(d.getHours()).padStart(2,'0')+'<i>:</i>'+String(d.getMinutes()).padStart(2,'0');$('dWd').textContent=WD[d.getDay()];$('dKw').textContent='KW '+kw(d);$('dDate').textContent=d.getDate()+'. '+d.toLocaleDateString('de-DE',{month:'long'})+' '+d.getFullYear();}
 tick();setInterval(tick,15000);
 
 /* ---------- Navigation ---------- */
@@ -67,13 +67,19 @@ function pwBack(){$('pwForm').hidden=true;$('whoGrid').hidden=false;$('whoP').hi
 function pwErr(t){const f=$('pwForm');$('pwErr').textContent=t;f.classList.remove('shake');void f.offsetWidth;f.classList.add('shake');}
 $('pwBack').addEventListener('click',pwBack);
 $('whoGrid').addEventListener('click',e=>{const b=e.target.closest('[data-u]');if(b)pwOpen(b.dataset.u);});
-$('pwForm').addEventListener('submit',async e=>{e.preventDefault();const go=$('pwGo');if(go.disabled)return;const a=$('pw1').value;if(!a){pwErr('Bitte ein Passwort eingeben.');return;}
+let autoT=null,autoSilent=false,lastTry='';
+function autoLogin(){clearTimeout(autoT);if(!pwU)return;const a=$('pw1').value,first=!USERSET[pwU.id];if(!a)return;
+ if(first){const b=$('pw2').value;if(!b||b.length<a.length)return;if(a!==b)return;}
+ const key=pwU.id+'|'+a+'|'+(first?$('pw2').value:'');if(key===lastTry)return;
+ autoT=setTimeout(()=>{lastTry=key;autoSilent=true;$('pwForm').requestSubmit();},first?500:650);}
+['pw1','pw2'].forEach(id=>$(id).addEventListener('input',()=>{$('pwErr').textContent='';autoLogin();}));
+$('pwForm').addEventListener('submit',async e=>{e.preventDefault();clearTimeout(autoT);const silent=autoSilent;autoSilent=false;const go=$('pwGo');if(go.disabled)return;const a=$('pw1').value;if(!a){pwErr('Bitte ein Passwort eingeben.');return;}
  if(!USERSET[pwU.id]&&a!==$('pw2').value){pwErr('Die beiden Eingaben sind nicht gleich.');return;}
  go.disabled=true;const mail=pwU.id+DOMAIN;
  try{if(!USERSET[pwU.id]){try{await auth.createUserWithEmailAndPassword(mail,fpw(a));}catch(e){if(e.code==='auth/email-already-in-use')await auth.signInWithEmailAndPassword(mail,fpw(a));else throw e;}
    await db.doc('meta/users').set({[pwU.id]:true},{merge:true});USERSET[pwU.id]=true;}
   else await auth.signInWithEmailAndPassword(mail,fpw(a));}
- catch(err){const c=err.code||'';pwErr(c==='auth/too-many-requests'?'Zu viele Versuche – bitte kurz warten.':/password|credential|user-not-found/.test(c)?'Passwort falsch.':c==='auth/network-request-failed'?'Keine Internetverbindung.':err.message);}
+ catch(err){const c=err.code||'';if(silent&&/password|credential|user-not-found/.test(c)){$('pwErr').textContent='';return;}pwErr(c==='auth/too-many-requests'?'Zu viele Versuche – bitte kurz warten.':/password|credential|user-not-found/.test(c)?'Passwort falsch.':c==='auth/network-request-failed'?'Keine Internetverbindung.':err.message);}
  finally{go.disabled=false;}});
 $('switchUser').addEventListener('click',async()=>{relock();await auth.signOut();});
 async function start(me){if(ME&&ME.id===me.id)return;ME=me;const u=U(me.id);$('meName').textContent=u.n;$('meAv').style.setProperty('--uc',u.c);$('meAv').textContent=u.n[0];
