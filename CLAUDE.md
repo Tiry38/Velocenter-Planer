@@ -28,7 +28,7 @@ Web-App für **Velocenter Hessert** (Fahrradgeschäft, Wörth am Rhein). Ersetzt
   - `logo_small.b64` – Velocenter-Logo · `fbconfig.js` – Firebase-Konfiguration (öffentlich, kein Geheimnis)
   - `firestore.rules` – Sicherheitsregeln (Kopie; aktiv sind sie in der Firebase-Konsole)
 - **Bauen:** `cd src && python3 build.py <neue Version>` → schreibt `../index.html`, `../version.txt` usw. und `tests/test_fb.html`.
-- **Ausliefern:** commit + `git push origin main`. GitHub Pages braucht ~1 Min. **Offene Geräte prüfen alle 30 s `version.txt` und laden sich selbst neu** (mit `?v=` am Cache vorbei). Version bei jeder Auslieferung hochzählen (zuletzt **1.5.8**).
+- **Ausliefern:** commit + `git push origin main`. GitHub Pages braucht ~1 Min. **Offene Geräte prüfen alle 30 s `version.txt` und laden sich selbst neu** (mit `?v=` am Cache vorbei). Version bei jeder Auslieferung hochzählen (zuletzt **1.5.9**).
 - **Tests (lokal, ohne Internet):** `src/tests/` – `fbmock.js` baut Firebase Auth + Firestore nach (localStorage, Live-Abgleich zwischen Tabs).
   - Einmalig: `cd src/tests && npm pack xlsx@0.18.5 && tar xzf xlsx-0.18.5.tgz package/dist/xlsx.full.min.js && mv package/dist/xlsx.full.min.js . && rm -rf package xlsx-0.18.5.tgz`
   - `node quick.js` (Kurztest, ~30 s) · `node tf.js` (Gesamttest, ~2 Min). Playwright/Chromium ist vorinstalliert.
@@ -89,7 +89,8 @@ Web-App für **Velocenter Hessert** (Fahrradgeschäft, Wörth am Rhein). Ersetzt
   - **Papierkorb (1.5.8, Tiry: „Safe, falls man ausversehen aufs X drückt“):** × = 2× klicken, dann 6 s „Rückgängig“ **und** die Zeile landet in `meta/kd_trash` = {items:{id:{…Zeile,_y,_del,_von}}}; Knopf „↩ Gelöschte · N“ in der Werkzeugleiste listet sie mit „↩ Zurückholen“ (`kdBinOpen`, `kdRestore`), nach 30 Tagen räumt `kdBinPrune` sie weg. „Alle löschen“ geht nicht in den Papierkorb.
   - **„🗑 Alle löschen“** (nur Admin, LÖSCHEN eintippen): löscht alle `meta/kd_*`-Docs mit Inhalt, setzt `meta/import.kunden=false` → Import-Knopf erscheint wieder. Import liest **nur den Reiter „Kunden“** und ersetzt je Jahr das ganze Doc. **Kundendaten nie ins Repo.**
 - **🔒 Notizen** (nur Admins, Navi versteckt für Mitarbeiter; Farbe #A78BFA): Zugangsdaten/interne Infos im Planer-Stil (Farbpunkt · Eintrag · Zusatz · ⧉ kopieren · × löschen mit Rückgängig), direkt bearbeitbar; Spalte „Eintrag“ per Ziehen an der Kopfkante breiter/schmaler (`vc_nw`, pro Gerät; Doppelklick = Standard). **Verschlüsselt mit der Tresor-PIN in `tresor/pw` = {grid, notes}** (Regel: nur Admins) – Passwortliste (`grid`) und Notizen teilen sich das Doc; alte Fassung (reines Array) wird weiter gelesen. Knopf „Aus Passwort-Liste übernehmen“ (nur wenn Notizen leer). **Inhalte nie ins Repo/in den Chat.** Verlassen von Passwörter/Notizen sperrt den Tresor.
-- **Passwörter** (nur Admins): PIN-Schloss; darunter einmalig „Aus Sheet übernehmen“ (xlsx-Download des Sheets) für PW-Liste + Lieferanten-Logins – verschwindet nach Übernahme.
+- **Reiter „Passwörter“ (Tresor) ab 1.5.9 abgeschaltet** (Tiry 02.11.: „kannst du löschen“; Navi-Knopf immer `hidden`, `show()` fällt auf Planer zurück). Daten in `tresor/pw`/`tresor/logins` bleiben unberührt; 🔒 Notizen laufen weiter (eigener PIN-Knopf `nOpen`). Lieferanten ohne Spalten Login/Passwort, ohne „Logins zeigen (PIN)“.
+- **(alt) Passwörter** (nur Admins): PIN-Schloss; darunter einmalig „Aus Sheet übernehmen“ (xlsx-Download des Sheets) für PW-Liste + Lieferanten-Logins – verschwindet nach Übernahme.
 
 ## 7. Datenübernahme (02.11.2026 erledigt)
 
