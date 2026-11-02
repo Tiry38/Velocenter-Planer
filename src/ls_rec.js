@@ -1,5 +1,5 @@
 // Leasing-Infos nach Tirys Fragenliste, Versicherungen mit eigenen Händler-Feldern (Volltext-Prüfung offizieller Seiten/PDFs, Stand 02.11.2026; Eurorad + assona am 03.11.2026 geprüft). Neue Fassung → LSREC_VER hochzählen und betroffene Einträge mit "v": <neue Version> markieren – nur die werden überschrieben.
-const LSREC_VER=4;
+const LSREC_VER=5;
 const LSREC=[
 {
 "k": "JR",
@@ -222,7 +222,7 @@ const LSREC=[
 },
 {
 "k": "ER",
-"v": 4,
+"v": 5,
 "pak": [
 "Basis: 40 € Selbstbeteiligung, 75 € Bagatellgrenze, Diebstahl/Raub versichert",
 "Premium: keine Selbstbeteiligung, keine Bagatellgrenze, Verschleiß 100 % ab Tag 1, UVV-Check nach Jahr 1 + 2 (max. 30 €/Jahr), Mobilitätsschutz 24/7 europaweit",
@@ -232,7 +232,7 @@ const LSREC=[
 "isz": "PremiumPLUS: Inspektion inkl. UVV max. 60 € (Antrag bis 29.02.2024) bzw. 90 € (ab 01.03.2024) · Premium: nur UVV max. 30 € · Mehrkosten zahlt der Kunde",
 "vsd": "Premium + PremiumPLUS: 100 % ab Tag 1, ohne Obergrenze · Basis: nein · Einreichen über assona, die ganzen 36 Monate",
 "vers": "Ja – assona wickelt die Schäden ab (Basis / Premium / PremiumPLUS)",
-"reNeu": "Keine Rechnung – nach Übermittlung des Übergabe-Tokens automatische Gutschrift der AGL Activ Services GmbH (Georgstr. 42, 30159 Hannover) über den Gesamtverkaufspreis",
+"reNeu": "Keine Rechnung – nach Übermittlung des Übergabe-Tokens automatische Gutschrift der AGL Activ Services GmbH über den Gesamtverkaufspreis",
 "reIV": "Inspektion: seit 07.04.2026 nur noch per Gutschriftverfahren im Dienstrad-Tool (nicht mehr über assona) · UVV-Checkliste im Dienstrad-Tool hochladen · Verschleiß: über assona (Rahmennummer)",
 "reSch": "Direkt mit assona über die Rahmennummer (kein extra Code) · Schäden erst 1 Monat nach Vertragsbeginn einreichbar · Diebstahl: kundenservice@assona.com, Polizeianzeige + Schloss-Nachweis",
 "abMon": "Inspektion frühestens im 10. bzw. 22. Monat · Verschleiß ab Tag 1 · Schäden ab 2. Monat",
@@ -240,12 +240,15 @@ const LSREC=[
 "mit": "Übergabe-Token",
 "isCode": "Nein – Zuordnung über die Rahmennummer",
 "zubJa": [
-"Alles, was fest mit dem Rad verbunden ist",
-"Schloss (laut Händlerseiten Pflicht, UVP ab 50 € – offiziell nicht bestätigt)"
+"Alles, was fest mit dem Rad verbunden ist (zählt zur Ausstattung)",
+"Schloss"
 ],
 "zubNein": [
-"Alles, was nicht fest am Rad ist (z. B. Helm, Bekleidung, Werkzeug, Pumpe, abnehmbares Navi)"
-]
+"Alles, was nicht fest mit dem Rad verbunden ist"
+],
+"kon": "fachhaendler@eurorad.de · +49 221 845539-0 · Portal: leasingportal.eurorad.de",
+"ende": "Rücknahme nach 36 Monaten freiwillig – nur alle oder keine, Entscheidung an anfrage@agl.de · Vorzeitige Rückgabe nur mit schriftlichem Formular des Nutzers, an leasing@eurorad.de melden · Ablöseangebot verschickt die AGL",
+"preis": "Rad mind. 357 €, max. 20.000 € (Höchstpreis legt der Arbeitgeber fest) · Lastenräder erlaubt"
 },
 {
 "k": "CB",
@@ -439,7 +442,7 @@ const LSREC=[
 },
 {
 "k": "AS",
-"v": 4,
+"v": 5,
 "pak": [
 "Versicherer bzw. Schadenabwickler bei Eurorad und JobRad – Schäden laufen über das assona-Partnerportal",
 "Eigene E-Bike-Tarife im Fachhandel (z. B. E-Power-Schutz) – genaue Bedingungen nicht offiziell geprüft"

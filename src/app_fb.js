@@ -499,7 +499,8 @@ const LQG=[['🔧 Inspektion & Verschleiß',[['isz','Inspektion – wir bekommen
  ['🛡 Versicherung',[['vers','Versicherung dabei?']]],
  ['🧾 Rechnungsadressen',[['reNeu','Neurad'],['reIV','Inspektion & Verschleiß'],['reSch','Schaden']]],
  ['🚲 Erlaubt zu leasen',[['drei','E-Dreirad','t'],['spe','S-Pedelec','t']]],
- ['🔑 Neuradabholung',[['code','Abholcode?'],['mit','Kunde bringt mit']]]];
+ ['🔑 Neuradabholung',[['code','Abholcode?'],['mit','Kunde bringt mit']]],
+ ['📞 Kontakt & Leasingende',[['kon','Händler-Kontakt','','o'],['ende','Leasingende / Rückgabe','','o'],['preis','Preisgrenzen','','o']]]];/* 1.7.6: 'o' = nur anzeigen, wenn gefüllt */
 const LQF=LQG.flatMap(g=>g[1]);
 const isVers=f=>/versicherung|schäden/i.test(f.sub||'');
 const qG=f=>isVers(f)?LVG:LQG,qF=f=>isVers(f)?LVF:LQF;
@@ -518,7 +519,7 @@ const qv=(f,[k,,t])=>t==='t'?triV(f[k]):String(f[k]||'').trim()?hl(f[k]):OFFEN;
 function lsCard(f,i){const nj=(f.zubJa||[]).length,nn=(f.zubNein||[]).length;
  return `<article class="lc" style="--ac:${esc(f.ac||'#94A3B8')}"><div class="lctop"><button class="edbtn" type="button" data-led="${i}" aria-label="${esc(f.n)} bearbeiten">✎ Bearbeiten</button></div><div class="lh">${logoOf(f)?`<div class="logo"><img src="${esc(logoOf(f))}" alt="${esc(f.n)} Logo"></div>`:`<div class="mono">${esc(f.k)}</div>`}<div style="min-width:0">${logoOf(f)?'':`<b>${esc(f.n)}</b>`}<small>${esc(f.sub||'Leasing')} · ${esc(f.k)}</small></div></div>
  <div class="blk"><h4>${isVers(f)?'🛡 Tarife · Leistungen':'📦 Pakete · Leistungen · Preis für den Kunden'}</h4>${(f.pak||[]).length?`<ul>${f.pak.map(li).join('')}</ul>`:`<p class="qe">${OFFEN}</p>`}</div>
- ${qG(f).map(([h,qs])=>`<div class="blk"><h4>${esc(h)}</h4><dl class="qa">${qs.map(q=>`<dt>${esc(q[1])}</dt><dd>${qv(f,q)}</dd>`).join('')}</dl></div>`).join('')}
+ ${qG(f).map(([h,qs])=>[h,qs.filter(q=>q[3]!=='o'||String(f[q[0]]||'').trim())]).filter(([h,qs])=>qs.length).map(([h,qs])=>`<div class="blk"><h4>${esc(h)}</h4><dl class="qa">${qs.map(q=>`<dt>${esc(q[1])}</dt><dd>${qv(f,q)}</dd>`).join('')}</dl></div>`).join('')}
  ${isVers(f)&&!nj&&!nn?'':`<button class="zubbtn" type="button" data-zub="${i}">🧩 Leasingfähiges Zubehör <span>${nj||nn?nj+' ✓ · '+nn+' ✗':'offen'}</span></button>`}
  </article>`;}
 function rl(){
