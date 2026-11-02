@@ -89,6 +89,60 @@ async function start(me){if(ME&&ME.id===me.id)return;ME=me;const u=U(me.id);$('m
 function dlg(html){$('dlgBox').innerHTML=html;$('dlg').hidden=false;const f=$('dlgBox').querySelector('input');if(f)f.focus();}
 function dlgClose(){$('dlg').hidden=true;$('dlgBox').innerHTML='';$('dlgBox').classList.remove('wide');}
 $('dlg').addEventListener('click',e=>{if(e.target.id==='dlg'||e.target.closest('[data-close]'))dlgClose();});
+$('meCfg').addEventListener('click',()=>brandDlg());
+/* ⚙ Einstellungen → Markenlogos: Bild hochladen → automatisch freistellen, zuschneiden, schärfen, auf Einheitshöhe bringen */
+function loadImg(file){return new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>{const i=new Image();i.onload=()=>res(i);i.onerror=()=>rej(new Error('Bild nicht lesbar'));i.src=r.result;};r.onerror=()=>rej(new Error('Datei nicht lesbar'));r.readAsDataURL(file);});}
+function cvs(w,h){const c=document.createElement('canvas');c.width=Math.max(1,w);c.height=Math.max(1,h);return c;}
+async function procLogo(file,H=80){const img=await loadImg(file);let w=img.naturalWidth||img.width||600,h=img.naturalHeight||img.height||200;
+ const up=Math.min(4,Math.max(1,1600/Math.max(w,h)));if(/svg/i.test(file.type)||up>1){w=Math.round(w*up);h=Math.round(h*up);}const sc=Math.min(1,2400/Math.max(w,h));w=Math.round(w*sc);h=Math.round(h*sc);
+ let c=cvs(w,h),x=c.getContext('2d');x.drawImage(img,0,0,w,h);let D=x.getImageData(0,0,w,h),d=D.data;
+ // 1) Hintergrund: Randpixel prüfen – einheitlich & deckend → per Farbabstand weich freistellen (auch Innenflächen wie im „O“)
+ const edge=[];for(let i=0;i<w;i+=Math.max(1,w>>7)){edge.push((i)*4,((h-1)*w+i)*4);}for(let j=0;j<h;j+=Math.max(1,h>>7)){edge.push((j*w)*4,(j*w+w-1)*4);}
+ const opaque=edge.filter(p=>d[p+3]>245).length/edge.length;
+ if(opaque>.9){const med=k=>{const a=edge.map(p=>d[p+k]).sort((u,v)=>u-v);return a[a.length>>1];};const bg=[med(0),med(1),med(2)];
+  const near=edge.filter(p=>Math.hypot(d[p]-bg[0],d[p+1]-bg[1],d[p+2]-bg[2])<40).length/edge.length;
+  if(near>.8){const t0=26,t1=110;for(let p=0;p<d.length;p+=4){const dist=Math.hypot(d[p]-bg[0],d[p+1]-bg[1],d[p+2]-bg[2]);let a=dist<=t0?0:dist>=t1?1:(dist-t0)/(t1-t0);
+   if(a<1&&a>0){for(let k=0;k<3;k++)d[p+k]=Math.max(0,Math.min(255,Math.round((d[p+k]-bg[k]*(1-a))/a)));}d[p+3]=Math.round(d[p+3]*a);}}}
+ // 2) Zuschneiden auf den Inhalt
+ let x0=w,y0=h,x1=-1,y1=-1;for(let j=0;j<h;j++)for(let i=0;i<w;i++)if(d[(j*w+i)*4+3]>14){if(i<x0)x0=i;if(i>x1)x1=i;if(j<y0)y0=j;if(j>y1)y1=j;}
+ if(x1<0)throw new Error('Kein Logo im Bild erkannt');x.putImageData(D,0,0);
+ const cw=x1-x0+1,ch=y1-y0+1;let cur=cvs(cw,ch);cur.getContext('2d').drawImage(c,x0,y0,cw,ch,0,0,cw,ch);
+ // 3) Einheitshöhe (H px = scharf bis 3× Bildschirmdichte), max. Breite 6×H, in Halbschritten verkleinern
+ const s2=Math.min(H/ch,(H*6)/cw);const tw=Math.max(1,Math.round(cw*s2)),th=Math.max(1,Math.round(ch*s2));
+ while(cur.width/2>tw&&cur.height/2>th){const n=cvs(Math.round(cur.width/2),Math.round(cur.height/2)),nx=n.getContext('2d');nx.imageSmoothingQuality='high';nx.drawImage(cur,0,0,n.width,n.height);cur=n;}
+ const out=cvs(tw,th),ox=out.getContext('2d');ox.imageSmoothingQuality='high';ox.drawImage(cur,0,0,tw,th);
+ // 4) Schärfen (Unscharf-Maskierung, nur Farbe, Alpha bleibt)
+ const O=ox.getImageData(0,0,tw,th),o=O.data,src=new Uint8ClampedArray(o),amt=.45;
+ for(let j=1;j<th-1;j++)for(let i=1;i<tw-1;i++){const p=(j*tw+i)*4;if(src[p+3]<8)continue;for(let k=0;k<3;k++){const bl=(src[p+k]*4+src[p-4+k]+src[p+4+k]+src[p-tw*4+k]+src[p+tw*4+k])/8;o[p+k]=src[p+k]+amt*(src[p+k]-bl);}}
+ ox.putImageData(O,0,0);
+ // 5) Dunkles Logo auf dunkler Oberfläche unsichtbar → dunkle, unbunte Teile automatisch hell
+ if(logoDark(o))logoLight(o);ox.putImageData(O,0,0);
+ return out.toDataURL('image/png');}
+function logoDark(o){let s=0,n=0;for(let p=0;p<o.length;p+=4){const a=o[p+3]/255;if(a<.3)continue;s+=a*(.2126*o[p]+.7152*o[p+1]+.0722*o[p+2])/255;n+=a;}return n>0&&s/n<.3;}
+function logoLight(o){for(let p=0;p<o.length;p+=4){if(o[p+3]<8)continue;const r=o[p],g=o[p+1],b=o[p+2],mx=Math.max(r,g,b),mn=Math.min(r,g,b),sat=mx?(mx-mn)/mx:0,l=(.2126*r+.7152*g+.0722*b)/255;if(sat<.25&&l<.55){const v=Math.round(240-l*40);o[p]=v;o[p+1]=v;o[p+2]=Math.min(255,v+8);}}}
+async function logoInvert(url){const i=new Image();await new Promise((r,j)=>{i.onload=r;i.onerror=j;i.src=url;});const c=cvs(i.width,i.height),x=c.getContext('2d');x.drawImage(i,0,0);const D=x.getImageData(0,0,c.width,c.height),o=D.data;
+ for(let p=0;p<o.length;p+=4){if(o[p+3]<8)continue;const r=o[p],g=o[p+1],b=o[p+2],mx=Math.max(r,g,b),mn=Math.min(r,g,b);if(!mx||(mx-mn)/mx<.25){o[p]=255-r;o[p+1]=255-g;o[p+2]=255-b;}}x.putImageData(D,0,0);return c.toDataURL('image/png');}
+function brSave(){return db.doc('meta/brands').set({list:BUSER.list||[],logos:BUSER.logos||{},ts:stamp()}).catch(fail);}
+function brandDlg(){const A=allBrands(),LG=BUSER.logos||{},ul=BUSER.list||[];
+ const miss=[...new Set(V.filter(b=>b.modell&&!brandOf(b.modell)).map(b=>String(b.modell).trim()))].slice(0,40);
+ const row=b=>{const u=ul.find(x=>x.k===b.k)||{};const lg=LG[b.k];return `<div class="brow" data-bk="${esc(b.k)}">
+  <div class="bprev">${lg?`<img src="${lg}" alt="${esc(b.n)}" class="bp1"><img src="${lg}" alt="" class="bp2">`:`<span class="bchip"${b.c?` style="color:${b.c}"`:''}>${esc(b.n)}</span><em>noch kein Logo</em>`}</div>
+  <div class="binfo"><b>${esc(b.n)}</b><label>${b.own?'Erkennungswörter im Modell':'Zusätzliche Erkennungswörter'}<input class="bw" value="${esc(u.w||'')}" placeholder="${b.own?'z. B. Endeavour, Image, Entice':'automatisch erkannt – optional ergänzen'}"></label></div>
+  <div class="bacts"><label class="btn bup">⬆ Logo<input type="file" accept="image/*" hidden></label>${lg?`<button class="btn" type="button" data-binv title="Schwarz/Weiß-Teile tauschen">Hell ⇄</button><button class="btn" type="button" data-bdel title="Logo entfernen">✕</button>`:''}${b.own?`<button class="btn" type="button" data-bkill title="Marke löschen">🗑</button>`:''}</div></div>`;};
+ $('dlgBox').classList.add('wide');
+ dlg(`<h3>⚙ Einstellungen · Markenlogos</h3><p class="hint">Logo hochladen (PNG, JPG, SVG, WebP – Screenshot reicht). Die App stellt automatisch frei, schneidet zu, schärft und bringt es auf die passende Größe für Liste und Karten. Gilt sofort auf allen PCs.</p>
+ <div id="brF" class="blist">${A.map(row).join('')}</div>
+ <form id="brNew" class="bnew" autocomplete="off"><input name="n" placeholder="Neue Marke, z. B. Kalkhoff" required><input name="w" placeholder="Modellwörter, z. B. Endeavour, Image"><button class="btn red" type="submit">+ Marke</button></form>
+ ${miss.length?`<p class="hint bmiss"><b>Ohne erkannte Marke:</b> ${miss.map(esc).join(' · ')}</p>`:''}
+ <div class="err" id="brE"></div><div class="acts"><button class="btn" type="button" data-close>Fertig</button></div>`);
+ const box=$('dlgBox'),E=t=>{$('brE').textContent=t||'';};
+ box.querySelectorAll('.brow').forEach(r=>{const k=r.dataset.bk;
+  r.querySelector('input[type=file]').addEventListener('change',async e=>{const f=e.target.files[0];if(!f)return;E('Logo wird aufbereitet …');try{const u=await procLogo(f);if(u.length>300000)throw new Error('Logo zu groß');BUSER.logos=Object.assign({},BUSER.logos,{[k]:u});await brSave();E('');toast('Logo gespeichert');brandDlg();}catch(err){E(err.message||String(err));}});
+  const inv=r.querySelector('[data-binv]');if(inv)inv.addEventListener('click',async()=>{BUSER.logos=Object.assign({},BUSER.logos,{[k]:await logoInvert(BUSER.logos[k])});await brSave();brandDlg();});
+  const del=r.querySelector('[data-bdel]');if(del)del.addEventListener('click',async()=>{const l=Object.assign({},BUSER.logos);delete l[k];BUSER.logos=l;await brSave();brandDlg();});
+  const kill=r.querySelector('[data-bkill]');if(kill)kill.addEventListener('click',async()=>{BUSER.list=(BUSER.list||[]).filter(x=>x.k!==k);const l=Object.assign({},BUSER.logos);delete l[k];BUSER.logos=l;await brSave();brandDlg();});
+  r.querySelector('.bw').addEventListener('change',async e=>{const w=e.target.value.trim(),b=A.find(x=>x.k===k),l=(BUSER.list||[]).filter(x=>x.k!==k);if(w||b.own)l.push({k,n:b.n,w});BUSER.list=l;await brSave();toast('Erkennung gespeichert');});});
+ $('brNew').addEventListener('submit',async e=>{e.preventDefault();const n=e.target.n.value.trim(),w=e.target.w.value.trim();if(!n)return;const k='U'+n.toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,10);if(allBrands().some(b=>b.k===k||b.n.toLowerCase()===n.toLowerCase())){E('Marke gibt es schon');return;}BUSER.list=(BUSER.list||[]).concat([{k,n,w}]);await brSave();brandDlg();});}
 $('meSet').addEventListener('click',()=>{dlg(`<h3>Passwort ändern</h3><form id="pcF" autocomplete="off"><input id="pcO" type="password" placeholder="Altes Passwort"><input id="pcN" type="password" placeholder="Neues Passwort"><input id="pcN2" type="password" placeholder="Neues Passwort wiederholen"><div class="err" id="pcE"></div><div class="acts"><button class="btn" type="button" data-close>Abbrechen</button><button class="btn red" type="submit">Speichern</button></div></form>
  ${ME&&ME.adm?`<h3 style="margin-top:18px">Passwort eines Mitarbeiters zurücksetzen</h3><p class="hint">Passwort vergessen? So geht es (dauert 1 Minute):</p><p class="hint rsHint">Firebase-Konsole → Projekt <b>Velocenter Planer</b> → Authentication → Nutzer → Person (z. B. sascha@…) → ⋮ → <b>Konto löschen</b>. Dann hier unten auf ihren Namen klicken – beim nächsten Öffnen legt sie ein neues Passwort fest.</p><div class="acts">${USERS.filter(u=>u.id!==ME.id).map(u=>`<button class="btn" type="button" data-reset="${u.id}">${esc(u.n)}</button>`).join('')}</div>`:''}`);
  $('pcF').addEventListener('submit',async e=>{e.preventDefault();if($('pcN').value!==$('pcN2').value){$('pcE').textContent='Die neuen Eingaben sind nicht gleich.';return;}if(!$('pcN').value){$('pcE').textContent='Neues Passwort fehlt.';return;}
@@ -112,6 +166,7 @@ function startLive(){stopLive();const from=iso(new Date(Date.now()-35*864e5));
  listen('V',x=>V=x);listen('B',x=>B=x);listen('T',x=>T=x);listen('S',x=>S=x);
  listen('L',x=>{L=x.map(o=>Object.assign({},o,{k:o.k||o.id}));if(!x.length)seedLeasing();else recLeasing();});
  listen('I',x=>{I={};x.forEach(o=>I[o.id]=o.wert);});
+ unsubs.push(db.doc('meta/brands').onSnapshot(d=>{const x=d.exists?d.data():{};BUSER={list:x.list||[],logos:x.logos||{}};scheduleRender();},()=>{}));
  unsubs.push(db.doc('meta/import').onSnapshot(d=>{const x=d.exists?d.data():{};$('impBox').hidden=!(ME&&ME.adm)||x.tresor===true;},()=>{}));
  unsubs.push(db.doc('tresor/check').onSnapshot(d=>{TSET=d.exists;TCHECK=d.exists?d.data():null;$('lockHint').textContent=TSET?'PIN eingeben':'Noch keine PIN: Ein Admin legt sie jetzt mit der ersten Eingabe fest.';},()=>{}));
  rollover();}
@@ -225,9 +280,14 @@ function ltHot(lt){const k=vkLt(lt),ck=kw(new Date());return k!==999&&k!==0&&k<=
 const BRANDS=[{k:'KTM',n:'KTM',c:'#FF6A00',re:/\bktm\b|macina|gravelator|revelator|scarp|kapoho|myroon|lycan|chicago|\b(tour|city|sport|team|style|fun|cross|gran|aera|life)\s*(px|p|sx|cx)?\s*-?\d{3}\b|\bpx\s*\d{3}\b|\bsx[- ]?(master|elite|prime|pro)\b/i},
  {k:'ISY',n:'i:SY',re:/\bi[:\s]?sy\b|\bp\s?12\b|\bzr\b/i},
  {k:'GUD',n:'Gudereit',re:/gudereit|\bec[- ]?\d/i}];
-const BLOGO={};
-const brandOf=m=>{m=String(m||'');return BRANDS.find(b=>b.re.test(m))||null;};
-function bIco(m){const b=brandOf(m);if(!b)return'🚲 ';const lg=BLOGO[b.k];return lg?`<img class="blg" src="${lg}" alt="${b.n}" title="${b.n}">`:`<span class="bchip" title="${b.n}"${b.c?` style="color:${b.c}"`:''}>${b.n}</span>`;}
+// Eigene Marken + Logos (⚙ Einstellungen): meta/brands = {list:[{k,n,w}], logos:{k:dataURL}}
+let BUSER={list:[],logos:{}};
+const reEsc=x=>x.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+function wordsRe(w){const p=String(w||'').split(/[,;\n]/).map(x=>x.trim()).filter(Boolean).map(x=>reEsc(x).replace(/\s+/g,'\\s*'));return p.length?new RegExp(p.join('|'),'i'):null;}
+function allBrands(){const ul=BUSER.list||[];return BRANDS.map(b=>{const u=ul.find(x=>x.k===b.k);return Object.assign({},b,{ux:u?wordsRe(u.w):null,own:false});}).concat(ul.filter(u=>!BRANDS.some(b=>b.k===u.k)).map(u=>({k:u.k,n:u.n,re:wordsRe((u.w?u.w+',':'')+u.n),own:true})));}
+const brandOf=m=>{m=String(m||'');if(!m)return null;const A=allBrands();return A.find(b=>b.own&&b.re&&b.re.test(m))||A.find(b=>!b.own&&(b.re.test(m)||(b.ux&&b.ux.test(m))))||null;};
+function bModel(m){m=String(m||'');const b=brandOf(m);let t=m;if(b){const r=new RegExp('^\\s*'+reEsc(b.n)+'\\s+','i');if(r.test(t))t=t.replace(r,'');}return bIco(m)+esc(t);}
+function bIco(m){const b=brandOf(m);if(!b)return'🚲 ';const lg=(BUSER.logos||{})[b.k];return lg?`<img class="blg" src="${lg}" alt="${b.n}" title="${b.n}">`:`<span class="bchip" title="${b.n}"${b.c?` style="color:${b.c}"`:''}>${b.n}</span>`;}
 function leasLogo(f){if(!f)return'';const x=L.find(l=>l.k===f);const lg=x?logoOf(x):(LOGOS[f]||'');return lg?`<img class="llg" src="${esc(lg)}" alt="${esc(FN[f]||f)}" title="${esc(FN[f]||f)}">`:`<span class="lchip">${esc(f)}</span>`;}
 // Status-Farbe am Namen: montiert = gelb, O.K. = grün, beides = Verlauf gelb → grün
 const vkFx=b=>b.m==='1'&&b.b==='1'?' fx-mb':b.b==='1'?' fx-b':b.m==='1'?' fx-m':'';
@@ -236,7 +296,7 @@ function vkRow(b){const st=b.a==='1'?'a':b.b==='1'?'b':b.m==='1'?'m':'o';const c
  const dc=(f,v,cls)=>`<td class="dcell ${cls}" data-vid="${esc(b.id)}" data-df="${f}" title="${esc(v||'')} · Klick = Datum wählen" tabindex="0">${esc(dshort(v))}</td>`;
  return `<tr class="vr st-${st}">
  <td class="sdot" title="${{o:'offen',m:'montiert',b:'O.K. – abholbereit',a:'abgeholt'}[st]}"><i></i></td>
- <td class="who2${vkFx(b)}"><div class="wp"><b>${esc(b.name||'–')}</b><small>${bIco(b.modell)}${esc(b.modell||'')}</small></div></td>
+ <td class="who2${vkFx(b)}"><div class="wp"><b>${esc(b.name||'–')}</b><small>${bModel(b.modell)}</small></div></td>
  ${dcD('dat',b.dat)}<td class="kcell${ltHot(b.lt)&&b.a!=='1'?' hot':''}" data-vid="${esc(b.id)}" title="Klick = Kalenderwoche wählen" tabindex="0">${esc(b.lt||'')}</td>${ce('notiz',[b.notiz,b.montieren?'Montieren: '+b.montieren:''].filter(Boolean).join(' · '),'vnote')}
 <td><div class="lcell">${leasLogo(b.firma)}<select class="lsel mini2${b.firma?'':' off'}" data-vi="${esc(b.id)}" aria-label="Leasing-Firma"><option value="">–</option>${Object.entries(FN).map(([k,n])=>`<option value="${esc(k)}"${b.firma===k?' selected':''}>${esc(k)} · ${esc(n)}</option>`).join('')}${b.firma&&!FN[b.firma]?`<option selected>${esc(b.firma)}</option>`:''}</select></div></td>
  ${b.firma?dc('antrag',b.antrag,'d-antrag'):'<td class="na">–</td>'}${b.firma?dc('ok',b.ok,b.ok?'d-ok':'d-ok miss'):'<td class="na">–</td>'}${b.firma?dc('lende',b.lende,'d-lende'):'<td class="na">–</td>'}

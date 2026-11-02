@@ -239,3 +239,21 @@ body.navmini #switchUser{font-size:0;padding:6px 8px;margin:0}body.navmini #swit
 .vtab thead th.hL .btn,.vtab thead th.hR .vkAdd{text-transform:none;letter-spacing:0}
 .vtab thead th.hL .btn{font:600 12.5px var(--body)}
 .vtab thead th.hR{padding-right:12px}
+/* ⚙ Einstellungen · Markenlogos */
+.me .lnk{display:block}
+.blist{display:flex;flex-direction:column;gap:8px;margin:10px 0}
+.brow{display:grid;grid-template-columns:190px 1fr auto;gap:12px;align-items:center;padding:10px 12px;border-radius:12px;background:var(--panel2);border:1px solid var(--line)}
+.bprev{height:58px;border-radius:9px;background:#070a10;border:1px solid #1f2735;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:4px 8px}
+.bprev .bp1{height:26px;max-width:170px;object-fit:contain}.bprev .bp2{height:13px;max-width:80px;object-fit:contain}
+.bprev em{font:500 10px var(--mono);color:var(--muted);font-style:normal}
+.binfo b{display:block;font:700 15px Outfit,var(--display),sans-serif;margin-bottom:4px}.binfo label{display:block;font-size:11px;color:var(--muted)}
+.binfo input{width:100%;margin-top:3px;box-sizing:border-box}
+.bacts{display:flex;gap:6px;align-items:center}.bacts .btn{padding:6px 10px}
+#brNew.bnew{display:grid!important;grid-template-columns:1fr 1.4fr auto;gap:8px;margin-top:6px;align-items:center}#brNew.bnew .btn{width:auto;white-space:nowrap}
+.bmiss{margin-top:10px}
+.blg{height:15px}
+@media (max-width:640px){.brow{grid-template-columns:1fr}#brNew.bnew{grid-template-columns:1fr}}
+/* Hintergrund wie KI-Zentrale: Hauptfläche dunkel mit weichen Farbschimmern (oben links blau, oben rechts rot, unten rechts violett) */
+body{background-color:#0A0C10;background-image:radial-gradient(760px 420px at 0% 0%,rgba(70,95,190,.26),transparent 70%),radial-gradient(820px 440px at 100% 0%,rgba(190,30,45,.22),transparent 70%),radial-gradient(900px 520px at 100% 100%,rgba(120,80,200,.16),transparent 70%),radial-gradient(820px 520px at 0% 100%,rgba(90,60,140,.10),transparent 70%);background-attachment:fixed}
+/* Navi: feines Karomuster, unten links roter Schimmer, oben blauer Hauch */
+nav{background-color:#101116;background-image:radial-gradient(300px 340px at 0% 100%,rgba(160,32,52,.50),transparent 72%),radial-gradient(260px 200px at 100% 0%,rgba(60,80,150,.22),transparent 70%),repeating-conic-gradient(rgba(255,255,255,.03) 0 25%,transparent 0 50%);background-size:auto,auto,14px 14px;border-right:1px solid rgba(70,90,150,.30)}
