@@ -590,7 +590,7 @@ const kdLab=(k,v)=>v===''?'(leer)':k==='leas'&&FN[v]?v+' · '+FN[v]:k==='vers'&&
 let kdF={},kdYr=String(ls.get('vc_kdyr','')||'');  // Filter je Spalte: {Spalte: Set(Werte)} wie der Excel-Autofilter
 const kdYear=r=>{const d=r._d?new Date(r._d):null;return d?d.getFullYear():'ohne Datum';};
 const kdPreis=v=>{v=String(v==null?'':v).trim();if(/^\d+([.,]\d+)?$/.test(v)){const n=parseFloat(v.replace(',','.'));return n.toLocaleString('de-DE',{maximumFractionDigits:2})+' €';}return v;};
-function rk(){const g=$('kdGrid');if(!g)return;const all=kdAll();{const cy=new Date().getFullYear();$('nKunden').textContent=all.length?all.filter(r=>r._d&&new Date(r._d).getFullYear()===cy).length:'–';$('nKunden').title=all.length.toLocaleString('de-DE')+' Einträge gesamt · Zahl = Verkäufe '+cy;}
+function rk(){const g=$('kdGrid');if(!g)return;const all=kdAll();{const cy=new Date().getFullYear();$('nKunden').textContent=all.length?all.length.toLocaleString('de-DE'):'–';$('nKunden').title=all.length.toLocaleString('de-DE')+' Verkäufe gesamt seit 1995 · davon '+all.filter(r=>r._d&&new Date(r._d).getFullYear()===cy).length+' in '+cy;}
  if(document.querySelector('#kdGrid [contenteditable]:focus'))return;
  const q=($('kdSearch').value||'').trim().toLowerCase();const now=new Date().getFullYear();
  const fk=Object.keys(kdF),fo=r=>fk.every(k=>kdF[k].has(kdVal(k,r)));if($('kdFx')){$('kdFx').hidden=!fk.length;$('kdFx').textContent='✕ Filter aus ('+fk.length+')';}
