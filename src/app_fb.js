@@ -309,7 +309,7 @@ function ltBar(b){if(b.a==='1')return null;const s=String(b.lt||'').trim();
  const a=vkDate(b.dat);if(!a)return null;const p=now>=z?1:Math.max(0.02,Math.min(1,(now-a)/Math.max(864e5,z-a)));
  return {p:+p.toFixed(3),c:'#34D399',t:'Liefertermin KW '+L.k+': '+Math.round(p*100)+' % der Wartezeit vorbei'};}
 function ltBarPos(){requestAnimationFrame(()=>{const t=document.querySelector('#cards .vtab table');if(!t)return;const r=t.querySelector('tr.vr');if(!r)return;const a=r.querySelector('td.who2'),n=r.querySelector('td.vnote');if(!a||!n)return;
- const w=n.getBoundingClientRect().right-a.getBoundingClientRect().left;if(w>0)t.style.setProperty('--lbw',Math.round(w)+'px');});}
+ const f=r.cells[0].getBoundingClientRect().left,al=a.getBoundingClientRect().left,w=n.getBoundingClientRect().right-f;if(w>0){t.style.setProperty('--lbw',Math.round(w)+'px');t.style.setProperty('--lbx',Math.round(al-f)+'px');}});}
 addEventListener('resize',()=>ltBarPos());
 function vkLt(s){s=String(s||'').trim();if(/^sofort/i.test(s))return -1;if(/lager|^l$/i.test(s))return 0;const p=ltParse(s);if(!p)return 999;return p.k+(p.y-new Date().getFullYear())*53;}
 const ltNorm=s=>{const p=ltParse(s);return p?'KW '+p.k+'/'+String(p.y%100).padStart(2,'0'):String(s||'');};

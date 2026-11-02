@@ -577,6 +577,6 @@ body[data-v=kunden] .tt small{background:var(--rb);-webkit-background-clip:text;
 .vtab td.ce.vnote[data-von]::after{content:attr(data-von);position:absolute;right:5px;top:50%;transform:translateY(-50%);display:grid;place-items:center;width:15px;height:15px;border-radius:50%;font:800 8.5px/1 var(--body);color:#0b0e15;background:var(--uc);box-shadow:0 0 0 2px #0b0e15,0 0 6px var(--uc);pointer-events:none}
 /* 1.6.7: Liefertermin-Fortschrittsbalken unten an der Zeile (Kunde → Notiz) */
 .vtab td.who2{position:relative}
-.vtab .ltbar{position:absolute;left:0;bottom:0;height:3px;width:var(--lbw,600px);pointer-events:none;z-index:1;border-radius:0 2px 2px 0;
+.vtab .ltbar{position:absolute;left:calc(-1*var(--lbx,0px));bottom:0;height:3px;width:var(--lbw,600px);pointer-events:none;z-index:1;border-radius:0 2px 2px 0;
  background:linear-gradient(90deg,var(--lc) 0 calc(var(--lp)*100%),rgba(255,255,255,.05) calc(var(--lp)*100%) 100%);
  filter:drop-shadow(0 0 4px color-mix(in srgb,var(--lc) 60%,transparent))}
