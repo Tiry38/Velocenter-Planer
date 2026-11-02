@@ -222,13 +222,22 @@ function vkLt(s){s=String(s||'').trim();if(/lager|^l$/i.test(s))return 0;const m
 const vkRank=b=>b.a==='1'?4:b.b==='1'?3:b.m==='1'?2:1;
 function vkCmp(a,b){if(vkSort==='lt')return vkLt(a.lt)-vkLt(b.lt);if(vkSort==='status')return vkRank(a)-vkRank(b)||vkDate(b.dat)-vkDate(a.dat);if(vkSort==='name')return String(a.name).localeCompare(String(b.name));return vkDate(b.dat)-vkDate(a.dat);}
 function ltHot(lt){const k=vkLt(lt),ck=kw(new Date());return k!==999&&k!==0&&k<=ck+1;}
+// Herstellermarke aus dem Modelltext (Verkauf): Logo, sonst Marken-Schild, sonst 🚲
+const BRANDS=[{k:'KTM',n:'KTM',c:'#FF6A00',re:/\bktm\b|macina|gravelator|revelator|scarp|kapoho|myroon|lycan|chicago|\b(tour|city|sport|team|style|fun|cross|gran|aera|life)\s*(px|p|sx|cx)?\s*-?\d{3}\b|\bpx\s*\d{3}\b|\bsx[- ]?(master|elite|prime|pro)\b/i},
+ {k:'ISY',n:'i:SY',re:/\bi[:\s]?sy\b|\bp\s?12\b|\bzr\b/i},
+ {k:'GUD',n:'Gudereit',re:/gudereit|\bec[- ]?\d/i}];
+const BLOGO={};
+const brandOf=m=>{m=String(m||'');return BRANDS.find(b=>b.re.test(m))||null;};
+function bIco(m){const b=brandOf(m);if(!b)return'🚲 ';const lg=BLOGO[b.k];return lg?`<img class="blg" src="${lg}" alt="${b.n}" title="${b.n}">`:`<span class="bchip" title="${b.n}"${b.c?` style="color:${b.c}"`:''}>${b.n}</span>`;}
 function leasLogo(f){if(!f)return'';const x=L.find(l=>l.k===f);const lg=x?logoOf(x):(LOGOS[f]||'');return lg?`<img class="llg" src="${esc(lg)}" alt="${esc(FN[f]||f)}" title="${esc(FN[f]||f)}">`:`<span class="lchip">${esc(f)}</span>`;}
+// Status-Farbe am Namen: montiert = gelb, O.K. = grün, beides = Verlauf gelb → grün
+const vkFx=b=>b.m==='1'&&b.b==='1'?' fx-mb':b.b==='1'?' fx-b':b.m==='1'?' fx-m':'';
 function vkRow(b){const st=b.a==='1'?'a':b.b==='1'?'b':b.m==='1'?'m':'o';const ce=(f,v,cls)=>`<td class="ce ${cls||''}" contenteditable="true" spellcheck="false" data-vid="${esc(b.id)}" data-f="${f}">${esc(v||'')}</td>`;
  const dcD=(f,v)=>`<td class="dcell d-dat" data-vid="${esc(b.id)}" data-df="${f}" title="Klick = Datum wählen" tabindex="0">${esc(dshort(v))}</td>`;
  const dc=(f,v,cls)=>`<td class="dcell ${cls}" data-vid="${esc(b.id)}" data-df="${f}" title="${esc(v||'')} · Klick = Datum wählen" tabindex="0">${esc(dshort(v))}</td>`;
  return `<tr class="vr st-${st}">
  <td class="sdot" title="${{o:'offen',m:'montiert',b:'O.K. – abholbereit',a:'abgeholt'}[st]}"><i></i></td>
- <td class="who2"><b>${esc(b.name||'–')}</b><small>🚲 ${esc(b.modell||'')}</small></td>
+ <td class="who2${vkFx(b)}"><div class="wp"><b>${esc(b.name||'–')}</b><small>${bIco(b.modell)}${esc(b.modell||'')}</small></div></td>
  <td><div class="lcell">${leasLogo(b.firma)}<select class="lsel mini2${b.firma?'':' off'}" data-vi="${esc(b.id)}" aria-label="Leasing-Firma"><option value="">–</option>${Object.entries(FN).map(([k,n])=>`<option value="${esc(k)}"${b.firma===k?' selected':''}>${esc(k)} · ${esc(n)}</option>`).join('')}${b.firma&&!FN[b.firma]?`<option selected>${esc(b.firma)}</option>`:''}</select></div></td>
  ${dcD('dat',b.dat)}${ce('lt',b.lt,ltHot(b.lt)&&b.a!=='1'?'hot':'')}${b.firma?dc('antrag',b.antrag,'d-antrag'):'<td class="na">–</td>'}${b.firma?dc('ok',b.ok,b.ok?'d-ok':'d-ok miss'):'<td class="na">–</td>'}${b.firma?dc('lende',b.lende,'d-lende'):'<td class="na">–</td>'}${ce('notiz',[b.notiz,b.montieren?'Montieren: '+b.montieren:''].filter(Boolean).join(' · '),'vnote')}
  <td><select class="ssel mini2" data-vi="${esc(b.id)}" aria-label="Verkauf/Beratung"><option value="">–</option>${USERS.map(u=>`<option value="${u.id}"${b.verk===u.id?' selected':''}>${esc(u.n)}</option>`).join('')}</select></td>
@@ -236,7 +245,7 @@ function vkRow(b){const st=b.a==='1'?'a':b.b==='1'?'b':b.m==='1'?'m':'o';const c
  <td><button class="mini" type="button" data-vedit="${esc(b.id)}" title="Alle Felder / Löschen">✎</button></td></tr>`;}
 function vkCard(b){const L1=!!b.firma,st=b.a==='1'?'abgeholt':b.b==='1'?'bereit':b.m==='1'?'montiert':'',stl=b.a==='1'?'abgeholt':b.b==='1'?'O.K.':b.m==='1'?'montiert':'offen';
  const steps=L1?[['Antrag',b.antrag],['Montiert',b.m==='1'],['O.K.',b.b==='1'],['Abgeholt',b.a==='1']]:[['Montiert',b.m==='1'],['O.K.',b.b==='1'],['Abgeholt',b.a==='1']];
- return `<article class="bike" data-s="${st}"><div class="h"><div style="min-width:0"><div class="name">${esc(b.name||'–')}</div><div class="model">🚲 ${esc(b.modell)}</div></div>${b.firma?`<div class="clogo">${leasLogo(b.firma)}</div>`:''}
+ return `<article class="bike" data-s="${st}"><div class="h"><div class="wp${vkFx(b)}" style="min-width:0"><div class="name">${esc(b.name||'–')}</div><div class="model">${bIco(b.modell)}${esc(b.modell)}</div></div>${b.firma?`<div class="clogo">${leasLogo(b.firma)}</div>`:''}
  <select class="lsel${L1?'':' off'}" data-vi="${esc(b.id)}" aria-label="Leasing-Firma wählen"><option value="">ohne Leasing</option>${Object.entries(FN).map(([k,n])=>`<option value="${esc(k)}"${b.firma===k?' selected':''}>${esc(k)} · ${esc(n)}</option>`).join('')}${b.firma&&!FN[b.firma]?`<option selected>${esc(b.firma)}</option>`:''}</select></div>
  <div class="seller"><span>Verkauf / Beratung</span><select class="ssel" data-vi="${esc(b.id)}" aria-label="Verkauft von"><option value="">– wählen –</option>${USERS.map(u=>`<option value="${u.id}"${b.verk===u.id?' selected':''}>${esc(u.n)}</option>`).join('')}</select>${av(b.verk,'verkauft von')}</div>
  <div class="meta"><div><small>Verkauft</small><b>${esc(dshort(b.dat)||'–')}</b></div><div><small>LT</small><b>${esc(b.lt||'–')}</b></div>
