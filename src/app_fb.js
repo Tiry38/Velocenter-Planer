@@ -318,6 +318,14 @@ const LQG=[['🔧 Inspektion & Verschleiß',[['isz','Inspektion – wir bekommen
  ['🔑 Neuradabholung',[['code','Abholcode?'],['mit','Kunde bringt mit']]]];
 const LQF=LQG.flatMap(g=>g[1]);
 const isVers=f=>/versicherung|schäden/i.test(f.sub||'');
+const qG=f=>isVers(f)?LVG:LQG,qF=f=>isVers(f)?LVF:LQF;
+// Versicherungen (ENRA, Alteos, Fahrsicherung, Assona): eigene, rein händlerrelevante Felder
+const LVG=[['🚲 Was ist versicherbar?',[['vRad','Räder · Alter · Wert'],['spe','S-Pedelec','t'],['drei','E-Dreirad','t']]],
+ ['🤝 Abschluss über uns',[['vAbs','So schließen wir ab']]],
+ ['🔧 Inspektion & Verschleiß',[['isz','Inspektion'],['vsd','Verschleiß'],['abMon','Verschleiß ab']]],
+ ['🧾 Schaden',[['vMeld','Melden über'],['vKva','KVA / Freigabe'],['reSch','Rechnung an'],['vSb','Selbstbeteiligung']]],
+ ['📞 Kontakt',[['vKon','Für Händler']]]];
+const LVF=LVG.flatMap(g=>g[1]);
 const lRank=f=>{const r=LS.findIndex(x=>x.k===f.k);return r<0?99:r;};
 const lOrd=()=>L.map((f,i)=>[f,i]).sort((a,b)=>isVers(a[0])-isVers(b[0])||lRank(a[0])-lRank(b[0])||a[1]-b[1]);
 const OFFEN='<span class="qo">offen</span>';
@@ -325,9 +333,9 @@ const triV=v=>v===true?'<span class="qy">✓ ja</span>':v===false?'<span class="
 const qv=(f,[k,,t])=>t==='t'?triV(f[k]):String(f[k]||'').trim()?hl(f[k]):OFFEN;
 function lsCard(f,i){const nj=(f.zubJa||[]).length,nn=(f.zubNein||[]).length;
  return `<article class="lc" style="--ac:${esc(f.ac||'#94A3B8')}"><div class="lctop"><button class="edbtn" type="button" data-led="${i}" aria-label="${esc(f.n)} bearbeiten">✎ Bearbeiten</button></div><div class="lh">${logoOf(f)?`<div class="logo"><img src="${esc(logoOf(f))}" alt="${esc(f.n)} Logo"></div>`:`<div class="mono">${esc(f.k)}</div>`}<div style="min-width:0">${logoOf(f)?'':`<b>${esc(f.n)}</b>`}<small>${esc(f.sub||'Leasing')} · ${esc(f.k)}</small></div></div>
- <div class="blk"><h4>📦 Pakete · Leistungen · Preis für den Kunden</h4>${(f.pak||[]).length?`<ul>${f.pak.map(li).join('')}</ul>`:`<p class="qe">${OFFEN}</p>`}</div>
- ${LQG.map(([h,qs])=>`<div class="blk"><h4>${esc(h)}</h4><dl class="qa">${qs.map(q=>`<dt>${esc(q[1])}</dt><dd>${qv(f,q)}</dd>`).join('')}</dl></div>`).join('')}
- <button class="zubbtn" type="button" data-zub="${i}">🧩 Leasingfähiges Zubehör <span>${nj||nn?`${nj} ✓ · ${nn} ✗`:'offen'}</span></button>
+ <div class="blk"><h4>${isVers(f)?'🛡 Tarife · Leistungen':'📦 Pakete · Leistungen · Preis für den Kunden'}</h4>${(f.pak||[]).length?`<ul>${f.pak.map(li).join('')}</ul>`:`<p class="qe">${OFFEN}</p>`}</div>
+ ${qG(f).map(([h,qs])=>`<div class="blk"><h4>${esc(h)}</h4><dl class="qa">${qs.map(q=>`<dt>${esc(q[1])}</dt><dd>${qv(f,q)}</dd>`).join('')}</dl></div>`).join('')}
+ ${isVers(f)&&!nj&&!nn?'':`<button class="zubbtn" type="button" data-zub="${i}">🧩 Leasingfähiges Zubehör <span>${nj||nn?nj+' ✓ · '+nn+' ✗':'offen'}</span></button>`}
  </article>`;}
 function rl(){
  $('lgrid').innerHTML=lOrd().filter(([f,i])=>i===lsEdit||((!lsDrei||f.drei===true)&&(!lsQ||JSON.stringify(Object.assign({},f,{logo:'',alt:''})).toLowerCase().includes(lsQ)))).map(([f,i])=>i===lsEdit?editCard(f,i):lsCard(f,i)).join('')||'<p class="hint">Nichts gefunden.</p>';
@@ -343,9 +351,9 @@ function editCard(f,i){const ta=(k,lbl,r)=>`<label>${lbl} <em>(eine Zeile pro Pu
  <div class="lh">${logoOf(f)?`<div class="logo"><img src="${esc(logoOf(f))}" alt=""></div>`:`<div class="mono">${esc(f.k)}</div>`}<div style="flex:1;min-width:0"><b>Bearbeiten</b><small>Änderungen gelten sofort für alle</small></div></div>
  <div class="g2"><label>Name<input name="n" value="${esc(f.n)}" required></label><label>Kürzel<input name="k" value="${esc(f.k)}" maxlength="4" required></label>
  <label>Unterzeile<input name="sub" value="${esc(f.sub||'Leasing')}"></label><label>Farbe<input name="ac" type="color" value="${esc(f.ac||'#94A3B8')}"></label></div>
- ${ta('pak','Pakete · Leistungen · Preis für den Kunden',4)}
- <div class="g2">${LQF.map(([k,n,t])=>t==='t'?`<label>${esc(n)}<select name="${k}"><option value="1"${f[k]===true?' selected':''}>✓ ja</option><option value="0"${f[k]===false?' selected':''}>✗ nein</option><option value=""${f[k]!==true&&f[k]!==false?' selected':''}>offen</option></select></label>`:`<label>${esc(n)}<input name="${k}" value="${esc(f[k]||'')}"></label>`).join('')}</div>
- ${ta('zubJa','Leasingfähiges Zubehör',4)}${ta('zubNein','Nicht leasingfähig',3)}
+ ${ta('pak',isVers(f)?'Tarife · Leistungen':'Pakete · Leistungen · Preis für den Kunden',4)}
+ <div class="g2">${qF(f).map(([k,n,t])=>t==='t'?`<label>${esc(n)}<select name="${k}"><option value="1"${f[k]===true?' selected':''}>✓ ja</option><option value="0"${f[k]===false?' selected':''}>✗ nein</option><option value=""${f[k]!==true&&f[k]!==false?' selected':''}>offen</option></select></label>`:`<label>${esc(n)}<input name="${k}" value="${esc(f[k]||'')}"></label>`).join('')}</div>
+ ${isVers(f)?'':ta('zubJa','Leasingfähiges Zubehör',4)+ta('zubNein','Nicht leasingfähig',3)}
  <label class="up">Logo hochladen (PNG/SVG/WebP, freigestellt – wird automatisch verkleinert)<input name="logo" type="file" accept="image/png,image/svg+xml,image/webp,image/jpeg"></label>
  ${f.logo?`<button class="btn" type="button" data-rmlogo="${i}">Eigenes Logo entfernen</button>`:''}
  <div class="acts"><button class="btn red" type="submit">Speichern</button><button class="btn" type="button" data-lcancel>Abbrechen</button><button class="btn del" type="button" data-ldel="${i}">Anbieter löschen</button></div></form></article>`;}
@@ -362,8 +370,8 @@ $('ltab').addEventListener('click',e=>{const c=e.target.closest('.tg');if(!c)ret
 $('ltab').addEventListener('keydown',e=>{const c=e.target.closest('.ce,.tg');if(!c)return;if(e.key==='Enter'){e.preventDefault();if(c.classList.contains('tg'))c.click();else c.blur();}});
 $('ltab').addEventListener('focusout',e=>{const c=e.target.closest('.ce');if(!c)return;const f=Object.assign({},L[+c.dataset.lt]),v=c.textContent.trim();if(v===(f[c.dataset.f]||''))return;f[c.dataset.f]=v;putL(f).then(()=>toast('Gespeichert'));});
 $('lgrid').addEventListener('submit',async e=>{if(!e.target.dataset.lf)return;e.preventDefault();const fm=e.target,i=+fm.dataset.lf,f=Object.assign({},L[i]),d=new FormData(fm);delete f._new;
- ['n','k','sub','ac'].concat(LQF.filter(q=>!q[2]).map(q=>q[0])).forEach(k=>f[k]=String(d.get(k)||'').trim());f.k=f.k.toUpperCase().replace(/[^A-Z0-9]/g,'')||'NEU';LQF.filter(q=>q[2]).forEach(([k])=>{const v=d.get(k);f[k]=v==='1'?true:v==='0'?false:null;});
- ['pak','zubJa','zubNein'].forEach(k=>f[k]=String(d.get(k)||'').split('\n').map(x=>x.trim()).filter(Boolean));
+ ['n','k','sub','ac'].concat(qF(f).filter(q=>!q[2]).map(q=>q[0])).forEach(k=>f[k]=String(d.get(k)||'').trim());f.k=f.k.toUpperCase().replace(/[^A-Z0-9]/g,'')||'NEU';qF(f).filter(q=>q[2]).forEach(([k])=>{const v=d.get(k);f[k]=v==='1'?true:v==='0'?false:null;});
+ ['pak'].concat(isVers(f)?[]:['zubJa','zubNein']).forEach(k=>f[k]=String(d.get(k)||'').split('\n').map(x=>x.trim()).filter(Boolean));
  if(!f.id)f.id=f.k+Math.random().toString(36).slice(2,5).toUpperCase();
  const file=d.get('logo');if(file&&file.size){try{f.logo=await shrink(file);}catch(err){toast(err.message);return;}}
  if(await putL(f))toast('Gespeichert');});
