@@ -1,5 +1,5 @@
-// Leasing-Infos nach Tirys Fragenliste, Versicherungen mit eigenen Händler-Feldern (Volltext-Prüfung offizieller Seiten/PDFs, Stand 02.11.2026). Neue Fassung → LSREC_VER hochzählen.
-const LSREC_VER=3;
+// Leasing-Infos nach Tirys Fragenliste, Versicherungen mit eigenen Händler-Feldern (Volltext-Prüfung offizieller Seiten/PDFs, Stand 02.11.2026; Eurorad + assona am 03.11.2026 geprüft). Neue Fassung → LSREC_VER hochzählen und betroffene Einträge mit "v": <neue Version> markieren – nur die werden überschrieben.
+const LSREC_VER=4;
 const LSREC=[
 {
 "k": "JR",
@@ -222,35 +222,29 @@ const LSREC=[
 },
 {
 "k": "ER",
+"v": 4,
 "pak": [
-"Basic: Versicherung (assona) mit 40 € Selbstbeteiligung, 75 € Mindestschaden, kein Verschleiß",
-"Premium: ohne Selbstbeteiligung, Verschleiß ab Tag 1 ohne Obergrenze, UVV bis 30 €",
-"PremiumPLUS (nur Rahmenvertragskunden): ohne Selbstbeteiligung, Verschleiß unbegrenzt, Inspektion inkl. UVV bis 60 € (Antrag bis 29.02.2024) bzw. bis 90 € (ab 01.03.2024)",
-"Kundenpreis: steckt in der Leasingrate"
+"Basis: 40 € Selbstbeteiligung, 75 € Bagatellgrenze, Diebstahl/Raub versichert",
+"Premium: keine Selbstbeteiligung, keine Bagatellgrenze, Verschleiß 100 % ab Tag 1, UVV-Check nach Jahr 1 + 2 (max. 30 €/Jahr), Mobilitätsschutz 24/7 europaweit",
+"PremiumPLUS: wie Premium + Inspektion inkl. UVV nach Jahr 1 + 2 (max. 60 €/Jahr, Antrag ab 01.03.2024: 90 €/Jahr), Zeitwertentschädigung bei Diebstahl/Totalschaden, Schutz bei Elternzeit/Krankheit",
+"Paket legt der Arbeitgeber fest · Kundenpreis: steckt in der Leasingrate"
 ],
-"isz": "PremiumPLUS bis 90 € inkl. UVV (Antrag ab 01.03.2024) bzw. bis 60 € (älter) · Premium: UVV bis 30 € · Mehrkosten zahlt der Kunde",
-"vsd": "Premium + PremiumPLUS: ab Tag 1 ohne Limit · Basic: nein",
-"vers": "Ja – assona (Basic / Premium / PremiumPLUS)",
-"reNeu": "Keine Rechnung – automatische Gutschrift der AGL Activ Services GmbH, Georgstr. 42, 30159 Hannover, nach Eingabe des Übergabe-Tokens",
-"reIV": "Inspektion: seit 07.04.2026 nur per Gutschrift im Dienstradtool · Verschleiß: assona-Partnerportal (Rahmen- oder Antragsnummer)",
-"reSch": "assona-Partnerportal (per Rahmennummer, kein extra Code)",
-"abMon": "Inspektion frühestens im 10. bzw. 22. Monat nach Leasingbeginn · Verschleiß ab Tag 1",
-"code": "Ja – Token fürs Angebot (60 Tage gültig) + Übergabe-Token für die Abholung",
+"isz": "PremiumPLUS: Inspektion inkl. UVV max. 60 € (Antrag bis 29.02.2024) bzw. 90 € (ab 01.03.2024) · Premium: nur UVV max. 30 € · Mehrkosten zahlt der Kunde",
+"vsd": "Premium + PremiumPLUS: 100 % ab Tag 1, ohne Obergrenze · Basis: nein · Einreichen über assona, die ganzen 36 Monate",
+"vers": "Ja – assona wickelt die Schäden ab (Basis / Premium / PremiumPLUS)",
+"reNeu": "Keine Rechnung – nach Übermittlung des Übergabe-Tokens automatische Gutschrift der AGL Activ Services GmbH (Georgstr. 42, 30159 Hannover) über den Gesamtverkaufspreis",
+"reIV": "Inspektion: seit 07.04.2026 nur noch per Gutschriftverfahren im Dienstrad-Tool (nicht mehr über assona) · UVV-Checkliste im Dienstrad-Tool hochladen · Verschleiß: über assona (Rahmennummer)",
+"reSch": "Direkt mit assona über die Rahmennummer (kein extra Code) · Schäden erst 1 Monat nach Vertragsbeginn einreichbar · Diebstahl: kundenservice@assona.com, Polizeianzeige + Schloss-Nachweis",
+"abMon": "Inspektion frühestens im 10. bzw. 22. Monat · Verschleiß ab Tag 1 · Schäden ab 2. Monat",
+"code": "Ja – Mitarbeiter-Token (60 Tage gültig) zum Bestellen · Übergabe-Token bei der Abholung (aktiviert den Vertrag)",
 "mit": "Übergabe-Token",
 "isCode": "Nein – Zuordnung über die Rahmennummer",
 "zubJa": [
-"Fest montiertes Zubehör",
-"Fest montiertes Display",
-"Schloss ab 50 € UVP"
+"Alles, was fest mit dem Rad verbunden ist",
+"Schloss (laut Händlerseiten Pflicht, UVP ab 50 € – offiziell nicht bestätigt)"
 ],
 "zubNein": [
-"Helm",
-"Bekleidung",
-"Werkzeug",
-"Pumpe",
-"Trinkflasche",
-"Abnehmbares Navi",
-"Anhänger (Liste 2025)"
+"Alles, was nicht fest am Rad ist (z. B. Helm, Bekleidung, Werkzeug, Pumpe, abnehmbares Navi)"
 ]
 },
 {
@@ -445,17 +439,18 @@ const LSREC=[
 },
 {
 "k": "AS",
+"v": 4,
 "pak": [
-"E-Bike-Schutz: Diebstahl, Sturz, Akkudefekt, Mobilitätsschutz – Laufzeit 36 Monate",
-"Versicherer bei JobRad und Eurorad (Leasing-Zweirad-Schutz Basic / Premium / PremiumPLUS)"
+"Versicherer bzw. Schadenabwickler bei Eurorad und JobRad – Schäden laufen über das assona-Partnerportal",
+"Eigene E-Bike-Tarife im Fachhandel (z. B. E-Power-Schutz) – genaue Bedingungen nicht offiziell geprüft"
 ],
-"vRad": "Fahrrad, E-Bike, Lastenrad · E-Bike-Schutz: Rad max. 12 Monate alt bei Händlerkauf · bis 20.000 €",
-"vAbs": "assona-Partnerportal – Originalrechnung + Zustandsbestätigung durch uns",
-"isz": "Im E-Bike-Schutz nicht versichert · Leasing PremiumPLUS: max. 60 € im 2. + 3. Jahr · Eurorad-Inspektionen seit 07.04.2026 nicht mehr über assona",
-"vsd": "Je nach Tarif",
-"vMeld": "assona-Partnerportal binnen 14 Tagen – Rad über Rahmen- oder Antragsnummer finden",
-"vKva": "Konkretes Reparaturangebot im Portal abgeben – erst nach Freigabe reparieren",
-"reSch": "Direktfälle: assona GmbH (§ 14 UStG), Zahlung in 30 Tagen · Leasingräder mit Leasinggeber MLF (JobRad, Deutsche Dienstrad): MLF Mercator-Leasing GmbH & Co. Finanz-KG, Londonstraße 1, 97424 Schweinfurt",
-"vKon": "030 208 666 66 (Händlerbetreuung) · kundenservice@assona.com"
+"vRad": "Fahrrad, E-Bike, Lastenrad · Alter/Wertgrenzen der eigenen Tarife: nicht offiziell bestätigt",
+"vAbs": "Partnerportal-Zugang: Anmeldeformular an sales@assona.com (Zugangsdaten per E-Mail) · Abschluss eigener Tarife: Bedingungen nicht offiziell geprüft",
+"isz": "Im Leasing je nach Anbieter (Eurorad-Inspektionen seit 07.04.2026 nicht mehr über assona)",
+"vsd": "Je nach Tarif bzw. Leasingpaket",
+"vMeld": "Partnerportal (Vertrag über Rahmen-/Antragsnummer suchen) · Frist: unverzüglich, bei Zweirad-Policen meist max. 14 Tage · Polizeianzeige bei Diebstahl/Vandalismus unverzüglich (i. d. R. 48 h) · Kunde braucht: Kaufbeleg, Fotos, KVA oder Rechnung; bei Diebstahl Polizeibestätigung + Schloss-Kaufbeleg",
+"vKva": "Pflicht: bei jeder Schadenmeldung im Portal ein konkretes Reparaturangebot (zu unseren normalen Konditionen) – erst reparieren, wenn assona im Portal freigibt · kein Anspruch auf Auftrag",
+"reSch": "Rechnung an assona GmbH (Pflichtangaben § 14 UStG), zahlbar in 30 Tagen · Vertrag kommt mit assona zustande, nicht mit dem Kunden · kein Werkunternehmerpfandrecht · Leasingräder mit Leasinggeber MLF (JobRad, Deutsche Dienstrad): MLF Mercator-Leasing GmbH & Co. Finanz-KG, Londonstraße 1, 97424 Schweinfurt",
+"vKon": "030 208 666 44 (Mo–Fr 8–20, Sa 8–16) · Notruf 24/7: 030 208 666 61 · kundenservice@assona.com · Portal-Zugang: sales@assona.com · JobRad-Schäden: 030 208666-24"
 }
 ];
