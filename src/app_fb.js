@@ -295,8 +295,8 @@ function bModel(m){const x=brandOf(m);return bIcoX(x)+esc(bStrip(m,x));}
 function bIco(m){return bIcoX(brandOf(m));}
 function bIcoX(b){if(!b)return'🚲 ';const lg=(BUSER.logos||{})[b.k];return lg?`<img class="blg" src="${lg}" alt="${esc(b.n)}" title="${esc(b.n)}">`:`<span class="bchip" title="${esc(b.n)}"${b.c?` style="color:${b.c}"`:''}>${esc(b.n)}</span>`;}
 function leasLogo(f){if(!f)return'';const x=L.find(l=>l.k===f);const lg=x?logoOf(x):(LOGOS[f]||'');return lg?`<img class="llg" src="${esc(lg)}" alt="${esc(FN[f]||f)}" title="${esc(FN[f]||f)}">`:`<span class="lchip">${esc(f)}</span>`;}
-// Status-Farbe am Namen: angeliefert = blau, montiert = rot, O.K. = grün – mehrere = Verlauf in dieser Reihenfolge
-const VKC=[['an','96,165,250','#BFDBFE'],['m','239,68,68','#FECACA'],['b','52,211,153','#A7F3D0']];
+// Status-Farbe am Namen: angeliefert = gelb, montiert = rot, O.K. = grün – mehrere = Verlauf in dieser Reihenfolge
+const VKC=[['an','251,191,36','#FDE68A'],['m','239,68,68','#FECACA'],['b','52,211,153','#A7F3D0']];
 function vkSty(b){const c=VKC.filter(x=>b[x[0]]==='1');if(!c.length)return'';const L=c[c.length-1];
  const bg=c.length===1?`linear-gradient(90deg,rgba(${L[1]},.32),rgba(${L[1]},.07))`:`linear-gradient(90deg,${c.map(x=>`rgba(${x[1]},.36)`).join(',')})`;
  return `--wpbg:${bg};--wpbd:rgba(${L[1]},.5);--wpgl:rgba(${L[1]},.16);--wpfg:${c.length===1?L[2]:'#fff'}`;}

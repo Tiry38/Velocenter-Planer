@@ -383,7 +383,7 @@ td.r{text-align:right}.amt{color:color-mix(in srgb,var(--ac) 50%,#fff);font-fami
 .vtab table{font-size:13px}
 .vtab thead th{position:sticky;top:0;z-index:2;background:#0d1119;white-space:nowrap}
 .vtab td{vertical-align:middle;padding:8px 10px}
-.vr{--stc:#FBBF24}.vr.st-l{--stc:#60A5FA}.vr.st-m{--stc:#F87171}.vr.st-b{--stc:#34D399}.vr.st-a{--stc:#64748B;opacity:.55}
+.vr{--stc:#94A3B8}.vr.st-l{--stc:#FBBF24}.vr.st-m{--stc:#F87171}.vr.st-b{--stc:#34D399}.vr.st-a{--stc:#64748B;opacity:.55}
 .vr td:first-child{box-shadow:inset 3px 0 0 var(--stc)}
 .vr:hover{background:color-mix(in srgb,var(--stc) 7%,transparent)}
 .sdot i{display:block;width:10px;height:10px;border-radius:50%;background:var(--stc);box-shadow:0 0 10px var(--stc)}
@@ -597,7 +597,8 @@ body.navmini .navtog svg{transform:rotate(180deg)}
 /* Status „angeliefert“ (blau) + Namensfeld-Verlauf aus allen gesetzten Status */
 .who2.wfx .wp{background:var(--wpbg);box-shadow:inset 0 0 0 1px var(--wpbd),0 0 14px var(--wpgl)}
 .who2.wfx .wp b{color:var(--wpfg)}
-.st[aria-pressed="true"].an{background:rgba(96,165,250,.16);border-color:#60A5FA;color:#BFDBFE;box-shadow:0 0 10px rgba(96,165,250,.3)}
+.st[aria-pressed="true"].an{background:rgba(251,191,36,.16);border-color:#FBBF24;color:#FDE68A;box-shadow:0 0 10px rgba(251,191,36,.3)}
+.st[aria-pressed="true"].m{background:rgba(239,68,68,.16);border-color:#F87171;color:#FECACA;box-shadow:0 0 10px rgba(239,68,68,.3)}
 .stb .st{min-width:24px;padding:4px 6px;margin-right:2px}
 .vtab thead th.thb{min-width:104px}
 .vtab td.vnote{min-width:150px}
@@ -768,7 +769,7 @@ body.navmini .navtog svg{transform:rotate(180deg)}
 <script>
 const FB_CONFIG={apiKey:"AIzaSyC_uZPvc5rJETwlS4JbfCoTkkE4ckjtp0M",authDomain:"velocenter-planer.firebaseapp.com",projectId:"velocenter-planer",storageBucket:"velocenter-planer.firebasestorage.app",messagingSenderId:"1018330488700",appId:"1:1018330488700:web:262a4d1660353e6fde8ef9"};
 /* ================= Velocenter Werkstatt-Cockpit – Oberfläche ================= */
-const CLIENT_VERSION='1.2.8';
+const CLIENT_VERSION='1.2.9';
 const USERS=[{id:'kevin',n:'Kevin',c:'#E2232D'},{id:'stefan',n:'Stefan',c:'#F59E0B'},{id:'martina',n:'Martina',c:'#EC4899'},{id:'sascha',n:'Sascha',c:'#22D3EE'},{id:'rene',n:'René',c:'#34D399'}];
 const U=id=>USERS.find(u=>u.id===id)||{n:'',c:'#64748B',id:''};
 const $=id=>document.getElementById(id);
@@ -1064,8 +1065,8 @@ function bModel(m){const x=brandOf(m);return bIcoX(x)+esc(bStrip(m,x));}
 function bIco(m){return bIcoX(brandOf(m));}
 function bIcoX(b){if(!b)return'🚲 ';const lg=(BUSER.logos||{})[b.k];return lg?`<img class="blg" src="${lg}" alt="${esc(b.n)}" title="${esc(b.n)}">`:`<span class="bchip" title="${esc(b.n)}"${b.c?` style="color:${b.c}"`:''}>${esc(b.n)}</span>`;}
 function leasLogo(f){if(!f)return'';const x=L.find(l=>l.k===f);const lg=x?logoOf(x):(LOGOS[f]||'');return lg?`<img class="llg" src="${esc(lg)}" alt="${esc(FN[f]||f)}" title="${esc(FN[f]||f)}">`:`<span class="lchip">${esc(f)}</span>`;}
-// Status-Farbe am Namen: angeliefert = blau, montiert = rot, O.K. = grün – mehrere = Verlauf in dieser Reihenfolge
-const VKC=[['an','96,165,250','#BFDBFE'],['m','239,68,68','#FECACA'],['b','52,211,153','#A7F3D0']];
+// Status-Farbe am Namen: angeliefert = gelb, montiert = rot, O.K. = grün – mehrere = Verlauf in dieser Reihenfolge
+const VKC=[['an','251,191,36','#FDE68A'],['m','239,68,68','#FECACA'],['b','52,211,153','#A7F3D0']];
 function vkSty(b){const c=VKC.filter(x=>b[x[0]]==='1');if(!c.length)return'';const L=c[c.length-1];
  const bg=c.length===1?`linear-gradient(90deg,rgba(${L[1]},.32),rgba(${L[1]},.07))`:`linear-gradient(90deg,${c.map(x=>`rgba(${x[1]},.36)`).join(',')})`;
  return `--wpbg:${bg};--wpbd:rgba(${L[1]},.5);--wpgl:rgba(${L[1]},.16);--wpfg:${c.length===1?L[2]:'#fff'}`;}
