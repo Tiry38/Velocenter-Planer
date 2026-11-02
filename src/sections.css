@@ -585,3 +585,4 @@ body[data-v=kunden] .tt small{background:var(--rb);-webkit-background-clip:text;
 .vtab td.kcell{min-width:100px;padding-right:14px}
 /* 1.7.1: Fenster immer scrollbar, wenn höher als der Bildschirm */
 .dlg-box{max-height:calc(100dvh - 32px);overflow-y:auto;overscroll-behavior:contain}
+.vtab td.d-antrag.amiss:empty::before{content:"Antrag\A fehlt";white-space:pre;display:block;line-height:1.15;font-size:11px;text-align:center;color:#FCA5A5;font-weight:700}
