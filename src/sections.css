@@ -413,7 +413,7 @@ body{background-color:#090B10;background-image:
 #nLock{text-align:center}#nLock .btn{margin-top:14px}
 .ntools{justify-content:flex-end;gap:8px}.ntools .nstate{margin-right:auto;font:600 12.5px Outfit,var(--body),sans-serif;color:#C4B5FD}
 .nboard{max-height:calc(100vh - 260px)}
-.ngrid{display:grid;grid-template-columns:58px minmax(320px,1.4fr) minmax(220px,1fr) 78px}
+.ngrid{display:grid;grid-template-columns:58px var(--nw,minmax(320px,1.4fr)) minmax(220px,1fr) 78px}
 .ngrid .nhd{position:sticky;top:0;z-index:2;background:#0d1119;border-bottom:2px solid #3A4558;border-right:1px solid #1F2838;padding:10px;font:600 12px Outfit,var(--body),sans-serif;color:#C4B5FD;text-align:center}
 .nrow{display:contents}
 .nc{border-bottom:1px solid #2A3446;border-right:1px solid #1F2838;padding:6px;display:flex;align-items:center;min-height:44px;background:linear-gradient(90deg,color-mix(in srgb,var(--nc) 10%,transparent),transparent 70%)}
@@ -429,3 +429,9 @@ body{background-color:#090B10;background-image:
 .nx{all:unset;cursor:pointer;width:22px;height:22px;border-radius:50%;display:grid;place-items:center;color:#fff;background:rgba(239,68,68,.75);font:700 14px/1 var(--body)}
 .nx:hover{background:#EF4444}
 .nempty{grid-column:1/-1;text-align:center;color:var(--muted);padding:30px}
+/* Notizen: Spaltenbreite ziehen */
+.ngrid .nhd.nhr{position:sticky}
+.nres{position:absolute;top:0;right:-5px;width:10px;height:100%;cursor:col-resize;z-index:3}
+.nres::after{content:"";position:absolute;left:4px;top:20%;bottom:20%;width:2px;border-radius:2px;background:rgba(196,181,253,.45);transition:background .15s,box-shadow .15s}
+.nres:hover::after,body.nresizing .nres::after{background:#C4B5FD;box-shadow:0 0 10px #A78BFA}
+body.nresizing,body.nresizing *{cursor:col-resize!important;user-select:none!important}
