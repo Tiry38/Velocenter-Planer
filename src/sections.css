@@ -295,3 +295,7 @@ body.navmini .navtog svg{transform:rotate(180deg)}
 .who2 b.ef:empty::before{content:"Kunde …";color:var(--muted);font-weight:400}
 .who2 span.ef:empty::before{content:"Modell …";color:var(--muted)}
 .ksel.klist.ksm{width:120px}
+.edf.vnew .g5{display:grid;grid-template-columns:1.3fr 1fr 1.3fr 1fr 1.2fr;gap:10px;margin:8px 0}
+.edf.vnew .g5 label,.edf.vnew .g2 label{display:flex;flex-direction:column;gap:5px}
+.edf.vnew select,.edf.vnew input[type=date]{width:100%;box-sizing:border-box}
+@media (max-width:900px){.edf.vnew .g5{grid-template-columns:1fr 1fr}}
