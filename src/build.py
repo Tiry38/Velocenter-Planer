@@ -8,8 +8,7 @@ extra=open('sections.css').read()+'''
 [hidden]{display:none!important}
 #sTab td.b{font-weight:700}#sTab .pwm.ed{outline:none;padding:2px 6px;border-radius:6px;font-family:var(--mono)}#sTab td{vertical-align:top}
 #sTab td.ce,#ltab td.ce{cursor:text;border-bottom:1px dashed #2A3446;outline:none}#sTab td.ce:focus,#sTab .pwm.ed:focus,#ltab td.ce:focus{box-shadow:inset 0 0 0 2px var(--cyan);background:var(--panel2)}#ltab td.tg{cursor:pointer;user-select:none}#sTab td.ce:hover,#ltab td.tg:hover,#ltab td.ce:hover{background:rgba(255,255,255,.04)}#ltab td.tg:focus-visible{outline:2px solid var(--cyan)}
-.metools{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}.metools .mini{flex:1;text-align:center}
-@media (max-width:720px){.metools{display:none}}
+@media (max-width:720px){#meFull,#navTog{display:none!important}.metools{grid-template-columns:repeat(2,38px);margin-top:0;flex:none}.me{margin-top:0;flex:none}}
 '''
 body=open('body_fb.html').read()
 logo=open('logo_small.b64').read().strip()
