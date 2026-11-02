@@ -729,10 +729,9 @@ body{background-color:#090B10;background-image:
 #v-planer .date span{font-size:22px!important;font-weight:600!important;line-height:1}
 #v-planer .date b{line-height:1}
 #v-planer .date em{flex-basis:100%;margin-left:0!important;width:max-content;max-width:max-content;text-align:center}
-/* Planer: Mi- und Sa-Zeilen mit Farbverlauf in der Farbe des Wochentags (wie Kopfzeile, kräftig bis zur Mitte) */
-#grid .row.mi .c{background-image:linear-gradient(90deg,rgba(251,146,60,.42) 0,rgba(251,146,60,.30) 320px,rgba(251,146,60,.14) 640px,rgba(251,146,60,.05) 880px,transparent 1040px)!important;background-attachment:fixed!important}
-#grid .row.sa .c{background-image:linear-gradient(90deg,rgba(74,222,128,.38) 0,rgba(74,222,128,.26) 320px,rgba(74,222,128,.12) 640px,rgba(74,222,128,.04) 880px,transparent 1040px)!important;background-attachment:fixed!important}
-#grid .row.mi .c.date{background-color:#1a120b!important}#grid .row.sa .c.date{background-color:#0c1a12!important}
+/* Planer: Mi und Sa – Farbverlauf nur im Tag-Kästchen (links kräftig, bis zur Hälfte) */
+#grid .row.mi .c.date{background:linear-gradient(90deg,rgba(251,146,60,.55),rgba(251,146,60,.28) 30%,rgba(251,146,60,.08) 52%,#0b0e15 62%)!important}
+#grid .row.sa .c.date{background:linear-gradient(90deg,rgba(74,222,128,.48),rgba(74,222,128,.24) 30%,rgba(74,222,128,.07) 52%,#0b0e15 62%)!important}
 #v-planer .hd{justify-content:center!important;text-align:center}#v-planer .hd.d{justify-content:flex-start!important;text-align:left}
 
 [hidden]{display:none!important}
@@ -882,7 +881,7 @@ body{background-color:#090B10;background-image:
 <script>
 const FB_CONFIG={apiKey:"AIzaSyC_uZPvc5rJETwlS4JbfCoTkkE4ckjtp0M",authDomain:"velocenter-planer.firebaseapp.com",projectId:"velocenter-planer",storageBucket:"velocenter-planer.firebasestorage.app",messagingSenderId:"1018330488700",appId:"1:1018330488700:web:262a4d1660353e6fde8ef9"};
 /* ================= Velocenter Werkstatt-Cockpit – Oberfläche ================= */
-const CLIENT_VERSION='1.4.8';
+const CLIENT_VERSION='1.4.9';
 const USERS=[{id:'kevin',n:'Kevin',c:'#E2232D'},{id:'stefan',n:'Stefan',c:'#F59E0B'},{id:'martina',n:'Martina',c:'#EC4899'},{id:'sascha',n:'Sascha',c:'#22D3EE'},{id:'rene',n:'René',c:'#34D399'}];
 const U=id=>USERS.find(u=>u.id===id)||{n:'',c:'#64748B',id:''};
 const $=id=>document.getElementById(id);
