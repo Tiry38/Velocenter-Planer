@@ -539,7 +539,7 @@ body.navmini .navsep{width:40px;margin:8px auto}
 .vtab td.kcell:hover{background:rgba(255,255,255,.05)}.vtab td.kcell:focus-visible{outline:2px solid var(--cyan)}
 .vtab td.kcell:empty::before{content:"📅 –";color:var(--muted);font-weight:400}
 .vtab td.kcell.hot{color:#FDBA74}
-.vtab td.kcell .lty{font-size:9.5px;font-weight:600;opacity:.6;margin-left:3px;vertical-align:1px;letter-spacing:.02em}
+.vtab td.kcell .lty{font-size:9.5px;font-weight:700;color:#34D399;text-shadow:0 0 6px rgba(52,211,153,.45);margin-left:3px;vertical-align:1px;letter-spacing:.02em}
 
 /* Verkauf: Steuerung in der oberen Kopfzeile der Tabelle (links Sortieren/Abgeholte, rechts + Rad) – keine Extra-Leiste */
 .vtab thead tr.h1 th{height:40px;padding:6px 8px;vertical-align:middle}
@@ -883,6 +883,15 @@ body[data-v=kunden] .tt small{background:var(--rb);-webkit-background-clip:text;
 /* 1.6.4: Kürzel-Kreis am Status-Knopf (wer montiert/O.K./… hat) */
 .stb .st{position:relative}
 .st .sav{position:absolute;top:-6px;right:-6px;display:grid;place-items:center;width:14px;height:14px;border-radius:50%;font:800 8.5px/1 var(--body);color:#0b0e15;background:var(--uc);box-shadow:0 0 0 2px #0b0e15,0 0 6px var(--uc);pointer-events:none}
+/* 1.6.5: Admin wählt, wer den Status gesetzt hat */
+.kdpop:has(.vstp){width:200px}
+.vstl{display:grid;gap:4px}
+.vstu,.vstx{all:unset;cursor:pointer;display:flex;align-items:center;gap:9px;padding:6px 8px;border-radius:8px;font:600 13px var(--body);color:#E2E8F0;border:1px solid transparent}
+.vstu:hover{background:rgba(255,255,255,.06)}
+.vstu.on{border-color:var(--uc);background:color-mix(in srgb,var(--uc) 16%,transparent);box-shadow:0 0 10px color-mix(in srgb,var(--uc) 35%,transparent)}
+.vstu .av{width:20px;height:20px;font-size:10.5px}
+.vstx{margin-top:8px;width:calc(100% - 16px);color:#FCA5A5;border-top:1px solid #2A3344;border-radius:0;padding-top:9px}
+.vstx:hover{color:#F87171}
 
 [hidden]{display:none!important}
 #sTab td.b{font-weight:700}#sTab .pwm.ed{outline:none;padding:2px 6px;border-radius:6px;font-family:var(--mono)}#sTab td{vertical-align:top}
@@ -1057,7 +1066,7 @@ body[data-v=kunden] .tt small{background:var(--rb);-webkit-background-clip:text;
 <script>
 const FB_CONFIG={apiKey:"AIzaSyC_uZPvc5rJETwlS4JbfCoTkkE4ckjtp0M",authDomain:"velocenter-planer.firebaseapp.com",projectId:"velocenter-planer",storageBucket:"velocenter-planer.firebasestorage.app",messagingSenderId:"1018330488700",appId:"1:1018330488700:web:262a4d1660353e6fde8ef9"};
 /* ================= Velocenter Werkstatt-Cockpit – Oberfläche ================= */
-const CLIENT_VERSION='1.6.4';
+const CLIENT_VERSION='1.6.5';
 const USERS=[{id:'kevin',n:'Kevin',c:'#E2232D'},{id:'stefan',n:'Stefan',c:'#F59E0B'},{id:'martina',n:'Martina',c:'#EC4899'},{id:'sascha',n:'Sascha',c:'#22D3EE'},{id:'rene',n:'René',c:'#34D399'}];
 const U=id=>USERS.find(u=>u.id===id)||{n:'',c:'#64748B',id:''};
 const $=id=>document.getElementById(id);
@@ -1419,7 +1428,13 @@ function vkForm(b){const nw=b.id==='new',dIso=nw?iso(new Date()):toIsoDe(b.dat);
  <div class="g5">${VF0.map(fld).join('')}</div>${nw?'<p class="hint">Alles optional – Rest (LT, Form, Größe, Leasing-Daten …) später direkt in der Liste.</p>':`<div class="g2">${VF1.map(fld).join('')}</div>`}
  <div class="acts"><button class="btn red" type="submit">${nw?'In die Liste':'Speichern'}</button><button class="btn" type="button" data-vcancel>Abbrechen</button>${!nw?`<button class="btn del" type="button" data-vdel="${esc(b.id)}">Löschen</button>`:''}</div></form></article>`;}
 async function putV(b){const i=V.findIndex(x=>x.id===b.id);if(i<0)V.unshift(b);else V[i]=b;rv();try{await save('V',b);}catch(_){}}
-$('cards').addEventListener('click',e=>{const t=e.target.closest('.st');if(t){const b=V.find(x=>x.id===t.dataset.vi);if(!b)return;const k=t.dataset.k,n=Object.assign({},b);n[k]=b[k]==='1'?'':'1';if(n[k]){n[k+'Von']=ME.id;const _d=new Date(),_s=String(_d.getDate()).padStart(2,'0')+'.'+String(_d.getMonth()+1).padStart(2,'0')+'.';n[k+'Am']=_s;if(k==='b'&&!n.ok)n.ok=_s+_d.getFullYear();}else{n[k+'Von']='';n[k+'Am']='';}putV(n);if(n[k]){if(k==='a')toast('Abgeholt – '+(b.name||b.modell)+' (unter „Abgeholte zeigen“)',()=>{putV(Object.assign({},b));toast('Wieder offen');});else toast({an:'Angeliefert',m:'Montiert',b:'O.K.'}[k]+' – '+U(ME.id).n);}return;}
+/* 1.6.5: Status setzen – who = Person-ID oder '' (entfernen). Admins wählen die Person, Team setzt nur sich selbst. */
+function vStSet(b,k,who){const n=Object.assign({},b);n[k]=who?'1':'';if(n[k]){n[k+'Von']=who;const _d=new Date(),_s=String(_d.getDate()).padStart(2,'0')+'.'+String(_d.getMonth()+1).padStart(2,'0')+'.';n[k+'Am']=_s;if(k==='b'&&!n.ok)n.ok=_s+_d.getFullYear();}else{n[k+'Von']='';n[k+'Am']='';}putV(n);if(n[k]){if(k==='a')toast('Abgeholt – '+(b.name||b.modell)+' (unter „Abgeholte zeigen“)',()=>{putV(Object.assign({},b));toast('Wieder offen');});else toast({an:'Angeliefert',m:'Montiert',b:'O.K.'}[k]+' – '+U(who).n);}}
+const VSTN={an:'Angeliefert',m:'Montiert',b:'O.K.',a:'Abgeholt'};
+function vStPick(t,b,k){if(kdPop&&kdPop.vst===b.id+k){kdPopClose();return;}const cur=b[k]==='1'?b[k+'Von']:null;
+ const el=kdPopOpen(t,`<div class="vstp"><div class="kph">${VSTN[k]} – von wem?</div><div class="vstl">${USERS.map(u=>`<button type="button" class="vstu${cur===u.id?' on':''}" style="--uc:${u.c}" data-vsu="${u.id}"><span class="av">${esc(u.n[0])}</span>${esc(u.n)}</button>`).join('')}</div>${b[k]==='1'?`<button type="button" class="vstx" data-vsu="">✕ ${VSTN[k]} entfernen</button>`:''}</div>`);kdPop.vst=b.id+k;
+ el.addEventListener('click',e=>{const x=e.target.closest('[data-vsu]');if(!x)return;kdPopClose();const bb=V.find(v=>v.id===b.id)||b,w=x.dataset.vsu;if(w&&bb[k]==='1'&&bb[k+'Von']===w)return;vStSet(bb,k,w);});}
+$('cards').addEventListener('click',e=>{const t=e.target.closest('.st');if(t){const b=V.find(x=>x.id===t.dataset.vi);if(!b)return;const k=t.dataset.k;if(ME.adm){vStPick(t,b,k);return;}vStSet(b,k,b[k]==='1'?'':ME.id);return;}
  const ed=e.target.closest('[data-vedit]');if(ed){vkEdit=ed.dataset.vedit;rv();return;}
  if(e.target.closest('[data-vcancel]')){vkEdit=null;rv();return;}
  const dl=e.target.closest('[data-vdel]');if(dl){if(!dl.dataset.sure){dl.dataset.sure=1;dl.textContent='Wirklich löschen?';return;}const id=dl.dataset.vdel,b=V.find(x=>x.id===id);V=V.filter(x=>x.id!==id);vkEdit=null;rv();del('V',id);toast('Gelöscht: '+(b&&b.modell||''),()=>{V.unshift(b);rv();save('V',b).catch(()=>{});});}});
@@ -2244,11 +2259,11 @@ $('kdGrid').addEventListener('focusout',e=>{const c=e.target.closest('[contented
 // Kleines Fenster unter Kopf/Zelle: Filter (Kopf antippen) bzw. Auswahl (Datum, Leasing, Vers.)
 let kdPop=null;
 function kdPopClose(){if(kdPop){kdPop.el.remove();kdPop=null;}}
-function kdPopOpen(anchor,html,o){kdPopClose();const el=document.createElement('div');el.className='kdpop';el.innerHTML=html;document.body.appendChild(el);kdPop=Object.assign({el},o);kdPopPos(anchor);const i=el.querySelector('input:not([type=checkbox])');if(i)i.focus();return el;}
+function kdPopOpen(anchor,html,o){kdPopClose();const el=document.createElement('div');el.className='kdpop';el.innerHTML=html;document.body.appendChild(el);kdPop=Object.assign({el,t0:Date.now()},o);kdPopPos(anchor);const i=el.querySelector('input:not([type=checkbox])');if(i)i.focus();return el;}
 function kdPopPos(anchor){const el=kdPop.el,rc=anchor.getBoundingClientRect(),W=el.offsetWidth,H=el.offsetHeight;el.style.left=Math.max(8,Math.min(innerWidth-W-8,rc.left))+'px';el.style.top=(rc.bottom+4+H>innerHeight-8?Math.max(8,rc.top-4-H):rc.bottom+4)+'px';}
-document.addEventListener('pointerdown',e=>{if(kdPop&&!kdPop.el.contains(e.target)&&!e.target.closest('[data-kpick],.kdh[data-kc]'))kdPopClose();},true);
+document.addEventListener('pointerdown',e=>{if(kdPop&&!kdPop.el.contains(e.target)&&!e.target.closest('[data-kpick],.kdh[data-kc],.stb .st'))kdPopClose();},true);
 document.addEventListener('keydown',e=>{if(kdPop&&e.key==='Escape')kdPopClose();});
-document.addEventListener('scroll',e=>{if(kdPop&&!kdPop.el.contains(e.target))kdPopClose();},true);
+document.addEventListener('scroll',e=>{if(kdPop&&!kdPop.el.contains(e.target)&&Date.now()-kdPop.t0>250)kdPopClose();},true);
 function kdFltOpen(hd){const k=hd.dataset.kc,c=KDC.find(x=>x.k===k);if(kdPop&&kdPop.t==='flt'&&kdPop.k===k){kdPopClose();return;}
  const cnt=new Map();kdAll().forEach(r=>{const v=kdVal(k,r);cnt.set(v,(cnt.get(v)||0)+1);});
  const vals=[...cnt].sort((a,b)=>k==='dat'||k==='nr'?0:(b[1]-a[1]||String(a[0]).localeCompare(String(b[0]),'de',{numeric:true}))),cur=new Set(kdF[k]||vals.map(x=>x[0]));
