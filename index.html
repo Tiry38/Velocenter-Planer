@@ -695,6 +695,7 @@ body{background-color:#090B10;background-image:
 .hd.hico{justify-content:center}
 .hd .waico{width:22px;height:22px;fill:#25D366;filter:drop-shadow(0 0 6px rgba(37,211,102,.55))}
 #grid .c[data-col="wa"] .e{padding:4px 5px;font-variant-numeric:tabular-nums}
+.toolbar.btools{justify-content:flex-end;padding:0!important;gap:8px;background:none!important;border:0!important;box-shadow:none!important;margin:0 0 10px!important}
 
 [hidden]{display:none!important}
 #sTab td.b{font-weight:700}#sTab .pwm.ed{outline:none;padding:2px 6px;border-radius:6px;font-family:var(--mono)}#sTab td{vertical-align:top}
@@ -765,10 +766,8 @@ body{background-color:#090B10;background-image:
 
   <!-- BESTELLUNGEN -->
   <section class="view" id="v-bestell">
-    <div class="stats" id="bStats"></div>
     <div class="alert pinkish"><span class="atag">📝 NOTIZ · anklicken zum Bearbeiten</span><div id="iBnotiz" data-i="bnotiz" contenteditable="true" spellcheck="false"></div></div>
-    <div class="toolbar">
-      <label class="search"><svg class="ico" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg><input id="bSearch" placeholder="Kunde, Artikel oder Lieferant suchen"></label>
+    <div class="toolbar btools">
       <button class="btn" type="button" id="bDone" aria-pressed="false">Erledigte zeigen</button>
       <button class="btn red" type="button" id="bAdd">+ Bestellung</button>
     </div>
@@ -833,7 +832,7 @@ body{background-color:#090B10;background-image:
 <script>
 const FB_CONFIG={apiKey:"AIzaSyC_uZPvc5rJETwlS4JbfCoTkkE4ckjtp0M",authDomain:"velocenter-planer.firebaseapp.com",projectId:"velocenter-planer",storageBucket:"velocenter-planer.firebasestorage.app",messagingSenderId:"1018330488700",appId:"1:1018330488700:web:262a4d1660353e6fde8ef9"};
 /* ================= Velocenter Werkstatt-Cockpit – Oberfläche ================= */
-const CLIENT_VERSION='1.4.2';
+const CLIENT_VERSION='1.4.3';
 const USERS=[{id:'kevin',n:'Kevin',c:'#E2232D'},{id:'stefan',n:'Stefan',c:'#F59E0B'},{id:'martina',n:'Martina',c:'#EC4899'},{id:'sascha',n:'Sascha',c:'#22D3EE'},{id:'rene',n:'René',c:'#34D399'}];
 const U=id=>USERS.find(u=>u.id===id)||{n:'',c:'#64748B',id:''};
 const $=id=>document.getElementById(id);
@@ -1215,9 +1214,8 @@ let bEdit=null,bShowDone=false;
 const BST=[['offen','Offen'],['bestellt','Bestellt'],['da','Da · Kunde informieren']];
 const BF=[['datum','Datum'],['kunde','Kunde / Modell'],['telefon','Telefon'],['artikel','Artikel'],['lieferant','Lieferant'],['lieferzeit','Lieferzeit'],['notiz','Notiz']];
 let bF='';
-function rb(){const s1=($('bSearch').value||'').toLowerCase(),m=b=>(!s1||(b.kunde+' '+b.artikel+' '+b.lieferant+' '+b.telefon).toLowerCase().includes(s1))&&(bF!=='np'||b.bezahlt!=='ja');
+function rb(){const m=b=>true;
  const st=k=>B.filter(b=>(b.status||'offen')===k).length;
- stats('bStats',[{n:'Offen · noch bestellen',v:st('offen'),c:'#FBBF24',i:'bell'},{n:'Bestellt · unterwegs',v:st('bestellt'),c:'#60A5FA',i:'truck'},{n:'Da · Kunde informieren',v:st('da'),c:'#34D399',i:'box'},{k:'np',n:'Nicht bezahlt',v:B.filter(b=>(b.status||'offen')!=='fertig'&&b.bezahlt!=='ja').length,c:'#F87171',i:'euro'}],bF);
  $('bForm').innerHTML=bEdit?bForm(bEdit==='new'?{id:'new',datum:new Date().toLocaleDateString('de-DE'),status:'offen'}:B.find(x=>x.id===bEdit)||{id:'new'}):'';
  const cols=bShowDone?[...BST,['fertig','Erledigt']]:BST;
  $('bCols').style.gridTemplateColumns=`repeat(${cols.length},minmax(0,1fr))`;
@@ -1234,8 +1232,6 @@ $('v-bestell').addEventListener('click',e=>{const mv=e.target.closest('[data-bmv
  if(e.target.closest('[data-bcancel]')){bEdit=null;rb();return;}
  const dl=e.target.closest('[data-bdel]');if(dl){if(!dl.dataset.sure){dl.dataset.sure=1;dl.textContent='Wirklich löschen?';return;}const id=dl.dataset.bdel,b=B.find(x=>x.id===id);B=B.filter(x=>x.id!==id);bEdit=null;rb();del('B',id);toast('Gelöscht',()=>{B.unshift(b);rb();save('B',b).catch(()=>{});});}});
 $('v-bestell').addEventListener('submit',e=>{if(!e.target.dataset.bf)return;e.preventDefault();const f=e.target,id=f.dataset.bf,d=new FormData(f);const b=id==='new'?{id:nid('b'),status:'offen',von:ME.id}:Object.assign({},B.find(x=>x.id===id));BF.forEach(([k])=>b[k]=String(d.get(k)||'').trim());b.bezahlt=d.get('bezahlt')||'';bEdit=null;putB(b);toast('Gespeichert');});
-$('bSearch').addEventListener('input',rb);
-$('bStats').addEventListener('click',e=>{const b=e.target.closest('[data-sf]');if(!b)return;bF=bF===b.dataset.sf?'':b.dataset.sf;rb();});
 $('bAdd').addEventListener('click',()=>{bEdit='new';rb();const f=document.querySelector('[data-bf=new] input[name=kunde]');if(f)f.focus();});
 $('bDone').addEventListener('click',e=>{bShowDone=!bShowDone;e.currentTarget.setAttribute('aria-pressed',bShowDone);rb();});
 

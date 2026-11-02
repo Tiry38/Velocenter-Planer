@@ -371,3 +371,4 @@ body{background-color:#090B10;background-image:
 .hd.hico{justify-content:center}
 .hd .waico{width:22px;height:22px;fill:#25D366;filter:drop-shadow(0 0 6px rgba(37,211,102,.55))}
 #grid .c[data-col="wa"] .e{padding:4px 5px;font-variant-numeric:tabular-nums}
+.toolbar.btools{justify-content:flex-end;padding:0!important;gap:8px;background:none!important;border:0!important;box-shadow:none!important;margin:0 0 10px!important}
