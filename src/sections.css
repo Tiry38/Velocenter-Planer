@@ -367,3 +367,7 @@ body{background-color:#090B10;background-image:
 #v-bestell .alert.pinkish{background:rgba(57,242,107,.09);border-color:#1f6b38;color:#C9FBD6}#v-bestell .alert.pinkish .atag{color:#39F26B}
 #v-bestell .mini.go{background:#39F26B;border-color:#39F26B;color:#062b12}
 #v-planer .date span{font-size:18px!important}
+/* WhatsApp-Spalte: schmal (max. 5 Ziffern), Logo statt Schrift */
+.hd.hico{justify-content:center}
+.hd .waico{width:22px;height:22px;fill:#25D366;filter:drop-shadow(0 0 6px rgba(37,211,102,.55))}
+#grid .c[data-col="wa"] .e{padding:4px 5px;font-variant-numeric:tabular-nums}
