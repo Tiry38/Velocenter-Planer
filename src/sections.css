@@ -181,4 +181,3 @@ body.navmini #switchUser{font-size:0;padding:6px 8px;margin:0}body.navmini #swit
 @container dt (max-width:540px){.dt .seg{padding:2px 8px}.dt .seg b{font-size:18px}.dt .sKw b{font-size:14px;padding:2px 9px}.dt .clock{font-size:24px!important;padding:3px 10px!important}.dt .live{font-size:0!important;gap:0;padding:6px!important}}
 @container dt (max-width:420px){.dt .sDate{padding-left:0}.dt .seg b{font-size:15.5px}.dt .clock{font-size:20px!important}.dt .sClock{gap:6px}.dt .mL{display:none}.dt .mS{display:inline}}
 @media (max-width:720px){.top{flex-wrap:wrap!important;gap:12px!important}.dt{width:100%;flex:none}}
-
