@@ -588,7 +588,7 @@ body.navmini #switchUser{font-size:0;padding:6px 8px;margin:0}body.navmini #swit
 <script>
 const FB_CONFIG={apiKey:"AIzaSyC_uZPvc5rJETwlS4JbfCoTkkE4ckjtp0M",authDomain:"velocenter-planer.firebaseapp.com",projectId:"velocenter-planer",storageBucket:"velocenter-planer.firebasestorage.app",messagingSenderId:"1018330488700",appId:"1:1018330488700:web:262a4d1660353e6fde8ef9"};
 /* ================= Velocenter Werkstatt-Cockpit – Oberfläche ================= */
-const CLIENT_VERSION='1.1.4';
+const CLIENT_VERSION='1.1.5';
 const USERS=[{id:'kevin',n:'Kevin',c:'#E2232D'},{id:'stefan',n:'Stefan',c:'#F59E0B'},{id:'martina',n:'Martina',c:'#EC4899'},{id:'sascha',n:'Sascha',c:'#22D3EE'},{id:'rene',n:'René',c:'#34D399'}];
 const U=id=>USERS.find(u=>u.id===id)||{n:'',c:'#64748B',id:''};
 const $=id=>document.getElementById(id);
@@ -704,8 +704,8 @@ async function rollover(){const t=TODAY();try{const go=await db.runTransaction(a
   if(!go)return;const snap=await db.collection('planer').where('datum','<',t).get();const b=db.batch();let n=0;
   snap.forEach(d=>{const o=d.data();if((o.spalte==='ws'||o.spalte==='best')&&o.erledigt!=='1'){b.update(d.ref,{datum:t,ts:stamp(),tsVon:ME.id});n++;}});if(n)await b.commit();}catch(e){}}
 /* Auto-Update: neue Version auf GitHub → Seite lädt sich selbst neu (nicht während einer Eingabe) */
-async function verCheck(){try{const v=(await (await fetch('version.txt?'+Date.now(),{cache:'no-store'})).text()).trim();if(v&&v!==CLIENT_VERSION){if(editing()){$('upd').hidden=false;return;}location.reload();}}catch(_){}}
-setInterval(verCheck,60000);
+async function verCheck(){try{const v=(await (await fetch('version.txt?'+Date.now(),{cache:'no-store'})).text()).trim();if(v&&v!==CLIENT_VERSION){if(editing()){$('upd').hidden=false;return;}location.replace(location.pathname+'?v='+encodeURIComponent(v));}}catch(_){}}
+setInterval(verCheck,30000);setTimeout(verCheck,3000);
 /* ---------- Info-Felder (Wichtig, Merker, Hinweis, Bestell-Notiz) ---------- */
 function renderInfo(){document.querySelectorAll('[data-i]').forEach(el=>{if(document.activeElement===el)return;const v=I[el.dataset.i];if(v!=null)el.textContent=v;else if(el.dataset.i==='alert')el.textContent='Company Bike / Daimler Wörth: Seit März 2025 werden Angebote nur noch alle 2 Wochen freigegeben (in der ungeraden KW).';});}
 document.querySelectorAll('[data-i]').forEach(el=>{el.addEventListener('keydown',e=>{if(e.key==='Enter'&&el.dataset.i!=='bnotiz'){e.preventDefault();el.blur();}});
