@@ -1,0 +1,85 @@
+# CLAUDE.md – Velocenter Werkstatt-Cockpit (Web-App „Planer“)
+
+Diese Datei liest Claude Code bei jeder Sitzung automatisch. Sie enthält alles, was aus dem Aufbau-Chat (02.11.2026) wichtig ist.
+
+## 1. Was ist das?
+
+Web-App für **Velocenter Hessert** (Fahrradgeschäft, Wörth am Rhein). Ersetzt die Google-Tabelle „Abhol-Werkstattplaner“. **Seit dem 02.11.2026 wird nur noch in der App gearbeitet**, das Sheet bleibt unverändert als Sicherung stehen.
+
+- **Live:** https://tiry38.github.io/Velocenter-Planer/ (Groß-/Kleinschreibung beachten)
+- **Repo:** `Tiry38/Velocenter-Planer` (öffentlich, GitHub Pages ab `main`, Wurzelordner). Hier liegen **nie Daten oder Passwörter**, nur Code.
+- **Auftraggeber:** Kevin Thirolf („**Tiry**“), Junior-Chef. Getrennt davon gibt es die **KI-Zentrale** (eigenes privates Repo `Tiry38/velocenter-ki-zentrale`, Electron-App) – nicht vermischen.
+
+## 2. Kommunikation mit Tiry
+
+- Immer **„Tiry“**, Deutsch, direkt, ehrlich, **keine Floskeln/Entschuldigungen**, kurze Absätze, **Fettdruck für Kernbotschaften**.
+- **Hyperspeed bei hoher Qualität.** Er unterbricht oft mit neuen Wünschen → kleine Schritte, schnell ausliefern.
+- **Lange Testläufe nerven ihn** (er bricht sie ab). Kurztest `quick.js` reicht pro Änderung; großer Test `tf.js` nur bei größeren Umbauten.
+- 100 % faktenkorrekt, Unsicheres als unsicher benennen.
+- Design: **futuristisch, dunkel, leuchtend, stylisch** („kein 0815, nicht nach Excel aussehen“), trotzdem **sehr übersichtlich**. Schrift muss gut herausstechen.
+
+## 3. Technik
+
+- **Eine Datei:** `index.html` (Oberfläche + Logik), dazu `manifest.webmanifest`, `sw.js`, Icons, `version.txt`.
+- **Quellcode in `src/`** – nie `index.html` direkt bearbeiten:
+  - `app_fb.js` – gesamte Logik (Firebase, Planer, Verkauf, Bestellungen, Leasing, Lieferanten, Trinkgeld, Tresor, Import)
+  - `body_fb.html` – HTML-Gerüst · `head.html` – Grund-CSS · `sections.css` – CSS der Bereiche (neue Regeln hierhin)
+  - `ls_seed.js` – Leasing-Anbieter (Startdaten) · `logos_small.js` – Leasing-/Versicherungslogos (Tirys eigene, freigestellt, dunkle Fassung)
+  - `logo_small.b64` – Velocenter-Logo · `fbconfig.js` – Firebase-Konfiguration (öffentlich, kein Geheimnis)
+  - `firestore.rules` – Sicherheitsregeln (Kopie; aktiv sind sie in der Firebase-Konsole)
+- **Bauen:** `cd src && python3 build.py <neue Version>` → schreibt `../index.html`, `../version.txt` usw. und `tests/test_fb.html`.
+- **Ausliefern:** commit + `git push origin main`. GitHub Pages braucht ~1 Min. **Offene Geräte prüfen alle 30 s `version.txt` und laden sich selbst neu** (mit `?v=` am Cache vorbei). Version bei jeder Auslieferung hochzählen (zuletzt **1.1.5**).
+- **Tests (lokal, ohne Internet):** `src/tests/` – `fbmock.js` baut Firebase Auth + Firestore nach (localStorage, Live-Abgleich zwischen Tabs).
+  - Einmalig: `cd src/tests && npm pack xlsx@0.18.5 && tar xzf xlsx-0.18.5.tgz package/dist/xlsx.full.min.js && mv package/dist/xlsx.full.min.js . && rm -rf package xlsx-0.18.5.tgz`
+  - `node quick.js` (Kurztest, ~30 s) · `node tf.js` (Gesamttest, ~2 Min). Playwright/Chromium ist vorinstalliert.
+
+## 4. Firebase
+
+- Projekt **`velocenter-planer`** („Velocenter Planer“), Spark-Tarif (kostenlos), **Firestore in Frankfurt (europe-west3)**, Auth: **E-Mail/Passwort**.
+- Besitzer: **Kevins Google-Konto**. In seinem Chrome am Mini-PC ist es das Konto **/u/1/** (`console.firebase.google.com/u/1/...`); /u/0/ ist Stefans Konto.
+- **Anmeldung in der App:** Name wählen (Kevin, Stefan, Martina, Sascha, René) → beim **ersten Mal eigenes Passwort festlegen** (alles erlaubt, auch „7“). Intern: E-Mail `<id>@velocenter-cockpit.app`, Firebase-Passwort = `'VC!'+pw+'#cockpit'` (wegen Mindestlänge 6). Sitzung bleibt pro Gerät gespeichert.
+- **Rollen:** Admins = kevin, stefan, martina → alles. Mitarbeiter = sascha, rene → **alles außer Reiter „Passwörter“** (Regeln sperren `tresor/pw` serverseitig). Lieferanten-Logins darf jeder sehen, der die Tresor-PIN kennt (so gewollt).
+- **Passwort vergessen:** Firebase-Konsole → Authentication → Nutzer → Konto löschen; Person legt beim nächsten Login neu fest.
+- **Offen:** Sobald alle 5 angemeldet sind, in Firebase **neue Registrierungen abschalten** (Authentication → Einstellungen → Nutzeraktionen). Stand 02.11.: nur Kevin angemeldet.
+- **Collections:** `planer` (id, datum yyyy-mm-dd, spalte int|anf|t1|t2|wa|ws|best|not, text, zeit, von, ts, tsVon), `verkauf`, `bestell`, `trinkgeld`, `leasing` (Doc-ID = Kürzel), `lieferanten` (ohne Logins), `info` (wichtig, merker, alert, bnotiz), `meta/users|import|rollover|seed|prefs`, `tresor/check|logins|pw`.
+- **Tresor:** AES-GCM, Schlüssel per PBKDF2 (250 000 Runden) aus der **Tresor-PIN**. `tresor/check` prüft die PIN, `tresor/logins` = Lieferanten-Logins, `tresor/pw` = Passwortliste aus Reiter „PW“. Auto-Sperre 60 s. **Die PIN legt ein Admin beim ersten Öffnen fest.**
+
+## 5. Harte Regeln
+
+- **Tresor-PIN und Passwörter nie erfragen, nie ausgeben, nie im Klartext speichern oder committen.** Tirys PIN kam einmal im Chat vor – nie wiederholen, nie selbst eingeben.
+- **Keine Bestätigungscodes/Passwörter selbst eintippen** (GitHub-Codes usw. macht Tiry).
+- Daten nie aus dem Repo heraus veröffentlichen; Repo ist öffentlich.
+- Das Google-Sheet nicht verändern (nur lesen).
+
+## 6. Bereiche & feste Entscheidungen
+
+- **Navigation links:** leuchtende Farbkacheln je Bereich, **einklappbar** (Pfeil rechts an der Navi; eingeklappt nur Symbole). **Zustand pro Profil gemerkt** (`meta/prefs`, auf allen PCs). Unten: Profil (Passwort ändern, Wechseln ⇄) und „⛶ Vollbild“. **Kein** Import-Knopf und **kein** grünes Sicherheitsfeld mehr in der Navi.
+- **Kopfzeile** (jeder Reiter gleich): Symbol + Unterzeile + Titel im Farbverlauf der Reiterfarbe; rechts LIVE, Wochentag, KW, Datum, Uhr.
+- **Planer** (aus „Planer NEU“-Struktur): eine Zeile pro Tag (ohne Sonntage, RLP-Feiertage markiert), KW-Trenner rot, heute rot hinterlegt, Sa grün, Mi orange.
+  - Spalten: Intern · **Anfr.** (nur leuchtender Punkt, Info beim Drüberfahren, Spalte so schmal wie der Punkt) · Zeit · 1. Termin · Zeit · 2. Termin · WhatsApp · Sonstiges Werkstatt · Bestellungen · Notiz. **Nico-Spalte entfernt.**
+  - **Klick irgendwo ins Feld = eintragen.** Eintrag anklicken = bearbeiten, rotes × = löschen (6 s Rückgängig), Ziehen auf anderen Tag.
+  - **Uhrzeit:** Klick ins Zeit-Feld → Auswahl **nur 09:00–12:00 und 14:30–17:45 in 15-Min-Schritten**, danach Termin-Text. Gelbe Zeit-Chips anklicken = Zeit ändern.
+  - **Kein Abhak-Kästchen mehr** (nur löschen oder stehen lassen). **Keine** Such-/Filterleiste, **keine** Zähler-Leiste. Oben nur WICHTIG/MERKER (anklickbar).
+  - Offenes in Werkstatt/Bestellungen wandert täglich auf heute (`rollover`).
+  - Jeder Eintrag zeigt Kürzel des Erstellers.
+- **Verkauf:** Standard **Liste** (umschaltbar Karten), Kennzahlen-Kacheln als Filter (Noch montieren · Montiert/wartet O.K. · O.K./abholbereit · Leasing ohne O.K.), Sortierung (Neueste, Liefertermin, Status, Name).
+  - Spalten: Status-Punkt · Kunde/Modell · Leasing (Logo + Auswahl) · Verkauft · LT · Antrag · O.K. · L.-Ende · **Notiz** (ersetzt „Montieren“) · Beratung (Person) · Status 🔧 / O.K. / ✓ · ✎.
+  - **Datumsfelder (Verkauft, Antrag, O.K., L.-Ende) per Kalender, Anzeige einheitlich TT.MM. ohne Jahr** (gespeichert mit Jahr). Farben: Antrag lila, O.K. grün („fehlt“ rot), L.-Ende türkis, Notiz gelb.
+  - **„bereit“ heißt „O.K.“**. Wer montiert/O.K./abgeholt hat, wird mit Datum gespeichert. Abgeholte verschwinden (über „Abgeholte zeigen“ zurückholbar, 6 s Rückgängig).
+  - Leasing-Kürzel: BL Bikeleasing, CB Company Bike, KM Kazenmaier, BB Businessbike, JR JobRad, DD Deutsche Dienstrad, LB Lease a Bike, RD RIDE, ER Eurorad.
+- **Bestellungen:** Spalten-Board Offen → Bestellt → Da · Kunde informieren (→ Erledigt), bezahlt-Schalter, Kacheln (inkl. Filter „Nicht bezahlt“), Notizfeld oben.
+- **Leasing-Infos:** 13 Karten (JobRad, Bikeleasing, Businessbike, Kazenmaier, RIDE, Eurorad, Company Bike, Lease a Bike, Deutsche Dienstrad, ENRA, Alteos, Fahrsicherung, Assona) mit Logos, alles bearbeitbar (✎, Logo-Upload, + Anbieter), Hinweisbanner (Daimler/Company Bike: Freigabe nur ungerade KW), Tabelle „Auf einen Blick“ direkt bearbeitbar. Inhalte stammen aus Reiter „Leasing-IS“; Alteos/Fahrsicherung wie ENRA angelegt (von Tiry noch zu prüfen).
+- **Lieferanten:** Kacheln, A–Z-Leiste, Tabelle direkt bearbeitbar; 🔒 anklicken → Tresor-PIN → Login/Passwort sichtbar und änderbar (verschlüsselt).
+- **Trinkgeld EC:** Kacheln (Monat, Vormonat, Jahr, Einträge), Balken 6 Monate, Liste nach Monat gruppiert, Konto 1371 steuerfrei.
+- **Passwörter** (nur Admins): PIN-Schloss; darunter einmalig „Aus Sheet übernehmen“ (xlsx-Download des Sheets) für PW-Liste + Lieferanten-Logins – verschwindet nach Übernahme.
+
+## 7. Datenübernahme (02.11.2026 erledigt)
+
+Aus dem **Original-Reiter „Planer“** (ab Zeile 110; Spalten: C Intern, D Nico→Notiz, E Anfr., F/G Zeit+1.Termin, H/I Zeit+2.Termin, J/K 3.Termin→Notiz, L WhatsApp, M Werkstatt, N Bestellungen, O/P→Notiz), **WICHTIG** = A109+C109, **MERKER** = C55, aus dem **Verkaufs-Sheet** (eigene Tabelle, Reiter VERKAUF ab Zeile 109; „+“ am Namen = O.K.; „montiert“ war nur Zellfarbe → nicht übernommen), TG, Lieferanten (ohne Logins), Bestell-Notiz. Sheet-Adressen stehen absichtlich nicht hier (Repo ist öffentlich) – Tiry hat sie in Chrome geöffnet.
+**Noch offen:** Passwortliste + Lieferanten-Logins übernimmt Tiry selbst (Reiter Passwörter → „Aus Sheet übernehmen“).
+
+## 8. Arbeitsumgebung
+
+- Tiry arbeitet am **Mini-PC-Büro** (Windows) mit **Claude in Chrome**. Firebase-Konsole dort unter `/u/1/` (Kevin). GitHub-Schreibrecht: Claude-GitHub-App ist für dieses Repo freigegeben.
+- Die alte Apps-Script-Variante (Dateien „WebApp“/„App“ im Skript-Projekt des Sheets) wurde **verworfen** (Google-Leiste nicht entfernbar) und ist leer/ungenutzt.
+- Vollbild: Chrome ⋮ → „Streamen, speichern und teilen“ → „Seite als App installieren“ (Manifest `display: fullscreen`), dazu Knopf „⛶ Vollbild“.

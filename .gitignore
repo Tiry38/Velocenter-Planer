@@ -1,0 +1,4 @@
+src/tests/test_fb.html
+src/tests/xlsx.full.min.js
+src/tests/*.png
+node_modules/
