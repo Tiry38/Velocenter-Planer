@@ -831,6 +831,9 @@ const SF=[['name','Lieferant'],['kdnr','Kunden-Nr.'],['mbw','Mindestbestellwert'
 let sAZ='';
 // Recherchierte Mindestbestellwerte (Websuche 02.11.2026, nur Belegtes) – einmalig, nur in LEERE Felder, sobald ein Admin angemeldet ist
 const SMBW_VER=1,SMBW={'böttcher':'kein Mindestbestellwert (B2B-Shop)','bbf':'kein fester MBW · unter 50 € netto +6,95 € Mindermenge · ab 50 € netto 9,90 € Fracht'};
+/* 1.7.7: alle Lieferanten-Namen kopieren (nur Namen, keine Kd-Nr./Logins) */
+$('sExp').addEventListener('click',async()=>{const t=S.map(o=>String(o.name||'').trim()).filter(Boolean).sort((a,b)=>a.localeCompare(b,'de')).join('\n');
+ try{await navigator.clipboard.writeText(t);toast(S.length+' Namen kopiert – jetzt einfach in den Chat einfügen');}catch(_){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([t],{type:'text/plain'}));a.download='lieferanten-namen.txt';a.click();toast('Als Datei gespeichert (Download-Ordner)');}});
 let smbwDone=false;async function smbwSeed(){if(smbwDone||!ME||!ME.adm||!S.length)return;smbwDone=true;try{const f=db.doc('meta/seed');const d=await f.get();if(d.exists&&(d.data().smbw||0)>=SMBW_VER)return;
  for(const o of S){const v=SMBW[String(o.name||'').trim().toLowerCase()];if(v&&!String(o.mbw||'').trim()){const n=Object.assign({},o,{mbw:v});delete n.hasLogin;await save('S',n);}}await f.set({smbw:SMBW_VER},{merge:true});}catch(e){smbwDone=false;}}
 // Mindestbestellwert immer in €: „500“ → „500 €“ (Text wie „frachtfrei ab 300“ bleibt unverändert)
