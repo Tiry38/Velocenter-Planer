@@ -361,7 +361,13 @@ function vkForm(b){const nw=b.id==='new',dIso=nw?iso(new Date()):toIsoDe(b.dat);
  <div class="g5">${VF0.map(fld).join('')}</div>${nw?'<p class="hint">Alles optional – Rest (LT, Form, Größe, Leasing-Daten …) später direkt in der Liste.</p>':`<div class="g2">${VF1.map(fld).join('')}</div>`}
  <div class="acts"><button class="btn red" type="submit">${nw?'In die Liste':'Speichern'}</button><button class="btn" type="button" data-vcancel>Abbrechen</button>${!nw?`<button class="btn del" type="button" data-vdel="${esc(b.id)}">Löschen</button>`:''}</div></form></article>`;}
 async function putV(b){const i=V.findIndex(x=>x.id===b.id);if(i<0)V.unshift(b);else V[i]=b;rv();try{await save('V',b);}catch(_){}}
-$('cards').addEventListener('click',e=>{const t=e.target.closest('.st');if(t){const b=V.find(x=>x.id===t.dataset.vi);if(!b)return;const k=t.dataset.k,n=Object.assign({},b);n[k]=b[k]==='1'?'':'1';if(n[k]){n[k+'Von']=ME.id;const _d=new Date(),_s=String(_d.getDate()).padStart(2,'0')+'.'+String(_d.getMonth()+1).padStart(2,'0')+'.';n[k+'Am']=_s;if(k==='b'&&!n.ok)n.ok=_s+_d.getFullYear();}else{n[k+'Von']='';n[k+'Am']='';}putV(n);if(n[k]){if(k==='a')toast('Abgeholt – '+(b.name||b.modell)+' (unter „Abgeholte zeigen“)',()=>{putV(Object.assign({},b));toast('Wieder offen');});else toast({an:'Angeliefert',m:'Montiert',b:'O.K.'}[k]+' – '+U(ME.id).n);}return;}
+/* 1.6.5: Status setzen – who = Person-ID oder '' (entfernen). Admins wählen die Person, Team setzt nur sich selbst. */
+function vStSet(b,k,who){const n=Object.assign({},b);n[k]=who?'1':'';if(n[k]){n[k+'Von']=who;const _d=new Date(),_s=String(_d.getDate()).padStart(2,'0')+'.'+String(_d.getMonth()+1).padStart(2,'0')+'.';n[k+'Am']=_s;if(k==='b'&&!n.ok)n.ok=_s+_d.getFullYear();}else{n[k+'Von']='';n[k+'Am']='';}putV(n);if(n[k]){if(k==='a')toast('Abgeholt – '+(b.name||b.modell)+' (unter „Abgeholte zeigen“)',()=>{putV(Object.assign({},b));toast('Wieder offen');});else toast({an:'Angeliefert',m:'Montiert',b:'O.K.'}[k]+' – '+U(who).n);}}
+const VSTN={an:'Angeliefert',m:'Montiert',b:'O.K.',a:'Abgeholt'};
+function vStPick(t,b,k){if(kdPop&&kdPop.vst===b.id+k){kdPopClose();return;}const cur=b[k]==='1'?b[k+'Von']:null;
+ const el=kdPopOpen(t,`<div class="vstp"><div class="kph">${VSTN[k]} – von wem?</div><div class="vstl">${USERS.map(u=>`<button type="button" class="vstu${cur===u.id?' on':''}" style="--uc:${u.c}" data-vsu="${u.id}"><span class="av">${esc(u.n[0])}</span>${esc(u.n)}</button>`).join('')}</div>${b[k]==='1'?`<button type="button" class="vstx" data-vsu="">✕ ${VSTN[k]} entfernen</button>`:''}</div>`);kdPop.vst=b.id+k;
+ el.addEventListener('click',e=>{const x=e.target.closest('[data-vsu]');if(!x)return;kdPopClose();const bb=V.find(v=>v.id===b.id)||b,w=x.dataset.vsu;if(w&&bb[k]==='1'&&bb[k+'Von']===w)return;vStSet(bb,k,w);});}
+$('cards').addEventListener('click',e=>{const t=e.target.closest('.st');if(t){const b=V.find(x=>x.id===t.dataset.vi);if(!b)return;const k=t.dataset.k;if(ME.adm){vStPick(t,b,k);return;}vStSet(b,k,b[k]==='1'?'':ME.id);return;}
  const ed=e.target.closest('[data-vedit]');if(ed){vkEdit=ed.dataset.vedit;rv();return;}
  if(e.target.closest('[data-vcancel]')){vkEdit=null;rv();return;}
  const dl=e.target.closest('[data-vdel]');if(dl){if(!dl.dataset.sure){dl.dataset.sure=1;dl.textContent='Wirklich löschen?';return;}const id=dl.dataset.vdel,b=V.find(x=>x.id===id);V=V.filter(x=>x.id!==id);vkEdit=null;rv();del('V',id);toast('Gelöscht: '+(b&&b.modell||''),()=>{V.unshift(b);rv();save('V',b).catch(()=>{});});}});
@@ -692,11 +698,11 @@ $('kdGrid').addEventListener('focusout',e=>{const c=e.target.closest('[contented
 // Kleines Fenster unter Kopf/Zelle: Filter (Kopf antippen) bzw. Auswahl (Datum, Leasing, Vers.)
 let kdPop=null;
 function kdPopClose(){if(kdPop){kdPop.el.remove();kdPop=null;}}
-function kdPopOpen(anchor,html,o){kdPopClose();const el=document.createElement('div');el.className='kdpop';el.innerHTML=html;document.body.appendChild(el);kdPop=Object.assign({el},o);kdPopPos(anchor);const i=el.querySelector('input:not([type=checkbox])');if(i)i.focus();return el;}
+function kdPopOpen(anchor,html,o){kdPopClose();const el=document.createElement('div');el.className='kdpop';el.innerHTML=html;document.body.appendChild(el);kdPop=Object.assign({el,t0:Date.now()},o);kdPopPos(anchor);const i=el.querySelector('input:not([type=checkbox])');if(i)i.focus();return el;}
 function kdPopPos(anchor){const el=kdPop.el,rc=anchor.getBoundingClientRect(),W=el.offsetWidth,H=el.offsetHeight;el.style.left=Math.max(8,Math.min(innerWidth-W-8,rc.left))+'px';el.style.top=(rc.bottom+4+H>innerHeight-8?Math.max(8,rc.top-4-H):rc.bottom+4)+'px';}
-document.addEventListener('pointerdown',e=>{if(kdPop&&!kdPop.el.contains(e.target)&&!e.target.closest('[data-kpick],.kdh[data-kc]'))kdPopClose();},true);
+document.addEventListener('pointerdown',e=>{if(kdPop&&!kdPop.el.contains(e.target)&&!e.target.closest('[data-kpick],.kdh[data-kc],.stb .st'))kdPopClose();},true);
 document.addEventListener('keydown',e=>{if(kdPop&&e.key==='Escape')kdPopClose();});
-document.addEventListener('scroll',e=>{if(kdPop&&!kdPop.el.contains(e.target))kdPopClose();},true);
+document.addEventListener('scroll',e=>{if(kdPop&&!kdPop.el.contains(e.target)&&Date.now()-kdPop.t0>250)kdPopClose();},true);
 function kdFltOpen(hd){const k=hd.dataset.kc,c=KDC.find(x=>x.k===k);if(kdPop&&kdPop.t==='flt'&&kdPop.k===k){kdPopClose();return;}
  const cnt=new Map();kdAll().forEach(r=>{const v=kdVal(k,r);cnt.set(v,(cnt.get(v)||0)+1);});
  const vals=[...cnt].sort((a,b)=>k==='dat'||k==='nr'?0:(b[1]-a[1]||String(a[0]).localeCompare(String(b[0]),'de',{numeric:true}))),cur=new Set(kdF[k]||vals.map(x=>x[0]));
