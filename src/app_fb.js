@@ -39,11 +39,11 @@ function tick(){const d=new Date();$('clock').innerHTML=String(d.getHours()).pad
 tick();setInterval(tick,15000);
 
 /* ---------- Navigation ---------- */
-const titles={planer:'Planer',verkauf:'Verkaufte Räder',bestell:'Bestellungen',rekla:'Reklamationen',leasing:'Leasing-Infos',lief:'Lieferanten',kasse:'Trinkgeld EC',tresor:'Passwörter'};
+const titles={planer:'Planer',verkauf:'Verkaufte Räder',bestell:'Bestellungen',rekla:'Reklamationen',leasing:'Leasing-Infos',lief:'Lieferanten',kasse:'Trinkgeld EC',tresor:'Passwörter',notes:'Notizen'};
 function show(v){const nb=document.querySelector(`.navbtn[data-v=${v}]`);if(!nb||nb.hidden)v='planer';const b=document.querySelector(`.navbtn[data-v=${v}]`),top=document.querySelector('.top');
  top.style.setProperty('--ac',b.style.getPropertyValue('--ac'));document.querySelector('main').style.setProperty('--ac',b.style.getPropertyValue('--ac'));$('tIco').innerHTML=b.querySelector('.tile').innerHTML;$('tSub').textContent=b.querySelector('.lbl small').textContent;
  document.querySelectorAll('.view').forEach(s=>s.classList.toggle('on',s.id==='v-'+v));document.querySelectorAll('.navbtn').forEach(x=>x.setAttribute('aria-current',x.dataset.v===v));$('title').textContent=titles[v];
- if(v!=='tresor'&&!$('vault').hidden)relock();ls.set('vc_view',v);}
+ if(!['tresor','notes'].includes(v)&&(!$('vault').hidden||NOTES))relock();ls.set('vc_view',v);}
 document.querySelectorAll('.navbtn').forEach(b=>b.addEventListener('click',()=>show(b.dataset.v)));
 /* Navigation einklappen */
 document.querySelectorAll('.navbtn').forEach(b=>{b.title=b.querySelector('.lbl').childNodes[0].textContent.trim();});
@@ -83,7 +83,7 @@ $('pwForm').addEventListener('submit',async e=>{e.preventDefault();clearTimeout(
  finally{go.disabled=false;}});
 $('switchUser').addEventListener('click',async()=>{relock();await auth.signOut();});
 async function start(me){if(ME&&ME.id===me.id)return;ME=me;const u=U(me.id);$('meName').textContent=u.n;$('meRole').textContent=me.adm?'Admin':'Team';$('meAv').style.setProperty('--uc',u.c);$('meAv').textContent=u.n[0];
- document.querySelector('.navbtn[data-v=tresor]').hidden=!me.adm;$('whoOv').hidden=true;navForUser();startLive();show(ls.get('vc_view','planer'));toast('Hallo '+u.n+' 👋');}
+ document.querySelector('.navbtn[data-v=tresor]').hidden=!me.adm;document.querySelector('.navbtn[data-v=notes]').hidden=!me.adm;$('whoOv').hidden=true;navForUser();startLive();show(ls.get('vc_view','planer'));toast('Hallo '+u.n+' 👋');}
 
 /* Passwort ändern / zurücksetzen */
 function dlg(html){$('dlgBox').innerHTML=html;$('dlg').hidden=false;const f=$('dlgBox').querySelector('input');if(f)f.focus();}
@@ -166,6 +166,7 @@ function startLive(){stopLive();const from=iso(new Date(Date.now()-35*864e5));
  listen('V',x=>V=x);listen('B',x=>B=x);listen('T',x=>T=x);listen('S',x=>{S=x;smbwSeed();});
  listen('L',x=>{L=x.map(o=>Object.assign({},o,{k:o.k||o.id}));if(!x.length)seedLeasing();else recLeasing();});
  listen('I',x=>{I={};x.forEach(o=>I[o.id]=o.wert);});
+ if(ME&&ME.adm)unsubs.push(db.doc('tresor/pw').onSnapshot(d=>{if(KEY&&NOTES&&d.exists&&d.data().ct&&d.data().tsVon!==ME.id&&!document.querySelector('#nGrid [contenteditable]:focus'))open_(KEY,d.data()).then(x=>{if(!Array.isArray(x)){NOTES=x.notes||[];PWGRID=x.grid||PWGRID;rn();}}).catch(()=>{});},()=>{}));
  unsubs.push(db.doc('meta/reklam').onSnapshot(d=>{RKD=(d.exists&&d.data().items)||{};scheduleRender();},()=>{}));
  unsubs.push(db.doc('meta/brands').onSnapshot(d=>{const x=d.exists?d.data():{};BUSER={list:x.list||[],logos:x.logos||{}};scheduleRender();},()=>{}));
  unsubs.push(db.doc('meta/import').onSnapshot(d=>{const x=d.exists?d.data():{};$('impBox').hidden=!(ME&&ME.adm)||x.tresor===true;},()=>{}));
@@ -622,13 +623,13 @@ $('tgForm').addEventListener('submit',async e=>{e.preventDefault();const a=$('tg
 $('tgTab').addEventListener('click',e=>{const d=e.target.closest('[data-tdel]');if(!d)return;const t=T.find(x=>x.id===d.dataset.tdel);T=T.filter(x=>x.id!==t.id);rtg();del('T',t.id);toast('Gelöscht',()=>{T.push(t);rtg();save('T',t).catch(()=>{});});});
 
 /* ================= TRESOR (verschlüsselt, Schlüssel = PIN) ================= */
-let lockT,KEY=null,PWGRID=null,pinFails=0,pinLockUntil=0;
+let lockT,KEY=null,PWGRID=null,pinFails=0,pinLockUntil=0,NOTES=null;
 const enc=new TextEncoder(),dec=new TextDecoder();
 const b64=a=>btoa(String.fromCharCode(...new Uint8Array(a))),unb64=s=>Uint8Array.from(atob(s),c=>c.charCodeAt(0));
 async function deriveKey(pin,salt){const base=await crypto.subtle.importKey('raw',enc.encode(pin),'PBKDF2',false,['deriveKey']);return crypto.subtle.deriveKey({name:'PBKDF2',salt:unb64(salt),iterations:250000,hash:'SHA-256'},base,{name:'AES-GCM',length:256},false,['encrypt','decrypt']);}
 async function seal(key,obj){const iv=crypto.getRandomValues(new Uint8Array(12));const ct=await crypto.subtle.encrypt({name:'AES-GCM',iv},key,enc.encode(JSON.stringify(obj)));return{iv:b64(iv),ct:b64(ct)};}
 async function open_(key,box){const pt=await crypto.subtle.decrypt({name:'AES-GCM',iv:unb64(box.iv)},key,unb64(box.ct));return JSON.parse(dec.decode(pt));}
-function relock(){KEY=null;LOGINS=null;PWGRID=null;clearTimeout(lockT);$('vault').hidden=true;$('lock').hidden=false;$('vTab').innerHTML='';rs();}
+function relock(){KEY=null;LOGINS=null;PWGRID=null;NOTES=null;rn();clearTimeout(lockT);$('vault').hidden=true;$('lock').hidden=false;$('vTab').innerHTML='';rs();}
 function arm(){clearTimeout(lockT);if(KEY)lockT=setTimeout(()=>{relock();toast('Tresor automatisch gesperrt');},60000);}
 ['click','keydown'].forEach(ev=>document.addEventListener(ev,()=>{if(KEY)arm();}));
 async function unlock(pin){if(Date.now()<pinLockUntil)throw new Error('Zu viele Versuche – bitte '+Math.ceil((pinLockUntil-Date.now())/1000)+' s warten.');if(!pin)throw new Error('PIN fehlt.');
@@ -637,7 +638,7 @@ async function unlock(pin){if(Date.now()<pinLockUntil)throw new Error('Zu viele 
  else{key=await deriveKey(pin,chk.salt);try{const v=await open_(key,chk);if(v!=='velocenter-ok')throw 0;}catch(_){pinFails++;if(pinFails>=5){pinFails=0;pinLockUntil=Date.now()+60000;throw new Error('5× falsch – 60 Sekunden gesperrt.');}throw new Error('PIN falsch.');}}
  pinFails=0;KEY=key;
  const lg=await db.doc('tresor/logins').get();const map=lg.exists?await open_(KEY,lg.data()):{};LOGINS=Object.entries(map).map(([id,v])=>({id,login:v.login||'',pass:v.pass||''}));
- if(ME.adm){const pw=await db.doc('tresor/pw').get();PWGRID=pw.exists?await open_(KEY,pw.data()):[];showVault();}
+ if(ME.adm){const pw=await db.doc('tresor/pw').get();const x=pw.exists?await open_(KEY,pw.data()):[];PWGRID=Array.isArray(x)?x:(x.grid||[]);NOTES=Array.isArray(x)?[]:(x.notes||[]);showVault();rn();}
  rs();arm();}
 function showVault(){$('vTab').innerHTML='<tbody>'+(PWGRID||[]).map(row=>'<tr>'+row.map((c,j)=>`<td class="${j?'wrap':''}">${esc(c)}${j&&String(c).trim()?` <button class="mini" type="button" data-cp="${esc(c)}">kopieren</button>`:''}</td>`).join('')+'</tr>').join('')+'</tbody>'||'<tbody><tr><td>Noch keine Einträge – über „⚙ Daten übernehmen“ aus dem Sheet holen.</td></tr></tbody>';$('lock').hidden=true;$('vault').hidden=false;}
 async function saveLogins(){if(!KEY)return;const map={};(LOGINS||[]).forEach(l=>{if(l.login||l.pass)map[l.id]={login:l.login,pass:l.pass};});await db.doc('tresor/logins').set(await seal(KEY,map));}
@@ -646,6 +647,30 @@ $('vLock').addEventListener('click',relock);
 $('vault').addEventListener('click',async e=>{const cp=e.target.closest('[data-cp]');if(cp){try{await navigator.clipboard.writeText(cp.dataset.cp);toast('Kopiert');}catch(_){toast('Kopieren nicht erlaubt');}}});
 function pinDlg(after){dlg(`<h3>🔓 Tresor öffnen</h3><p class="hint">${TSET?'Tresor-PIN eingeben':'Noch keine PIN – als Admin jetzt festlegen'}</p><form id="pdF" autocomplete="off"><input id="pdP" type="password" placeholder="PIN"><div class="err" id="pdE"></div><div class="acts"><button class="btn" type="button" data-close>Abbrechen</button><button class="btn red" type="submit">Öffnen</button></div></form>`);
  $('pdF').addEventListener('submit',async e=>{e.preventDefault();try{await unlock($('pdP').value);dlgClose();toast('Tresor offen – sperrt nach 60 s');if(after)after();}catch(err){$('pdE').textContent=err.message;}});}
+
+/* ================= NOTIZEN (🔒, nur Admins) – verschlüsselt mit der Tresor-PIN in tresor/pw {grid,notes} (Regel: nur Admins lesen/schreiben) =================
+   Inhalt: [{id,t (Eintrag),z (Zusatz),c (Farbe)}]. Klartext existiert nur im geöffneten Browser. */
+const NCOL=['#6EE7B7','#FDE047','#E879F9','#FB923C','#94A3B8','#60A5FA','#FDA4AF','#86EFAC','#3B82F6','#22D3EE','#EF4444','#FBBF24'];
+async function saveNotes(){if(!KEY||!NOTES||!ME.adm)return;try{await db.doc('tresor/pw').set(Object.assign(await seal(KEY,{grid:PWGRID||[],notes:NOTES}),{ts:stamp(),tsVon:ME.id}));}catch(e){fail(e);}}
+function rn(){const box=$('nBox');if(!box)return;const open=!!(KEY&&NOTES);$('nLock').hidden=open;box.hidden=!open;if(!open){$('nGrid').innerHTML='';return;}
+ if(document.querySelector('#nGrid [contenteditable]:focus'))return;
+ $('nImp').hidden=!(PWGRID&&PWGRID.length&&!NOTES.length);
+ $('nGrid').innerHTML='<div class="nhd">Farbe</div><div class="nhd">Eintrag</div><div class="nhd">Zusatz / Info</div><div class="nhd"></div>'+
+  (NOTES.length?NOTES.map((n,i)=>{const c=n.c||NCOL[i%NCOL.length];return `<div class="nrow" style="--nc:${c}"><div class="nc ncol"><button class="ndot" type="button" data-ncol="${i}" title="Farbe wechseln"></button></div>
+  <div class="nc"><div class="ne" contenteditable="true" spellcheck="false" data-ni="${i}" data-nf="t">${esc(n.t||'')}</div></div>
+  <div class="nc"><div class="nz" contenteditable="true" spellcheck="false" data-ni="${i}" data-nf="z">${esc(n.z||'')}</div></div>
+  <div class="nc nact"><button class="mini" type="button" data-ncp="${i}" title="Eintrag kopieren">⧉</button><button class="nx" type="button" data-ndel="${i}" title="Löschen">×</button></div></div>`;}).join('')
+  :'<div class="nempty">Noch keine Notizen – „+ Notiz“ oder „Aus Passwort-Liste übernehmen“.</div>');}
+$('nOpen').addEventListener('click',()=>pinDlg(()=>{show('notes');}));
+$('nLockBtn').addEventListener('click',relock);
+$('nAdd').addEventListener('click',()=>{if(!NOTES)return;NOTES.push({id:nid('n'),t:'',z:'',c:NCOL[NOTES.length%NCOL.length]});rn();const el=document.querySelector(`#nGrid [data-ni="${NOTES.length-1}"][data-nf=t]`);if(el)el.focus();});
+$('nImp').addEventListener('click',async()=>{if(!NOTES||!PWGRID)return;PWGRID.forEach((row,i)=>{const cells=row.map(x=>String(x||'').trim()).filter(Boolean);if(!cells.length)return;NOTES.push({id:nid('n'),t:cells[0],z:cells.slice(1).join(' · '),c:NCOL[NOTES.length%NCOL.length]});});await saveNotes();rn();toast('Aus Passwort-Liste übernommen');});
+$('nGrid').addEventListener('click',async e=>{if(!NOTES)return;
+ const cl=e.target.closest('[data-ncol]');if(cl){const n=NOTES[+cl.dataset.ncol];const k=NCOL.indexOf(n.c);n.c=NCOL[(k+1)%NCOL.length];rn();saveNotes();return;}
+ const cp=e.target.closest('[data-ncp]');if(cp){const n=NOTES[+cp.dataset.ncp];try{await navigator.clipboard.writeText([n.t,n.z].filter(Boolean).join(' – '));toast('Kopiert');}catch(_){toast('Kopieren nicht erlaubt');}return;}
+ const dl=e.target.closest('[data-ndel]');if(dl){const i=+dl.dataset.ndel,old=NOTES[i];NOTES.splice(i,1);rn();saveNotes();toast('Notiz gelöscht',()=>{NOTES.splice(i,0,old);rn();saveNotes();toast('Wiederhergestellt');});}});
+$('nGrid').addEventListener('keydown',e=>{const c=e.target.closest('[contenteditable]');if(c&&e.key==='Enter'&&!e.shiftKey){e.preventDefault();c.blur();}});
+$('nGrid').addEventListener('focusout',e=>{const c=e.target.closest('[contenteditable][data-ni]');if(!c||!NOTES)return;const n=NOTES[+c.dataset.ni];if(!n)return;const v=c.innerText.trim();if(v===(n[c.dataset.nf]||''))return;n[c.dataset.nf]=v;saveNotes();toast('Gespeichert (verschlüsselt)');});
 
 /* ================= DATEN AUS DEM GOOGLE-SHEET ÜBERNEHMEN (einmalig, nur Admin) ================= */
 function importDlg(){if(!ME.adm){toast('Nur für Admins');return;}
@@ -674,7 +699,7 @@ async function importXlsx(file){await loadXLSX();const wb=XLSX.read(await file.a
   D.slice(2).forEach(r=>{if(!String(r[1]||'').trim()&&!String(r[3]||'').trim())return;put('bestell',{id:nid('b'),datum:r[0],kunde:r[1],telefon:r[2],artikel:r[3],bezahlt:String(r[4]).trim()?'ja':'',status:String(r[6]).trim()?'bestellt':'offen',lieferant:r[7],lieferzeit:r[8],notiz:'',von:ME.id});});}
  const pw=sh('PW');const grid=pw?disp(pw).filter(r=>r.some(c=>String(c).trim())).map(r=>{let k=r.length;while(k>0&&!String(r[k-1]).trim())k--;return r.slice(0,k).map(String);}):null;
  for(let i=0;i<ops.length;i+=400){const b=db.batch();ops.slice(i,i+400).forEach(([c,o])=>b.set(db.collection(c).doc(String(o.id)),Object.assign(clean(o),{ts,tsVon:ME.id})));await b.commit();}
- await db.doc('tresor/logins').set(await seal(KEY,logins));if(grid)await db.doc('tresor/pw').set(await seal(KEY,grid));
+ await db.doc('tresor/logins').set(await seal(KEY,logins));if(grid)await db.doc('tresor/pw').set(await seal(KEY,{grid,notes:NOTES||[]}));
  if(done){await db.doc('meta/import').set({tresor:true,tresorAm:ts},{merge:true});LOGINS=Object.entries(logins).map(([id,v])=>({id,login:v.login,pass:v.pass}));if(grid){PWGRID=grid;showVault();}rs();return 'Passwortliste und '+Object.keys(logins).length+' Lieferanten-Logins (verschlüsselt)';}
  await db.doc('meta/import').set({am:ts,von:ME.id,tresor:true});try{await db.doc('meta/rollover').delete();}catch(_){}await rollover();LOGINS=Object.entries(logins).map(([id,v])=>({id,login:v.login,pass:v.pass}));if(grid){PWGRID=grid;showVault();}
  return cP+' Planer-Einträge, '+cV+' Räder, '+cT+' Trinkgeld, '+cS+' Lieferanten'+(grid?', Passwortliste':'');}
