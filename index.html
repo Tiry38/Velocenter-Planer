@@ -762,7 +762,7 @@ body.nresizing,body.nresizing *{cursor:col-resize!important;user-select:none!imp
 /* ===== Kunden (Verkaufshistorie, Planer-Stil) ===== */
 .kdboard{max-height:calc(100vh - 250px)}
 .kdgrid{display:grid;grid-template-columns:98px 66px 130px minmax(200px,1.6fr) 96px 92px minmax(170px,1.2fr) 56px 130px 130px 34px 40px;min-width:1250px}
-.kdgrid .kdh{position:sticky;top:0;z-index:3;justify-content:center;text-align:center;font-family:Outfit,var(--body),sans-serif!important;text-transform:none!important;letter-spacing:.02em!important;font-size:12px!important;color:#F9A8D4!important}
+.kdgrid .kdh{position:sticky;top:0;z-index:3;justify-content:center;text-align:center;font-family:Outfit,var(--body),sans-serif!important;text-transform:none!important;letter-spacing:.02em!important;font-size:12px!important;color:var(--hc,#F9A8D4)!important;box-shadow:inset 0 -2px 0 var(--hc,#F472B6);text-shadow:0 0 12px color-mix(in srgb,var(--hc,#F472B6) 55%,transparent)}
 .kdgrid .kw.kdy{grid-column:1/-1}.kdgrid .kw.kdy span{margin-left:10px;font-weight:600;letter-spacing:.02em;color:#FBCFE8;opacity:.8}
 .kdgrid .kc{min-height:38px;justify-content:center;font:500 13px/1.3 var(--body);color:#E2E8F0;outline:none;cursor:text;padding:6px 8px;overflow-wrap:anywhere}
 .kdgrid .kc:focus,.kdgrid .kmt:focus{box-shadow:inset 0 0 0 2px var(--cyan);background:rgba(0,0,0,.35)}
@@ -779,6 +779,41 @@ body.nresizing,body.nresizing *{cursor:col-resize!important;user-select:none!imp
 .kdf .g4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
 @media (max-width:900px){.kdf .g4{grid-template-columns:1fr 1fr}}
 
+/* ===== Kunden: Regenbogen (Tiry 02.11.) + Spalten/Zeilen verschieben wie in Excel ===== */
+:root{--rb:linear-gradient(90deg,#FF3B5C,#FF8A1F 15%,#FFD93B 30%,#3DDC84 45%,#22D3EE 60%,#4F7BFF 75%,#B15CFF 88%,#FF4FD8)}
+.navbtn[data-v=kunden] .tile{background:conic-gradient(from 210deg,#FF3B5C,#FF8A1F,#FFD93B,#3DDC84,#22D3EE,#4F7BFF,#B15CFF,#FF4FD8,#FF3B5C)!important;border-color:rgba(255,255,255,.55)!important}
+.navbtn[data-v=kunden] .tile svg{stroke:#fff!important;filter:drop-shadow(0 1px 1.5px rgba(0,0,0,.6))}.navbtn[data-v=kunden] .tile svg .f{fill:rgba(255,255,255,.35)!important}
+.navbtn[data-v=kunden] .lbl small{background:var(--rb);-webkit-background-clip:text;background-clip:text;color:transparent!important}
+.navbtn[data-v=kunden][aria-current="true"]{background:linear-gradient(90deg,rgba(255,59,92,.14),rgba(255,217,59,.1) 30%,rgba(34,211,238,.08) 55%,transparent 85%)}
+.navbtn[data-v=kunden][aria-current="true"]::before{background:linear-gradient(180deg,#FF3B5C,#FFD93B,#3DDC84,#22D3EE,#B15CFF);box-shadow:0 0 12px rgba(177,92,255,.8)}
+.navbtn[data-v=kunden] .n{background:linear-gradient(#0b0e15,#0b0e15) padding-box,var(--rb) border-box;border:1px solid transparent}
+body[data-v=kunden] .top{background:linear-gradient(100deg,rgba(255,59,92,.42) 0%,rgba(255,138,31,.36) 12%,rgba(255,217,59,.28) 24%,rgba(61,220,132,.22) 34%,rgba(34,211,238,.16) 44%,rgba(79,123,255,.1) 54%,rgba(177,92,255,.05) 62%,rgba(14,18,26,.86) 72%),#0B0E15!important;border-color:rgba(177,92,255,.45)!important;box-shadow:0 18px 40px -28px #B15CFF,inset 0 1px 0 rgba(255,255,255,.06)!important}
+body[data-v=kunden] .top::after{background:var(--rb)!important;box-shadow:0 0 14px rgba(177,92,255,.7)}
+body[data-v=kunden] .tt .tile{background:conic-gradient(from 210deg,#FF3B5C,#FF8A1F,#FFD93B,#3DDC84,#22D3EE,#4F7BFF,#B15CFF,#FF4FD8,#FF3B5C)!important;border-color:rgba(255,255,255,.7)!important;box-shadow:0 0 0 1px rgba(0,0,0,.55),0 0 0 5px rgba(177,92,255,.22),0 8px 24px -6px rgba(0,0,0,.7),0 0 24px -4px #FF4FD8!important}
+body[data-v=kunden] .top h1{background:linear-gradient(95deg,#fff 0%,#FFD93B 22%,#3DDC84 44%,#22D3EE 62%,#B15CFF 82%,#FF4FD8 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
+body[data-v=kunden] .tt small{background:var(--rb);-webkit-background-clip:text;background-clip:text;color:transparent!important;text-shadow:none}
+.kdboard{border:1px solid transparent!important;background:linear-gradient(#0C0F16,#0C0F16) padding-box,linear-gradient(90deg,rgba(255,59,92,.7),rgba(255,217,59,.6),rgba(61,220,132,.6),rgba(34,211,238,.6),rgba(177,92,255,.7),rgba(255,79,216,.7)) border-box!important;box-shadow:0 20px 50px -34px #B15CFF}
+.kdgrid .kw.kdy{background:linear-gradient(90deg,rgba(255,59,92,.22),rgba(255,217,59,.14) 25%,rgba(61,220,132,.1) 50%,rgba(34,211,238,.08) 70%,transparent)!important;border-left:4px solid transparent;border-image:linear-gradient(180deg,#FF3B5C,#FFD93B,#3DDC84,#22D3EE,#B15CFF) 1;color:#fff!important}
+.kdgrid .kw.kdy span{color:#E9D5FF}
+.kdgrid .kk{background-image:linear-gradient(90deg,#FF8A8A,#FFC46B,#FFE36B,#7CF0B0,#67E8F9,#8FB0FF,#C4A1FF,#FF8AE2,#FF8A8A);background-size:12em 100%;background-repeat:repeat-x;-webkit-background-clip:text;background-clip:text;color:transparent;caret-color:#fff}
+.kdgrid .row.kr:hover .kk{filter:brightness(1.18)}
+.kdgrid .kk:focus{color:#fff;-webkit-background-clip:border-box;background-clip:border-box;background-image:none}
+.kdgrid .row.kr:hover .kc:not(.kk){background:linear-gradient(90deg,rgba(255,59,92,.05),rgba(34,211,238,.05),rgba(177,92,255,.06))}
+#kdAdd{background:var(--rb)!important;color:#0B0E15!important;border-color:transparent!important;font-weight:800;box-shadow:0 6px 20px -8px #B15CFF}
+#kdAdd:hover{filter:brightness(1.1)}
+.kdclr{border-color:rgba(255,59,92,.55)!important;color:#FDA4AF!important}.kdclr:hover{background:rgba(255,59,92,.15)!important}
+/* Ziehen: Spaltenkopf (Reihenfolge), rechter Rand (Breite), Griff links (Zeile) */
+.kdgrid .kdh[data-kc]{cursor:grab;position:sticky}
+.kdgrid .kdh.kdrag{opacity:.45}
+.kdgrid .kdh.dropL{box-shadow:inset 3px 0 0 #fff,inset 0 -2px 0 var(--hc)}.kdgrid .kdh.dropR{box-shadow:inset -3px 0 0 #fff,inset 0 -2px 0 var(--hc)}
+.kdgrid .kres{position:absolute;top:0;right:-4px;width:9px;height:100%;cursor:col-resize;z-index:4;touch-action:none}
+.kdgrid .kres::after{content:"";position:absolute;top:22%;bottom:22%;left:4px;width:2px;border-radius:2px;background:rgba(255,255,255,.14);transition:background .15s}
+.kdgrid .kres:hover::after{background:var(--hc);box-shadow:0 0 8px var(--hc)}
+.kdgrid .kgrip{cursor:grab;color:#475569;font:700 12px/1 var(--mono);letter-spacing:-2px;align-items:center;justify-content:center;padding:0!important;user-select:none;transition:color .15s}
+.kdgrid .row.kr:hover .kgrip{color:#C4B5FD}.kdgrid .kgrip:active{cursor:grabbing}
+.kdgrid .row.kr.kdrag>.kc{opacity:.4}
+.kdgrid .row.kr.dropT>.kc{box-shadow:inset 0 3px 0 #22D3EE}.kdgrid .row.kr.dropB>.kc{box-shadow:inset 0 -3px 0 #B15CFF}
+
 [hidden]{display:none!important}
 #sTab td.b{font-weight:700}#sTab .pwm.ed{outline:none;padding:2px 6px;border-radius:6px;font-family:var(--mono)}#sTab td{vertical-align:top}
 #sTab td.ce,#ltab td.ce{cursor:text;border-bottom:1px dashed #2A3446;outline:none}#sTab td.ce:focus,#sTab .pwm.ed:focus,#ltab td.ce:focus{box-shadow:inset 0 0 0 2px var(--cyan);background:var(--panel2)}#ltab td.tg{cursor:pointer;user-select:none}#sTab td.ce:hover,#ltab td.tg:hover,#ltab td.ce:hover{background:rgba(255,255,255,.04)}#ltab td.tg:focus-visible{outline:2px solid var(--cyan)}
@@ -791,7 +826,7 @@ body.nresizing,body.nresizing *{cursor:col-resize!important;user-select:none!imp
   <button class="navbtn" data-v="verkauf" style="--ac:#FBBF24"><span class="tile"><svg viewBox="0 0 24 24"><circle class="f" cx="6" cy="16.5" r="3.6"/><circle class="f" cx="18" cy="16.5" r="3.6"/><circle cx="6" cy="16.5" r="3.6"/><circle cx="18" cy="16.5" r="3.6"/><path d="M6 16.5 9.5 9h6.5L18 16.5M9.5 9 8.3 6H6.5M16 9l-4 7.5h-6M14 6h2.5"/><path d="M20.5 3.5l.6 1.4 1.4.6-1.4.6-.6 1.4-.6-1.4-1.4-.6 1.4-.6z"/></svg></span><span class="lbl">Verkauf<small>Räder · Leasing</small></span><span class="n" id="nOffen">–</span></button>
   <button class="navbtn" data-v="bestell" style="--ac:#39F26B"><span class="tile"><svg viewBox="0 0 24 24"><path class="f" d="M3 8l9-5 9 5-9 5z"/><path d="M3 8l9-5 9 5v8l-9 5-9-5z"/><path d="M3 8l9 5 9-5M12 13v8M7.5 5.5l9 5"/></svg></span><span class="lbl">Bestellungen<small>Teile · Kunden</small></span><span class="n" id="nBest">–</span></button>
   <button class="navbtn" data-v="rekla" style="--ac:#FB923C"><span class="tile"><svg viewBox="0 0 24 24"><path class="f" d="M4 7l8-4 8 4v10l-8 4-8-4z"/><path d="M4 7l8-4 8 4v10l-8 4-8-4z"/><path d="M15 10.5h-5l1.8-1.8M10 10.5l1.8 1.8M10 14.5h4"/></svg></span><span class="lbl">Reklamationen<small>Lieferanten · Ersatz</small></span><span class="n" id="nRekla">–</span></button>
-  <button class="navbtn" data-v="kunden" style="--ac:#F472B6"><span class="tile"><svg viewBox="0 0 24 24"><circle class="f" cx="9" cy="8" r="3.5"/><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.6-3.6 3.3-5.5 6.5-5.5s5.9 1.9 6.5 5.5"/><path d="M16 4.6a3.4 3.4 0 0 1 0 6.8M18 14.6c2 .7 3.2 2.5 3.5 5.4"/></svg></span><span class="lbl">Kunden<small>Verkäufe seit 1995</small></span><span class="n" id="nKunden">–</span></button>
+  <button class="navbtn" data-v="kunden" style="--ac:#B15CFF"><span class="tile"><svg viewBox="0 0 24 24"><circle class="f" cx="9" cy="8" r="3.5"/><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.6-3.6 3.3-5.5 6.5-5.5s5.9 1.9 6.5 5.5"/><path d="M16 4.6a3.4 3.4 0 0 1 0 6.8M18 14.6c2 .7 3.2 2.5 3.5 5.4"/></svg></span><span class="lbl">Kunden<small>Verkäufe seit 1995</small></span><span class="n" id="nKunden">–</span></button>
   <div class="navsep"></div>
   <button class="navbtn" data-v="leasing" style="--ac:#C084FC"><span class="tile"><svg viewBox="0 0 24 24"><path class="f" d="M6 3h9l4 4v14H6z"/><path d="M6 3h9l4 4v14H6zM15 3v4h4"/><path d="M9 12h7M9 15.5h7M9 9h3"/></svg></span><span class="lbl">Leasing-Infos<small>Leasing · Versicherung</small></span></button>
   <button class="navbtn" data-v="lief" style="--ac:#22D3EE"><span class="tile"><svg viewBox="0 0 24 24"><rect class="f" x="2.5" y="6" width="11" height="9" rx="1.5"/><path d="M2.5 6h11v9h-11zM13.5 9.5h4l3.5 3.5v2h-7.5"/><circle cx="7" cy="17.5" r="2"/><circle cx="17" cy="17.5" r="2"/></svg></span><span class="lbl">Lieferanten<small>Kontakte · Logins</small></span></button>
@@ -854,6 +889,8 @@ body.nresizing,body.nresizing *{cursor:col-resize!important;user-select:none!imp
     <div class="toolbar kdtools">
       <label class="search"><svg class="ico" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg><input id="kdSearch" placeholder="Suchen in allen Kunden seit 1995: Name, Marke, Modell, Rahmen-Nr., Telefon, Beleg-Nr. …"></label>
       <button class="btn" type="button" id="kdImp" hidden>📥 Kunden aus Sheet übernehmen</button>
+      <button class="btn" type="button" id="kdRst" hidden title="Spaltenreihenfolge und -breiten zurücksetzen">↺ Spalten</button>
+      <button class="btn kdclr" type="button" id="kdClr" hidden>🗑 Alle löschen</button>
       <button class="btn red" type="button" id="kdAdd">+ Verkauf</button>
     </div>
     <div id="kdForm"></div>
@@ -948,7 +985,7 @@ body.nresizing,body.nresizing *{cursor:col-resize!important;user-select:none!imp
 <script>
 const FB_CONFIG={apiKey:"AIzaSyC_uZPvc5rJETwlS4JbfCoTkkE4ckjtp0M",authDomain:"velocenter-planer.firebaseapp.com",projectId:"velocenter-planer",storageBucket:"velocenter-planer.firebasestorage.app",messagingSenderId:"1018330488700",appId:"1:1018330488700:web:262a4d1660353e6fde8ef9"};
 /* ================= Velocenter Werkstatt-Cockpit – Oberfläche ================= */
-const CLIENT_VERSION='1.5.2';
+const CLIENT_VERSION='1.5.3';
 const USERS=[{id:'kevin',n:'Kevin',c:'#E2232D'},{id:'stefan',n:'Stefan',c:'#F59E0B'},{id:'martina',n:'Martina',c:'#EC4899'},{id:'sascha',n:'Sascha',c:'#22D3EE'},{id:'rene',n:'René',c:'#34D399'}];
 const U=id=>USERS.find(u=>u.id===id)||{n:'',c:'#64748B',id:''};
 const $=id=>document.getElementById(id);
@@ -992,13 +1029,13 @@ const titles={planer:'Planer',verkauf:'Verkaufte Räder',bestell:'Bestellungen',
 function show(v){const nb=document.querySelector(`.navbtn[data-v=${v}]`);if(!nb||nb.hidden)v='planer';const b=document.querySelector(`.navbtn[data-v=${v}]`),top=document.querySelector('.top');
  top.style.setProperty('--ac',b.style.getPropertyValue('--ac'));document.querySelector('main').style.setProperty('--ac',b.style.getPropertyValue('--ac'));$('tIco').innerHTML=b.querySelector('.tile').innerHTML;$('tSub').textContent=b.querySelector('.lbl small').textContent;
  document.querySelectorAll('.view').forEach(s=>s.classList.toggle('on',s.id==='v-'+v));document.querySelectorAll('.navbtn').forEach(x=>x.setAttribute('aria-current',x.dataset.v===v));$('title').textContent=titles[v];
- if(!['tresor','notes'].includes(v)&&(!$('vault').hidden||NOTES))relock();ls.set('vc_view',v);}
+ if(!['tresor','notes'].includes(v)&&(!$('vault').hidden||NOTES))relock();ls.set('vc_view',v);document.body.dataset.v=v;}
 document.querySelectorAll('.navbtn').forEach(b=>b.addEventListener('click',()=>show(b.dataset.v)));
 /* Navigation einklappen */
 document.querySelectorAll('.navbtn').forEach(b=>{b.title=b.querySelector('.lbl').childNodes[0].textContent.trim();});
 function navMini(on,keep){document.body.classList.toggle('navmini',on);$('navTog').setAttribute('aria-label',on?'Navigation ausklappen':'Navigation einklappen');$('navTog').title=on?'Navigation ausklappen':'Navigation einklappen';
  if(keep||!ME)return;ls.set('vc_navmini_'+ME.id,on);db.doc('meta/prefs').set({[ME.id]:{navmini:on}},{merge:true}).catch(()=>{});}
-async function navForUser(){if(!ME)return;navMini(!!ls.get('vc_navmini_'+ME.id,false),true);try{const d=await db.doc('meta/prefs').get();const x=d.exists&&d.data()[ME.id];if(x&&typeof x.navmini==='boolean'){navMini(x.navmini,true);ls.set('vc_navmini_'+ME.id,x.navmini);}}catch(_){}}
+async function navForUser(){if(!ME)return;navMini(!!ls.get('vc_navmini_'+ME.id,false),true);try{const d=await db.doc('meta/prefs').get();const x=d.exists&&d.data()[ME.id];if(x&&typeof x.navmini==='boolean'){navMini(x.navmini,true);ls.set('vc_navmini_'+ME.id,x.navmini);}kdLayLoad(x&&x.kdlay);}catch(_){kdLayLoad(null);}}
 $('navTog').addEventListener('click',()=>navMini(!document.body.classList.contains('navmini')));
 
 function toast(t,undo){const el=$('toast');el.textContent=t;el.classList.toggle('act',!!undo);if(undo){const b=document.createElement('button');b.type='button';b.className='undo';b.textContent='Rückgängig';b.onclick=()=>{undo();el.classList.remove('on','act');};el.append(b);}el.classList.add('on');clearTimeout(el._t);el._t=setTimeout(()=>el.classList.remove('on','act'),undo?6000:2200);}
@@ -2007,7 +2044,18 @@ $('v-rekla').addEventListener('submit',e=>{if(!e.target.dataset.rf)return;e.prev
    Gespeichert je Jahr in meta/kd_<Jahr> = {items:{id:{…}}} (bzw. meta/kd_x ohne Jahr) – wenige Lesevorgänge, Regel meta/* reicht.
    Felder: dat (TT.MM.JJJJ) · nr (Beleg-Nr.) · marke · modell · preis · leas · kunde · vers · rahmen · tel · k (Spalte ohne Überschrift) · y (Paket). */
 let KD={},KDIMP=false,kdDirty=true,kdList=[],kdYears=2,kdEdit=null;
-const kdAll=()=>{if(kdDirty){kdList=[];for(const y in KD)for(const id in KD[y]){const r=KD[y][id];if(r&&r.id){r._t=[r.kunde,r.marke,r.modell,r.rahmen,r.tel,r.nr,r.leas,r.vers,r.dat,r.preis].join(' ').toLowerCase();r._d=vkDate(r.dat)||0;kdList.push(r);}}kdList.sort((a,b)=>b._d-a._d||String(b.nr).localeCompare(String(a.nr),'de',{numeric:true}));kdDirty=false;}return kdList;};
+const kdAll=()=>{if(kdDirty){kdList=[];for(const y in KD)for(const id in KD[y]){const r=KD[y][id];if(r&&r.id){r._t=[r.kunde,r.marke,r.modell,r.rahmen,r.tel,r.nr,r.leas,r.vers,r.dat,r.preis].join(' ').toLowerCase();r._d=vkDate(r.dat)||0;r._o=(r.o!=null&&r.o!==''&&!isNaN(+r.o))?+r.o:r._d;kdList.push(r);}}kdList.sort((a,b)=>b._o-a._o||String(b.nr).localeCompare(String(a.nr),'de',{numeric:true}));kdDirty=false;}return kdList;};
+/* Spalten wie in Excel: Reihenfolge per Ziehen am Kopf, Breite am rechten Rand des Kopfs (Doppelklick = Standard).
+   Je Profil in meta/prefs[ID].kdlay = {o:[Spalten], w:{Spalte:px}} (+ localStorage). Zeilen: Griff ⋮⋮ links, nur innerhalb eines Jahres (Feld o). */
+const KDC=[{k:'dat',n:'Datum',w:98,c:'kd'},{k:'nr',n:'Beleg',w:66,c:'kn'},{k:'marke',n:'Marke',w:130,c:'km'},{k:'modell',n:'Modell',min:200,fr:1.6,c:'kmo'},{k:'preis',n:'Preis',w:96,c:'kp'},{k:'leas',n:'Leasing',w:92,c:'kl2'},{k:'kunde',n:'Kunde',min:170,fr:1.2,c:'kk'},{k:'vers',n:'Vers.',w:56,c:'kv'},{k:'rahmen',n:'Rahmen-Nr.',w:130,c:'krn'},{k:'tel',n:'Telefon',w:130,c:'kt'},{k:'k',n:'',w:34,c:'kx'}];
+const KDRB=['#FF3B5C','#FF6B2C','#FF9F1C','#FFD93B','#A3E635','#3DDC84','#22D3EE','#38BDF8','#4F7BFF','#8B5CF6','#D946EF'];
+const kdDef=()=>({o:KDC.map(c=>c.k),w:{}});
+let kdLay=kdDef(),kdDrag=null;
+function kdLayLoad(x){if(!ME)return;const l=ls.get('vc_kdlay_'+ME.id,null);if(l&&Array.isArray(l.o))kdLay=l;if(x&&Array.isArray(x.o)){kdLay={o:x.o,w:x.w||{}};ls.set('vc_kdlay_'+ME.id,kdLay);}rk();}
+function kdLaySave(){if(!ME)return;ls.set('vc_kdlay_'+ME.id,kdLay);const p=db.doc('meta/prefs');p.update({[ME.id+'.kdlay']:kdLay}).catch(()=>p.set({[ME.id]:{kdlay:kdLay}},{merge:true})).catch(()=>{});}
+const kdCols=()=>{const o=(kdLay.o||[]).filter((k,i,a)=>KDC.some(c=>c.k===k)&&a.indexOf(k)===i);KDC.forEach(c=>{if(!o.includes(c.k))o.push(c.k);});return o.map(k=>KDC.find(c=>c.k===k));};
+function kdTpl(){const g=$('kdGrid');if(!g)return;let mw=66;const t=['26px'];kdCols().forEach(c=>{const w=kdLay.w&&kdLay.w[c.k];if(w){t.push(w+'px');mw+=w;}else if(c.fr){t.push(`minmax(${c.min}px,${c.fr}fr)`);mw+=c.min;}else{t.push(c.w+'px');mw+=c.w;}});t.push('40px');g.style.gridTemplateColumns=t.join(' ');g.style.minWidth=mw+'px';
+ if($('kdRst'))$('kdRst').hidden=JSON.stringify({o:kdCols().map(c=>c.k),w:kdLay.w||{}})===JSON.stringify(kdDef());}
 const kdYear=r=>{const d=r._d?new Date(r._d):null;return d?d.getFullYear():'ohne Datum';};
 const kdPreis=v=>{v=String(v==null?'':v).trim();if(/^\d+([.,]\d+)?$/.test(v)){const n=parseFloat(v.replace(',','.'));return n.toLocaleString('de-DE',{maximumFractionDigits:2})+' €';}return v;};
 function rk(){const g=$('kdGrid');if(!g)return;const all=kdAll();{const cy=new Date().getFullYear();$('nKunden').textContent=all.length?all.filter(r=>r._d&&new Date(r._d).getFullYear()===cy).length:'–';$('nKunden').title=all.length.toLocaleString('de-DE')+' Einträge gesamt · Zahl = Verkäufe '+cy;}
@@ -2017,15 +2065,18 @@ function rk(){const g=$('kdGrid');if(!g)return;const all=kdAll();{const cy=new D
  const more=q?list.length>600:all.some(r=>r._d&&new Date(r._d).getFullYear()<=now-kdYears);list=list.slice(0,600);
  $('kdMore').hidden=q||!more;$('kdMore').textContent='Ältere Jahre anzeigen (bis '+(now-kdYears-1)+')';
  $('kdForm').innerHTML=kdEdit?kdFormH():'';
- const H=['Datum','Beleg','Marke','Modell','Preis','Leasing','Kunde','Vers.','Rahmen-Nr.','Telefon','',''];
- let h=H.map((n,i)=>`<div class="hd kdh${i===6?' kl':''}">${n}</div>`).join('');let yr=null;const cnt={};list.forEach(r=>{const y=kdYear(r);cnt[y]=(cnt[y]||0)+1;});
+ if($('kdClr'))$('kdClr').hidden=!(ME&&ME.adm)||!all.length;
+ const cols=kdCols();kdTpl();
+ let h=`<div class="hd kdh kgh" style="--hc:${KDRB[0]}"></div>`+cols.map((c,i)=>`<div class="hd kdh${c.k==='kunde'?' kl':''}" draggable="true" data-kc="${c.k}" title="Ziehen = Spalte verschieben · rechter Rand = Breite" style="--hc:${KDRB[i%KDRB.length]}">${c.n||'·'}<span class="kres" data-kres="${c.k}" title="Ziehen = Breite ändern · Doppelklick = Standard"></span></div>`).join('')+`<div class="hd kdh" style="--hc:${KDRB[KDRB.length-1]}"></div>`;let yr=null;const cnt={};list.forEach(r=>{const y=kdYear(r);cnt[y]=(cnt[y]||0)+1;});
  if(!all.length){g.innerHTML=h+`<div class="kdempty">${ME&&ME.adm?'Noch keine Kunden – oben „📥 Kunden aus Sheet übernehmen“ und die .xlsx des Sheets wählen.':'Noch keine Kunden übernommen.'}</div>`;return;}
  for(const r of list){const y=kdYear(r);if(y!==yr){yr=y;h+=`<div class="kw kdy">${y}<span>${cnt[y]} ${cnt[y]===1?'Verkauf':'Verkäufe'}${q?' (Treffer)':''}</span></div>`;}
-  const b=brandOfB({marke:r.marke,modell:r.modell}),lg=b&&(BUSER.logos||{})[b.k];
-  const ce=(f,v,cls)=>`<div class="c kc ${cls||''}" contenteditable="true" spellcheck="false" data-kid="${esc(r.id)}" data-ky="${esc(r.y)}" data-kf="${f}">${esc(v==null?'':v)}</div>`;
-  h+=`<div class="row kr">${ce('dat',dshort(r.dat)===r.dat?r.dat:r.dat,'kd')}${ce('nr',r.nr,'kn')}<div class="c kc km" data-kid="${esc(r.id)}">${lg?`<img src="${lg}" alt="" class="kml">`:''}<span class="kmt" contenteditable="true" spellcheck="false" data-kid="${esc(r.id)}" data-ky="${esc(r.y)}" data-kf="marke">${esc(r.marke||'')}</span></div>${ce('modell',r.modell,'kmo')}${ce('preis',kdPreis(r.preis),'kp')}${ce('leas',r.leas,'kl2')}${ce('kunde',r.kunde,'kk')}${ce('vers',r.vers,'kv')}${ce('rahmen',r.rahmen,'krn')}${ce('tel',r.tel,'kt')}${ce('k',r.k,'kx')}<div class="c kc kdel"><button class="nx" type="button" data-kdel="${esc(r.id)}" data-ky="${esc(r.y)}" title="Eintrag löschen">×</button></div></div>`;}
+  const id=esc(r.id),ky=esc(r.y);
+  h+=`<div class="row kr"><div class="c kc kgrip" draggable="true" data-kid="${id}" data-ky="${ky}" title="Ziehen = Zeile verschieben">⋮⋮</div>${cols.map(c=>kdCell(c,r,id,ky)).join('')}<div class="c kc kdel" data-kid="${id}" data-ky="${ky}"><button class="nx" type="button" data-kdel="${id}" data-ky="${ky}" title="Eintrag löschen">×</button></div></div>`;}
  g.innerHTML=h+(q&&!list.length?'<div class="kdempty">Nichts gefunden.</div>':'');}
-async function kdPut(y,r){const c=Object.assign({},r);delete c._t;delete c._d;c.ts=stamp();c.tsVon=ME?ME.id:'';KD[y]=Object.assign({},KD[y]||{},{[r.id]:c});kdDirty=true;
+function kdCell(c,r,id,ky){if(c.k==='marke'){const b=brandOfB({marke:r.marke,modell:r.modell}),lg=b&&(BUSER.logos||{})[b.k];
+  return `<div class="c kc km" data-kid="${id}" data-ky="${ky}" data-kc="marke">${lg?`<img src="${lg}" alt="" class="kml" draggable="false">`:''}<span class="kmt" contenteditable="true" spellcheck="false" data-kid="${id}" data-ky="${ky}" data-kf="marke">${esc(r.marke||'')}</span></div>`;}
+ const v=c.k==='preis'?kdPreis(r.preis):r[c.k];return `<div class="c kc ${c.c}" contenteditable="true" spellcheck="false" data-kid="${id}" data-ky="${ky}" data-kf="${c.k}" data-kc="${c.k}">${esc(v==null?'':v)}</div>`;}
+async function kdPut(y,r){const c=Object.assign({},r);delete c._t;delete c._d;delete c._o;c.ts=stamp();c.tsVon=ME?ME.id:'';KD[y]=Object.assign({},KD[y]||{},{[r.id]:c});kdDirty=true;
  try{await db.doc('meta/kd_'+y).update({['items.'+r.id]:c});}catch(e){try{await db.doc('meta/kd_'+y).set({items:Object.assign({},KD[y])},{merge:true});}catch(e2){fail(e2);}}}
 function kdFormH(){const opt='<option value="">–</option>'+Object.entries(FN).map(([k,n])=>`<option value="${esc(k)}">${esc(k)} · ${esc(n)}</option>`).join('');
  return `<form class="edf card kdf" data-kf2="new" autocomplete="off" novalidate><b>Neuer Verkauf / Kunde</b><datalist id="kdBrandL">${allBrands().map(x=>`<option value="${esc(x.n)}">`).join('')}</datalist><div class="g4">
@@ -2045,6 +2096,43 @@ $('v-kunden').addEventListener('submit',async e=>{if(!e.target.dataset.kf2)retur
 $('kdGrid').addEventListener('keydown',e=>{const c=e.target.closest('[contenteditable]');if(c&&e.key==='Enter'){e.preventDefault();c.blur();}if(c&&e.key==='Escape'){c.blur();kdDirty=true;rk();}});
 $('kdGrid').addEventListener('focusout',e=>{const c=e.target.closest('[contenteditable][data-kf]');if(!c)return;const y=c.dataset.ky,id=c.dataset.kid,f=c.dataset.kf,r=KD[y]&&KD[y][id];if(!r)return;let v=c.innerText.trim();
  const cur=f==='preis'?kdPreis(r.preis):(r[f]||'');if(v===String(cur))return;if(f==='preis'&&/^[\d.]+(,\d+)?\s*€?$/.test(v))v=v.replace(/\s*€/,'').replace(/\./g,'');kdPut(y,Object.assign({},r,{[f]:v})).then(()=>{rk();});toast('Gespeichert');});
+{const KG=$('kdGrid');
+ const mark=()=>KG.querySelectorAll('.dropL,.dropR,.dropT,.dropB').forEach(x=>x.classList.remove('dropL','dropR','dropT','dropB'));
+ const end=()=>{mark();KG.querySelectorAll('.kdrag').forEach(x=>x.classList.remove('kdrag'));kdDrag=null;};
+ KG.addEventListener('dragstart',e=>{const t=e.target.closest?e.target:e.target.parentNode,hc=t.closest('.kdh[data-kc]'),gr=t.closest('.kgrip');
+  if(hc)kdDrag={t:'col',k:hc.dataset.kc};else if(gr)kdDrag={t:'row',id:gr.dataset.kid,y:gr.dataset.ky};else{e.preventDefault();return;}
+  (hc||gr.parentNode).classList.add('kdrag');e.dataTransfer.effectAllowed='move';try{e.dataTransfer.setData('text/plain','');}catch(_){}});
+ KG.addEventListener('dragover',e=>{if(!kdDrag)return;const t=e.target.closest?e.target:e.target.parentNode;mark();kdDrag.to=null;
+  if(kdDrag.t==='col'){const c=t.closest('[data-kc]');if(!c||c.dataset.kc===kdDrag.k)return;e.preventDefault();const rc=c.getBoundingClientRect(),after=e.clientX>rc.left+rc.width/2;
+   const hd=KG.querySelector(`.kdh[data-kc="${c.dataset.kc}"]`);if(hd)hd.classList.add(after?'dropR':'dropL');kdDrag.to=c.dataset.kc;kdDrag.after=after;}
+  else{const c=t.closest('[data-kid]'),row=c&&c.closest('.row.kr');if(!row||c.dataset.kid===kdDrag.id)return;e.preventDefault();const rc=c.getBoundingClientRect(),after=e.clientY>rc.top+rc.height/2;
+   row.classList.add(after?'dropB':'dropT');kdDrag.to=c.dataset.kid;kdDrag.ty=c.dataset.ky;kdDrag.after=after;}});
+ KG.addEventListener('drop',e=>{if(!kdDrag||!kdDrag.to)return;e.preventDefault();const d=kdDrag;end();
+  if(d.t==='col'){const o=kdCols().map(c=>c.k).filter(k=>k!==d.k);let i=o.indexOf(d.to);if(d.after)i++;o.splice(i,0,d.k);kdLay=Object.assign({},kdLay,{o});kdLaySave();rk();}
+  else kdMoveRow(d);});
+ KG.addEventListener('dragend',end);
+ KG.addEventListener('pointerdown',e=>{const h=e.target.closest('.kres');if(!h)return;e.preventDefault();e.stopPropagation();const hd=h.parentNode,k=h.dataset.kres,x0=e.clientX,w0=hd.getBoundingClientRect().width;
+  hd.draggable=false;document.body.classList.add('nresizing');
+  const mv=ev=>{kdLay=Object.assign({},kdLay,{w:Object.assign({},kdLay.w,{[k]:Math.max(40,Math.round(w0+ev.clientX-x0))})});kdTpl();};
+  const up=()=>{document.removeEventListener('pointermove',mv);document.removeEventListener('pointerup',up);document.body.classList.remove('nresizing');hd.draggable=true;kdLaySave();};
+  document.addEventListener('pointermove',mv);document.addEventListener('pointerup',up);});
+ KG.addEventListener('dblclick',e=>{const h=e.target.closest('.kres');if(!h)return;const w=Object.assign({},kdLay.w);delete w[h.dataset.kres];kdLay=Object.assign({},kdLay,{w});kdTpl();kdLaySave();});}
+// Zeile verschieben: ganze Jahresliste neu durchnummerieren (o ab 1. Januar, je Zeile 1 min) – ein Schreibvorgang je Jahres-Paket
+function kdMoveRow(d){const all=kdAll(),a=all.find(r=>r.id===d.id&&String(r.y)===d.y),t=all.find(r=>r.id===d.to&&String(r.y)===d.ty);if(!a||!t)return;
+ const y=kdYear(a);if(kdYear(t)!==y){toast('Zeilen nur innerhalb eines Jahres verschieben');return;}
+ const yl=all.filter(r=>kdYear(r)===y&&r!==a);let i=yl.indexOf(t);if(d.after)i++;yl.splice(i,0,a);
+ const base=typeof y==='number'?new Date(y,0,1).getTime():0,n=yl.length,by={};
+ yl.forEach((r,j)=>{const c=Object.assign({},r,{o:base+(n-j)*60000});delete c._t;delete c._d;delete c._o;if(r===a){c.ts=stamp();c.tsVon=ME?ME.id:'';}
+  KD[r.y]=Object.assign({},KD[r.y],{[r.id]:c});(by[r.y]=by[r.y]||{})['items.'+r.id]=c;});
+ kdDirty=true;rk();for(const yy in by)db.doc('meta/kd_'+yy).update(by[yy]).catch(fail);toast('Zeile verschoben');}
+$('kdRst').addEventListener('click',()=>{kdLay=kdDef();kdLaySave();rk();toast('Spalten zurückgesetzt');});
+// Alle Kunden löschen (nur Admin, mit Bestätigung). Das Google-Sheet bleibt unberührt -> über „📥 Kunden aus Sheet übernehmen“ jederzeit neu holbar.
+$('kdClr').addEventListener('click',()=>{if(!ME||!ME.adm)return;const n=kdAll().length;
+ dlg(`<h3>🗑 Alle Kunden löschen</h3><p class="hint">Löscht <b>alle ${n.toLocaleString('de-DE')} Einträge</b> im Reiter Kunden – für alle Nutzer. Das Google-Sheet bleibt unverändert; über „📥 Kunden aus Sheet übernehmen“ kannst du später neu übernehmen.</p><form id="kcF" autocomplete="off"><label>Zum Bestätigen <b>LÖSCHEN</b> eintippen<input id="kcIn" autocomplete="off"></label><div class="err" id="kcE"></div><div class="acts"><button class="btn" type="button" data-close>Abbrechen</button><button class="btn red" type="submit">Endgültig löschen</button></div></form>`);
+ $('kcF').addEventListener('submit',async ev=>{ev.preventDefault();if($('kcIn').value.trim().toUpperCase()!=='LÖSCHEN'){$('kcE').textContent='Bitte genau LÖSCHEN eintippen.';return;}
+  try{$('kcE').textContent='Löscht …';for(const y of Object.keys(KD))if(KD[y]&&Object.keys(KD[y]).length)await db.doc('meta/kd_'+y).delete();
+   await db.doc('meta/import').set({kunden:false,kundenGeloescht:stamp(),kundenGeloeschtVon:ME.id},{merge:true});
+   KD={};kdDirty=true;dlgClose();rk();toast('Alle Kunden gelöscht');}catch(err){$('kcE').textContent=err.message||String(err);}});});
 // Einmalige Übernahme aus der Sheet-.xlsx (Reiter „Kunden“) – Daten gehen direkt in die Datenbank, nie ins Repo
 $('kdImp').addEventListener('click',()=>{if(!ME.adm)return;dlg(`<h3>📥 Kunden aus dem Sheet übernehmen</h3><p class="hint">Im Google-Sheet „Abhol-Werkstattplaner“: <b>Datei → Herunterladen → Microsoft Excel (.xlsx)</b>, dann die Datei hier wählen. Übernommen wird der Reiter <b>„Kunden“</b> komplett (alle Jahre).</p><form id="kiF"><input id="kiFile" type="file" accept=".xlsx"><div class="err" id="kiE"></div><div class="acts"><button class="btn" type="button" data-close>Abbrechen</button><button class="btn red" type="submit">Übernehmen</button></div></form>`);
  $('kiF').addEventListener('submit',async ev=>{ev.preventDefault();const f=$('kiFile').files[0];if(!f){$('kiE').textContent='Bitte die .xlsx-Datei wählen.';return;}try{$('kiE').textContent='Lädt …';const n=await importKunden(f);dlgClose();toast(n.toLocaleString('de-DE')+' Kunden übernommen');}catch(err){$('kiE').textContent=err.message||String(err);}});});
