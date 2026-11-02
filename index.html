@@ -449,7 +449,7 @@ body.navmini #switchUser{font-size:0;padding:6px 8px;margin:0}body.navmini #swit
 .vtab td.d-ok.miss:empty::before{content:"fehlt";color:#FCA5A5;font-weight:700}
 .vtab td.d-lende{color:#67E8F9}
 .edit.din{width:132px;padding:3px 4px;font:700 12px var(--mono);color-scheme:dark;background:var(--panel2);color:#fff;border:1px solid var(--cyan);border-radius:7px}
-.vtab thead th:nth-child(6){color:#C4B5FD}.vtab thead th:nth-child(7){color:#34D399}.vtab thead th:nth-child(8){color:#67E8F9}
+.vtab thead tr.h2 th:nth-child(6){color:#C4B5FD}.vtab thead tr.h2 th:nth-child(7){color:#34D399}.vtab thead tr.h2 th:nth-child(8){color:#67E8F9}
 
 .vtab td.vnote{font-family:var(--body);font-size:12.5px;color:#FDE68A;min-width:180px;max-width:280px;white-space:normal}.vtab td.vnote:empty::before{content:"📝 –";color:var(--muted)}.vtab thead th.thn{color:#FDE68A}
 
@@ -527,6 +527,29 @@ body.navmini #switchUser{font-size:0;padding:6px 8px;margin:0}body.navmini #swit
 @media (max-width:720px){.zcols{grid-template-columns:1fr}.qa{grid-template-columns:1fr}.qa dt{padding-bottom:0}}
 .lctop{display:flex;justify-content:flex-end;margin:-4px -2px -6px}
 .lctop .edbtn{margin-left:0}
+.bchip{display:inline-block;font:800 10.5px/1 Outfit,var(--display),sans-serif;letter-spacing:.04em;color:#E8ECF3;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.16);border-radius:5px;padding:2px 5px 2px;margin-right:6px;vertical-align:1px}
+.blg{height:13px;width:auto;max-width:64px;object-fit:contain;margin-right:6px;vertical-align:-2px}
+.who2 .wp,.bike .wp{border-radius:10px;padding:6px 10px;margin:-6px -10px;transition:background .35s,box-shadow .35s}
+.bike .wp{margin:-6px 0 -6px -10px}
+.fx-m .wp,.wp.fx-m{background:linear-gradient(90deg,rgba(251,191,36,.30),rgba(251,191,36,.07));box-shadow:inset 0 0 0 1px rgba(251,191,36,.45),0 0 14px rgba(251,191,36,.12)}
+.fx-b .wp,.wp.fx-b{background:linear-gradient(90deg,rgba(52,211,153,.30),rgba(52,211,153,.07));box-shadow:inset 0 0 0 1px rgba(52,211,153,.45),0 0 14px rgba(52,211,153,.12)}
+.fx-mb .wp,.wp.fx-mb{background:linear-gradient(90deg,rgba(251,191,36,.34),rgba(52,211,153,.34));box-shadow:inset 0 0 0 1px rgba(160,205,110,.5),0 0 16px rgba(52,211,153,.16)}
+.fx-m .wp b,.wp.fx-m .name{color:#FDE68A}.fx-b .wp b,.wp.fx-b .name{color:#A7F3D0}.fx-mb .wp b,.wp.fx-mb .name{color:#fff;text-shadow:0 0 10px rgba(52,211,153,.45)}
+.bike .h{flex-wrap:wrap}.bike .h>.wp,.bike .h>div:first-child{flex:1 1 150px;min-width:150px}.bike .h .clogo{flex:none}.bike .h>.lsel{flex:none}
+/* Leasing-Gruppe (Antrag · O.K. · L.-Ende): Kopf + Trennlinien */
+.vtab thead tr.h1 th{height:24px;padding:6px 8px 0;border-bottom:0}
+.vtab thead tr.h2 th{top:30px}
+.vtab thead th.lgrp{text-align:center;font:700 11px/1 Outfit,var(--display),sans-serif;letter-spacing:.22em;text-transform:uppercase;color:#E9D5FF;border-left:1px solid rgba(167,139,250,.35);border-right:1px solid rgba(103,232,249,.35);border-top:1px solid rgba(167,139,250,.25);border-radius:8px 8px 0 0;background:linear-gradient(90deg,rgba(196,181,253,.10),rgba(52,211,153,.08),rgba(103,232,249,.10)),#0d1119;text-shadow:0 0 10px rgba(196,181,253,.45)}
+.vtab thead tr.h2 th:nth-child(5),.vtab tbody td:nth-child(5){border-left:1px solid rgba(167,139,250,.35)}
+.vtab thead tr.h2 th:nth-child(8),.vtab tbody td:nth-child(8){border-right:1px solid rgba(103,232,249,.35)}
+.vtab thead tr.h2 th:nth-child(5),.vtab thead tr.h2 th:nth-child(6),.vtab thead tr.h2 th:nth-child(7),.vtab thead tr.h2 th:nth-child(8),.vtab tbody td:nth-child(5),.vtab tbody td:nth-child(6),.vtab tbody td:nth-child(7),.vtab tbody td:nth-child(8){text-align:center}
+.vtab tbody td:nth-child(5) .lcell{justify-content:center}
+.vtab thead th.thb{line-height:1.25;white-space:normal;min-width:96px}
+.vtab td.kcell{cursor:pointer;font-family:var(--mono);font-size:12.5px;font-weight:700;color:#E2E8F0;min-width:64px;white-space:nowrap;border-bottom:1px dashed #2A3446}
+.vtab td.kcell:hover{background:rgba(255,255,255,.05)}.vtab td.kcell:focus-visible{outline:2px solid var(--cyan)}
+.vtab td.kcell:empty::before{content:"📅 –";color:var(--muted);font-weight:400}
+.vtab td.kcell.hot{color:#FDBA74}
+.ksel{font:600 12.5px var(--mono);min-width:200px}
 
 [hidden]{display:none!important}
 #sTab td.b{font-weight:700}#sTab .pwm.ed{outline:none;padding:2px 6px;border-radius:6px;font-family:var(--mono)}#sTab td{vertical-align:top}
@@ -583,7 +606,7 @@ body.navmini #switchUser{font-size:0;padding:6px 8px;margin:0}body.navmini #swit
     <div class="toolbar">
       <label class="search"><svg class="ico" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg><input id="vkSearch" placeholder="Name, Modell oder Leasing suchen"></label>
       <div class="seg" id="vkViewSeg"><button class="btn" type="button" data-vv="liste" aria-pressed="true">☰ Liste</button><button class="btn" type="button" data-vv="karten" aria-pressed="false">▦ Karten</button></div>
-      <select class="btn sortsel" id="vkSortSel" aria-label="Sortieren"><option value="neu">Neueste zuerst</option><option value="lt">Nach Liefertermin</option><option value="status">Nach Status</option><option value="name">Nach Name</option></select>
+      <select class="btn sortsel" id="vkSortSel" aria-label="Sortieren"><option value="neu">Neueste zuerst</option><option value="lt">Nach Liefertermin</option><option value="status">Nach Status</option></select>
       <button class="btn" type="button" id="vkDone" aria-pressed="false">Abgeholte zeigen</button>
       <button class="btn red" type="button" id="vkAdd">+ Verkauftes Rad</button>
     </div>
@@ -661,7 +684,7 @@ body.navmini #switchUser{font-size:0;padding:6px 8px;margin:0}body.navmini #swit
 <script>
 const FB_CONFIG={apiKey:"AIzaSyC_uZPvc5rJETwlS4JbfCoTkkE4ckjtp0M",authDomain:"velocenter-planer.firebaseapp.com",projectId:"velocenter-planer",storageBucket:"velocenter-planer.firebasestorage.app",messagingSenderId:"1018330488700",appId:"1:1018330488700:web:262a4d1660353e6fde8ef9"};
 /* ================= Velocenter Werkstatt-Cockpit – Oberfläche ================= */
-const CLIENT_VERSION='1.1.9';
+const CLIENT_VERSION='1.2.0';
 const USERS=[{id:'kevin',n:'Kevin',c:'#E2232D'},{id:'stefan',n:'Stefan',c:'#F59E0B'},{id:'martina',n:'Martina',c:'#EC4899'},{id:'sascha',n:'Sascha',c:'#22D3EE'},{id:'rene',n:'René',c:'#34D399'}];
 const U=id=>USERS.find(u=>u.id===id)||{n:'',c:'#64748B',id:''};
 const $=id=>document.getElementById(id);
@@ -865,43 +888,53 @@ function stats(el,list,active){$(el).innerHTML=list.map(x=>`<button class="stat$
 
 /* ================= VERKAUF ================= */
 let FN={BL:'Bikeleasing',CB:'Company Bike',KM:'Kazenmaier',BB:'Businessbike',JR:'JobRad',DD:'Deutsche Dienstrad',LB:'Lease a Bike',RD:'RIDE',ER:'Eurorad'};
-let vkEdit=null,vkShowDone=false,vkF='',vkView=ls.get('vc_vkview','liste'),vkSort=ls.get('vc_vksort','neu');
-const VF=[['dat','Verkauft am'],['modell','Modell'],['name','Kunde'],['lt','Liefertermin'],['antrag','Antrag'],['ok','O.K.'],['lende','Leasing-Ende'],['notiz','Notiz']];
+let vkEdit=null,vkShowDone=false,vkF='',vkView=ls.get('vc_vkview','liste'),vkSort=ls.get('vc_vksort','neu');if(!['neu','lt','status'].includes(vkSort))vkSort='neu';
+const VF=[['dat','Vom Kunde bestellt am'],['modell','Modell'],['name','Kunde'],['lt','Liefertermin'],['antrag','Antrag'],['ok','O.K.'],['lende','Leasing-Ende'],['notiz','Notiz']];
 function rv(){const s1=($('vkSearch').value||'').toLowerCase();
  const open=V.filter(b=>b.a!=='1'),F={nm:b=>b.a!=='1'&&b.m!=='1'&&b.b!=='1',mw:b=>b.a!=='1'&&b.m==='1'&&b.b!=='1',ok:b=>b.a!=='1'&&b.b==='1',lk:b=>b.a!=='1'&&b.firma&&!b.ok};
  stats('vkStats',[{k:'nm',n:'Noch montieren',v:V.filter(F.nm).length,c:'#FBBF24',i:'wrench'},{k:'mw',n:'Montiert · wartet auf O.K.',v:V.filter(F.mw).length,c:'#60A5FA',i:'clock'},{k:'ok',n:'O.K. · abholbereit',v:V.filter(F.ok).length,c:'#34D399',i:'check'},{k:'lk',n:'Leasing ohne O.K.',v:V.filter(F.lk).length,c:'#F87171',i:'alert'}],vkF);
- const list=V.filter(b=>(vkShowDone||b.a!=='1'||b.id===vkEdit)&&(!vkF||F[vkF](b)||b.id===vkEdit)&&(!s1||(b.modell+' '+b.name+' '+(FN[b.firma]||'')+' '+b.firma).toLowerCase().includes(s1)));
+ const list=V.filter(b=>(vkShowDone||b.a!=='1'||b.id===vkEdit)&&(!vkF||F[vkF](b)||b.id===vkEdit)&&(!s1||(b.modell+' '+b.name+' '+(FN[b.firma]||'')+' '+b.firma+' '+(b.lt||'')+' '+((brandOf(b.modell)||{}).n||'')).toLowerCase().includes(s1)));
  list.sort(vkCmp);
  document.querySelectorAll('#vkViewSeg .btn').forEach(x=>x.setAttribute('aria-pressed',x.dataset.vv===vkView));$('vkSortSel').value=vkSort;
  const form=vkEdit==='new'?vkForm({id:'new'}):vkEdit&&V.find(x=>x.id===vkEdit)?vkForm(V.find(x=>x.id===vkEdit)):'';
  if(document.querySelector('#cards [contenteditable]:focus, #cards .din'))return;
- if(vkView==='liste'){$('cards').className='vlist';$('cards').innerHTML=form+(list.length?`<div class="tbl vtab"><table><thead><tr><th></th><th>Kunde · Modell</th><th>Leasing</th><th>Verkauft</th><th>LT</th><th>Antrag</th><th>O.K.</th><th>L.-Ende</th><th class="thn">Notiz</th><th>Beratung</th><th>Status</th><th></th></tr></thead><tbody>${list.map(vkRow).join('')}</tbody></table></div>`:'<p class="empty">Keine Räder in dieser Auswahl.</p>');}
+ if(vkView==='liste'){$('cards').className='vlist';$('cards').innerHTML=form+(list.length?`<div class="tbl vtab"><table><thead><tr class="h1"><th colspan="4"></th><th colspan="4" class="lgrp"><span>Leasing</span></th><th colspan="4"></th></tr><tr class="h2"><th></th><th>Kunde · Modell</th><th class="thb">Vom Kunde<br>bestellt am</th><th>LT</th><th>Anbieter</th><th>Antrag</th><th>O.K.</th><th>L.-Ende</th><th class="thn">Notiz</th><th>Beratung</th><th>Status</th><th></th></tr></thead><tbody>${list.map(vkRow).join('')}</tbody></table></div>`:'<p class="empty">Keine Räder in dieser Auswahl.</p>');}
  else{$('cards').className='cards';$('cards').innerHTML=form+(list.filter(b=>b.id!==vkEdit).map(vkCard).join('')||'<p class="empty">Keine Räder in dieser Auswahl.</p>');}
  $('nOffen').textContent=V.filter(b=>b.a!=='1').length;}
 /* Sortierung: Datum „17.8.“ / „29.09.“ / LT „38“ „KW 38“ „Lager“ */
 function vkDate(s){const m=String(s||'').match(/(\d{1,2})\.(\d{1,2})\.?(\d{2,4})?/);if(!m)return 0;const now=new Date();let y=m[3]?+m[3]:now.getFullYear();if(y<100)y+=2000;let d=new Date(y,+m[2]-1,+m[1]);if(!m[3]&&d>new Date(now.getTime()+60*864e5))d=new Date(y-1,+m[2]-1,+m[1]);return d.getTime();}
 function vkLt(s){s=String(s||'').trim();if(/lager|^l$/i.test(s))return 0;const m=s.match(/(\d{1,2})/);if(!m)return 999;let k=+m[1];const ck=kw(new Date());if(k<ck-20)k+=53;return k;}
 const vkRank=b=>b.a==='1'?4:b.b==='1'?3:b.m==='1'?2:1;
-function vkCmp(a,b){if(vkSort==='lt')return vkLt(a.lt)-vkLt(b.lt);if(vkSort==='status')return vkRank(a)-vkRank(b)||vkDate(b.dat)-vkDate(a.dat);if(vkSort==='name')return String(a.name).localeCompare(String(b.name));return vkDate(b.dat)-vkDate(a.dat);}
+function vkCmp(a,b){if(vkSort==='lt')return vkLt(a.lt)-vkLt(b.lt)||vkDate(b.dat)-vkDate(a.dat);if(vkSort==='status')return vkRank(a)-vkRank(b)||vkDate(b.dat)-vkDate(a.dat);return vkDate(b.dat)-vkDate(a.dat);}
 function ltHot(lt){const k=vkLt(lt),ck=kw(new Date());return k!==999&&k!==0&&k<=ck+1;}
+// Herstellermarke aus dem Modelltext (Verkauf): Logo, sonst Marken-Schild, sonst 🚲
+const BRANDS=[{k:'KTM',n:'KTM',c:'#FF6A00',re:/\bktm\b|macina|gravelator|revelator|scarp|kapoho|myroon|lycan|chicago|\b(tour|city|sport|team|style|fun|cross|gran|aera|life)\s*(px|p|sx|cx)?\s*-?\d{3}\b|\bpx\s*\d{3}\b|\bsx[- ]?(master|elite|prime|pro)\b/i},
+ {k:'ISY',n:'i:SY',re:/\bi[:\s]?sy\b|\bp\s?12\b|\bzr\b/i},
+ {k:'GUD',n:'Gudereit',re:/gudereit|\bec[- ]?\d/i}];
+const BLOGO={};
+const brandOf=m=>{m=String(m||'');return BRANDS.find(b=>b.re.test(m))||null;};
+function bIco(m){const b=brandOf(m);if(!b)return'🚲 ';const lg=BLOGO[b.k];return lg?`<img class="blg" src="${lg}" alt="${b.n}" title="${b.n}">`:`<span class="bchip" title="${b.n}"${b.c?` style="color:${b.c}"`:''}>${b.n}</span>`;}
 function leasLogo(f){if(!f)return'';const x=L.find(l=>l.k===f);const lg=x?logoOf(x):(LOGOS[f]||'');return lg?`<img class="llg" src="${esc(lg)}" alt="${esc(FN[f]||f)}" title="${esc(FN[f]||f)}">`:`<span class="lchip">${esc(f)}</span>`;}
+// Status-Farbe am Namen: montiert = gelb, O.K. = grün, beides = Verlauf gelb → grün
+const vkFx=b=>b.m==='1'&&b.b==='1'?' fx-mb':b.b==='1'?' fx-b':b.m==='1'?' fx-m':'';
 function vkRow(b){const st=b.a==='1'?'a':b.b==='1'?'b':b.m==='1'?'m':'o';const ce=(f,v,cls)=>`<td class="ce ${cls||''}" contenteditable="true" spellcheck="false" data-vid="${esc(b.id)}" data-f="${f}">${esc(v||'')}</td>`;
  const dcD=(f,v)=>`<td class="dcell d-dat" data-vid="${esc(b.id)}" data-df="${f}" title="Klick = Datum wählen" tabindex="0">${esc(dshort(v))}</td>`;
  const dc=(f,v,cls)=>`<td class="dcell ${cls}" data-vid="${esc(b.id)}" data-df="${f}" title="${esc(v||'')} · Klick = Datum wählen" tabindex="0">${esc(dshort(v))}</td>`;
  return `<tr class="vr st-${st}">
  <td class="sdot" title="${{o:'offen',m:'montiert',b:'O.K. – abholbereit',a:'abgeholt'}[st]}"><i></i></td>
- <td class="who2"><b>${esc(b.name||'–')}</b><small>🚲 ${esc(b.modell||'')}</small></td>
- <td><div class="lcell">${leasLogo(b.firma)}<select class="lsel mini2${b.firma?'':' off'}" data-vi="${esc(b.id)}" aria-label="Leasing-Firma"><option value="">–</option>${Object.entries(FN).map(([k,n])=>`<option value="${esc(k)}"${b.firma===k?' selected':''}>${esc(k)} · ${esc(n)}</option>`).join('')}${b.firma&&!FN[b.firma]?`<option selected>${esc(b.firma)}</option>`:''}</select></div></td>
- ${dcD('dat',b.dat)}${ce('lt',b.lt,ltHot(b.lt)&&b.a!=='1'?'hot':'')}${b.firma?dc('antrag',b.antrag,'d-antrag'):'<td class="na">–</td>'}${b.firma?dc('ok',b.ok,b.ok?'d-ok':'d-ok miss'):'<td class="na">–</td>'}${b.firma?dc('lende',b.lende,'d-lende'):'<td class="na">–</td>'}${ce('notiz',[b.notiz,b.montieren?'Montieren: '+b.montieren:''].filter(Boolean).join(' · '),'vnote')}
+ <td class="who2${vkFx(b)}"><div class="wp"><b>${esc(b.name||'–')}</b><small>${bIco(b.modell)}${esc(b.modell||'')}</small></div></td>
+ ${dcD('dat',b.dat)}<td class="kcell${ltHot(b.lt)&&b.a!=='1'?' hot':''}" data-vid="${esc(b.id)}" title="Klick = Kalenderwoche wählen" tabindex="0">${esc(b.lt||'')}</td>
+<td><div class="lcell">${leasLogo(b.firma)}<select class="lsel mini2${b.firma?'':' off'}" data-vi="${esc(b.id)}" aria-label="Leasing-Firma"><option value="">–</option>${Object.entries(FN).map(([k,n])=>`<option value="${esc(k)}"${b.firma===k?' selected':''}>${esc(k)} · ${esc(n)}</option>`).join('')}${b.firma&&!FN[b.firma]?`<option selected>${esc(b.firma)}</option>`:''}</select></div></td>
+ ${b.firma?dc('antrag',b.antrag,'d-antrag'):'<td class="na">–</td>'}${b.firma?dc('ok',b.ok,b.ok?'d-ok':'d-ok miss'):'<td class="na">–</td>'}${b.firma?dc('lende',b.lende,'d-lende'):'<td class="na">–</td>'}${ce('notiz',[b.notiz,b.montieren?'Montieren: '+b.montieren:''].filter(Boolean).join(' · '),'vnote')}
  <td><select class="ssel mini2" data-vi="${esc(b.id)}" aria-label="Verkauf/Beratung"><option value="">–</option>${USERS.map(u=>`<option value="${u.id}"${b.verk===u.id?' selected':''}>${esc(u.n)}</option>`).join('')}</select></td>
  <td class="stb"><button class="st m" type="button" aria-pressed="${b.m==='1'}" data-vi="${esc(b.id)}" data-k="m" title="${b.mVon?'montiert von '+esc(U(b.mVon).n)+' '+esc(b.mAm):'montiert'}">🔧</button><button class="st b" type="button" aria-pressed="${b.b==='1'}" data-vi="${esc(b.id)}" data-k="b" title="${b.bVon?'O.K. von '+esc(U(b.bVon).n)+' '+esc(b.bAm):'O.K.'}">O.K.</button><button class="st a" type="button" aria-pressed="${b.a==='1'}" data-vi="${esc(b.id)}" data-k="a" title="${b.aVon?'abgeholt von '+esc(U(b.aVon).n)+' '+esc(b.aAm):'abgeholt'}">✓</button></td>
  <td><button class="mini" type="button" data-vedit="${esc(b.id)}" title="Alle Felder / Löschen">✎</button></td></tr>`;}
 function vkCard(b){const L1=!!b.firma,st=b.a==='1'?'abgeholt':b.b==='1'?'bereit':b.m==='1'?'montiert':'',stl=b.a==='1'?'abgeholt':b.b==='1'?'O.K.':b.m==='1'?'montiert':'offen';
  const steps=L1?[['Antrag',b.antrag],['Montiert',b.m==='1'],['O.K.',b.b==='1'],['Abgeholt',b.a==='1']]:[['Montiert',b.m==='1'],['O.K.',b.b==='1'],['Abgeholt',b.a==='1']];
- return `<article class="bike" data-s="${st}"><div class="h"><div style="min-width:0"><div class="name">${esc(b.name||'–')}</div><div class="model">🚲 ${esc(b.modell)}</div></div>${b.firma?`<div class="clogo">${leasLogo(b.firma)}</div>`:''}
+ return `<article class="bike" data-s="${st}"><div class="h"><div class="wp${vkFx(b)}" style="min-width:0"><div class="name">${esc(b.name||'–')}</div><div class="model">${bIco(b.modell)}${esc(b.modell)}</div></div>${b.firma?`<div class="clogo">${leasLogo(b.firma)}</div>`:''}
  <select class="lsel${L1?'':' off'}" data-vi="${esc(b.id)}" aria-label="Leasing-Firma wählen"><option value="">ohne Leasing</option>${Object.entries(FN).map(([k,n])=>`<option value="${esc(k)}"${b.firma===k?' selected':''}>${esc(k)} · ${esc(n)}</option>`).join('')}${b.firma&&!FN[b.firma]?`<option selected>${esc(b.firma)}</option>`:''}</select></div>
  <div class="seller"><span>Verkauf / Beratung</span><select class="ssel" data-vi="${esc(b.id)}" aria-label="Verkauft von"><option value="">– wählen –</option>${USERS.map(u=>`<option value="${u.id}"${b.verk===u.id?' selected':''}>${esc(u.n)}</option>`).join('')}</select>${av(b.verk,'verkauft von')}</div>
- <div class="meta"><div><small>Verkauft</small><b>${esc(dshort(b.dat)||'–')}</b></div><div><small>LT</small><b>${esc(b.lt||'–')}</b></div>
+ <div class="meta"><div><small>Bestellt am</small><b>${esc(dshort(b.dat)||'–')}</b></div><div><small>LT</small><b>${esc(b.lt||'–')}</b></div>
  ${L1?`<div><small>Antrag</small><b style="color:#C4B5FD">${esc(dshort(b.antrag)||'–')}</b></div><div><small>O.K.</small><b style="color:${b.ok?'#34D399':'#FCA5A5'}">${esc(dshort(b.ok)||'fehlt')}</b></div><div><small>L.-Ende</small><b style="color:#67E8F9">${esc(dshort(b.lende)||'–')}</b></div>`:''}</div>
  <div><div class="flow">${steps.map(x=>`<i class="${x[1]?'on':''}"></i>`).join('')}</div><div class="flowl">${steps.map(x=>`<span>${x[0]}</span>`).join('')}</div></div>
  ${b.notiz?`<div class="note">📝 ${esc(b.notiz)}</div>`:''}
@@ -924,10 +957,17 @@ $('vkSortSel').addEventListener('change',e=>{vkSort=e.target.value;ls.set('vc_vk
 function dshort(v){v=String(v||'').trim();const m=v.match(/^(\d{1,2})\.(\d{1,2})\.?(\d{2,4})?$/);return m?m[1].padStart(2,'0')+'.'+m[2].padStart(2,'0')+'.':v;}
 function toIsoDe(v){const m=String(v||'').match(/(\d{1,2})\.(\d{1,2})\.?(\d{2,4})?/);if(!m)return '';const t=vkDate(v);if(!t)return '';const d=new Date(t);return iso(d);}
 function dateEdit(td){const b=V.find(x=>x.id===td.dataset.vid),f=td.dataset.df;if(!b)return;const i=document.createElement('input');i.type='date';i.className='edit din';i.value=toIsoDe(b[f]);td.textContent='';td.append(i);i.focus();try{i.showPicker();}catch(_){}
- let done=false;const fin=ok=>{if(done)return;done=true;const v=i.value;i.remove();if(ok&&v){const d=fromIso(v);const out=String(d.getDate()).padStart(2,'0')+'.'+String(d.getMonth()+1).padStart(2,'0')+'.'+d.getFullYear();if(out!==b[f]){putV(Object.assign({},b,{[f]:out}));toast({dat:'Verkauft',antrag:'Antrag',ok:'O.K.',lende:'Leasing-Ende'}[f]+': '+dshort(out));return;}}rv();};
+ let done=false;const fin=ok=>{if(done)return;done=true;const v=i.value;i.remove();if(ok&&v){const d=fromIso(v);const out=String(d.getDate()).padStart(2,'0')+'.'+String(d.getMonth()+1).padStart(2,'0')+'.'+d.getFullYear();if(out!==b[f]){putV(Object.assign({},b,{[f]:out}));toast({dat:'Bestellt am',antrag:'Antrag',ok:'O.K.',lende:'Leasing-Ende'}[f]+': '+dshort(out));return;}}rv();};
  i.addEventListener('change',()=>{if(i.value)fin(true);});i.addEventListener('keydown',k=>{if(k.key==='Enter'){k.preventDefault();fin(true);}if(k.key==='Escape')fin(false);});i.addEventListener('blur',()=>setTimeout(()=>fin(false),200));}
-$('cards').addEventListener('click',e=>{const td=e.target.closest('td.dcell');if(td&&!td.querySelector('input'))dateEdit(td);});
-$('cards').addEventListener('keydown',e=>{const td=e.target.closest('td.dcell');if(td&&e.key==='Enter'&&!td.querySelector('input')){e.preventDefault();dateEdit(td);return;}const c=e.target.closest('[contenteditable]');if(c&&e.key==='Enter'){e.preventDefault();c.blur();}if(c&&e.key==='Escape'){c.blur();rv();}});
+$('cards').addEventListener('click',e=>{const td=e.target.closest('td.dcell');if(td&&!td.querySelector('input'))dateEdit(td);const tk=e.target.closest('td.kcell');if(tk&&!tk.querySelector('select'))ltEdit(tk);});
+// LT: Klick → Kalenderwoche wählen (Lager, KW −4 … +30 mit Datum Mo–Sa), gespeichert als „KW 47“
+function ltOpts(cur){const mo=new Date();mo.setHours(12,0,0,0);mo.setDate(mo.getDate()-((mo.getDay()+6)%7));const dd=d=>String(d.getDate()).padStart(2,'0')+'.'+String(d.getMonth()+1).padStart(2,'0')+'.';const o=[['','–  kein LT'],['Lager','Lager']];
+ for(let i=-4;i<=30;i++){const a=new Date(mo);a.setDate(a.getDate()+7*i);const e=new Date(a);e.setDate(e.getDate()+5);const v='KW '+kw(a);o.push([v,v+'  ·  '+dd(a)+'–'+dd(e)+(i===0?'  (diese Woche)':'')]);}
+ if(cur&&!o.some(x=>x[0]===cur))o.splice(2,0,[cur,cur]);return o.map(([v,n])=>`<option value="${esc(v)}"${v===cur?' selected':''}>${esc(n)}</option>`).join('');}
+function ltEdit(td){const b=V.find(x=>x.id===td.dataset.vid);if(!b)return;const sl=document.createElement('select');sl.className='edit din ksel';sl.innerHTML=ltOpts(b.lt||'');td.textContent='';td.append(sl);sl.focus();try{sl.showPicker();}catch(_){}
+ let done=false;const fin=ok=>{if(done)return;done=true;const v=sl.value;sl.remove();if(ok&&v!==(b.lt||'')){putV(Object.assign({},b,{lt:v}));toast(v?'Liefertermin: '+v:'Liefertermin entfernt');return;}rv();};
+ sl.addEventListener('change',()=>fin(true));sl.addEventListener('keydown',k=>{if(k.key==='Escape')fin(false);});sl.addEventListener('blur',()=>setTimeout(()=>fin(false),150));}
+$('cards').addEventListener('keydown',e=>{const td=e.target.closest('td.dcell');if(td&&e.key==='Enter'&&!td.querySelector('input')){e.preventDefault();dateEdit(td);return;}const tk=e.target.closest('td.kcell');if(tk&&e.key==='Enter'&&!tk.querySelector('select')){e.preventDefault();ltEdit(tk);return;}const c=e.target.closest('[contenteditable]');if(c&&e.key==='Enter'){e.preventDefault();c.blur();}if(c&&e.key==='Escape'){c.blur();rv();}});
 $('cards').addEventListener('focusout',e=>{const c=e.target.closest('td[contenteditable]');if(!c)return;const b=V.find(x=>x.id===c.dataset.vid),f=c.dataset.f,v=c.textContent.trim();const cur=f==='notiz'?[b&&b.notiz,b&&b.montieren?'Montieren: '+b.montieren:''].filter(Boolean).join(' · '):(b&&b[f]||'');if(!b||v===cur)return;putV(Object.assign({},b,{[f]:v},f==='notiz'?{montieren:''}:{}));toast('Gespeichert');});
 $('vkStats').addEventListener('click',e=>{const b=e.target.closest('[data-sf]');if(!b)return;vkF=vkF===b.dataset.sf?'':b.dataset.sf;rv();});
 $('vkAdd').addEventListener('click',()=>{vkEdit='new';rv();$('cards').scrollIntoView({block:'start'});const f=document.querySelector('[data-vf=new] input');if(f)f.focus();});
@@ -997,86 +1037,95 @@ const LS=[
   ser:['Versicherungskunden zahlen nur die Inspektion (99 €)','Schäden und Verschleiß übernimmt die Versicherung','!Dienstleistungen mit AW-Stufe 5 abrechnen: 11 € je AW (110 €/Std.)']},
  {k:'AS',n:'Assona',sub:'Versicherung · Schäden',ac:'#64748B',drei:null,is:'–',vs:'–',gs:'nein',abh:[],
   ser:['Rechnungsadresse: MLF Mercador','Rahmennummer + Schadensgrund in die Rechnung','!Keine Gutschrift','!Unter 60 € muss der Kunde selbst bezahlen']}];
-// Leasing-Infos nach Tirys Fragenliste, Versicherungen mit eigenen Händler-Feldern (Recherche Stand 02.11.2026). Neue Fassung → LSREC_VER hochzählen.
-const LSREC_VER=2;
+// Leasing-Infos nach Tirys Fragenliste, Versicherungen mit eigenen Händler-Feldern (Volltext-Prüfung offizieller Seiten/PDFs, Stand 02.11.2026). Neue Fassung → LSREC_VER hochzählen.
+const LSREC_VER=3;
 const LSREC=[
 {
 "k": "JR",
 "pak": [
-"Basis: 1 Inspektion pro Jahr, kein Verschleiß – 6,90 € Fahrrad · 7,90 € E-Bike · 12,90 € Lastenrad (netto/Monat)",
-"Komfort: Inspektion + Verschleißbudget (230 € Fahrrad · 300 € E-Bike über die Laufzeit) – 10,90 € · 12,90 € · 16,90 € (netto/Monat)",
-"Unlimited: Inspektion + Verschleiß unbegrenzt + Akku unter 50 % Kapazität – 19,90 € Fahrrad/E-Bike · 22,90 € Lastenrad (netto/Monat)",
-"Altverträge: JobRad-Inspektion (90 € pro Inspektion) bzw. FullService (500 € gesamt)"
+"Basis: 1 Inspektion pro Jahr (3× in 36 Mon.), kein Verschleiß – 6,90 € Fahrrad · 7,90 € E-Bike · 12,90 € Lastenrad (netto/Monat)",
+"Komfort: Inspektion + Verschleiß/Reparatur-Budget 230 € Fahrrad · 300 € E-Bike · 300 € Lastenrad (gesamte Laufzeit) – 10,90 € · 12,90 € · 16,90 € (netto/Monat)",
+"Unlimited: Inspektion + Verschleiß/Reparatur unbegrenzt inkl. Akku (Kapazität dauerhaft unter 50 %) – 19,90 € Fahrrad/E-Bike · 22,90 € Lastenrad (netto/Monat)",
+"Altverträge (laufen parallel weiter): JobRad-Inspektion 90 € je Inspektion (5 €/Monat) · FullService 500 € Rahmen inkl. Inspektion (10 €/Monat)",
+"Arbeitgeber legt fest, welche Pakete buchbar sind · nur bei Vertragsabschluss buchbar · JobRad für Selbstständige: keine Servicepakete"
 ],
-"isz": "90 € Fahrrad · 100 € E-Bike · 180 € Lastenrad (brutto je Inspektion, Pakete ab 06/2025) · Altverträge 90 €",
-"vsd": "Nur Komfort (230 € Fahrrad / 300 € E-Bike gesamt) und Unlimited (unbegrenzt) – Basis ohne Verschleiß",
-"vers": "Ja – Vollkasko + Mobilitätsgarantie über assona",
-"reNeu": "Keine Rechnung – JobRad-Gutschrift nach Übergabebestätigung im Fachhandelsportal",
-"reIV": "Fachhandelsportal mit Service-ID (Gutschrift)",
-"reSch": "Meldung an assona · Mercator-Verträge: Rechnung auf MLF Mercator-Leasing GmbH & Co. Finanz-KG, Londonstraße 1, 97424 Schweinfurt",
-"abMon": "Inspektion je Leasingjahr: Monat 1–12, 13–24, 25–36 (empfohlen 10–12 Monate nach Übernahme)",
-"code": "Ja – JobRad-Abholcode per Mail mit der Bestellbestätigung",
+"isz": "90 € Fahrrad · 100 € E-Bike · 180 € Lastenrad (brutto je Inspektion, Basis/Komfort/Unlimited) · Altvertrag JobRad-Inspektion 90 € · + ServicePro-Zuschuss 30 € bzw. 60 € brutto je Inspektion (Servicequote ≥ 80 % + Zertifikat und/oder Ausbildungsbetrieb) · Mehrkosten zahlt der Kunde · Erst-/Herstellerinspektion nicht abrechenbar",
+"vsd": "Nur Komfort (230 € Fahrrad · 300 € E-Bike · 300 € Lastenrad gesamt) und Unlimited (unbegrenzt, inkl. Akku) – Basis ohne Verschleiß · Altvertrag FullService: 500 € inkl. Inspektion",
+"vers": "Ja – JobRad-Vollkasko inkl. Mobilitätsgarantie immer dabei (Schadenabwicklung assona; greift ab 60 € Schadenshöhe inkl. USt) · Selbstständige: wahlweise eigene Versicherung · S-Pedelec: Kunde versichert selbst",
+"reNeu": "Keine Rechnung – Gutschrift im Fachhandelsportal anfordern, sobald Status „übergeben“ (Kunde bestätigt Übernahme per Code) · Zahlung innerhalb von 2 Werktagen · Einkaufsrabatt: 1. Kalenderjahr 4 %, danach nach Netto-Vorjahresumsatz (max. 6 %), 0 % bei Eigenakquise/Selbstständigen · Lastenrad ohne neues Servicepaket: ProLastenrad-Zuschuss 230 € netto automatisch mit der Gutschrift (Abrechnung bis 31.12.2026, im Angebot „Transportrad“ wählen)",
+"reIV": "Fachhandelsportal → „Service durchführen“, Kunde per Service-ID finden, Posten „Arbeitszeit für Inspektion“ – Vergütung läuft automatisch · Altverträge (Inspektionscoupon/FullService): abrechnung@jobrad.org",
+"reSch": "Schaden begutachten und über das assona-Partnerportal melden (alternativ Tel. 030 208666 + Regionaldurchwahl oder kundenservice@assona.com, mit Rahmen- oder KAU-Nummer) · Rechnungsempfänger je nach Leasinggesellschaft (nennt assona): MLF Mercator-Verträge → Rechnung auf MLF Mercator-Leasing GmbH & Co. Finanz-KG, Londonstraße 1, 97424 Schweinfurt · JobRad Leasing GmbH → Abwicklung über assona",
+"abMon": "Inspektion je Leasingjahr: Monat 1–12, 13–24, 25–36 nach Vertragsstart (verfällt danach) · Komfort/Unlimited-Verschleiß bis Vertragsende",
+"code": "Ja – JobRad-Abholcode aus der Bestellbestätigungs-Mail; Kunde nennt ihn bei Abholung = papierlose Übernahmebestätigung · bei Versand bestätigt der Kunde im Portal (Code dann nicht anfordern)",
 "mit": "Abholcode + Personalausweis",
-"isCode": "Ja – Service-ID (13-stellig, gilt die ganze Laufzeit)",
+"isCode": "Ja – Service-ID (13 Ziffern) im JobRad-Portal bzw. in der Erinnerungs-Mail · ohne ID: Kunde per Name + PLZ, E-Mail oder Rahmennummer finden · Abholung nach dem Service nur mit 7-stelligem Abhol-Code (kommt per Mail)",
+"spe": true,
+"drei": true,
 "zubJa": [
-"Schloss",
+"Beleuchtung: Akku- (StVZO), Dynamo-, Pedelec-Akku-Beleuchtung",
+"Schloss ab 49 € UVP",
 "Gepäckträger vorn/hinten",
-"Schutzbleche",
+"Schutzblech",
 "Fahrradständer",
 "Trinkflaschenhalter",
-"Klingel",
+"Fahrradklingel",
 "Kindersitz",
-"Rückspiegel",
+"Zweiter Akku bei Dual-Battery-System",
+"Luftpumpe mit Rahmenhalterung (bis 150 €)",
+"GPS-Diebstahlschutz",
+"Tandem- und Adaptersysteme (fest am Rad)",
 "Smartphone-Halterung",
-"Beleuchtung",
-"Fest montierte Teile (Sattel, Griffe, Pedale)"
+"Upgrades: Griffe, Vorbau, Lenker, Pedelec-Display, Sattel, Sattelstütze, Pedale, Laufradsatz, Reifen, Bremsen",
+"Lastenrad: Kindersitz/Sitzpolster, Kiste/Box, Persenning, Kinderverdeck",
+"Nur im Angebot zusammen mit dem Rad – nachträglich nicht möglich"
 ],
 "zubNein": [
-"Fahrradtaschen / Korb",
-"Fahrradcomputer / Navi / Tacho",
-"Schutzfolie",
-"Fahrradanhänger",
 "Helm",
-"Bekleidung",
-"Brille",
-"Schuhe",
+"Bekleidung / Brille / Schuhe",
 "Handschuhe",
 "Rucksack",
+"Tasche / Korb",
+"Fahrradanhänger",
+"Fahrradcomputer / Navi / Tacho / Schutzfolie",
+"Dämpferpumpe",
 "Trinkflasche",
-"Pumpe"
+"Alles, was im Portal (EAN-Suche) nicht auftaucht"
 ]
 },
 {
 "k": "BL",
 "pak": [
-"Komfort-Versicherung (Pflicht): Diebstahl, Unfall, Sturz, Vandalismus inkl. Akku/Motor + Mobilitätsgarantie – im Leasing enthalten",
-"Inspektionspaket: 2 Inspektionen bei 36 Monaten (3 bei 48 Monaten)",
-"Verschleiß-Versicherung (optional): Bremsscheiben, Ketten, Reifen, Züge, Akku unter 50 % – ab 5,90 €/Monat je nach Kaufpreis"
+"Komfort-Versicherung (Pflicht, in jeder Leasingrate): Diebstahl, Teilediebstahl, Vandalismus, Raub, Unfall, Sturz, Reifenpanne, Bedienfehler, Elektronik-/Material-/Produktionsfehler inkl. Akku & Motor · keine Selbstbeteiligung · Mobilitätsgarantie (Transport bis 150 €, Leihrad 25 €/Tag max. 14 Tage) · 5,90–23,90 €/Monat je Kaufpreis (bis 15.000 € brutto), inkl. Versicherungssteuer",
+"Verschleiß-Versicherung (optional, zusätzlich zur Komfort): Akku, Bremsbeläge/-scheiben/-flüssigkeit, Kette/Riemen, Kassette, Kettenblätter, Reifen/Schlauch, Pedale, Griffe, Züge inkl. Hülle, Freilauf, Getriebenaben-Service, Lager (Gabel, Dämpfer, Dropper, Steuersatz, Naben, Innenlager) · 5,90–23,90 €/Monat je Kaufpreis · keine Wartezeit, keine Selbstbeteiligung",
+"Inspektionspaket 1 (optional): 2 Inspektionen bei 36 Monaten / 3 bei 48 Monaten · 4 € netto/Monat",
+"Inspektionspaket 2 (nur wenn Arbeitgeber vereinbart): eine Inspektion mehr (3 bei 36 / 4 bei 48 Monaten) · 6 € netto/Monat",
+"Haftpflicht & Rechtsschutz (optional, schließt der Arbeitgeber ab): Privatnutzung + Arbeitsweg, nur Räder/Pedelecs bis 25 km/h · 1 €/Monat"
 ],
-"isz": "70 € inkl. MwSt. pro Inspektion",
-"vsd": "Nur mit Verschleiß-Versicherung – Übernahme ab 01.02.2026: unbegrenzt bis zum Kaufpreis · vorher 238 € (bis 5.000 €) / 297 € (bis 10.000 €) / 357 € (bis 15.000 €) pro Jahr",
-"vers": "Ja – Komfort-Versicherung (Pflicht), Versicherer ERGO",
-"reNeu": "BLS Bikeleasing-Service GmbH & Co. KG, Ernst-Reuter-Straße 2, 37170 Uslar – über das Bikeleasing-Portal",
-"reIV": "Bikeleasing-Portal an BLS (Gutschrift) – Inspektion binnen 7 Tagen nach Leistung abrechnen, sonst keine Zahlung",
-"reSch": "BLS Bikeleasing-Service GmbH & Co. KG, Uslar – Portal oder Mail, mit Vertrags-Nr., Vorgangs-Nr. (VS-…), Rahmen-Nr., Leistungsdatum · KVA ab 250 €",
+"isz": "70 € brutto (inkl. MwSt.) pro Inspektion – als Gutschrift über das Bikeleasing-Portal",
+"vsd": "Nur mit Verschleiß-Versicherung (optional) – keine Wartezeit · Übernahme ab 01.02.2026: Budget bis zum Kaufpreis über die gesamte Laufzeit · Übernahme vor 01.02.2026: max. 200 € (Kaufpreis bis 5.000 €) / 250 € (bis 10.000 €) / 300 € (bis 15.000 €) netto pro Leasingjahr · Akku nur bei nachgewiesener Kapazität unter 50 % (Herstellerprüfung)",
+"abMon": "Inspektion Paket 1: Monat 1–18 / 19–36 / 37–48 nach Übernahme · Paket 2: Monat 1–12 / 13–24 / 25–36 / 37–48 · nicht genutzter Zeitraum = Code verfällt · Verschleiß ohne Wartezeit ab Übernahme",
+"isCode": "Ja – einmaliger Inspektions-Code (Gutschein-Code), Kunde bekommt ihn 14 Tage vor Beginn des Zeitraums per Mail + im Portal · vor der Inspektion geben lassen, ohne Code keine Abrechnung · fehlt/ungültig: im Portal „Code erneut senden“",
+"vers": "Ja – Bikeleasing-Komfort-Versicherung (Pflicht, ohne Selbstbeteiligung), Partner ERGO Versicherungen AG · Verschleiß-Versicherung optional",
+"reNeu": "Über das Bikeleasing-Portal: „Rad übergeben“ → Übernahmedatum, Rahmen-Nr., Akku-Nr., Übernahmecode bzw. Übernahmebestätigung · Rechnungsverfahren: Rechnung an BLS Bikeleasing-Service GmbH & Co. KG, Ernst-Reuter-Straße 2, 37170 Uslar mit hochladen (Modell + Rahmen-Nr., Kaufpreis = Leasingvertrag, Lieferdatum = Übernahmedatum) · Gutschriftenverfahren: keine Rechnung, BLS schickt Gutschrift",
+"reIV": "Inspektion: Portal → Versicherungsfälle → Inspektionen → Leistungsdatum, Inspektions-Code, eigene Rechnungs-Nr. → automatische Gutschrift 70 € brutto · binnen 7 Tagen nach Leistung abrechnen, sonst keine Zahlung · Verschleiß: Portal → Versicherungsfälle → Schaden melden → Schadenart „Verschleiß“, Reparaturdatum, Teile + Arbeitswerte → Gutschrift, keine Rechnung nötig · Fremdkunden: Vertrags-Nr. oder Bikeleasing-Nutzer-ID nötig",
+"reSch": "Vor der Reparatur melden: Portal → Versicherungsfälle → Schaden melden → Schadenart + Angaben, Rechnung oder KVA hochladen (KVA ab 250 €) · Regulierung durch Bikeleasing direkt an uns, Kunde zahlt nichts vor · Reifenpanne: Teile + Arbeitswerte angeben → Gutschrift ohne Rechnung/KVA · Ausnahme per Mail: bikeschaden@bikeleasing.de · Schaden-Telefon +49 5571 3026-200 (Mo–Sa 8–18 Uhr) · Diebstahl/Vandalismus: Polizeianzeige binnen 5 Werktagen · Fremdkunden: Vertrags-Nr. oder Nutzer-ID · Rechnung an BLS Bikeleasing-Service GmbH & Co. KG, Uslar, mit Vertrags-Nr., Vorgangs-Nr. (VS-…), Rahmen-Nr., Leistungsdatum",
 "spe": true,
-"abMon": "Inspektion: Code kommt ca. 14 Tage vor dem Leistungszeitraum (z. B. Monat 1–18 / 19–36) · Verschleiß ohne Wartezeit",
-"code": "Ja – Übernahmecode per Mail nach finaler Freigabe",
-"mit": "Übernahmecode",
-"isCode": "Ja – einmaliger Inspektionscode per Mail + Portal, verfällt ungenutzt",
+"code": "Ja – Übernahmecode (Abholvollmacht), Kunde bekommt ihn per Mail nach Freigabe durch den Arbeitgeber · je nach Arbeitgeber-Vertrag stattdessen schriftliche Übernahmebestätigung · bei Übergabe im Portal eingeben (= mängelfreie Übergabe, Start von Leasing + Versicherung)",
+"mit": "Übernahmecode (bzw. Übernahmebestätigung) + gültigen Ausweis (Personalausweis/Reisepass)",
 "zubJa": [
-"Schloss – Pflicht, mind. 48 €",
-"Gepäckträger",
-"Lowrider / Frontgepäckträger",
-"Schutzbleche",
-"Kettenschutz",
-"Beleuchtung",
-"Klingel",
-"Lenkerteile",
-"Kindersitz",
-"Lastenrad-Box / Verdeck",
-"Fahrradtaschen",
-"Upgrades (Akku, Bremsen, Display)"
+"Schloss – Pflicht, UVP mind. 48 €, fest am Rad oder an fest verbauter Halterung",
+"Gepäckträger, Lowrider / Frontgepäckträger",
+"Schutzbleche, Kettenschützer, Seitenständer",
+"Beleuchtung (Akku, Dynamo, Pedelec), Blinker",
+"Cockpit: Klingel, Griffe/Lenkerband, Barends, Lenkeraufsatz, Rückspiegel, Smartphone-Halterung",
+"Elektronik: Fahrradcomputer, Leistungsmesser, USB-Ladestation, zweiter Akku (wenn gleichzeitig nutzbar)",
+"Kindersitz, Anhängerkupplung, Steckachsen für Anhänger, Abschleppvorrichtung für Kinder",
+"Lastenrad: Kindersitz/-adapter, Kiste/Box, Verdeck, Aufbauten",
+"Körbe, Boxen, Lenkertaschen, Flaschenhalter, Luftpumpe mit Halterung, Tool Pack, Pedale",
+"Diebstahlschutz: Ersatzschloss, GPS-Tracker, abschließbare Schnellspanner",
+"Upgrades: Akku (mehr Kapazität), Bremsen, Display, Gabel/Dämpfer, Laufradsatz, Lenker, Vorbau, Reifen, Sattel, Sattelstütze, Schaltung",
+"Sonderlackierung vom Hersteller",
+"Keine Preisobergrenze je Teil · nur zusammen mit dem Rad, nicht nachträglich"
 ],
 "zubNein": [
 "Helm",
@@ -1087,6 +1136,9 @@ const LSREC=[
 "Dämpferpumpe",
 "Ersatzschaltauge",
 "Standpumpe",
+"Fahrradanhänger",
+"Kistenabdeckung (Persenning)",
+"Zweiter Laufradsatz",
 "Fahrradträger fürs Auto",
 "Alles, was nicht fest verbaut ist"
 ]
@@ -1095,92 +1147,108 @@ const LSREC=[
 "k": "BB",
 "pak": [
 "Ohne Budget: nur UVV-Check 25 € pro Leistungszeitraum",
-"Basis: 75 € pro Jahr (225 € gesamt), v. a. UVV-Prüfung",
-"Premium: 175 € pro Jahr (525 € gesamt) – Inspektion, Bremsbeläge, Kette, Ritzel, Reifen",
-"Pro: 300 € pro Jahr (900 € gesamt) – Wartung + Reparatur",
+"Basis: 75 € pro Jahr (225 € gesamt) – 5 €/Monat",
+"Premium: 175 € pro Jahr (525 € gesamt) – 10 €/Monat",
+"Pro: 300 € pro Jahr (900 € gesamt) – 15 €/Monat",
+"Budgets brutto, frei nutzbar für UVV, Inspektion, Verschleiß inkl. Material (auch Reifenschäden) · Budget + wer zahlt legt der Arbeitgeber fest",
+"Vollkasko (ENRA) immer dabei: 0,30 % vom Bruttopreis pro Monat, mind. 2,38 € (Angebote ab 01.05.2024)",
+"Radpreis 499–15.000 € brutto (Zubehör/Schloss kommen obendrauf)",
 "Altverträge (Angebot vor 01.09.2022): S = UVV 25 € · M = Inspektion 75 € · L = Inspektion 75 € + 225 € Verschleiß gesamt"
 ],
-"isz": "Aus dem Budget (75 / 175 / 300 € pro Jahr) · ohne Budget UVV 25 € · Altpaket M/L 75 €",
-"vsd": "Ja über Budget Premium/Pro · Altpaket L 225 € gesamt · Restbudget verfällt jährlich",
-"vers": "Ja – Vollkasko standardmäßig, Versicherer ENRA",
-"reNeu": "PEAC Germany GmbH (Leasinggeber) – Abrechnung im BusinessBike-Portal („Bike abrechnen“)",
-"reIV": "Servicemeldung im BusinessBike-Portal an BusinessBike GmbH, Herzogenaurach (Inspektion und Verschleiß getrennt melden)",
-"reSch": "PEAC Germany GmbH, Zahlung durch ENRA – Meldung + Rechnung im Portal",
+"isz": "Aus dem Budget (brutto): Basis 75 € · Premium 175 € · Pro 300 € pro Leistungszeitraum, frei für UVV/Inspektion/Verschleiß · ohne Budget nur UVV-Check 25 € · Altpaket S UVV 25 € · M/L Inspektion 75 €",
+"vsd": "Ja – jedes Budget (Basis/Premium/Pro) frei auch für Verschleißreparaturen inkl. Material · Altpaket L 225 € gesamt · Restbudget verfällt nach jedem Leistungszeitraum · Mehrkosten zahlt der Kunde direkt an uns",
+"abMon": "Ab Übernahme: 1. Leistungszeitraum Monat 1–12, 2. ab Monat 13, 3. ab Monat 25 · Meldung nur im laufenden Zeitraum, rückwirkend nicht möglich",
+"isCode": "Nein – Servicemeldung im Portal mit Rahmen- + Policennummer und Leasingbeginn/-ende (stehen auf der BusinessBike Card des Kunden) · Restbudget sehen wir bei der Meldung",
+"vers": "Ja – Vollkasko immer inklusive, Versicherer ENRA · ohne Selbstbeteiligung, ohne Zeitwertabzug, Neurad bei Diebstahl/Totalschaden · Mobilitätsgarantie mit Pick-Up-Service",
+"reNeu": "Leasinggeber PEAC Germany GmbH zahlt – nach Übergabe im Portal „Bike abrechnen“ (IBAN + Bruttoverkaufspreis prüfen), Gutschrift in den folgenden Werktagen · Dealer Commission (Händler-Rabatt) 6 % je Vorgang seit 01.03.2025, über „Trails“ bis 3 %",
+"reIV": "Servicemeldung im Portal („Service melden“) + Rechnung hochladen, Rechnung auf BusinessBike GmbH, Ohmstraße 2, 91074 Herzogenaurach · Auszahlung Serviceabrechnungen freitags · Altpakete: Inspektion und Verschleiß getrennt melden und rechnen",
+"reSch": "Rechnungsempfänger PEAC Germany GmbH, Zahlung durch ENRA – im Portal „Schaden oder Diebstahl melden“ + Rechnung hochladen · Frist 14 Tage (Fremdschaden 5 Werktage; Diebstahl/Vandalismus vorher Polizeianzeige binnen 5 Werktagen) · nur vor Leasingende meldbar · Ersatzrad erst nach ENRA-Freigabe, kommt in den bestehenden Vertrag (kein neues Angebot!) · Rechnungsstatus: ENRA 02131 124360",
 "drei": true,
 "spe": false,
-"abMon": "Ab Übernahme: 1. Leistungszeitraum Monat 1–12, 2. ab Monat 13, 3. ab Monat 25",
-"code": "Ja – Übernahme-PIN per Mail mit dem Abholtermin",
-"mit": "Übernahme-PIN + Personalausweis oder Reisepass",
-"isCode": "Nein – Servicemeldung über das Portal",
+"code": "Ja – Übernahme-PIN: geht per Mail an Kunde und Arbeitgeber, sobald wir den Übergabetermin im Portal eintragen · bei Quickstart + Rad vorrätig sofort im Laden · PIN weg → Arbeitgeber fragen, sonst BusinessBike-Kontaktformular",
+"mit": "Übernahme-PIN + Personalausweis oder Reisepass (wir prüfen Ausweis, machen UVV-Einweisung und dokumentieren die Übergabe im Portal)",
 "zubJa": [
-"Antrieb / Schaltung",
-"Sattel",
-"Gepäckträger",
-"Schutzbleche",
-"Ständer",
-"Kettenschutz",
-"Beleuchtung",
-"Pumpe",
-"Schloss",
+"Rahmen, Gabel, Dämpfer, Steuersatz, Lenker, Vorbau, Griffe, Barends, Klingel/Hupe, Spiegel",
+"Antrieb/Schaltung: Kettenblätter, Kurbeln, Kette/Riemen, Kassette, Schaltwerk, Nabenschaltung, Pedale",
+"E-Antrieb: Motor, Akku, Display, Controller, Bedienelemente",
+"Bremsen, Laufräder, Felgen, Reifen, Schläuche",
+"Sattel, Sattelstütze, Gepäckträger, Schutzbleche, Kettenschutz, Ständer, Körbe/Boxen",
+"Beleuchtung, Tacho/Fahrradcomputer, Pumpe, Flaschenhalter, Handyhalterung, GPS-Diebstahlschutz",
+"Schloss (UVP mind. 49 € · Rahmenschloss nur zusammen mit Einsteck-Kettenschloss ab 24 €)",
 "Kindersitz",
-"Handyhalterung",
-"Lastenrad: Sitzpolster, Verdeck",
-"Taschen nur mit Sicherung (z. B. integriertes Schloss)"
+"Lastenrad: Sitzpolster, Persenning/Kistenabdeckung, Verdeck",
+"Taschen fest montiert · abnehmbare nur mit Sicherung (z. B. integriertes Schloss)"
 ],
 "zubNein": [
 "Anhänger",
-"Helm"
+"Helm",
+"Montage- und Versandkosten",
+"Zubehör nachträglich – alles muss direkt ins Angebot"
 ]
 },
 {
 "k": "KM",
 "pak": [
-"Mobilitätsgarantie (Pannenhilfe): immer kostenfrei dabei",
-"Dienstrad-Komplettschutz: Diebstahl/Totalschaden, Reparatur nach Unfall/Sturz/Vandalismus, Akku unter 50 %",
-"Fahrrad-Rundumschutz: Schäden + vorzeitiger Verschleiß (ohne Bremsen/Reifen), Neuwert bei Diebstahl/Totalschaden",
-"Wartung & Verschleiß: Wartung, Inspektion, Verschleiß bis Höchstwert pro Vertragsjahr",
-"UVV-Prüfung: 50 € inkl. MwSt. pro Jahr"
+"Mobilitätsgarantie (Schutzbrief): immer kostenfrei dabei – 24/7 Pannenhilfe, Transport zur Werkstatt, Ersatzrad bis 14 Tage · max. 150 € inkl. MwSt. je Schadenfall",
+"Dienstrad-Komplettschutz: verpflichtend, 0,35 % vom Bruttokaufpreis pro Monat – Reparatur nach Unfall/Sturz/Vandalismus/Bedienfehler, Elektronik-/Feuchtigkeitsschäden, Akku unter 50 %, Material-/Konstruktionsfehler nach 24 Mon. · Neuwert bei Diebstahl/Totalschaden im 1. Vertragsjahr · Ratenausfall-/Rückgabeschutz",
+"Dienstrad-Jahresdurchsicht (UVV): optional, 3,50 € netto pro Monat – 1× jährlich UVV-Check inkl. Dokumentation",
+"Dienstrad-Wartung & Verschleiß: optional, 10 € netto pro Monat – Wartung/Verschleiß inkl. Material bis 140 € brutto pro Vertragsjahr (nicht übertragbar)",
+"Weitere Pakete lt. Werkstatt-Modalitäten 05/2026 (nicht in den Bedingungen für Rahmenverträge ab 01/2024): Fahrrad-Rundumschutz (Schaden + Verschleiß ohne Reifen/Bremsen), Fahrrad-Vollkasko, Wartungspaket",
+"Welche Pakete Pflicht/wählbar sind, legt der Arbeitgeber fest – gebuchte Pakete stehen auf dem Mobilitätsschein"
 ],
-"isz": "UVV-Prüfung 50 € inkl. MwSt. · mit Paket Wartung & Verschleiß bis zum vereinbarten Jahreshöchstwert",
-"vsd": "Ja im Paket Wartung & Verschleiß (Höchstwert pro Jahr) · Rundumschutz: vorzeitiger Verschleiß ohne Bremsen/Reifen",
-"vers": "Ja – Komplett-/Rundumschutz als Leistungspaket",
-"reNeu": "Keine Rechnung – Liefergutschrift der Kazenmaier Leasing GmbH, Ottostraße 18, 76227 Karlsruhe (nach digital signierter Übernahmebestätigung), Zahlung binnen 2 Werktagen",
-"reIV": "Upload im Kazenmaier-Dienstradportal (UVV: Rechnung + Prüfprotokoll)",
-"reSch": "Kazenmaier Leasing GmbH über das Portal · Meldung an schadenmeldung@kazenmaier.de",
+"isz": "UVV: 50 € inkl. MwSt. per Liefergutschrift (inkl. bis 20 Min. Einstellarbeiten; Teile, Reparatur, Software-Updates zahlt der Kunde) · Wartung & Verschleiß: bis zum Budget auf dem Mobilitätsschein (Standard 140 € brutto/Vertragsjahr) · Pflicht: auch Kazenmaier-Räder anderer Händler annehmen",
+"vsd": "Nur mit Paket Wartung & Verschleiß: bis 140 € brutto pro Vertragsjahr (Budget lt. Mobilitätsschein, Kontingent vorher abfragen) · Komplettschutz: kein normaler Verschleiß, nur Akku unter 50 % · Rundumschutz (ältere Pakete): Verschleiß ohne Reifen/Bremsen – bis 150 € ohne Freigabe, darüber telefonisch",
+"abMon": "Wartung & Verschleiß ab dem 7. Vertragsmonat (Erstinspektion/„Kunden-Service“ ausgeschlossen), Budget je 12 Monate ab Übernahme · UVV frühestens 11 Monate nach Übernahme, dann alle 12 Monate",
+"isCode": "Nein – Kunde zeigt Mobilitätsschein (gebuchte Pakete stehen drauf) · UVV-Protokoll im Portal per Vertragsnummer erzeugen (Portal prüft Paket und Fälligkeit)",
+"vers": "Ja – Dienstrad-Komplettschutz (eigenes Kazenmaier-Leistungspaket, lt. Paketseite verpflichtend; alternativ Versicherungsnachweis des Arbeitgebers) · Mobilitätsgarantie immer inklusive",
+"reNeu": "Keine Rechnung – Liefergutschrift der Kazenmaier Leasing GmbH, Ottostraße 18, 76227 Karlsruhe, nach digital signierter Übernahmebestätigung + korrekter Rahmennummer im Portal · Zahlung binnen 2 Arbeitstagen · eigene Rechnung nur, wenn Kazenmaier die Gutschrift verweigert",
+"reIV": "UVV: Protokoll im Dienstradportal erzeugen, unterschrieben + gestempelt hochladen → Liefergutschrift, KEINE Rechnung schicken · Wartung & Verschleiß: Kontingent vorher abfragen (0721 3728-732 / -735), Rechnung auf Kazenmaier Leasing GmbH mit Leasingvertrags-Nr., Rahmennr., km-Stand per Mail an schaden@kazenmaier.de",
+"reSch": "Fotos + KVA an schaden@kazenmaier.de, Freigabe abwarten (Tel. 0721 3728-732 / -735; ggf. nur Teilbetrag, Rest zahlt Kunde) · Rechnung auf Kazenmaier Leasing GmbH, Ottostr. 18, 76227 Karlsruhe (Leasingvertrags-Nr., Rahmennr., km-Stand) per Mail an schaden@kazenmaier.de · Kunde meldet selbst per Schadenanzeige an schadenmeldung@kazenmaier.de · Ersatzrad nach Diebstahl: Angebot an Kazenmaier, dann Lieferrechnung an schaden@kazenmaier.de",
 "drei": true,
 "spe": true,
-"abMon": "Wartung & Verschleiß ab dem 7. Vertragsmonat · UVV frühestens 11 Monate nach Übernahme, dann alle 12 Monate",
-"code": "Kein Abholcode – Einkaufszertifikat",
-"mit": "Einkaufszertifikat + Ausweis · Übernahmebestätigung digital signieren",
-"isCode": "Nein – Abrechnung über das Portal",
+"code": "Kein Abholcode – Einkaufszertifikat: Kunde weist es im Portal unserem Laden zu, wir identifizieren per Ausweisnummer · Abholung per digital signierter Übernahmebestätigung",
+"mit": "Ausweis (das im Portal hinterlegte Dokument) + Smartphone für die digitale Unterschrift · ohne Smartphone: Papierprozess (Leasingschein + Einkaufszertifikat ausdrucken, unterschreiben, im Portal hochladen)",
 "zubJa": [
-"Alles außer Bekleidung – z. B. Sattel, Helm, Pedale, Fahrradträger",
-"Anhänger (Kind/Hund), Abdeckplanen",
-"Schloss: Falt-, Bügel- oder Kettenschloss mind. 49 € – Pflicht",
-"Genaue Freigabe steht im Einkaufszertifikat (Arbeitgeber legt fest)"
+"Pflicht: Schloss lt. Einkaufszertifikat – Falt-, Bügel- oder Kettenschloss ab 49 € UVP oder mind. 50 % der Hersteller-Sicherheitsskala (kein Zahlenschloss)",
+"Pflicht: Beleuchtung nach StVO",
+"Fest verbaut: Gepäckträger, Schutzbleche, Ersatzakku, Klingel, Flaschenhalter, Kindersitz, Pumpe mit Rahmenhalterung, Bike-Computer/Navi, GPS-Diebstahlschutz",
+"Anpassungen: Griffe, Sattelstütze, Sattel, Pedale, Laufradsatz, Reifen",
+"Nicht fest verbaut (leasbar, aber nicht im Komplettschutz): Helm, Gepäck-/Satteltaschen, Anhänger (Kind/Hund), Auto-Fahrradträger, Abdeckplane",
+"Arbeitgeber kann Zubehör einschränken – maßgeblich ist das Einkaufszertifikat"
 ],
 "zubNein": [
-"Bekleidung",
-"Zahlenschlösser"
+"Bekleidung aller Art",
+"Zahlenschlösser (als Pflichtschloss nicht zugelassen)"
 ]
 },
 {
 "k": "RD",
 "pak": [
-"RadFahrSchutz (in der Rate enthalten): Vollkasko, Mobilitätsgarantie, Ausfallversicherung – Diebstahl, Sturz, Totalschaden, Verschleiß, ohne Selbstbeteiligung, Neuwert",
-"Inspektionspaket mit UVV-Check (optional): 1 Inspektion pro Jahr"
+"RadFahrSchutz (Vollkasko, bei jedem Rad in der Rate): ohne Selbstbeteiligung, weltweit · (Teile-)Diebstahl, Vandalismus, Sturz/Unfall, Feuchtigkeits-/Elektronikschäden an Akku und Motor, Defekt nach Gewährleistung, Totalschaden · Neuwert · grobe Fahrlässigkeit mitversichert",
+"Verschleiß ohne Höchstgrenze – alle Teile inkl. Reifen, Bremsen, Akku",
+"Mobilitätsgarantie europaweit, 24-h-Pannenhilfe",
+"Arbeitgeber-Ausfallschutz: Krankheit, Elternzeit, Kündigung, Tod",
+"Inspektionspaket mit UVV-Check: 1 Inspektion pro Leasingjahr · öffentl. Dienst je nach Dienststelle gebucht · RIDE-Firmen (angebunden ab 09.06.2026): 150 € brutto je Inspektion",
+"Öffentl. Dienst (RadimDienst, TV-Fahrradleasing): 1 Rad pro Beschäftigtem, max. 7.000 € inkl. Zubehör"
 ],
-"isz": "Firmenkunden (RIDE-Partnerprogramm): 150 € brutto je Inspektion + 30 € Handling je Vertrag + 20 €/Jahr Reparaturbonus · gilt nicht für RadimDienst (öffentlicher Dienst)",
-"vsd": "Ja – Verschleißschutz im RadFahrSchutz, ohne Selbstbeteiligung",
-"vers": "Ja – Vollkasko + Mobilitätsgarantie + Ausfallversicherung (in der Rate)",
-"reNeu": "Keine Rechnung – Gutschrift der Ride Mobility GmbH spätestens 14 Werktage nach dokumentierter Übernahme",
-"reIV": "Über das RIDE-Händlerportal dokumentieren und abrechnen",
-"reSch": "Über das RIDE-Händlerportal (Kunde meldet den Schaden digital im Portal)",
-"code": "Ja – Übernahmecode, erzeugt der Kunde vor der Abholung im Portal",
-"mit": "Übernahmecode + Ausweis",
+"isz": "RIDE-Firmenkunden: 150 € brutto je Inspektion, wenn Firma ab 09.06.2026 angebunden (vorher: niedrigerer Satz – vor jeder Inspektion im Händlerportal prüfen) · Partnerprogramm (nur RIDE): 30 € netto Abwicklungspauschale je bei uns übergebenem Rad, 20 € netto Reparaturbonus 1×/Jahr je Nutzer ab 150 € freigegebener Reparatur, 120/180 € netto Vermittlungsprämie für über das Händlerportal angeworbene Firmen · RadimDienst (öffentl. Dienst): keine Prämien, Inspektionsbudget lt. Händlerportal",
+"vsd": "Ja – Verschleiß ohne Höchstgrenze im RadFahrSchutz, ohne Selbstbeteiligung · Verschleiß und Schadenreparatur nie auf eine Rechnung: je Ereignis eigene Schadenmeldung + eigene Rechnung",
+"abMon": "Inspektion 1× pro Leasingjahr (i. d. R. 3× je Vertrag), nicht genutztes Budget verfällt · Schäden unverzüglich melden",
+"isCode": "Nicht beschrieben – gebuchtes Paket und Inspektionsbudget je Nutzer im Händlerportal prüfen",
+"vers": "Ja – RadFahrSchutz bei jedem Rad in der Rate: Vollkasko + Verschleiß + Mobilitätsgarantie + Arbeitgeber-Ausfallschutz",
+"reNeu": "Keine Rechnung – Gutschrift (§ 14 Abs. 2 UStG) der Ride Mobility GmbH, Stadionring 1, 44791 Bochum, über vollen Rad- + Zubehörpreis nach dokumentierter Übernahme, Zahlung spätestens 14 Werktage · Anfrage im Händlerportal unter „Kunden anlegen“ mit Dienststellen-/Leasingcode · keine Provision, keine Aufschläge/Bearbeitungsgebühren erlaubt",
+"reIV": "Im RIDE-Händlerportal/App: Inspektion mit UVV-Checkliste dokumentieren und abrechnen · Leistungen über das Paket hinaus zahlt der Kunde · Prämien kommen gesammelt als Monatsgutschrift (2–3 Werktage nach Monatsende)",
+"reSch": "Schadenmeldung unverzüglich – Kunde im Beschäftigtenportal oder wir im Händlerportal · Reparaturrechnung im Händlerportal einreichen · je Ereignis eigene Meldung + Rechnung",
+"code": "Ja – Übernahmecode: Kunde erzeugt ihn vor der Abholung im Portal (nach Freigabe + unterschriebenem Überlassungsvertrag); Übergabe damit im Portal dokumentieren",
+"mit": "Übernahmecode + Personalausweis oder Reisepass",
 "zubJa": [
-"Nur fest mit dem Rad verbundenes Zubehör (TV-Fahrradleasing)",
-"Fahrradanhänger",
+"Öffentl. Dienst (TV-Fahrradleasing): nur fest mit dem Rad verbundenes Zubehör",
+"Fahrradanhänger (auch Kinderanhänger), Kindersitz",
+"Lastenrad-Aufbauten: Sitzpolster, Transportkiste, Regenschutz, Kinderverdeck",
+"Gepäckträger, Korb, Schutzbleche, Sattel, Beleuchtung",
+"Zweiter Akku, Navi/Handyhalterung, Tacho",
+"Schloss mit Halterung (Bügel-, Falt-, Kabel-, Kettenschloss) · Rahmen-/Speichenschloss allein reicht für die Versicherung nicht",
+"RIDE-Firmen zusätzlich lt. Händler-Leitfaden: Taschen, Hundekörbe",
 "Anhängerkupplung"
 ],
 "zubNein": [
@@ -1227,148 +1295,192 @@ const LSREC=[
 {
 "k": "CB",
 "pak": [
-"Rundum-Schutz (in der Rate): weltweit, 36 Monate, keine Selbstbeteiligung – Verschleiß, Verbrauchsmaterial und Platten ausgeschlossen",
-"Jahresinspektion (optional, in der Nutzungsrate): Verträge ab Mitte Nov. 2025 Budget bis 120 € · ältere Verträge mind. 75 €/Jahr"
+"Rundum-Schutz (in der Rate, 36 Monate, weltweit): Unfall/Sturz, Bedienfehler, Vandalismus, Diebstahl, Garantieverlängerung ab dem 3. Jahr + Mobilitätsgarantie – Bestellungen ab 01.02.2024 ohne Selbstbehalt (ältere: 10 %, max. 100 €) · Verschleiß, Verbrauchsmaterial, Platten, optische Schäden ausgeschlossen",
+"Jahresinspektion (optional, in der Nutzungsrate): Verträge ab 16.11.2025 – Kunde bucht selbst, Budget bis 120 € je Inspektion · Verträge 16.02.2024–16.11.2025 – Preis aus unserem Angebot (mind. 75 €) · ältere Händleroption-Verträge ohne Inspektion",
+"Kein Verschleiß-/Wartungspaket"
 ],
-"isz": "Preis aus dem Angebot, höchstens bis zum Betrag auf dem Inspektionscode (neu bis 120 €, alt mind. 75 €/Jahr) – per Gutschrift",
-"vsd": "Nein – kein Verschleißpaket, Verschleiß zahlt der Kunde",
-"vers": "Ja – Rundum-Schutz, keine Selbstbeteiligung",
-"reNeu": "Keine Rechnung – Gutschrift der company bike solutions GmbH (bereits gebuchte Rechnung nicht schicken)",
-"reIV": "Inspektion per Inspektionscode, Gutschrift binnen 9 Werktagen · Fragen: service@company-bike.com",
-"reSch": "Vor der Reparatur melden (sonst keine Erstattung), danach Reparaturrechnung bei company bike solutions GmbH einreichen · versicherung@company-bike.com",
-"code": "Ja – Angebotscode (QR + PIN) aus der „Händleroption“, dann Übergabecode (QR)",
-"mit": "Übergabecode (QR)",
-"isCode": "Ja – Inspektionscode mit Budget (neue Verträge bei jedem Händler, alte nur beim liefernden Händler)",
+"isz": "Neu (ab 16.11.2025): tatsächlicher Preis, max. 120 € je Inspektion (egal welche Radkategorie) · Alt (16.02.2024–16.11.2025): exakt der Angebotspreis (mind. 75 €, fest für 36 Monate) · Gutschrift binnen 9 Werktagen ohne Abzug · Mehrkosten zahlt der Kunde",
+"vsd": "Nein – kein Verschleiß-/Wartungspaket, Verschleiß zahlt der Kunde selbst",
+"abMon": "1 Inspektion pro Nutzungsjahr (Nutzungsjahr beginnt im Monat nach der Übergabe) · Kunde kann den Code nur im gültigen Inspektionszeitraum erzeugen",
+"isCode": "Ja – Kunde erzeugt Inspektionscode (PIN, Mail-Betreff „Company Bike Händleroption Inspektionscode“ + Auftragsnr.) im Kundenkonto → Portal „Inspektion durchführen“, danach „abschließen“ · neue Verträge bei jedem CBS-Händler, alte nur beim liefernden Händler · ohne Code keine Abrechnung",
+"vers": "Ja – Rundum-Schutz der Leasinggesellschaft (kein Versicherungsvertrag) inkl. Diebstahl, Garantieverlängerung und Mobilitätsgarantie · ab 01.02.2024 ohne Selbstbehalt",
+"reNeu": "Keine Rechnung schicken – Gutschriftverfahren der company bike solutions GmbH über den Bestellbetrag, ausgelöst durch die Übergabe im Portal (Übergabecode) · Zahlung automatisch binnen 9 Tagen abzgl. 2 % Skonto · vorher einmalig fürs Gutschriftverfahren registrieren (USt-ID nötig)",
+"reIV": "Inspektion: keine Rechnung – per Inspektionscode im Portal abschließen → Gutschrift binnen 9 Werktagen · Verschleiß/Reparaturen rechnet der Kunde selbst mit uns ab · Händlerbetreuung: haendler@company-bike.com · +49 89 242 94 150 (Mo–Fr 9–17 Uhr)",
+"reSch": "Kunde meldet den Schaden selbst digital im Kundenkonto (wir können nicht melden) · wir: Fotos/Videos + KVA mit schriftlicher Begründung des technischen Defekts (KVA-Kosten werden nicht erstattet) · erst nach Freigabe reparieren · Rechnung an company bike solutions GmbH, Aidenbachstraße 54-56, 81379 München – direkt mit uns oder Kunde zahlt vor und bekommt erstattet",
+"code": "Ja – Angebotscode (QR + PIN) erzeugt der Kunde im Kundenkonto für unsere PLZ (je Code nur 1 Angebot annehmbar) · nach Bestellung per Mail + Rahmen-/Akkunummer im Portal bekommt der Kunde den Übergabecode (QR/PIN)",
+"mit": "Übergabecode (QR/PIN) – ohne Code kein Rad übergeben",
 "zubJa": [
-"Fest montiertes Zubehör: Beleuchtung, Schutzbleche, Sattel, Pedale"
+"Fest verbautes Zubehör: Beleuchtung (E-Bike mit Verkabelung, Dynamo), fest verschraubte Schutzbleche, Gepäckträger, Ständer",
+"Sattel, Sattelstütze, Pedale, Griffe, Vorbau, Laufradsatz, Bereifung",
+"Schloss: Rahmenschloss + Ansteckkette oder Markenschloss mit Halterung/Tasche",
+"Zweiter Akku bei Dual Battery",
+"Kindersitz, Lastenrad-Aufbau (Kiste/Box), Persenning",
+"Flaschen-/Pumpenhalter, Klick-Fix-Halterung, Klingel, Spiegel, Reflektoren, GPS-Tracker (ohne Lizenz)",
+"Montage/Aufbau: bis 10 % der Rad-UVP, max. 150 €"
 ],
 "zubNein": [
-"Tacho / Navi (mobil)",
-"Kleidung",
-"Zusatzakku",
-"Taschen / Körbe",
-"Trinkflaschen",
-"Kinder-/Hundeanhänger"
+"Taschen / Körbe (auch fest montiert)",
+"Abnehmbare Beleuchtung / Navi / Tacho",
+"Kleidung, Helm, Brille, Schuhe",
+"Zusatzakku (nicht verbunden)",
+"Trinkflaschen, Pumpen, Werkzeug",
+"Kinder-/Hundeanhänger",
+"Steckschutzbleche (nicht fest)",
+"Ketten-/Zahlenschloss, nicht montierbares Schloss",
+"Fracht-/Versandkosten"
 ]
 },
 {
 "k": "LB",
 "pak": [
-"Neuverträge ab 13.03.2025, Bausteine – Diebstahl & Schaden: Premium (Zeitwert) oder All-inclusive (Neuwert), ohne Selbstbeteiligung, mit Mobilitätsgarantie",
-"Inspektion: Basis 2× bis 85 € · Premium 3× bis 85 € · All-inclusive 3× bis 115 € (brutto)",
-"Verschleiß: Basis 50 € · Premium 150 € pro Leasingjahr · All-inclusive unbegrenzt",
-"Kundenpreis: steckt in der Rate, Arbeitgeber legt die Pakete fest",
-"Altverträge bis 12.03.2025: Erstinspektion bis 41,65 € brutto, weitere ab dem 13. und 25. Monat"
+"Neuverträge ab 13.03.2025, Bausteine frei kombinierbar (Arbeitgeber kann Optionen vorgeben/ausschließen):",
+"Diebstahl & Schaden: Premium (Zeitwert – bei Diebstahl/Totalschaden endet der Vertrag) oder All-inclusive (Neuwert – Ersatzrad zum Anschaffungswert inkl. Zubehör) · ohne Selbstbeteiligung · Rad muss abgeschlossen sein · inkl. europaweiter Mobilitätsgarantie",
+"Inspektion: Basis 2× bis 85 € · Premium 3× bis 85 € · All-inclusive 3× bis 115 € (brutto, max. 1 pro Leasingjahr)",
+"Verschleiß: Basis 50 € · Premium 150 € brutto pro Leasingjahr · All-inclusive unbegrenzt",
+"Kundenpreis: steckt in der Rate (36 Monate) · Radwert 499–15.000 € brutto inkl. Zubehör · keine private Zuzahlung über das Arbeitgeber-Limit",
+"Altverträge bis 12.03.2025: gemeinsames Servicebudget (Inspektion + Verschleiß) Basis 75 € · Premium 200 € brutto/Jahr · All-inclusive unbegrenzt"
 ],
-"isz": "Bis 85 € brutto (Basis/Premium) bzw. 115 € (All-inclusive), max. 1 pro Leasingjahr · Altverträge: Erstinspektion bis 41,65 € · Mehrkosten zahlt der Kunde",
-"vsd": "Basis 50 € · Premium 150 € pro Leasingjahr · All-inclusive unbegrenzt (Rest verfällt am Ende des Leasingjahres)",
-"vers": "Ja – Diebstahl- und Schadenschutz ohne Selbstbeteiligung + Mobilitätsgarantie",
-"reNeu": "Rechnung im Lease-a-Bike-Portal erfassen und vor der Übergabe bestätigen – Empfänger ist die jeweilige Leasinggesellschaft (steht auf der Rechnung), nicht separat schicken",
-"reIV": "Service Hub an Lease a Bike (Gutschrift im Budget)",
-"reSch": "Nur über uns im Portal („Schaden/Diebstahl melden“) mit KVA + Fotos – nach Freigabe direkt mit Lease a Bike abrechnen",
+"isz": "Neu: bis 85 € brutto (Basis/Premium) bzw. 115 € brutto (All-inclusive), max. 1 pro Leasingjahr · Altverträge: Erstinspektion bis 41,65 € brutto (35 € netto), ab 13./25. Monat bis 83,30 € brutto (70 € netto) aus dem Servicebudget · Mehrkosten zahlt der Kunde",
+"vsd": "Ja – Basis 50 € · Premium 150 € brutto pro Leasingjahr · All-inclusive unbegrenzt (Rest verfällt am Ende des Leasingjahres) · Altverträge: Servicebudget 75/200 €/unbegrenzt · Ersatz nur gleicher Art und Güte (keine Upgrades) · Platten = Verschleiß",
+"abMon": "Max. 1 Inspektion pro Leasingjahr · Altverträge: Erstinspektion im 1. Leasingjahr, weitere ab dem 13. und 25. Monat",
+"isCode": "Nein – kein Code: Abrechnung im Service Hub über die Vertrags-ID (dort auch Restbudget sichtbar)",
+"vers": "Ja – Diebstahl- & Schadenschutz (Versicherungspartner Allianz) ohne Selbstbeteiligung + europaweite Mobilitätsgarantie mit 24/7-Pannenhilfe",
+"reNeu": "Rechnung im Lease-a-Bike-Portal erzeugen (Rechnungsnr. + -datum eintragen, bestätigen) – Empfänger ist die jeweilige Leasinggesellschaft (steht auf der Rechnung), nichts separat schicken · Auszahlung nach Übergabe (Abhol-PIN) und Aktivierung durch die Leasinggesellschaft",
+"reIV": "Service Hub im Portal (Online-Formular, Vertrags-ID) → nach Prüfung/Freigabe Gutschrift im Rahmen des Budgets · Mehrkosten zahlt der Kunde vor Ort · Fragen: service@lease-a-bike.de · +49 4471 967 3337",
+"reSch": "Kunde meldet im Portal („Schaden/Diebstahl melden“ → Allianz-Portal) oder wir über „Schaden & Diebstahl melden“ mit KVA/Rechnung + Fotos aller beschädigten Teile · wir ergänzen Reparaturdaten · nach Freigabe reparieren, Erstattung direkt durch Lease a Bike · Diebstahl-Ersatzrad (nur All-inclusive): Rechnung an Lease a Bike",
 "spe": true,
-"abMon": "Max. 1 Inspektion pro Leasingjahr · Altverträge ab dem 13. und 25. Monat (+ Erstinspektion)",
-"code": "Ja – 6-stelliger Bestellcode fürs Angebot + Abhol-PIN je Rad per Mail",
-"mit": "Abhol-PIN",
+"code": "Ja – 6-stelliger Bestellcode des Kunden (Mail/Portal) zum Anlegen des Vertrags · Abhol-PIN je Rad per Mail an den Kunden nach Arbeitgeber-Freigabe",
+"mit": "Abhol-PIN (erst bei der Übergabe im Laden nennen) – wir tragen PIN, Rahmennummer und ggf. Akku-Seriennummer im Portal ein",
 "zubJa": [
-"Fest am Rad verbautes Zubehör",
-"Schloss, Beleuchtung, Laufradsatz, Reifen"
+"Alles fest verbaute/verschraubte Zubehör oder mit fest montierter Halterung",
+"Schloss, Klingel, Beleuchtung & Rückspiegel (fest)",
+"Gepäckträger, Schutzbleche, Ständer, Ketten-/Mantelschutz",
+"Laufradsatz, Reifen, Bremsen, Steckachsen, Kettenblätter",
+"Vorbau, Lenkeraufsatz, Ergo-Griffe, Sattel-Upgrade, Sattelstütze, Pedale, Flaschenhalter",
+"Zweiter Akku + modellspezifische Halterungen",
+"Navi nur fest verbaut",
+"Lastenrad: Kindersitz, Sitzbank, Kiste/Box, Abdeckung, Regen-/Kinderverdeck"
 ],
 "zubNein": [
 "Helm",
-"Taschen",
-"Körbe",
+"Taschen (abnehmbar)",
+"Körbe (abnehmbar)",
 "Anhänger",
-"Kleidung"
+"Kleidung, Handschuhe, Schuhe",
+"Lichtsets (nicht fest)",
+"Abnehmbare Displays / Bordcomputer",
+"Trinkflaschen",
+"Smartphone-Halter (abnehmbar)"
 ]
 },
 {
 "k": "DD",
 "pak": [
-"Basis-Service: Vollkasko + Mobilitätsgarantie, 1 Sichtprüfung/UVV pro Jahr (3× in der Laufzeit)",
-"Premium-Service: wie Basis + Verschleißreparaturen und -teile",
-"Arbeitgeber legt das Paket fest, Preis steckt in der Rate"
+"Basis: Vollkasko + Mobilitätsgarantie, 1 Sichtprüfung/UVV pro Jahr (3× in der Laufzeit) – Reparaturen/Verschleiß zahlt der Kunde",
+"FullService: wie Basis + Verschleiß & Instandhaltung bis max. 210 € inkl. MwSt.",
+"Premium: wie Basis + Verschleiß & Instandhaltung unbegrenzt",
+"Arbeitgeber legt das Paket bei Vertragsabschluss fest, Preis steckt in der Rate · nachträglich nicht buchbar · gebuchtes Paket + Budget stehen in der Servicekarte der DD-Plattform"
 ],
-"isz": "Basis: automatische Gutschrift 70 € brutto · Premium: Gutschrift in Höhe der Leistung · Differenz zahlt der Kunde",
-"vsd": "Basis: nein · Premium-/FullService: ja",
-"vers": "Ja – Vollkasko inkl. Mobilitätsgarantie über Leasinggeber MLF Mercator-Leasing, keine Selbstbeteiligung",
-"reNeu": "Keine Rechnung – Gutschrift als PDF in der DD-Plattform nach Eingabe des Abholcodes · Selbstständige: Rechnung an DD Deutsche Dienstrad GmbH, Sven-Wingquist-Straße 2, 97424 Schweinfurt",
-"reIV": "DD-Plattform mit dem Code des Kunden – automatische Gutschrift",
-"reSch": "MLF Mercator-Leasing GmbH & Co. Finanz-KG, Londonstraße 1, 97424 Schweinfurt (sonst nur Netto-Erstattung) – vorher KVA + Freigabe",
-"abMon": "1. Sichtprüfung Monat 1–12, 2. Monat 13–24, 3. Monat 25–36 nach Übernahme",
-"code": "Ja – Abholcode per Mail + Plattform, sobald das Rad abholbereit ist",
-"mit": "Abholcode + gültiger Personalausweis",
-"isCode": "Ja – Code per Mail, sobald die Sichtprüfung fällig ist",
+"isz": "Basis: automatische Gutschrift 70 € brutto je Sichtprüfung (2 Werktage) · FullService/Premium: Gutschrift in Höhe der Leistung (3 Werktage) · Verschleiß und Hersteller-Serviceempfehlungen zahlt bei Basis der Kunde",
+"vsd": "Basis: nein · FullService: bis 210 € inkl. MwSt. · Premium: unbegrenzt · ohne Wartezeit, Anzahl Besuche unbegrenzt",
+"vers": "Ja – Vollkasko inkl. Mobilitätsgarantie in jedem Service-Paket, ohne Bagatellgrenze und Selbstbehalt · Selbstständige: Versicherung optional, Kaskoschutz über Leasinggeber MLF Mercator-Leasing (S-Pedelecs dort nicht versicherbar)",
+"reNeu": "Keine Rechnung – nach Eingabe des Abholcodes Gutschrift als PDF in der DD-Plattform, Auszahlung i. d. R. in 2–3 Werktagen · Selbstständige: Übernahmebestätigung + Rechnung per Mail an DD (Auszahlung 2–3 Werktage), Rechnung an DD Deutsche Dienstrad GmbH, Sven-Wingquist-Straße 2, 97424 Schweinfurt",
+"reIV": "DD-Plattform: Kunde wählt uns als Servicepartner, Abwicklung mit seinem Berechtigungscode – automatische Gutschrift (2–3 Werktage)",
+"reSch": "Kunde meldet den Schaden in der DD-Plattform („Meine Versicherung“), Hotline 09721 97293-80 · Reparaturrechnung auf MLF Mercator-Leasing GmbH & Co. Finanz-KG, Londonstraße 1, 97424 Schweinfurt, mit Rahmennummer (sonst nur Netto-Erstattung) – vorher KVA + Freigabe · Totalschaden: KVA eines DD-Fachhändlers mit Rahmennummer, Ursache, Reparaturumfang",
+"abMon": "1. Sichtprüfung Monat 1–12, 2. Monat 13–24, 3. Monat 25–36 nach Übernahme · Verschleiß (FullService/Premium) ohne Wartezeit",
+"code": "Ja – wir setzen das Rad in der DD-Plattform auf „abholbereit“ → Kunde bekommt den Abholcode per Mail (steht auch in seiner Bestellung) · Code-Eingabe = Übernahmebestätigung, startet Leasing + Versicherung",
+"mit": "Abholcode + gültiger Personalausweis · Selbstständige: Personalausweis + Übernahmebestätigung",
+"isCode": "Ja – Berechtigungscode per Mail, sobald die Sichtprüfung fällig ist (auch in der Servicekarte der DD-Plattform) · damit holt der Kunde das Rad nach dem Service ab",
+"spe": true,
 "zubJa": [
-"Fest verbundenes Zubehör",
-"Zubehör für Nutzung/Sicherheit – nur zusammen mit dem Rad",
-"Lastenrad-Zubehör (Kiste, Regenverdeck)"
+"Anbauteile: Ständer, Schutzblech, Pedale, Gepäckträger, Kettenschützer, Flaschenhalter, Rahmenschutzfolie",
+"Montagematerial / Adapterplatte für Taschen und Körbe",
+"Sonderumbau für Gehandicapte (z. B. Stützräder), Versehrtenkurbel",
+"Cockpit: Barends, Griffe, Lenkerband, Lenker-/Vorbau-Upgrade, Smartphone-Halterung, Rückspiegel, Klingel",
+"Tacho (mit/ohne GPS) und Navi – leasingfähig, aber nicht versichert",
+"Beleuchtung (StVZO): Pedelec-Beleuchtung fest verbaut, Akku-Beleuchtung, Reflektoren-Set",
+"Schlösser: Bügel-, Falt-, Kabel-, Ketten-, Rahmenschloss, Einsteckkette",
+"Upgrades: Antrieb, Bremsen, Laufräder, Reifen, Schlauch, Tubeless, Federgabel, Dämpfer, Sattel, Sattelstütze",
+"E-Bike: Display-/Bedieneinheit-Upgrade, Akku mit mehr Kapazität, zweiter Akku (Dual-System)",
+"GPS-Diebstahlschutz, Wattmessgerät",
+"Lastenrad: Kiste/Box, Regenverdeck, Persenning",
+"Zusatzleistungen: Montagekosten, Sonderlackierung ab Werk, Transport-/Versandkosten, Transportversicherung",
+"Nur zusammen mit dem Rad im Angebot – nachträglich nicht möglich"
 ],
 "zubNein": [
-"Kleidung",
+"Bekleidung / Schuhe",
 "Helm",
-"Reine Ersatzteile",
-"Rucksäcke / Taschen",
+"Ersatzteile",
+"Rucksack",
+"Taschen / Körbe",
 "Werkzeug",
-"Pumpen",
-"Trinkflaschen",
-"Anhänger",
-"Körbe"
+"Pumpe (Stand-/Dämpferpumpe)",
+"Trinkflasche (einzeln)",
+"Fahrradgarage",
+"Fahrradanhänger + Steckachse für Anhänger"
 ]
 },
 {
 "k": "EN",
 "pak": [
-"Rundumschutz Plus: Diebstahl, Teilediebstahl, Raub, Vandalismus, Unfall/Sturz, Akku-Defekt, Pick-Up-Service + Verschleiß",
-"Rundumschutz: wie Plus, aber ohne Verschleiß",
-"Versicherer bei BusinessBike-Leasing"
+"Rundumschutz Plus (nur neue E-Bikes/S-Pedelecs): Diebstahl, Teilediebstahl, Raub, Vandalismus, Unfall/Sturz/Panne, unsachgemäße Handhabung, Elektronik-/Akkudefekt, Brand/Elementar, Pick-Up-Service + Verschleiß inkl. Akku",
+"Rundumschutz (gebrauchte bzw. über 6 Monate alte E-Bikes, alle Fahrräder/Anhänger): wie Plus, aber ohne Verschleiß",
+"Neuwert-Ersatz bis zur Versicherungssumme, keine Selbstbeteiligung · Material-/Konstruktionsfehler erst nach Ablauf der Herstellergarantie",
+"Laufzeit 1 Jahr, verlängert automatisch bis max. 7 Jahre · Prämie per SEPA jährlich oder monatlich (mit Aufpreis), Preis per Tarifrechner (Kaufpreis + PLZ)",
+"Versicherer Bovemij (NL), ENRA ist Vermittler · auch Versicherer beim BusinessBike-Leasing (dort Abwicklung über das BusinessBike-Portal)"
 ],
-"vRad": "Rundumschutz Plus: nur Neurad, Erstbesitz, max. 6 Monate ab Kauf · Rundumschutz: auch Gebrauchte (ENRA-Partner prüft Zustand + Zeitwert) · bis 15.000 € inkl. Schloss · keine gewerblich genutzten Räder",
+"vRad": "E-Bikes/Pedelecs + S-Pedelecs bis 15.000 € · Fahrräder/Anhänger bis 6.000 € (Rechnungspreis nach Rabatt inkl. Schloss + fest verschraubtem Zubehör) · auch Lastenräder, Dreiräder · neu = Erstbesitz, max. 6 Monate ab Kauf · älter/gebraucht nur über ENRA-Partner (prüft Zustand, legt Wert fest) · CE nötig · gewerblich, Sport/Bikepark, Dirt/Downhill/Triathlon nur Diebstahlschutz · Schloss UVP mind. 50 € · Wohnsitz in Deutschland",
 "spe": true,
-"vAbs": "Nur über den Fachhandel – Antrag mit unserer ENRA-Partnernummer per Mail oder Post",
-"isz": "Nicht versichert – zahlt der Kunde",
-"vsd": "Nur im Rundumschutz Plus, alle Verschleißteile · Akku erst unter 50 % Kapazität",
-"abMon": "Ab dem 7. Monat nach Vertragsbeginn",
-"vMeld": "Schadenformular mit dem Kunden ausfüllen → ENRA-Händlerportal oder schaden@enra.eu (Policen-Nr. in den Betreff)",
-"vKva": "Abrechnung nur nach Rechnung – nicht nach KVA, KVA-Kosten werden nicht erstattet",
-"reSch": "ENRA – Regulierung direkt mit uns nach Vorlage der Rechnung",
-"vSb": "Keine",
-"vKon": "02131 12436-0 · schaden@enra.eu"
+"drei": true,
+"vAbs": "Antrag (ENRA-Formular, mit unserer ENRA-Vertragspartner-Nr.) per E-Mail oder Post an ENRA oder per Upload im ENRA-Partnerportal · SEPA-Mandat dazu · Police kommt per Mail · wir bekommen Provision (Höhe nicht öffentlich) · neue Räder kann der Kunde auch selbst online abschließen",
+"isz": "Nicht versichert – Wartung, Inspektion, Software-Updates, Durchsicht nach Sturz zahlt der Kunde",
+"vsd": "Nur Rundumschutz Plus (neue E-Bikes/S-Pedelecs): Verschleiß an versicherten fest verschraubten Teilen + Akku unter 50 % Kapazität · Rundumschutz/Fahrräder ohne Verschleiß",
+"abMon": "Ab dem 7. Monat nach Versicherungsabschluss (Verschleiß und Akkuverschleiß)",
+"vMeld": "Schadenformular (Unfall/Sturz/Reparatur bzw. Diebstahl/Teilediebstahl/Vandalismus) mit dem Kunden ausfüllen → ENRA-Partnerportal oder Mail an info@enra.eu, Betreff „Schaden + Police-Nr.“ · Kaufrechnung Rad + Schloss beilegen · Diebstahl/Vandalismus: Polizeianzeige binnen 5 Werktagen, Bescheinigung nach § 158 StPO mit Rahmennummer",
+"vKva": "Abrechnung nur nach Rechnung – nach KVA ausgeschlossen, KVA-Erstellung wird nicht erstattet · Carbon-Rahmen/Akku: ENRA kann Prüfung durch Sachverständigen verlangen (binnen 14 Tagen bereitstellen)",
+"reSch": "ENRA – Regulierung als Reparatur/Ersatzrad über uns, Erstattung direkt an uns nach Vorlage der Rechnung (Reparatur bzw. Ersatzbeschaffung)",
+"vSb": "Keine – in allen Tarifen",
+"vKon": "ENRA GmbH, Novesiastr. 38, 41564 Kaarst · 02131 12436-0 (Mo–Fr 8:30–17:00) · info@enra.eu · Vertragsänderungen: vertrag@enra.eu · Pick-Up-Service 0800 907 07 07 (Ausland +49 3222 109 17 44)"
 },
 {
 "k": "AL",
 "pak": [
-"Basis: Diebstahl, Raub, Vandalismus",
-"Komfort: + Sturz, Unfall, Feuchtigkeit, Elektronik, Material-/Bedienfehler + Verschleiß bis 150 €/Jahr (ohne Reifen und Bremsen)",
-"Premium: voller Verschleißschutz inkl. Akku, max. 2 Verschleißfälle pro Jahr"
+"Basis: Diebstahl, Einbruch, Raub, Vandalismus, Diebstahl von Teilen, festem Akku + mitversichertem Zubehör/Schloss · kein Verschleiß",
+"Komfort: + Sturz/Unfall, Bedienfehler, Naturgewalten, Feuchtigkeit/Elektronik an Akku/Motor/Steuerung, Material-/Produktionsfehler nach Gewährleistung + Verschleiß bis 150 €/Jahr (ohne Reifen, Bremsen, Akku)",
+"Premium: wie Komfort + Verschleiß max. 2 Fälle/Jahr inkl. Reifen, Bremsen, Akku · Helm/Schutzkleidung bis 500 € · Ersatzrad-Miete bis 150 € · Inflationsausgleich bis +15 %",
+"Leasingzusatz (nur mit Premium, während der Leasinglaufzeit): deckt Lücken zum Leasing-Versicherer · bei Diebstahl/Totalschaden Ersatz der gezahlten Leasingraten",
+"Alle Tarife: 24/7-Mobilitätsschutz (ROLAND) · Wiederbeschaffung beim Händler, bei dem gekauft wurde · GPS-Option (It's My Bike) 18 €/Jahr, Tracker stellt Alteos, Einbau durch uns binnen 30 Tagen (Montage zahlt Kunde) · 10 % Nachlass bei verbautem GPS",
+"Schloss-Pflicht: mind. 45 € brutto, Rad einzeln an festen Gegenstand · Rahmenschloss nur mit Einsteckkette"
 ],
-"vRad": "Fahrräder, Pedelecs, S-Pedelecs bis 20.000 € inkl. Schloss + Zubehör · Basis/Komfort bis 39 Monate nach Kauf (Gebrauchte nur, wenn beim Händler gekauft) · Premium nur bis 12 Monate nach Neukauf · keine Velomobile, nicht rein gewerblich",
+"vRad": "Fahrräder, E-Bikes, S-Pedelecs (bis 45 km/h) bis 20.000 € inkl. Schloss + Zubehör (auch Anhänger) · nur im Handel gekauft, technisch einwandfrei · Basis/Komfort: bis 39 Monate nach Kauf (auch Gebrauchte vom Händler) · Premium: Erstbesitz, bis 12 Monate nach Kauf · Leasingzusatz: bis 3 Monate nach Leasingbeginn · Leasing-Übernahme: bis 3 Monate nach Leasingende (Basis/Komfort, Wert = Leasingwert) · keine Velomobile, Downhill/Dirt nur Basis · Verleih/Vermietung nur auf Anfrage",
 "spe": true,
-"vAbs": "Nur über Partner – Alteos-Partnerportal (seit 03/2026) mit Anbindung an velo.port",
+"vAbs": "Nur über Partner – Alteos-Partnerportal (seit 03/2026) mit eigener Abschlussstrecke oder per QR-Code · Kunde zahlt direkt an Alteos (PayPal, Kreditkarte, SEPA) · Provision in % der Netto-Prämie · Kassen-Anbindung u. a. HIW/BIKE&CO, velo.port",
 "isz": "Nicht versichert – zahlt der Kunde",
-"vsd": "Komfort: bis 150 €/Jahr (ohne Reifen/Bremsen) · Premium: voll inkl. Akku · Basis: nein",
-"abMon": "Komfort: 6 Monate Wartezeit, wenn der Abschluss mehr als 12 Monate nach dem Kauf erfolgt",
-"vMeld": "Alteos-Partnerportal oder service@alteos.com",
-"vKva": "KVA + Fotos ab 350 € Reparaturkosten",
-"reSch": "Rechnung muss Marke, Typ und Rahmen-Nr. enthalten",
-"vSb": "Keine (alle Tarife seit 03/2023)",
-"vKon": "service@alteos.com"
+"vsd": "Basis: nein · Komfort: bis 150 €/Jahr – Kette/Riemen, Kassette/Ritzel, Speichen, Pedale, Griffe, Züge, Getriebenabe inkl. Service, Lager (ohne Reifen, Bremsen, Akku) · Premium: max. 2 Fälle/Jahr, zusätzlich Reifen/Schläuche, Bremsbeläge/-scheiben/-flüssigkeit + Akku (unter 50 % in den ersten 3 Jahren, danach unter 40 %) · Kunde zahlt vor, Alteos erstattet",
+"abMon": "Komfort: 6 Monate Wartezeit, wenn der Abschluss mehr als 12 Monate nach dem Kauf erfolgt – sonst sofort · Premium: sofort",
+"vMeld": "Partnerportal → Schadenfälle → „Schaden melden“ – oder Kunde selbst über mein.alteos.com/schaden bzw. service@alteos.com · binnen 14 Tagen · Diebstahl nur mit Polizei-Aktenzeichen",
+"vKva": "KVA + Fotos vor der Reparatur, wenn Reparaturkosten voraussichtlich über 350 € · Reparatur nur durch von Alteos freigegebene Werkstatt",
+"reSch": "Kunde reicht unsere Reparaturrechnung bei Alteos ein (Händler nicht beteiligt) · Pflichtangaben: Marke, Typ, Rahmen-Nr.",
+"vSb": "Keine (alle Tarife)",
+"vKon": "030 5884 9112 (Service E-Bike/Fahrrad, Mo–Fr 9–18 Uhr) · service@alteos.com · Partner werden: 030 5683 8665"
 },
 {
 "k": "FS",
 "pak": [
-"FahrSicherung ist Versicherungsmakler mit Eigenprodukt „FahrSicher“ – kein Versicherer",
+"FahrSicherung ist Versicherungsmakler (Berlin) mit Eigenprodukt „FahrSicher“ (Risikoträger Barmenia) – kein Versicherer · vergleicht außerdem u. a. Ammerländer, Wertgarantie, Assona, GVO, Häger, ADAC, NeoDigital, Signal Iduna",
+"FahrSicher: Diebstahl zum Neuwert (auch loses Zubehör/Gepäck, aus Kfz/vom Träger), keine Schlossvorgabe – Rad muss nur abgeschlossen sein · Beschädigung inkl. Downhill · Schutzbrief (Pannenhilfe, Pick-up, Ersatzrad)",
 "FahrSicher: Verschleiß an jedem Teil inkl. Reifen und Bremsen, 5 Jahre ab Erstkauf",
-"Inspektion nur über separat gekaufte Inspektionsgutscheine"
+"Inspektion nur über separat gekaufte Inspektionsgutscheine",
+"Premiumservice (kostenpflichtig, 2 Jahre Laufzeit): Schadenmanagement + Direktabrechnung mit der Werkstatt, Rückmeldung binnen 24 h werktags, GPS-Tracker „FaSi One“ inklusive"
 ],
 "vRad": "Auch Gebrauchte versicherbar (auch gebrauchte Lastenräder, gewerbliche Pedelecs)",
-"vAbs": "FahrSicherung-Partnerportal mit Händler-Abschlussstrecke und Provisionsportal",
-"isz": "Nicht versichert – nur mit Inspektionsgutschein des Kunden: Gutschein + Inspektionsrechnung einreichen, Erstattung ca. 14 Werktage",
+"vAbs": "FahrSicherung-Händlerportal: nach Registrierung Zugang zu Vergleichsrechner/Abschlussstrecke (ca. 3 Min., ohne Papier und Unterschrift, auch auf unserer Homepage einbindbar), Angebot per Mail an den Kunden, Provisionslisten",
+"isz": "Nicht versichert – nur mit Inspektionsgutschein, den der Kunde direkt beim Versicherungsabschluss kauft · Rad bei uns (FahrSicherung-Partner) gekauft → Gutschein nur bei uns einlösbar · Kunde reicht Inspektionsrechnung + Gutschein ein, Erstattung an ihn ca. 14 Werktage",
 "vsd": "Ja – jedes Teil inkl. Reifen und Bremsen, 5 Jahre ab Erstkauf · Akku unter 65 % (Jahr 1–3) bzw. 50 %",
-"vMeld": "Kunde fordert sein persönliches Schadenformular mit seiner Versicherungsnummer an",
+"vMeld": "Kunde fordert auf fahrsicherung.de/schadenmeldung mit seiner Versicherungsnummer sein persönliches Schadenformular an (sonst Blanko-Formular) · Diebstahl/Vandalismus: Polizeianzeige möglichst binnen 24 h",
 "vKva": "Pauschale Freigabe bis 500 € – darüber KVA",
 "reSch": "Direktabrechnung mit uns nur, wenn der Kunde den „Premiumservice“ gebucht hat",
-"vKon": "030 921 099 530 · rad@fahrsicherung.de"
+"vKon": "030 921 099 530 (tel. 10–16 Uhr) · rad@fahrsicherung.de"
 },
 {
 "k": "AS",
