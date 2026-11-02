@@ -414,7 +414,7 @@ td.r{text-align:right}.amt{color:color-mix(in srgb,var(--ac) 50%,#fff);font-fami
 .tchip{all:unset;cursor:pointer;font:700 12.5px var(--mono);color:#FDE047;padding:3px 6px;border-radius:7px;background:rgba(253,224,71,.08);border:1px solid rgba(253,224,71,.25)}
 .tchip:hover{border-color:#FDE047;background:rgba(253,224,71,.16)}.tchip:focus-visible{outline:2px solid var(--cyan)}
 .tchip.empty{color:#a1a1aa;border-style:dashed}
-.edit.tin{width:100%;min-width:0;padding:4px 2px;font:700 12px var(--mono);color-scheme:dark}
+.edit.tin{width:100%;min-width:0;padding:4px 2px;font:700 12px var(--mono);color-scheme:dark;background:var(--panel2);color:#FDE047;border:1px solid #FDE047;border-radius:7px}.edit.tin option{background:#131926;color:#fff}
 
 /* ===== Einklappbare Navigation ===== */
 .app{transition:grid-template-columns .25s ease}
@@ -568,7 +568,7 @@ body.navmini #switchUser{font-size:0;padding:6px 8px;margin:0}body.navmini #swit
 <script>
 const FB_CONFIG={apiKey:"AIzaSyC_uZPvc5rJETwlS4JbfCoTkkE4ckjtp0M",authDomain:"velocenter-planer.firebaseapp.com",projectId:"velocenter-planer",storageBucket:"velocenter-planer.firebasestorage.app",messagingSenderId:"1018330488700",appId:"1:1018330488700:web:262a4d1660353e6fde8ef9"};
 /* ================= Velocenter Werkstatt-Cockpit – Oberfläche ================= */
-const CLIENT_VERSION='1.0.5';
+const CLIENT_VERSION='1.0.6';
 const USERS=[{id:'kevin',n:'Kevin',c:'#E2232D'},{id:'stefan',n:'Stefan',c:'#F59E0B'},{id:'martina',n:'Martina',c:'#EC4899'},{id:'sascha',n:'Sascha',c:'#22D3EE'},{id:'rene',n:'René',c:'#34D399'}];
 const U=id=>USERS.find(u=>u.id===id)||{n:'',c:'#64748B',id:''};
 const $=id=>document.getElementById(id);
@@ -722,10 +722,13 @@ function render(){const g=$('grid');if(document.querySelector('#grid .edit'))ret
  $('cOpen').textContent=P.filter(e=>e.erledigt!=='1'&&e.datum>=today).length;}
 const findE=id=>P.find(e=>e.id===id);
 function parseTm(v,col){if(!/^t[12]$/.test(col))return{zeit:'',text:v};const m=v.match(/^(\d{1,2})[:.](\d{2})\s*(?:uhr)?\s*[-–]?\s*(.*)$/i);if(m&&+m[1]<24&&+m[2]<60)return{zeit:m[1].padStart(2,'0')+':'+m[2],text:m[3]||''};return{zeit:'',text:v};}
-function timeEdit(anchor,val,saveFn){const i=document.createElement('input');i.type='time';i.className='edit tin';i.id='edit';i.step=300;i.value=val||'';anchor.replaceWith(i);i.focus();try{i.showPicker();}catch(_){}
- let done=false,t;const fin=ok=>{if(done)return;done=true;clearTimeout(t);const v=i.value;i.remove();if(ok&&/^\d\d:\d\d$/.test(v))saveFn(v);else render();};
- ['keydown','keyup'].forEach(ev=>i.addEventListener(ev,k=>{if(k.key==='Enter'){k.preventDefault();fin(true);}if(k.key==='Escape')fin(false);}));i.addEventListener('blur',()=>setTimeout(()=>fin(true),150));
- i.addEventListener('change',()=>{clearTimeout(t);if(/^\d\d:\d\d$/.test(i.value))t=setTimeout(()=>fin(true),900);});}
+const TSLOTS=(()=>{const a=[];for(let h=7;h<=20;h++)for(const m of [0,15,30,45]){if(h===20&&m>0)break;a.push(String(h).padStart(2,'0')+':'+String(m).padStart(2,'0'));}return a;})();
+function timeEdit(anchor,val,saveFn){const i=document.createElement('select');i.className='edit tin';i.id='edit';i.size=1;
+ const opts=TSLOTS.slice();if(val&&!opts.includes(val))opts.push(val),opts.sort();
+ i.innerHTML='<option value="">– Uhrzeit –</option>'+opts.map(t=>`<option${t===val?' selected':''}>${t}</option>`).join('');
+ anchor.replaceWith(i);i.focus();try{i.showPicker();}catch(_){}
+ let done=false;const fin=ok=>{if(done)return;done=true;const v=i.value;i.remove();if(ok&&/^\d\d:\d\d$/.test(v)&&v!==val)saveFn(v);else render();};
+ i.addEventListener('change',()=>fin(true));i.addEventListener('keydown',k=>{if(k.key==='Enter'){k.preventDefault();fin(true);}if(k.key==='Escape')fin(false);});i.addEventListener('blur',()=>setTimeout(()=>fin(false),200));}
 function inlineEdit(anchor,val,col,saveFn,onEmpty){const i=document.createElement('input');i.className='edit';i.id='edit';i.value=val;i.placeholder=/^t[12]$/.test(col)?'10:30 Abholung Müller':'Text eingeben, Enter = speichern';anchor.replaceWith(i);i.focus();let done=false;
  const fin=ok=>{if(done)return;done=true;const v=i.value.trim();i.remove();if(ok&&v)saveFn(v);else if(ok&&!v&&onEmpty&&val)onEmpty();render();};
  i.addEventListener('keydown',k=>{if(k.key==='Enter')fin(true);if(k.key==='Escape')fin(false);});i.addEventListener('blur',()=>fin(true));}
