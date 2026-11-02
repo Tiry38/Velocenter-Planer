@@ -913,6 +913,8 @@ body[data-v=kunden] .tt small{background:var(--rb);-webkit-background-clip:text;
 /* 1.7.3: Spaltenköpfe Verkauf in Outfit wie der Rest */
 .vtab thead tr.h2 th,.vtab thead tr.h2 th *{font-family:"Outfit",var(--body),sans-serif!important;font-weight:700;letter-spacing:.02em}
 .vtab thead tr.h2 th{font-size:11px}
+/* 1.7.4: leeres Leasingende = nur Strich (Kunde hatte vorher kein Leasing) */
+.vtab td.d-lende:empty::before{content:"–";color:var(--muted);font-weight:400}
 
 [hidden]{display:none!important}
 #sTab td.b{font-weight:700}#sTab .pwm.ed{outline:none;padding:2px 6px;border-radius:6px;font-family:var(--mono)}#sTab td{vertical-align:top}
@@ -1087,7 +1089,7 @@ body[data-v=kunden] .tt small{background:var(--rb);-webkit-background-clip:text;
 <script>
 const FB_CONFIG={apiKey:"AIzaSyC_uZPvc5rJETwlS4JbfCoTkkE4ckjtp0M",authDomain:"velocenter-planer.firebaseapp.com",projectId:"velocenter-planer",storageBucket:"velocenter-planer.firebasestorage.app",messagingSenderId:"1018330488700",appId:"1:1018330488700:web:262a4d1660353e6fde8ef9"};
 /* ================= Velocenter Werkstatt-Cockpit – Oberfläche ================= */
-const CLIENT_VERSION='1.7.3';
+const CLIENT_VERSION='1.7.4';
 const USERS=[{id:'kevin',n:'Kevin',c:'#E2232D'},{id:'stefan',n:'Stefan',c:'#F59E0B'},{id:'martina',n:'Martina',c:'#EC4899'},{id:'sascha',n:'Sascha',c:'#22D3EE'},{id:'rene',n:'René',c:'#34D399'}];
 const U=id=>USERS.find(u=>u.id===id)||{n:'',c:'#64748B',id:''};
 const $=id=>document.getElementById(id);
