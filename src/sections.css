@@ -400,3 +400,8 @@ body{background-color:#090B10;background-image:
 .rkf textarea{font:500 13px var(--body);resize:vertical}
 @media (max-width:900px){.rkf .g4{grid-template-columns:1fr 1fr}.rkf .w2{grid-column:1/-1}}
 .rktab .rkm{font:600 12px var(--mono);color:#E2E8F0}
+/* Planer Tag-Spalte: Wochentag groß, Spalte endet direkt dahinter, „Heute“ unter dem Datum */
+#v-planer .date{flex-wrap:wrap;align-content:center;column-gap:7px!important;row-gap:3px!important;padding:6px 8px 6px 10px!important}
+#v-planer .date span{font-size:22px!important;font-weight:600!important;line-height:1}
+#v-planer .date b{line-height:1}
+#v-planer .date em{flex-basis:100%;margin-left:0!important;width:max-content;max-width:max-content;text-align:center}

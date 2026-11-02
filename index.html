@@ -724,6 +724,11 @@ body{background-color:#090B10;background-image:
 .rkf textarea{font:500 13px var(--body);resize:vertical}
 @media (max-width:900px){.rkf .g4{grid-template-columns:1fr 1fr}.rkf .w2{grid-column:1/-1}}
 .rktab .rkm{font:600 12px var(--mono);color:#E2E8F0}
+/* Planer Tag-Spalte: Wochentag groß, Spalte endet direkt dahinter, „Heute“ unter dem Datum */
+#v-planer .date{flex-wrap:wrap;align-content:center;column-gap:7px!important;row-gap:3px!important;padding:6px 8px 6px 10px!important}
+#v-planer .date span{font-size:22px!important;font-weight:600!important;line-height:1}
+#v-planer .date b{line-height:1}
+#v-planer .date em{flex-basis:100%;margin-left:0!important;width:max-content;max-width:max-content;text-align:center}
 
 [hidden]{display:none!important}
 #sTab td.b{font-weight:700}#sTab .pwm.ed{outline:none;padding:2px 6px;border-radius:6px;font-family:var(--mono)}#sTab td{vertical-align:top}
@@ -872,7 +877,7 @@ body{background-color:#090B10;background-image:
 <script>
 const FB_CONFIG={apiKey:"AIzaSyC_uZPvc5rJETwlS4JbfCoTkkE4ckjtp0M",authDomain:"velocenter-planer.firebaseapp.com",projectId:"velocenter-planer",storageBucket:"velocenter-planer.firebasestorage.app",messagingSenderId:"1018330488700",appId:"1:1018330488700:web:262a4d1660353e6fde8ef9"};
 /* ================= Velocenter Werkstatt-Cockpit – Oberfläche ================= */
-const CLIENT_VERSION='1.4.4';
+const CLIENT_VERSION='1.4.5';
 const USERS=[{id:'kevin',n:'Kevin',c:'#E2232D'},{id:'stefan',n:'Stefan',c:'#F59E0B'},{id:'martina',n:'Martina',c:'#EC4899'},{id:'sascha',n:'Sascha',c:'#22D3EE'},{id:'rene',n:'René',c:'#34D399'}];
 const U=id=>USERS.find(u=>u.id===id)||{n:'',c:'#64748B',id:''};
 const $=id=>document.getElementById(id);
@@ -1071,7 +1076,7 @@ function daysList(){const t=fromIso(TODAY()),start=new Date(t);if(showPast)start
  for(const d=new Date(start);d<=end&&d<=lim;d.setDate(d.getDate()+1)){if(d.getDay()===0)continue;out.push(iso(d));}return out;}
 const tmSort=(a,b)=>(a.zeit||'99').localeCompare(b.zeit||'99');
 function render(){const g=$('grid');if(document.querySelector('#grid .edit'))return;const cols=COLS.filter(c=>vis[c.of||c.k]);const today=TODAY();
- g.style.setProperty('--cols','144px '+cols.map(c=>c.of?'80px':c.dot?'34px':c.fix?c.fix:'minmax('+(/^t[12]$/.test(c.k)?180:150)+'px,'+c.w+')').join(' '));
+ g.style.setProperty('--cols','var(--dcw,112px) '+cols.map(c=>c.of?'80px':c.dot?'34px':c.fix?c.fix:'minmax('+(/^t[12]$/.test(c.k)?180:150)+'px,'+c.w+')').join(' '));
  g.style.setProperty('--minw',(132+cols.reduce((a,c)=>a+(c.of?80:c.dot?34:/^t[12]$/.test(c.k)?180:150),0))+'px');
  const by={};P.forEach(e=>{(by[e.datum]=by[e.datum]||[]).push(e);});
  let h='<div class="hd d">Tag</div>'+cols.map(c=>c.dot?`<div class="hd hdot" style="--cc:${c.c}" title="Anfragen Abholung/Reparatur"><i style="background:${c.c}"></i></div>`:(c.ico?`<div class="hd hico" style="--cc:${c.c}" title="${c.n}">${c.ico}</div>`:`<div class="hd" style="--cc:${c.c}"><i style="background:${c.c}"></i>${c.n}</div>`)).join('');
