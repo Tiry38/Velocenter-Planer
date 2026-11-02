@@ -101,11 +101,11 @@ const editing=()=>!!document.querySelector('#grid .edit, .edf, #dlg:not([hidden]
 function renderAll(){renderInfo();render();rv();rb();rl();rs();rtg();}
 function scheduleRender(){clearTimeout(rTimer);rTimer=setTimeout(()=>{if(editing()){dirty=true;return;}dirty=false;renderAll();},60);}
 document.addEventListener('focusout',()=>setTimeout(()=>{if(dirty&&!editing()){dirty=false;renderAll();}},120));
-function ping(fromOther){const l=$('live');if(fromOther){l.classList.remove('ping');void l.offsetWidth;l.classList.add('ping');}}
+function ping(fromOther){const l=$('live');if(l&&fromOther){l.classList.remove('ping');void l.offsetWidth;l.classList.add('ping');}}
 function listen(k,setter,q){let first=true;const ref=q||db.collection(COL[k]);unsubs.push(ref.onSnapshot({includeMetadataChanges:false},snap=>{
   setter(snap.docs.map(d=>Object.assign({id:d.id},d.data())));
   if(!first){const other=snap.docChanges().some(c=>(c.doc.data()||{}).tsVon&&(c.doc.data()||{}).tsVon!==ME.id&&!snap.metadata.hasPendingWrites);if(other){ping(true);}}
-  first=false;$('live').classList.toggle('off',snap.metadata.fromCache&&!navigator.onLine);scheduleRender();},e=>{fail(e);}));}
+  first=false;$('live')&&$('live').classList.toggle('off',snap.metadata.fromCache&&!navigator.onLine);scheduleRender();},e=>{fail(e);}));}
 function stopLive(){unsubs.forEach(u=>{try{u();}catch(_){}});unsubs=[];}
 function startLive(){stopLive();const from=iso(new Date(Date.now()-35*864e5));
  listen('P',x=>P=x,db.collection('planer').where('datum','>=',from));
@@ -203,18 +203,17 @@ function stats(el,list,active){$(el).innerHTML=list.map(x=>`<button class="stat$
 
 /* ================= VERKAUF ================= */
 let FN={BL:'Bikeleasing',CB:'Company Bike',KM:'Kazenmaier',BB:'Businessbike',JR:'JobRad',DD:'Deutsche Dienstrad',LB:'Lease a Bike',RD:'RIDE',ER:'Eurorad'};
-let vkEdit=null,vkShowDone=false,vkF='',vkView=ls.get('vc_vkview','liste'),vkSort=ls.get('vc_vksort','neu');if(!['neu','lt','status'].includes(vkSort))vkSort='neu';
+let vkEdit=null,vkShowDone=false,vkF='',vkSort=ls.get('vc_vksort','neu');if(!['neu','lt','status'].includes(vkSort))vkSort='neu';
 const VF=[['dat','Vom Kunde bestellt am'],['modell','Modell'],['name','Kunde'],['lt','Liefertermin'],['antrag','Antrag'],['ok','O.K.'],['lende','Leasing-Ende'],['notiz','Notiz']];
-function rv(){const s1=($('vkSearch').value||'').toLowerCase();
+function rv(){
  const open=V.filter(b=>b.a!=='1'),F={nm:b=>b.a!=='1'&&b.m!=='1'&&b.b!=='1',mw:b=>b.a!=='1'&&b.m==='1'&&b.b!=='1',ok:b=>b.a!=='1'&&b.b==='1',lk:b=>b.a!=='1'&&b.firma&&!b.ok};
- stats('vkStats',[{k:'nm',n:'Noch montieren',v:V.filter(F.nm).length,c:'#FBBF24',i:'wrench'},{k:'mw',n:'Montiert · wartet auf O.K.',v:V.filter(F.mw).length,c:'#60A5FA',i:'clock'},{k:'ok',n:'O.K. · abholbereit',v:V.filter(F.ok).length,c:'#34D399',i:'check'},{k:'lk',n:'Leasing ohne O.K.',v:V.filter(F.lk).length,c:'#F87171',i:'alert'}],vkF);
- const list=V.filter(b=>(vkShowDone||b.a!=='1'||b.id===vkEdit)&&(!vkF||F[vkF](b)||b.id===vkEdit)&&(!s1||(b.modell+' '+b.name+' '+(FN[b.firma]||'')+' '+b.firma+' '+(b.lt||'')+' '+((brandOf(b.modell)||{}).n||'')).toLowerCase().includes(s1)));
+ const list=V.filter(b=>(vkShowDone||b.a!=='1'||b.id===vkEdit));
  list.sort(vkCmp);
- document.querySelectorAll('#vkViewSeg .btn').forEach(x=>x.setAttribute('aria-pressed',x.dataset.vv===vkView));$('vkSortSel').value=vkSort;
- const form=vkEdit==='new'?vkForm({id:'new'}):vkEdit&&V.find(x=>x.id===vkEdit)?vkForm(V.find(x=>x.id===vkEdit)):'';
+  const form=vkEdit==='new'?vkForm({id:'new'}):vkEdit&&V.find(x=>x.id===vkEdit)?vkForm(V.find(x=>x.id===vkEdit)):'';
  if(document.querySelector('#cards [contenteditable]:focus, #cards .din'))return;
- if(vkView==='liste'){$('cards').className='vlist';$('cards').innerHTML=form+(list.length?`<div class="tbl vtab"><table><thead><tr class="h1"><th colspan="4"></th><th colspan="4" class="lgrp"><span>Leasing</span></th><th colspan="4"></th></tr><tr class="h2"><th></th><th>Kunde · Modell</th><th class="thb">Vom Kunde<br>bestellt am</th><th>LT</th><th>Anbieter</th><th>Antrag</th><th>O.K.</th><th>L.-Ende</th><th class="thn">Notiz</th><th>Beratung</th><th>Status</th><th></th></tr></thead><tbody>${list.map(vkRow).join('')}</tbody></table></div>`:'<p class="empty">Keine Räder in dieser Auswahl.</p>');}
- else{$('cards').className='cards';$('cards').innerHTML=form+(list.filter(b=>b.id!==vkEdit).map(vkCard).join('')||'<p class="empty">Keine Räder in dieser Auswahl.</p>');}
+ {const hold=$('vkCtlHold');['vkSortSel','vkDone','vkAdd'].forEach(id=>hold.append($(id)));$('vkSortSel').value=vkSort;
+ $('cards').className='vlist';$('cards').innerHTML=form+`<div class="tbl vtab"><table><thead><tr class="h1"><th colspan="5" class="hL"></th><th colspan="4" class="lgrp"><span>Leasing</span></th><th colspan="3" class="hR"></th></tr><tr class="h2"><th></th><th>Kunde · Modell</th><th class="thb">Vom Kunde<br>bestellt am</th><th>LT</th><th class="thn">Notiz</th><th>Anbieter</th><th>Antrag</th><th>O.K.</th><th>L.-Ende</th><th>Beratung</th><th>Status</th><th></th></tr></thead><tbody>${list.length?list.map(vkRow).join(''):'<tr><td colspan="12" class="empty">Keine Räder in dieser Auswahl.</td></tr>'}</tbody></table></div>`;
+ document.querySelector('#cards th.hL').append($('vkSortSel'),$('vkDone'));document.querySelector('#cards th.hR').append($('vkAdd'));}
  $('nOffen').textContent=V.filter(b=>b.a!=='1').length;}
 /* Sortierung: Datum „17.8.“ / „29.09.“ / LT „38“ „KW 38“ „Lager“ */
 function vkDate(s){const m=String(s||'').match(/(\d{1,2})\.(\d{1,2})\.?(\d{2,4})?/);if(!m)return 0;const now=new Date();let y=m[3]?+m[3]:now.getFullYear();if(y<100)y+=2000;let d=new Date(y,+m[2]-1,+m[1]);if(!m[3]&&d>new Date(now.getTime()+60*864e5))d=new Date(y-1,+m[2]-1,+m[1]);return d.getTime();}
@@ -238,24 +237,12 @@ function vkRow(b){const st=b.a==='1'?'a':b.b==='1'?'b':b.m==='1'?'m':'o';const c
  return `<tr class="vr st-${st}">
  <td class="sdot" title="${{o:'offen',m:'montiert',b:'O.K. – abholbereit',a:'abgeholt'}[st]}"><i></i></td>
  <td class="who2${vkFx(b)}"><div class="wp"><b>${esc(b.name||'–')}</b><small>${bIco(b.modell)}${esc(b.modell||'')}</small></div></td>
- ${dcD('dat',b.dat)}<td class="kcell${ltHot(b.lt)&&b.a!=='1'?' hot':''}" data-vid="${esc(b.id)}" title="Klick = Kalenderwoche wählen" tabindex="0">${esc(b.lt||'')}</td>
+ ${dcD('dat',b.dat)}<td class="kcell${ltHot(b.lt)&&b.a!=='1'?' hot':''}" data-vid="${esc(b.id)}" title="Klick = Kalenderwoche wählen" tabindex="0">${esc(b.lt||'')}</td>${ce('notiz',[b.notiz,b.montieren?'Montieren: '+b.montieren:''].filter(Boolean).join(' · '),'vnote')}
 <td><div class="lcell">${leasLogo(b.firma)}<select class="lsel mini2${b.firma?'':' off'}" data-vi="${esc(b.id)}" aria-label="Leasing-Firma"><option value="">–</option>${Object.entries(FN).map(([k,n])=>`<option value="${esc(k)}"${b.firma===k?' selected':''}>${esc(k)} · ${esc(n)}</option>`).join('')}${b.firma&&!FN[b.firma]?`<option selected>${esc(b.firma)}</option>`:''}</select></div></td>
- ${b.firma?dc('antrag',b.antrag,'d-antrag'):'<td class="na">–</td>'}${b.firma?dc('ok',b.ok,b.ok?'d-ok':'d-ok miss'):'<td class="na">–</td>'}${b.firma?dc('lende',b.lende,'d-lende'):'<td class="na">–</td>'}${ce('notiz',[b.notiz,b.montieren?'Montieren: '+b.montieren:''].filter(Boolean).join(' · '),'vnote')}
+ ${b.firma?dc('antrag',b.antrag,'d-antrag'):'<td class="na">–</td>'}${b.firma?dc('ok',b.ok,b.ok?'d-ok':'d-ok miss'):'<td class="na">–</td>'}${b.firma?dc('lende',b.lende,'d-lende'):'<td class="na">–</td>'}
  <td><select class="ssel mini2" data-vi="${esc(b.id)}" aria-label="Verkauf/Beratung"><option value="">–</option>${USERS.map(u=>`<option value="${u.id}"${b.verk===u.id?' selected':''}>${esc(u.n)}</option>`).join('')}</select></td>
  <td class="stb"><button class="st m" type="button" aria-pressed="${b.m==='1'}" data-vi="${esc(b.id)}" data-k="m" title="${b.mVon?'montiert von '+esc(U(b.mVon).n)+' '+esc(b.mAm):'montiert'}">🔧</button><button class="st b" type="button" aria-pressed="${b.b==='1'}" data-vi="${esc(b.id)}" data-k="b" title="${b.bVon?'O.K. von '+esc(U(b.bVon).n)+' '+esc(b.bAm):'O.K.'}">O.K.</button><button class="st a" type="button" aria-pressed="${b.a==='1'}" data-vi="${esc(b.id)}" data-k="a" title="${b.aVon?'abgeholt von '+esc(U(b.aVon).n)+' '+esc(b.aAm):'abgeholt'}">✓</button></td>
  <td><button class="mini" type="button" data-vedit="${esc(b.id)}" title="Alle Felder / Löschen">✎</button></td></tr>`;}
-function vkCard(b){const L1=!!b.firma,st=b.a==='1'?'abgeholt':b.b==='1'?'bereit':b.m==='1'?'montiert':'',stl=b.a==='1'?'abgeholt':b.b==='1'?'O.K.':b.m==='1'?'montiert':'offen';
- const steps=L1?[['Antrag',b.antrag],['Montiert',b.m==='1'],['O.K.',b.b==='1'],['Abgeholt',b.a==='1']]:[['Montiert',b.m==='1'],['O.K.',b.b==='1'],['Abgeholt',b.a==='1']];
- return `<article class="bike" data-s="${st}"><div class="h"><div class="wp${vkFx(b)}" style="min-width:0"><div class="name">${esc(b.name||'–')}</div><div class="model">${bIco(b.modell)}${esc(b.modell)}</div></div>${b.firma?`<div class="clogo">${leasLogo(b.firma)}</div>`:''}
- <select class="lsel${L1?'':' off'}" data-vi="${esc(b.id)}" aria-label="Leasing-Firma wählen"><option value="">ohne Leasing</option>${Object.entries(FN).map(([k,n])=>`<option value="${esc(k)}"${b.firma===k?' selected':''}>${esc(k)} · ${esc(n)}</option>`).join('')}${b.firma&&!FN[b.firma]?`<option selected>${esc(b.firma)}</option>`:''}</select></div>
- <div class="seller"><span>Verkauf / Beratung</span><select class="ssel" data-vi="${esc(b.id)}" aria-label="Verkauft von"><option value="">– wählen –</option>${USERS.map(u=>`<option value="${u.id}"${b.verk===u.id?' selected':''}>${esc(u.n)}</option>`).join('')}</select>${av(b.verk,'verkauft von')}</div>
- <div class="meta"><div><small>Bestellt am</small><b>${esc(dshort(b.dat)||'–')}</b></div><div><small>LT</small><b>${esc(b.lt||'–')}</b></div>
- ${L1?`<div><small>Antrag</small><b style="color:#C4B5FD">${esc(dshort(b.antrag)||'–')}</b></div><div><small>O.K.</small><b style="color:${b.ok?'#34D399':'#FCA5A5'}">${esc(dshort(b.ok)||'fehlt')}</b></div><div><small>L.-Ende</small><b style="color:#67E8F9">${esc(dshort(b.lende)||'–')}</b></div>`:''}</div>
- <div><div class="flow">${steps.map(x=>`<i class="${x[1]?'on':''}"></i>`).join('')}</div><div class="flowl">${steps.map(x=>`<span>${x[0]}</span>`).join('')}</div></div>
- ${b.notiz?`<div class="note">📝 ${esc(b.notiz)}</div>`:''}
- ${(b.m==='1'&&b.mVon)||(b.b==='1'&&b.bVon)||(b.a==='1'&&b.aVon)?`<div class="who">${b.m==='1'&&b.mVon?`<span>${av(b.mVon)} montiert ${esc(b.mAm)}</span>`:''}${b.b==='1'&&b.bVon?`<span>${av(b.bVon)} O.K. ${esc(b.bAm)}</span>`:''}${b.a==='1'&&b.aVon?`<span>${av(b.aVon)} abgeholt ${esc(b.aAm)}</span>`:''}</div>`:''}
- <div class="status"><button class="st m" type="button" aria-pressed="${b.m==='1'}" data-vi="${esc(b.id)}" data-k="m">montiert</button><button class="st b" type="button" aria-pressed="${b.b==='1'}" data-vi="${esc(b.id)}" data-k="b">O.K.</button><button class="st a" type="button" aria-pressed="${b.a==='1'}" data-vi="${esc(b.id)}" data-k="a">abgeholt</button></div>
- <button class="lnk" type="button" data-vedit="${esc(b.id)}">✎ Bearbeiten</button></article>`;}
 function vkForm(b){return `<article class="bike editing"><form class="edf" data-vf="${esc(b.id)}" autocomplete="off"><b>${b.id==='new'?'Neues verkauftes Rad':'Rad bearbeiten'}</b><div class="g2">${VF.map(([k,n])=>`<label>${n}<input name="${k}" value="${esc(b[k]||'')}"${k==='modell'?' required':''}></label>`).join('')}</div>
  <div class="acts"><button class="btn red" type="submit">Speichern</button><button class="btn" type="button" data-vcancel>Abbrechen</button>${b.id!=='new'?`<button class="btn del" type="button" data-vdel="${esc(b.id)}">Löschen</button>`:''}</div></form></article>`;}
 async function putV(b){const i=V.findIndex(x=>x.id===b.id);if(i<0)V.unshift(b);else V[i]=b;rv();try{await save('V',b);}catch(_){}}
@@ -266,8 +253,6 @@ $('cards').addEventListener('click',e=>{const t=e.target.closest('.st');if(t){co
 $('cards').addEventListener('change',e=>{const s=e.target.closest('.ssel');if(s){const b=V.find(x=>x.id===s.dataset.vi);putV(Object.assign({},b,{verk:s.value}));toast('Verkauf/Beratung: '+(s.value?U(s.value).n:'–'));return;}
  const l=e.target.closest('.lsel');if(l){const b=V.find(x=>x.id===l.dataset.vi);putV(Object.assign({},b,{firma:l.value}));toast(l.value?'Leasing: '+(FN[l.value]||l.value):'Ohne Leasing');}});
 $('cards').addEventListener('submit',e=>{e.preventDefault();const f=e.target,id=f.dataset.vf,d=new FormData(f);const b=id==='new'?{id:nid('v'),m:'',b:'',a:'',verk:ME.id,firma:''}:Object.assign({},V.find(x=>x.id===id));VF.forEach(([k])=>b[k]=String(d.get(k)||'').trim());vkEdit=null;putV(b);toast('Gespeichert');});
-$('vkSearch').addEventListener('input',rv);
-document.querySelectorAll('#vkViewSeg .btn').forEach(b=>b.addEventListener('click',()=>{vkView=b.dataset.vv;ls.set('vc_vkview',vkView);rv();}));
 $('vkSortSel').addEventListener('change',e=>{vkSort=e.target.value;ls.set('vc_vksort',vkSort);rv();});
 function dshort(v){v=String(v||'').trim();const m=v.match(/^(\d{1,2})\.(\d{1,2})\.?(\d{2,4})?$/);return m?m[1].padStart(2,'0')+'.'+m[2].padStart(2,'0')+'.':v;}
 function toIsoDe(v){const m=String(v||'').match(/(\d{1,2})\.(\d{1,2})\.?(\d{2,4})?/);if(!m)return '';const t=vkDate(v);if(!t)return '';const d=new Date(t);return iso(d);}
@@ -284,7 +269,6 @@ function ltEdit(td){const b=V.find(x=>x.id===td.dataset.vid);if(!b)return;const 
  sl.addEventListener('change',()=>fin(true));sl.addEventListener('keydown',k=>{if(k.key==='Escape')fin(false);});sl.addEventListener('blur',()=>setTimeout(()=>fin(false),150));}
 $('cards').addEventListener('keydown',e=>{const td=e.target.closest('td.dcell');if(td&&e.key==='Enter'&&!td.querySelector('input')){e.preventDefault();dateEdit(td);return;}const tk=e.target.closest('td.kcell');if(tk&&e.key==='Enter'&&!tk.querySelector('select')){e.preventDefault();ltEdit(tk);return;}const c=e.target.closest('[contenteditable]');if(c&&e.key==='Enter'){e.preventDefault();c.blur();}if(c&&e.key==='Escape'){c.blur();rv();}});
 $('cards').addEventListener('focusout',e=>{const c=e.target.closest('td[contenteditable]');if(!c)return;const b=V.find(x=>x.id===c.dataset.vid),f=c.dataset.f,v=c.textContent.trim();const cur=f==='notiz'?[b&&b.notiz,b&&b.montieren?'Montieren: '+b.montieren:''].filter(Boolean).join(' · '):(b&&b[f]||'');if(!b||v===cur)return;putV(Object.assign({},b,{[f]:v},f==='notiz'?{montieren:''}:{}));toast('Gespeichert');});
-$('vkStats').addEventListener('click',e=>{const b=e.target.closest('[data-sf]');if(!b)return;vkF=vkF===b.dataset.sf?'':b.dataset.sf;rv();});
 $('vkAdd').addEventListener('click',()=>{vkEdit='new';rv();$('cards').scrollIntoView({block:'start'});const f=document.querySelector('[data-vf=new] input');if(f)f.focus();});
 $('vkDone').addEventListener('click',e=>{vkShowDone=!vkShowDone;e.currentTarget.setAttribute('aria-pressed',vkShowDone);rv();});
 

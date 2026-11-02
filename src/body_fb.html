@@ -21,7 +21,7 @@
       <div class="seg sWd"><small>Heute</small><b id="dWd"></b></div>
       <div class="seg sDate"><small>Datum</small><b id="dDate"></b></div>
       <div class="seg sKw"><small>Kalenderwoche</small><b id="dKw"></b></div>
-      <div class="seg sClock"><span class="live" id="live" title="Änderungen anderer PCs erscheinen automatisch"><i></i>LIVE</span><span class="clock" id="clock">--<i>:</i>--</span></div>
+      <div class="seg sClock"><span class="clock" id="clock">--<i>:</i>--</span></div>
     </div>
   </div>
   <div class="upd" id="upd" hidden>Neue Version ist da – sie lädt automatisch, sobald du mit der Eingabe fertig bist.</div>
@@ -44,14 +44,11 @@
 
   <!-- VERKAUF -->
   <section class="view" id="v-verkauf">
-    <div class="toolbar">
-      <label class="search"><svg class="ico" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg><input id="vkSearch" placeholder="Name, Modell oder Leasing suchen"></label>
-      <div class="seg" id="vkViewSeg"><button class="btn" type="button" data-vv="liste" aria-pressed="true">☰ Liste</button><button class="btn" type="button" data-vv="karten" aria-pressed="false">▦ Karten</button></div>
+    <div id="vkCtlHold" hidden>
       <select class="btn sortsel" id="vkSortSel" aria-label="Sortieren"><option value="neu">Neueste zuerst</option><option value="lt">Nach Liefertermin</option><option value="status">Nach Status</option></select>
       <button class="btn" type="button" id="vkDone" aria-pressed="false">Abgeholte zeigen</button>
-      <button class="btn red" type="button" id="vkAdd">+ Verkauftes Rad</button>
+      <button class="vkAdd" type="button" id="vkAdd">+ Verkauftes Rad</button>
     </div>
-    <div class="stats" id="vkStats"></div>
     <div class="cards" id="cards"></div>
   </section>
 

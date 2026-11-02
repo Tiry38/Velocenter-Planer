@@ -51,10 +51,10 @@ await p.click('#navTog');await wait(350);ok('Navi ausklappen',await p.isVisible(
 await p.click('.navbtn[data-v=verkauf]');await wait(300);ok('Verkauf Liste: 2 offen',(await p.$$eval('.vr',b=>b.length))===2);
 await p.click('.vr .st.m[aria-pressed=false]');await wait(500);ok('montiert + wer',await p.evaluate(()=>V.some(v=>v.m==='1'&&v.mVon==='kevin')));
 await p.selectOption('.vr .ssel','rene');await wait(400);ok('Verkauf/Beratung',await p.evaluate(()=>V.some(v=>v.verk==='rene')));
-await p.click('.vr td[data-f="lt"]');await p.keyboard.press('Control+A');await p.keyboard.type('KW 46');await p.keyboard.press('Enter');await wait(500);ok('LT direkt in der Liste ändern',await p.evaluate(()=>V.some(v=>v.lt==='KW 46')));
+await p.click('.vr td.kcell');await wait(200);await p.selectOption('.vr td.kcell select',{index:8});await wait(500);ok('LT per KW-Auswahl',await p.evaluate(()=>V.some(v=>/^KW \d+$/.test(v.lt||''))));
 await p.selectOption('#vkSortSel','lt');await wait(200);ok('Sortieren nach Liefertermin',(await p.$$eval('.vr',r=>r.length))===2);
-await p.click('#vkStats [data-sf=nm]');await wait(200);const nm=await p.$$eval('.vr',r=>r.length);await p.click('#vkStats [data-sf=nm]');await wait(200);ok('Kachel-Filter',nm<2);
-await p.click('#vkViewSeg [data-vv=karten]');await wait(300);ok('Karten-Ansicht',(await p.$$eval('.bike',b=>b.length))===2);await p.click('#vkViewSeg [data-vv=liste]');
+ok('Kacheln weg, Steuerung im Tabellenkopf',!(await p.$('#vkStats'))&&!!(await p.$('th.hL #vkSortSel'))&&!!(await p.$('th.hL #vkDone'))&&!!(await p.$('th.hR #vkAdd')));
+ok('Keine Suche/Karten-Knöpfe mehr',!(await p.$('#vkSearch'))&&!(await p.$('#vkViewSeg'))&&!(await p.$('#live')));
 await p.click('#vkAdd');await p.fill('[data-vf=new] input[name=modell]','KTM Macina');await p.click('[data-vf=new] button[type=submit]');await wait(500);ok('+ Rad',await p.evaluate(()=>V.some(v=>v.modell==='KTM Macina')));
 // Bestell
 await p.click('.navbtn[data-v=bestell]');await wait(300);ok('Bestell-Notiz',(await p.textContent('#iBnotiz')).includes('Einbremsmaschine'));
