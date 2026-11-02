@@ -655,12 +655,19 @@ async function saveNotes(){if(!KEY||!NOTES||!ME.adm)return;try{await db.doc('tre
 function rn(){const box=$('nBox');if(!box)return;const open=!!(KEY&&NOTES);$('nLock').hidden=open;box.hidden=!open;if(!open){$('nGrid').innerHTML='';return;}
  if(document.querySelector('#nGrid [contenteditable]:focus'))return;
  $('nImp').hidden=!(PWGRID&&PWGRID.length&&!NOTES.length);
- $('nGrid').innerHTML='<div class="nhd">Farbe</div><div class="nhd">Eintrag</div><div class="nhd">Zusatz / Info</div><div class="nhd"></div>'+
+ $('nGrid').style.setProperty('--nw',(+ls.get('vc_nw',0)||0)>0?ls.get('vc_nw')+'px':'minmax(320px,1.4fr)');
+ $('nGrid').innerHTML='<div class="nhd">Farbe</div><div class="nhd nhr">Eintrag<span class="nres" title="Ziehen = Spaltenbreite ändern (Doppelklick = Standard)"></span></div><div class="nhd">Zusatz / Info</div><div class="nhd"></div>'+
   (NOTES.length?NOTES.map((n,i)=>{const c=n.c||NCOL[i%NCOL.length];return `<div class="nrow" style="--nc:${c}"><div class="nc ncol"><button class="ndot" type="button" data-ncol="${i}" title="Farbe wechseln"></button></div>
   <div class="nc"><div class="ne" contenteditable="true" spellcheck="false" data-ni="${i}" data-nf="t">${esc(n.t||'')}</div></div>
   <div class="nc"><div class="nz" contenteditable="true" spellcheck="false" data-ni="${i}" data-nf="z">${esc(n.z||'')}</div></div>
   <div class="nc nact"><button class="mini" type="button" data-ncp="${i}" title="Eintrag kopieren">⧉</button><button class="nx" type="button" data-ndel="${i}" title="Löschen">×</button></div></div>`;}).join('')
   :'<div class="nempty">Noch keine Notizen – „+ Notiz“ oder „Aus Passwort-Liste übernehmen“.</div>');}
+// Spaltenbreite „Eintrag“ per Ziehen (pro Gerät gemerkt), Doppelklick = Standard
+$('nGrid').addEventListener('pointerdown',e=>{const h=e.target.closest('.nres');if(!h)return;e.preventDefault();const g=$('nGrid'),col=h.parentElement,x0=e.clientX,w0=col.getBoundingClientRect().width;h.setPointerCapture(e.pointerId);document.body.classList.add('nresizing');
+ const mv=ev=>{const w=Math.max(180,Math.min(1400,Math.round(w0+ev.clientX-x0)));g.style.setProperty('--nw',w+'px');};
+ const up=ev=>{h.removeEventListener('pointermove',mv);h.removeEventListener('pointerup',up);document.body.classList.remove('nresizing');const w=Math.round(col.getBoundingClientRect().width);ls.set('vc_nw',w);arm();};
+ h.addEventListener('pointermove',mv);h.addEventListener('pointerup',up);});
+$('nGrid').addEventListener('dblclick',e=>{if(!e.target.closest('.nres'))return;ls.set('vc_nw',0);rn();});
 $('nOpen').addEventListener('click',()=>pinDlg(()=>{show('notes');}));
 $('nLockBtn').addEventListener('click',relock);
 $('nAdd').addEventListener('click',()=>{if(!NOTES)return;NOTES.push({id:nid('n'),t:'',z:'',c:NCOL[NOTES.length%NCOL.length]});rn();const el=document.querySelector(`#nGrid [data-ni="${NOTES.length-1}"][data-nf=t]`);if(el)el.focus();});

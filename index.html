@@ -737,7 +737,7 @@ body{background-color:#090B10;background-image:
 #nLock{text-align:center}#nLock .btn{margin-top:14px}
 .ntools{justify-content:flex-end;gap:8px}.ntools .nstate{margin-right:auto;font:600 12.5px Outfit,var(--body),sans-serif;color:#C4B5FD}
 .nboard{max-height:calc(100vh - 260px)}
-.ngrid{display:grid;grid-template-columns:58px minmax(320px,1.4fr) minmax(220px,1fr) 78px}
+.ngrid{display:grid;grid-template-columns:58px var(--nw,minmax(320px,1.4fr)) minmax(220px,1fr) 78px}
 .ngrid .nhd{position:sticky;top:0;z-index:2;background:#0d1119;border-bottom:2px solid #3A4558;border-right:1px solid #1F2838;padding:10px;font:600 12px Outfit,var(--body),sans-serif;color:#C4B5FD;text-align:center}
 .nrow{display:contents}
 .nc{border-bottom:1px solid #2A3446;border-right:1px solid #1F2838;padding:6px;display:flex;align-items:center;min-height:44px;background:linear-gradient(90deg,color-mix(in srgb,var(--nc) 10%,transparent),transparent 70%)}
@@ -753,6 +753,12 @@ body{background-color:#090B10;background-image:
 .nx{all:unset;cursor:pointer;width:22px;height:22px;border-radius:50%;display:grid;place-items:center;color:#fff;background:rgba(239,68,68,.75);font:700 14px/1 var(--body)}
 .nx:hover{background:#EF4444}
 .nempty{grid-column:1/-1;text-align:center;color:var(--muted);padding:30px}
+/* Notizen: Spaltenbreite ziehen */
+.ngrid .nhd.nhr{position:sticky}
+.nres{position:absolute;top:0;right:-5px;width:10px;height:100%;cursor:col-resize;z-index:3}
+.nres::after{content:"";position:absolute;left:4px;top:20%;bottom:20%;width:2px;border-radius:2px;background:rgba(196,181,253,.45);transition:background .15s,box-shadow .15s}
+.nres:hover::after,body.nresizing .nres::after{background:#C4B5FD;box-shadow:0 0 10px #A78BFA}
+body.nresizing,body.nresizing *{cursor:col-resize!important;user-select:none!important}
 
 [hidden]{display:none!important}
 #sTab td.b{font-weight:700}#sTab .pwm.ed{outline:none;padding:2px 6px;border-radius:6px;font-family:var(--mono)}#sTab td{vertical-align:top}
@@ -910,7 +916,7 @@ body{background-color:#090B10;background-image:
 <script>
 const FB_CONFIG={apiKey:"AIzaSyC_uZPvc5rJETwlS4JbfCoTkkE4ckjtp0M",authDomain:"velocenter-planer.firebaseapp.com",projectId:"velocenter-planer",storageBucket:"velocenter-planer.firebasestorage.app",messagingSenderId:"1018330488700",appId:"1:1018330488700:web:262a4d1660353e6fde8ef9"};
 /* ================= Velocenter Werkstatt-Cockpit – Oberfläche ================= */
-const CLIENT_VERSION='1.5.0';
+const CLIENT_VERSION='1.5.1';
 const USERS=[{id:'kevin',n:'Kevin',c:'#E2232D'},{id:'stefan',n:'Stefan',c:'#F59E0B'},{id:'martina',n:'Martina',c:'#EC4899'},{id:'sascha',n:'Sascha',c:'#22D3EE'},{id:'rene',n:'René',c:'#34D399'}];
 const U=id=>USERS.find(u=>u.id===id)||{n:'',c:'#64748B',id:''};
 const $=id=>document.getElementById(id);
@@ -2060,12 +2066,19 @@ async function saveNotes(){if(!KEY||!NOTES||!ME.adm)return;try{await db.doc('tre
 function rn(){const box=$('nBox');if(!box)return;const open=!!(KEY&&NOTES);$('nLock').hidden=open;box.hidden=!open;if(!open){$('nGrid').innerHTML='';return;}
  if(document.querySelector('#nGrid [contenteditable]:focus'))return;
  $('nImp').hidden=!(PWGRID&&PWGRID.length&&!NOTES.length);
- $('nGrid').innerHTML='<div class="nhd">Farbe</div><div class="nhd">Eintrag</div><div class="nhd">Zusatz / Info</div><div class="nhd"></div>'+
+ $('nGrid').style.setProperty('--nw',(+ls.get('vc_nw',0)||0)>0?ls.get('vc_nw')+'px':'minmax(320px,1.4fr)');
+ $('nGrid').innerHTML='<div class="nhd">Farbe</div><div class="nhd nhr">Eintrag<span class="nres" title="Ziehen = Spaltenbreite ändern (Doppelklick = Standard)"></span></div><div class="nhd">Zusatz / Info</div><div class="nhd"></div>'+
   (NOTES.length?NOTES.map((n,i)=>{const c=n.c||NCOL[i%NCOL.length];return `<div class="nrow" style="--nc:${c}"><div class="nc ncol"><button class="ndot" type="button" data-ncol="${i}" title="Farbe wechseln"></button></div>
   <div class="nc"><div class="ne" contenteditable="true" spellcheck="false" data-ni="${i}" data-nf="t">${esc(n.t||'')}</div></div>
   <div class="nc"><div class="nz" contenteditable="true" spellcheck="false" data-ni="${i}" data-nf="z">${esc(n.z||'')}</div></div>
   <div class="nc nact"><button class="mini" type="button" data-ncp="${i}" title="Eintrag kopieren">⧉</button><button class="nx" type="button" data-ndel="${i}" title="Löschen">×</button></div></div>`;}).join('')
   :'<div class="nempty">Noch keine Notizen – „+ Notiz“ oder „Aus Passwort-Liste übernehmen“.</div>');}
+// Spaltenbreite „Eintrag“ per Ziehen (pro Gerät gemerkt), Doppelklick = Standard
+$('nGrid').addEventListener('pointerdown',e=>{const h=e.target.closest('.nres');if(!h)return;e.preventDefault();const g=$('nGrid'),col=h.parentElement,x0=e.clientX,w0=col.getBoundingClientRect().width;h.setPointerCapture(e.pointerId);document.body.classList.add('nresizing');
+ const mv=ev=>{const w=Math.max(180,Math.min(1400,Math.round(w0+ev.clientX-x0)));g.style.setProperty('--nw',w+'px');};
+ const up=ev=>{h.removeEventListener('pointermove',mv);h.removeEventListener('pointerup',up);document.body.classList.remove('nresizing');const w=Math.round(col.getBoundingClientRect().width);ls.set('vc_nw',w);arm();};
+ h.addEventListener('pointermove',mv);h.addEventListener('pointerup',up);});
+$('nGrid').addEventListener('dblclick',e=>{if(!e.target.closest('.nres'))return;ls.set('vc_nw',0);rn();});
 $('nOpen').addEventListener('click',()=>pinDlg(()=>{show('notes');}));
 $('nLockBtn').addEventListener('click',relock);
 $('nAdd').addEventListener('click',()=>{if(!NOTES)return;NOTES.push({id:nid('n'),t:'',z:'',c:NCOL[NOTES.length%NCOL.length]});rn();const el=document.querySelector(`#nGrid [data-ni="${NOTES.length-1}"][data-nf=t]`);if(el)el.focus();});
