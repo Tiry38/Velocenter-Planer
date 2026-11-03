@@ -5,6 +5,7 @@ const ld=()=>{try{return JSON.parse(localStorage.getItem(K))||{users:{},docs:{}}
 let ST=ld();const sv=()=>{localStorage.setItem(K,JSON.stringify(ST));bc.postMessage(1);fire();};
 bc.onmessage=()=>{ST=ld();fire();};
 const listeners=new Set();function fire(){setTimeout(()=>listeners.forEach(l=>l()),0);}
+const dmerge=(a,b)=>{for(const k in b){if(b[k]&&typeof b[k]==='object'&&!Array.isArray(b[k])&&a[k]&&typeof a[k]==='object'&&!Array.isArray(a[k]))dmerge(a[k],b[k]);else a[k]=b[k];}return a;};
 const err=(code,msg)=>{const e=new Error(msg||code);e.code=code;return e;};
 // ---- Auth
 let cur=null;const authL=[];const sess=sessionStorage.getItem('__fbm_u');if(sess)cur=mkUser(sess);
@@ -22,7 +23,7 @@ const deny=p=>err('permission-denied','Missing or insufficient permissions ('+p+
 function snapDoc(path){const d=ST.docs[path];return{id:path.split('/').pop(),exists:!!d,data:()=>d?JSON.parse(JSON.stringify(d)):undefined,ref:docRef(path)};}
 function docRef(path){return{path,
  async get(){await tick();ST=ld();if(!rules(path))throw deny(path);return snapDoc(path);},
- async set(o,opt){await tick();ST=ld();if(!rules(path,1))throw deny(path);ST.docs[path]=opt&&opt.merge?Object.assign({},ST.docs[path]||{},o):JSON.parse(JSON.stringify(o));sv();},
+ async set(o,opt){await tick();ST=ld();if(!rules(path,1))throw deny(path);ST.docs[path]=opt&&opt.merge?dmerge(JSON.parse(JSON.stringify(ST.docs[path]||{})),JSON.parse(JSON.stringify(o))):JSON.parse(JSON.stringify(o));sv();},
  async update(o){await tick();ST=ld();if(!rules(path,1))throw deny(path);if(!ST.docs[path]){const e=new Error('No document to update: '+path);e.code='not-found';throw e;}const d=JSON.parse(JSON.stringify(ST.docs[path]));for(const k in o){const ks=k.split('.');let t=d;for(let i=0;i<ks.length-1;i++){t[ks[i]]=t[ks[i]]&&typeof t[ks[i]]==='object'?t[ks[i]]:{};t=t[ks[i]];}t[ks[ks.length-1]]=o[k];}ST.docs[path]=d;sv();},
  async delete(){await tick();ST=ld();if(!rules(path,1))throw deny(path);delete ST.docs[path];sv();},
  onSnapshot(cb,ecb){const f=()=>{if(!rules(path)){ecb&&ecb(deny(path));return;}cb(snapDoc(path));};listeners.add(f);f();return()=>listeners.delete(f);}};}
