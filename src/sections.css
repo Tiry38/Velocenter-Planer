@@ -598,3 +598,15 @@ body[data-v=kunden] .tt small{background:var(--rb);-webkit-background-clip:text;
 #sTab th.skh{font-size:11px;white-space:nowrap}
 #sTab td.sk{font-size:12px;line-height:1.35;color:#BAE6FD;min-width:150px;max-width:230px;white-space:normal;word-break:break-word}
 #sTab td.sk:empty::before{content:"–";color:var(--muted)}
+/* 1.7.9: Profil + Werkzeuge unten immer sichtbar (kleine Bildschirme/Skalierung), Beschriftung unter den Symbolen */
+@media (min-width:721px){
+ nav .me{position:sticky;bottom:72px;z-index:4;background-color:#15171e}
+ nav .metools{position:sticky;bottom:0;z-index:4;background:#121419;margin-bottom:-6px;padding-bottom:8px;box-shadow:0 12px 0 #121419}
+ body:not(.navmini) .metools .tico{height:auto;padding:6px 0 5px;row-gap:3px}
+ body:not(.navmini) .metools .tico::after{content:attr(data-l);font:600 9.5px/1 "Outfit",var(--body),sans-serif;color:#9AA4B5;letter-spacing:.01em}
+ body:not(.navmini) .metools #switchUser::after{color:#FCA5A5}
+}
+@media (min-width:721px) and (max-height:820px){
+ .navbtn{padding-top:4px;padding-bottom:4px}
+ .brand img{max-height:44px;width:auto}
+}

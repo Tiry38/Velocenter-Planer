@@ -922,6 +922,18 @@ body[data-v=kunden] .tt small{background:var(--rb);-webkit-background-clip:text;
 #sTab th.skh{font-size:11px;white-space:nowrap}
 #sTab td.sk{font-size:12px;line-height:1.35;color:#BAE6FD;min-width:150px;max-width:230px;white-space:normal;word-break:break-word}
 #sTab td.sk:empty::before{content:"–";color:var(--muted)}
+/* 1.7.9: Profil + Werkzeuge unten immer sichtbar (kleine Bildschirme/Skalierung), Beschriftung unter den Symbolen */
+@media (min-width:721px){
+ nav .me{position:sticky;bottom:72px;z-index:4;background-color:#15171e}
+ nav .metools{position:sticky;bottom:0;z-index:4;background:#121419;margin-bottom:-6px;padding-bottom:8px;box-shadow:0 12px 0 #121419}
+ body:not(.navmini) .metools .tico{height:auto;padding:6px 0 5px;row-gap:3px}
+ body:not(.navmini) .metools .tico::after{content:attr(data-l);font:600 9.5px/1 "Outfit",var(--body),sans-serif;color:#9AA4B5;letter-spacing:.01em}
+ body:not(.navmini) .metools #switchUser::after{color:#FCA5A5}
+}
+@media (min-width:721px) and (max-height:820px){
+ .navbtn{padding-top:4px;padding-bottom:4px}
+ .brand img{max-height:44px;width:auto}
+}
 
 [hidden]{display:none!important}
 #sTab td.b{font-weight:700}#sTab .pwm.ed{outline:none;padding:2px 6px;border-radius:6px;font-family:var(--mono)}#sTab td{vertical-align:top}
@@ -948,10 +960,10 @@ body[data-v=kunden] .tt small{background:var(--rb);-webkit-background-clip:text;
     <button class="mico" type="button" id="meCfg" title="Einstellungen · Markenlogos" aria-label="Einstellungen"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.6 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button>
   </div>
   <div class="metools">
-    <button class="tico" type="button" id="meFull" title="Vollbild" aria-label="Vollbild"><svg viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button>
-    <button class="tico" type="button" id="meSet" title="Passwort ändern" aria-label="Passwort ändern"><svg viewBox="0 0 24 24"><circle cx="8" cy="15" r="4"/><path d="M10.8 12.2 20 3M16 7l3 3M18 5l2 2"/></svg></button>
-    <button class="tico" type="button" id="switchUser" title="Benutzer wechseln" aria-label="Benutzer wechseln"><svg viewBox="0 0 24 24"><path d="M4 8h13l-3.5-3.5M20 16H7l3.5 3.5"/></svg></button>
-    <button class="tico navtog" id="navTog" type="button" aria-label="Navigation einklappen" title="Navigation einklappen"><svg viewBox="0 0 24 24"><path d="M13 6l-6 6 6 6"/><path d="M19 6l-6 6 6 6" opacity=".45"/></svg></button>
+    <button class="tico" type="button" id="meFull" data-l="Vollbild" title="Vollbild" aria-label="Vollbild"><svg viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button>
+    <button class="tico" type="button" id="meSet" data-l="Passwort" title="Passwort ändern" aria-label="Passwort ändern"><svg viewBox="0 0 24 24"><circle cx="8" cy="15" r="4"/><path d="M10.8 12.2 20 3M16 7l3 3M18 5l2 2"/></svg></button>
+    <button class="tico" type="button" id="switchUser" data-l="Abmelden" title="Abmelden / Benutzer wechseln" aria-label="Abmelden / Benutzer wechseln"><svg viewBox="0 0 24 24"><path d="M4 8h13l-3.5-3.5M20 16H7l3.5 3.5"/></svg></button>
+    <button class="tico navtog" id="navTog" data-l="Einklappen" type="button" aria-label="Navigation einklappen" title="Navigation einklappen"><svg viewBox="0 0 24 24"><path d="M13 6l-6 6 6 6"/><path d="M19 6l-6 6 6 6" opacity=".45"/></svg></button>
   </div>
 </nav>
 
@@ -1096,7 +1108,7 @@ body[data-v=kunden] .tt small{background:var(--rb);-webkit-background-clip:text;
 <script>
 const FB_CONFIG={apiKey:"AIzaSyC_uZPvc5rJETwlS4JbfCoTkkE4ckjtp0M",authDomain:"velocenter-planer.firebaseapp.com",projectId:"velocenter-planer",storageBucket:"velocenter-planer.firebasestorage.app",messagingSenderId:"1018330488700",appId:"1:1018330488700:web:262a4d1660353e6fde8ef9"};
 /* ================= Velocenter Werkstatt-Cockpit – Oberfläche ================= */
-const CLIENT_VERSION='1.7.8';
+const CLIENT_VERSION='1.7.9';
 const USERS=[{id:'kevin',n:'Kevin',c:'#E2232D'},{id:'stefan',n:'Stefan',c:'#F59E0B'},{id:'martina',n:'Martina',c:'#EC4899'},{id:'sascha',n:'Sascha',c:'#22D3EE'},{id:'rene',n:'René',c:'#34D399'}];
 const U=id=>USERS.find(u=>u.id===id)||{n:'',c:'#64748B',id:''};
 const $=id=>document.getElementById(id);
