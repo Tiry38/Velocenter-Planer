@@ -637,3 +637,15 @@ body.navmini .kwbrand small,body.navmini .kwbrand span,body.navmini .kwbrand b i
 body.navmini .kwbrand b{font-size:26px}
 @media (max-width:720px){.brand.kwbrand{flex-direction:row;gap:8px;padding:6px 10px;margin:0}.kwbrand small,.kwbrand span{display:none}.kwbrand b{font-size:22px}}
 #v-lief .tbl,#v-kasse .tbl{overflow:auto}
+/* 1.8.2: Navi-Hover (aufklappen ohne die Seite zu verschieben), Profil-Menü, Beratung breiter */
+body.navpeek .app{grid-template-columns:84px 1fr}
+body.navpeek nav{width:220px;z-index:60;box-shadow:12px 0 40px rgba(0,0,0,.55);border-right:1px solid rgba(255,255,255,.08)}
+#switchUser{display:none!important}
+.metools{grid-template-columns:repeat(3,1fr)!important}
+body.navmini .metools{grid-template-columns:1fr!important}
+#meChip{cursor:pointer}#meChip:hover{border-color:rgba(255,255,255,.22)}
+.mepop{display:grid;gap:6px;min-width:220px}
+.mepop .mpo{margin-top:0;border-top:0;padding-top:6px;color:#FCA5A5;font-weight:700}
+.kdpop:has(.mepop){width:250px}
+.vtab .ssel.mini2{min-width:104px!important;width:auto!important;max-width:none!important}
+body.navpeek #navTog svg{transform:scaleX(-1)}
