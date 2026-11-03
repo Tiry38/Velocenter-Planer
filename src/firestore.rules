@@ -8,7 +8,8 @@ service cloud.firestore {
 
     // Nur die Info, wer schon ein Passwort hat (für den Login-Bildschirm)
     match /meta/users { allow read: if true; allow write: if team(); }
-    match /meta/{doc} { allow read, write: if team(); }
+    // Kundendaten (meta/kd_<Jahr>, meta/kd_trash) nur Admins (1.9.6), alles andere in meta: ganzes Team
+    match /meta/{doc} { allow read, write: if team() && (!doc.matches('kd_.*') || admin()); }
 
     match /planer/{id}      { allow read, write: if team(); }
     match /verkauf/{id}     { allow read, write: if team(); }
