@@ -736,3 +736,9 @@ body.navmini #bmBar{left:100px}#bmBar span{overflow:hidden;text-overflow:ellipsi
  body.navmini .brand.kwbrand{padding-left:4px}
 }
 @media (min-width:721px){body.navmini .metools .tico::after{display:none}body.navmini .metools .tico{height:36px;padding:0}body.navmini .metools{width:60px!important;min-width:60px!important;max-width:60px!important;margin-left:6px}}
+/* 1.10.1: doppelte Marken */
+.dupl{display:grid;gap:8px;max-height:50vh;overflow:auto;margin:6px 0 12px}
+.dupg{display:flex;align-items:center;flex-wrap:wrap;gap:8px;padding:8px 10px;border-radius:10px;background:rgba(255,255,255,.04);border:1px solid #2A3344}
+.dupg>i{font-style:normal;color:#94A3B8}
+.dupb{display:inline-flex;align-items:center;gap:6px;padding:4px 8px;border-radius:8px;background:#0A0D13;border:1px solid #2A3344;font:600 12.5px "Outfit",sans-serif}
+.dupb.pri{border-color:#34D399;box-shadow:0 0 8px rgba(52,211,153,.3)}.dupb img{height:16px;max-width:60px;object-fit:contain}.dupb em{font-style:normal}
