@@ -1028,6 +1028,12 @@ body.bmdrag{cursor:col-resize!important;user-select:none}
 .setl{display:grid;gap:5px;font:600 12px "Outfit",sans-serif;color:#94A3B8}
 .setl select{padding:8px 10px;border-radius:10px;background:#0A0D13;border:1px solid #2A3344;color:#fff;font:500 13px var(--body)}
 #meChip .mi,#meChip .av{cursor:pointer}
+/* 1.9.3: Lieferanten-Logo an der Bestellung */
+.order{position:relative}
+.order .olg{position:absolute;top:10px;right:12px;max-height:22px;max-width:86px;object-fit:contain;filter:drop-shadow(0 1px 2px rgba(0,0,0,.6))}
+.order .olgt{position:absolute;top:10px;right:12px;max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font:700 10.5px/1 "Outfit",sans-serif;letter-spacing:.04em;text-transform:uppercase;color:#E2E8F0;padding:4px 8px;border-radius:7px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14)}
+.order:has(.olg)>b,.order:has(.olgt)>b{display:block;padding-right:100px}
+.paid.u{border-color:#334155;color:#94A3B8}.paid.n{border-color:#5a1a22;color:#FCA5A5}
 
 [hidden]{display:none!important}
 #sTab td.b{font-weight:700}#sTab .pwm.ed{outline:none;padding:2px 6px;border-radius:6px;font-family:var(--mono)}#sTab td{vertical-align:top}
@@ -1204,7 +1210,7 @@ body.bmdrag{cursor:col-resize!important;user-select:none}
 <script>
 const FB_CONFIG={apiKey:"AIzaSyC_uZPvc5rJETwlS4JbfCoTkkE4ckjtp0M",authDomain:"velocenter-planer.firebaseapp.com",projectId:"velocenter-planer",storageBucket:"velocenter-planer.firebasestorage.app",messagingSenderId:"1018330488700",appId:"1:1018330488700:web:262a4d1660353e6fde8ef9"};
 /* ================= Velocenter Werkstatt-Cockpit – Oberfläche ================= */
-const CLIENT_VERSION='1.9.2';
+const CLIENT_VERSION='1.9.3';
 const USERS=[{id:'kevin',n:'Kevin',c:'#E2232D'},{id:'stefan',n:'Stefan',c:'#F59E0B'},{id:'martina',n:'Martina',c:'#EC4899'},{id:'sascha',n:'Sascha',c:'#22D3EE'},{id:'rene',n:'René',c:'#34D399'}];
 const U=id=>USERS.find(u=>u.id===id)||{n:'',c:'#64748B',id:''};
 const $=id=>document.getElementById(id);
@@ -1790,15 +1796,18 @@ function rb(){const m=b=>true;
  $('bForm').innerHTML=bEdit?bForm(bEdit==='new'?{id:'new',datum:new Date().toLocaleDateString('de-DE'),status:'offen'}:B.find(x=>x.id===bEdit)||{id:'new'}):'';
  const cols=bShowDone?[...BST,['fertig','Erledigt']]:BST;
  $('bCols').style.gridTemplateColumns=`repeat(${cols.length},minmax(0,1fr))`;
- $('bCols').innerHTML=cols.map(([k,n])=>{const it=B.filter(b=>(b.status||'offen')===k&&m(b));return `<div class="col" data-k="${k}"><h3><i></i>${n} <span>${it.length}</span></h3>${it.length?'':'<p class="empty">Nichts hier ✓</p>'}${it.map(b=>`<div class="order"><b>${esc(b.artikel||'–')}</b><small>${esc(b.kunde)}${b.telefon?' · <a href="tel:'+esc(b.telefon.replace(/\s/g,''))+'">'+esc(b.telefon)+'</a>':''}</small><small>${b.lieferant?'Lieferant: '+esc(b.lieferant):''}${b.lieferzeit?' · '+esc(b.lieferzeit):''}${b.datum?' · '+esc(b.datum):''}</small>${b.notiz?`<small>📝 ${esc(b.notiz)}</small>`:''}
- <div class="oacts"><span class="paid ${b.bezahlt==='ja'?'y':''}" data-bpaid="${esc(b.id)}" role="button" tabindex="0">${b.bezahlt==='ja'?'✓ bezahlt':'nicht bezahlt'}</span>${av(b.von,'angelegt von','B',b.id)}<span style="flex:1"></span>
+ $('bCols').innerHTML=cols.map(([k,n])=>{const it=B.filter(b=>(b.status||'offen')===k&&m(b));return `<div class="col" data-k="${k}"><h3><i></i>${n} <span>${it.length}</span></h3>${it.length?'':'<p class="empty">Nichts hier ✓</p>'}${it.map(b=>`<div class="order">${bLfBadge(b)}<b>${esc(b.artikel||'–')}</b><small>${esc(b.kunde)}${b.telefon?' · <a href="tel:'+esc(b.telefon.replace(/\s/g,''))+'">'+esc(b.telefon)+'</a>':''}</small><small>${b.lieferant?'Lieferant: '+esc(b.lieferant):''}${b.lieferzeit?' · '+esc(b.lieferzeit):''}${b.datum?' · '+esc(b.datum):''}</small>${b.notiz?`<small>📝 ${esc(b.notiz)}</small>`:''}
+ <div class="oacts"><span class="paid ${b.bezahlt==='ja'?'y':b.bezahlt==='nein'?'n':'u'}" data-bpaid="${esc(b.id)}" role="button" tabindex="0" title="Klick = wechseln: – → bezahlt → nicht bezahlt">${b.bezahlt==='ja'?'✓ bezahlt':b.bezahlt==='nein'?'nicht bezahlt':'bezahlt –'}</span>${av(b.von,'angelegt von','B',b.id)}<span style="flex:1"></span>
  ${k!=='offen'?`<button class="mini" type="button" data-bmv="${esc(b.id)}" data-to="${k==='fertig'?'da':k==='da'?'bestellt':'offen'}" title="zurück">←</button>`:''}${k!=='fertig'?`<button class="mini go" type="button" data-bmv="${esc(b.id)}" data-to="${k==='offen'?'bestellt':k==='bestellt'?'da':'fertig'}">${k==='offen'?'bestellt →':k==='bestellt'?'ist da →':'✓ erledigt'}</button>`:''}<button class="mini" type="button" data-bedit="${esc(b.id)}" title="bearbeiten">✎</button></div></div>`).join('')}</div>`;}).join('');
  $('nBest').textContent=B.filter(b=>(b.status||'offen')!=='fertig').length;}
-function bForm(b){return `<form class="edf card" data-bf="${esc(b.id)}" autocomplete="off"><b>${b.id==='new'?'Neue Bestellung':'Bestellung bearbeiten'}</b><div class="g2">${BF.map(([k,n])=>`<label>${n}<input name="${k}" value="${esc(b[k]||'')}"${k==='artikel'?' required':''}></label>`).join('')}<label>Bezahlt<select name="bezahlt"><option value="">nein</option><option value="ja"${b.bezahlt==='ja'?' selected':''}>ja</option></select></label></div>
+/* 1.9.3: Lieferant der Bestellung als Logo oben rechts (sonst Name) */
+function bLf(b){const n=String(b.lieferant||'').trim().toLowerCase();return n?S.find(o=>String(o.name||'').trim().toLowerCase()===n):null;}
+function bLfBadge(b){if(!String(b.lieferant||'').trim())return '';const o=bLf(b),lg=o?sLogo(o):'';return lg?`<img class="olg" src="${lg}" alt="" title="Lieferant: ${esc(b.lieferant)}">`:`<span class="olgt" title="Lieferant">${esc(b.lieferant)}</span>`;}
+function bForm(b){return `<form class="edf card" data-bf="${esc(b.id)}" autocomplete="off"><b>${b.id==='new'?'Neue Bestellung':'Bestellung bearbeiten'}</b><div class="g2">${BF.map(([k,n])=>`<label>${n}<input name="${k}" value="${esc(b[k]||'')}"${k==='artikel'?' required':''}${k==='lieferant'?' list="bLfList" placeholder="Lieferant wählen oder tippen"':''}></label>`).join('')}<datalist id="bLfList">${[...new Set(S.map(o=>String(o.name||'').trim()).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'de')).map(n=>`<option value="${esc(n)}">`).join('')}</datalist><label>Bezahlt<select name="bezahlt"><option value="">– (nichts eingetragen)</option><option value="ja"${b.bezahlt==='ja'?' selected':''}>ja, bezahlt</option><option value="nein"${b.bezahlt==='nein'?' selected':''}>nein, nicht bezahlt</option></select></label></div>
  <div class="acts"><button class="btn red" type="submit">Speichern</button><button class="btn" type="button" data-bcancel>Abbrechen</button>${b.id!=='new'?`<button class="btn del" type="button" data-bdel="${esc(b.id)}">Löschen</button>`:''}</div></form>`;}
 async function putB(b){const i=B.findIndex(x=>x.id===b.id);if(i<0)B.unshift(b);else B[i]=b;rb();try{await save('B',b);}catch(_){}}
 $('v-bestell').addEventListener('click',e=>{const mv=e.target.closest('[data-bmv]');if(mv){const b=B.find(x=>x.id===mv.dataset.bmv);putB(Object.assign({},b,{status:mv.dataset.to}));toast({offen:'Offen',bestellt:'Bestellt',da:'Ist da – Kunde informieren',fertig:'Erledigt ✓'}[mv.dataset.to]);return;}
- const pd=e.target.closest('[data-bpaid]');if(pd){const b=B.find(x=>x.id===pd.dataset.bpaid);putB(Object.assign({},b,{bezahlt:b.bezahlt==='ja'?'':'ja'}));return;}
+ const pd=e.target.closest('[data-bpaid]');if(pd){const b=B.find(x=>x.id===pd.dataset.bpaid);putB(Object.assign({},b,{bezahlt:b.bezahlt==='ja'?'nein':b.bezahlt==='nein'?'':'ja'}));return;}
  const ed=e.target.closest('[data-bedit]');if(ed){bEdit=ed.dataset.bedit;rb();$('bForm').scrollIntoView({block:'start'});return;}
  if(e.target.closest('[data-bcancel]')){bEdit=null;rb();return;}
  const dl=e.target.closest('[data-bdel]');if(dl){if(!dl.dataset.sure){dl.dataset.sure=1;dl.textContent='Wirklich löschen?';return;}const id=dl.dataset.bdel,b=B.find(x=>x.id===id);B=B.filter(x=>x.id!==id);bEdit=null;rb();del('B',id);toast('Gelöscht',()=>{B.unshift(b);rb();save('B',b).catch(()=>{});});}});

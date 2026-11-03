@@ -704,3 +704,9 @@ body.bmdrag{cursor:col-resize!important;user-select:none}
 .setl{display:grid;gap:5px;font:600 12px "Outfit",sans-serif;color:#94A3B8}
 .setl select{padding:8px 10px;border-radius:10px;background:#0A0D13;border:1px solid #2A3344;color:#fff;font:500 13px var(--body)}
 #meChip .mi,#meChip .av{cursor:pointer}
+/* 1.9.3: Lieferanten-Logo an der Bestellung */
+.order{position:relative}
+.order .olg{position:absolute;top:10px;right:12px;max-height:22px;max-width:86px;object-fit:contain;filter:drop-shadow(0 1px 2px rgba(0,0,0,.6))}
+.order .olgt{position:absolute;top:10px;right:12px;max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font:700 10.5px/1 "Outfit",sans-serif;letter-spacing:.04em;text-transform:uppercase;color:#E2E8F0;padding:4px 8px;border-radius:7px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14)}
+.order:has(.olg)>b,.order:has(.olgt)>b{display:block;padding-right:100px}
+.paid.u{border-color:#334155;color:#94A3B8}.paid.n{border-color:#5a1a22;color:#FCA5A5}
