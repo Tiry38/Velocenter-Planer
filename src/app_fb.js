@@ -398,7 +398,10 @@ function wordsRe(w){const p=String(w||'').split(/[,;\n]/).map(x=>x.trim()).filte
 function allBrands(){const ul=BUSER.list||[];return BRANDS.map(b=>{const u=ul.find(x=>x.k===b.k);return Object.assign({},b,{ux:u?wordsRe(u.w):null,own:false});}).concat(ul.filter(u=>!BRANDS.some(b=>b.k===u.k)).map(u=>({k:u.k,n:u.n,re:wordsRe((u.w?u.w+',':'')+u.n),own:true})));}
 const brandOf=m=>{m=String(m||'');if(!m)return null;const A=allBrands();return A.find(b=>b.own&&b.re&&b.re.test(m))||A.find(b=>!b.own&&(b.re.test(m)||(b.ux&&b.ux.test(m))))||null;};
 // Marke: eigenes Feld „marke“ (beim Anlegen) hat Vorrang, sonst Erkennung aus dem Modelltext
-function brandOfB(b){const mk=String(b.marke||'').trim();if(mk){const l=mk.toLowerCase();return allBrands().find(x=>x.n.toLowerCase()===l||x.k.toLowerCase()===l)||{k:bKey(mk),n:mk};}return brandOf(b.modell);}
+/* 1.9.8: Kurzformen/Schreibweisen derselben Marke zusammenführen (Tiry: VdV = Velo de Ville) */
+const BALIAS={vdv:'Velo de Ville',velodeville:'Velo de Ville'};
+function brandOfB(b){let mk=String(b.marke||'').trim();if(mk){const al=BALIAS[mk.toLowerCase().replace(/[^a-z0-9äöü]/g,'')];if(al)mk=al;const l=mk.toLowerCase(),A=allBrands();
+ return A.find(x=>x.n.toLowerCase()===l||x.k.toLowerCase()===l)||A.find(x=>(x.ux&&x.ux.test(mk))||(x.own&&x.re&&x.re.test(mk)))||{k:bKey(mk),n:mk};}return brandOf(b.modell);}
 const bKey=n=>'U'+String(n).toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,10);
 function bStrip(m,x){let t=String(m||'');if(x){const r=new RegExp('^\\s*'+reEsc(x.n)+'\\s+','i');if(r.test(t))t=t.replace(r,'');}return t;}
 function bModelE(b){const x=brandOfB(b);return bIcoX(x)+`<span class="ef" contenteditable="true" spellcheck="false" data-vid="${esc(b.id)}" data-f="modell" title="Klick = Modell bearbeiten">${esc(bStrip(b.modell,x))}</span>`;}
