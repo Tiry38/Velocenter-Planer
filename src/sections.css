@@ -726,3 +726,6 @@ body.navmini #bmBar{left:100px}#bmBar span{overflow:hidden;text-overflow:ellipsi
 .kytr i{height:7px;border-radius:4px;background:linear-gradient(90deg,#B15CFF var(--p),rgba(255,255,255,.06) var(--p))}
 .kytr b{text-align:right;font-variant-numeric:tabular-nums}.kytr small{text-align:right;color:#94A3B8;font-size:11px}
 .kytm{font:500 11.5px "Outfit",sans-serif;color:#94A3B8;padding-top:4px}
+/* 1.9.7: Marken-Karte zeigt alle Marken, scrollbar, bleibt offen solange die Maus drauf ist */
+.kytip{pointer-events:auto}
+.kytl{display:grid;gap:6px;max-height:min(62vh,560px);overflow-y:auto;overscroll-behavior:contain;padding-right:4px}

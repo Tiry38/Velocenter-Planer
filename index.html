@@ -1050,6 +1050,9 @@ body.navmini #bmBar{left:100px}#bmBar span{overflow:hidden;text-overflow:ellipsi
 .kytr i{height:7px;border-radius:4px;background:linear-gradient(90deg,#B15CFF var(--p),rgba(255,255,255,.06) var(--p))}
 .kytr b{text-align:right;font-variant-numeric:tabular-nums}.kytr small{text-align:right;color:#94A3B8;font-size:11px}
 .kytm{font:500 11.5px "Outfit",sans-serif;color:#94A3B8;padding-top:4px}
+/* 1.9.7: Marken-Karte zeigt alle Marken, scrollbar, bleibt offen solange die Maus drauf ist */
+.kytip{pointer-events:auto}
+.kytl{display:grid;gap:6px;max-height:min(62vh,560px);overflow-y:auto;overscroll-behavior:contain;padding-right:4px}
 
 [hidden]{display:none!important}
 #sTab td.b{font-weight:700}#sTab .pwm.ed{outline:none;padding:2px 6px;border-radius:6px;font-family:var(--mono)}#sTab td{vertical-align:top}
@@ -1226,7 +1229,7 @@ body.navmini #bmBar{left:100px}#bmBar span{overflow:hidden;text-overflow:ellipsi
 <script>
 const FB_CONFIG={apiKey:"AIzaSyC_uZPvc5rJETwlS4JbfCoTkkE4ckjtp0M",authDomain:"velocenter-planer.firebaseapp.com",projectId:"velocenter-planer",storageBucket:"velocenter-planer.firebasestorage.app",messagingSenderId:"1018330488700",appId:"1:1018330488700:web:262a4d1660353e6fde8ef9"};
 /* ================= Velocenter Werkstatt-Cockpit – Oberfläche ================= */
-const CLIENT_VERSION='1.9.6';
+const CLIENT_VERSION='1.9.7';
 const USERS=[{id:'kevin',n:'Kevin',c:'#E2232D'},{id:'stefan',n:'Stefan',c:'#F59E0B'},{id:'martina',n:'Martina',c:'#EC4899'},{id:'sascha',n:'Sascha',c:'#22D3EE'},{id:'rene',n:'René',c:'#34D399'}];
 const U=id=>USERS.find(u=>u.id===id)||{n:'',c:'#64748B',id:''};
 const $=id=>document.getElementById(id);
@@ -2652,13 +2655,13 @@ $('kdGrid').addEventListener('drop',e=>{if(kdDrag)return;const km=e.target.close
 function kdYrStats(y){const rows=kdAll().filter(r=>!y||String(kdYear(r))===y),m=new Map();
  rows.forEach(r=>{const b=(r.marke||r.modell)?brandOfB({marke:r.marke,modell:r.modell}):null;const k=b?b.k:(String(r.marke||'').trim().toLowerCase()||'_');const n=b?b.n:(String(r.marke||'').trim()||'ohne Marke');const e=m.get(k)||{n,c:0,lg:b&&(BUSER.logos||{})[b.k]};e.c++;m.set(k,e);});
  return {tot:rows.length,list:[...m.values()].sort((a,b)=>b.c-a.c||a.n.localeCompare(b.n,'de'))};}
-let kyTip=null;
+let kyTip=null,kyT=0;
 function kyTipHide(){if(kyTip){kyTip.remove();kyTip=null;}}
-$('kdYrs').addEventListener('mouseover',e=>{const b=e.target.closest('.kyc');if(!b||(kyTip&&kyTip._b===b))return;kyTipHide();const y=b.dataset.kyr,st=kdYrStats(y),mx=st.list.length?st.list[0].c:1,top=st.list.slice(0,14),rest=st.list.slice(14);
+$('kdYrs').addEventListener('mouseover',e=>{const b=e.target.closest('.kyc');if(!b||(kyTip&&kyTip._b===b))return;kyTipHide();clearTimeout(kyT);const y=b.dataset.kyr,st=kdYrStats(y),mx=st.list.length?st.list[0].c:1,top=st.list,rest=[];
  const el=document.createElement('div');el.className='kytip';el._b=b;
- el.innerHTML=`<div class="kyth"><b>${y?esc(y):'Alle Jahre'}</b><span>${st.tot.toLocaleString('de-DE')} Räder · ${st.list.length} Marken</span></div>`+top.map(x=>`<div class="kytr"><span class="kytn">${x.lg?`<img src="${x.lg}" alt="">`:''}<em>${esc(x.n)}</em></span><i style="--p:${(x.c/mx*100).toFixed(1)}%"></i><b>${x.c.toLocaleString('de-DE')}</b><small>${Math.round(x.c/st.tot*100)} %</small></div>`).join('')+(rest.length?`<div class="kytm">+ ${rest.length} weitere Marken (${rest.reduce((a,x)=>a+x.c,0).toLocaleString('de-DE')} Räder)</div>`:'');
- document.body.append(el);kyTip=el;const rc=b.getBoundingClientRect();el.style.left=Math.max(8,Math.min(innerWidth-el.offsetWidth-8,rc.left))+'px';el.style.top=(rc.bottom+8+el.offsetHeight>innerHeight?Math.max(8,rc.top-8-el.offsetHeight):rc.bottom+8)+'px';});
-$('kdYrs').addEventListener('mouseleave',kyTipHide);document.addEventListener('scroll',kyTipHide,true);
+ el.innerHTML=`<div class="kyth"><b>${y?esc(y):'Alle Jahre'}</b><span>${st.tot.toLocaleString('de-DE')} Räder · ${st.list.length} Marken</span></div><div class="kytl">`+top.map(x=>`<div class="kytr"><span class="kytn">${x.lg?`<img src="${x.lg}" alt="">`:''}<em>${esc(x.n)}</em></span><i style="--p:${(x.c/mx*100).toFixed(1)}%"></i><b>${x.c.toLocaleString('de-DE')}</b><small>${Math.round(x.c/st.tot*100)} %</small></div>`).join('')+'</div>'+(rest.length?`<div class="kytm">+ ${rest.length} weitere Marken (${rest.reduce((a,x)=>a+x.c,0).toLocaleString('de-DE')} Räder)</div>`:'');
+ document.body.append(el);kyTip=el;el.addEventListener('mouseenter',()=>clearTimeout(kyT));el.addEventListener('mouseleave',()=>{kyT=setTimeout(kyTipHide,200);});const rc=b.getBoundingClientRect();el.style.left=Math.max(8,Math.min(innerWidth-el.offsetWidth-8,rc.left))+'px';el.style.top=(rc.bottom+8+el.offsetHeight>innerHeight?Math.max(8,rc.top-8-el.offsetHeight):rc.bottom+8)+'px';});
+$('kdYrs').addEventListener('mouseleave',()=>{kyT=setTimeout(kyTipHide,250);});document.addEventListener('scroll',e=>{if(kyTip&&kyTip.contains(e.target))return;kyTipHide();},true);
 $('kdYrs').addEventListener('click',e=>{const b=e.target.closest('[data-kyr]');if(!b)return;kdYr=b.dataset.kyr;ls.set('vc_kdyr',kdYr);kdPopClose();rk();const bd=document.querySelector('.kdboard');if(bd)bd.scrollTop=0;});
 $('kdFx').addEventListener('click',()=>{kdF={};kdPopClose();rk();});
 // Zeile verschieben: ganze Jahresliste neu durchnummerieren (o ab 1. Januar, je Zeile 1 min) – ein Schreibvorgang je Jahres-Paket
