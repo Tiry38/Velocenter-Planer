@@ -320,7 +320,7 @@ td.wrap{white-space:normal;max-width:380px}
 .dlg-box input{background:var(--panel2);border:1px solid var(--line);color:#fff;border-radius:10px;padding:10px;font:inherit}
 .dlg-box .acts{display:flex;flex-wrap:wrap;gap:8px}
 .me>div{min-width:0}.me .lnk{white-space:normal}
-[contenteditable]:empty::before{content:"– anklicken zum Eintragen –";color:var(--muted);font-weight:400}
+[contenteditable]:empty::before{content:"–";color:var(--muted);font-weight:400}
 .merk [contenteditable]{min-width:90px;display:inline-block}
 /* ===== Bereiche: Kennzahlen, Spalten, A–Z, Balken ===== */
 main{--ac:#E2232D}
@@ -987,6 +987,12 @@ body.navpeek .navbtn .lbl,body.navpeek .kwbrand small,body.navpeek .kwbrand span
 }
 @media (max-width:720px){.kwbrand .kwn{display:none}}
 @media (min-width:721px){body:not(.navmini) nav{width:220px}}
+/* 1.8.8: Kürzel-Kreise für Admins anklickbar */
+body.isadm .av.ave{cursor:pointer;transition:transform .15s,box-shadow .15s}
+body.isadm .av.ave:hover{transform:scale(1.2);box-shadow:0 0 0 2px #0b0e15,0 0 8px var(--uc)}
+body.isadm .vtab td.ce.vnote[data-von]::after{pointer-events:none}
+body.isadm .vtab td.ce.vnote[data-von]:hover::after{transform:translateY(-50%) scale(1.15)}
+[contenteditable]:empty{cursor:text;min-width:24px}
 
 [hidden]{display:none!important}
 #sTab td.b{font-weight:700}#sTab .pwm.ed{outline:none;padding:2px 6px;border-radius:6px;font-family:var(--mono)}#sTab td{vertical-align:top}
@@ -1161,13 +1167,13 @@ body.navpeek .navbtn .lbl,body.navpeek .kwbrand small,body.navpeek .kwbrand span
 <script>
 const FB_CONFIG={apiKey:"AIzaSyC_uZPvc5rJETwlS4JbfCoTkkE4ckjtp0M",authDomain:"velocenter-planer.firebaseapp.com",projectId:"velocenter-planer",storageBucket:"velocenter-planer.firebasestorage.app",messagingSenderId:"1018330488700",appId:"1:1018330488700:web:262a4d1660353e6fde8ef9"};
 /* ================= Velocenter Werkstatt-Cockpit – Oberfläche ================= */
-const CLIENT_VERSION='1.8.7';
+const CLIENT_VERSION='1.8.8';
 const USERS=[{id:'kevin',n:'Kevin',c:'#E2232D'},{id:'stefan',n:'Stefan',c:'#F59E0B'},{id:'martina',n:'Martina',c:'#EC4899'},{id:'sascha',n:'Sascha',c:'#22D3EE'},{id:'rene',n:'René',c:'#34D399'}];
 const U=id=>USERS.find(u=>u.id===id)||{n:'',c:'#64748B',id:''};
 const $=id=>document.getElementById(id);
 const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const sav=id=>{const u=U(id);return id&&u.n?`<span class="sav" style="--uc:${u.c}">${esc(u.n[0])}</span>`:''};
-const av=(id,t)=>{const u=U(id);return id&&u.n?`<span class="av" style="--uc:${u.c}" title="${esc((t?t+' ':'')+u.n)}">${esc(u.n[0])}</span>`:''};
+const av=(id,t,k,oid)=>{const u=U(id);return id&&u.n?`<span class="av${k?' ave':''}" style="--uc:${u.c}" title="${esc((t?t+' ':'')+u.n)}${k?' · Admin: Klick = Person ändern':''}"${k?` data-avk="${k}" data-avi="${esc(oid)}"`:''}>${esc(u.n[0])}</span>`:''};
 const nid=p=>p+Date.now().toString(36)+Math.random().toString(36).slice(2,8);
 const ls={get(k,d){try{const v=localStorage.getItem(k);return v==null?d:JSON.parse(v);}catch(_){return d;}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(_){}}};
 const ss={get(k){try{return sessionStorage.getItem(k);}catch(_){return null;}},set(k,v){try{sessionStorage.setItem(k,v);}catch(_){}},del(k){try{sessionStorage.removeItem(k);}catch(_){}}};
@@ -1261,7 +1267,7 @@ $('pwForm').addEventListener('submit',async e=>{e.preventDefault();clearTimeout(
  catch(err){ls.set('vc_pwneed','');const c=err.code||'';if(silent&&/password|credential|user-not-found/.test(c)){$('pwErr').textContent='';return;}pwErr(c==='auth/too-many-requests'?'Zu viele Versuche – bitte kurz warten.':/password|credential|user-not-found/.test(c)?'Passwort falsch.':c==='auth/network-request-failed'?'Keine Internetverbindung.':err.message);}
  finally{go.disabled=false;}});
 $('switchUser').addEventListener('click',async()=>{relock();await auth.signOut();});
-async function start(me){if(ME&&ME.id===me.id)return;ME=me;const u=U(me.id);$('meName').textContent=u.n;$('meRole').textContent=me.adm?'Admin':'Team';$('meAv').style.setProperty('--uc',u.c);$('meAv').textContent=u.n[0];
+async function start(me){if(ME&&ME.id===me.id)return;ME=me;document.body.classList.toggle('isadm',!!me.adm);const u=U(me.id);$('meName').textContent=u.n;$('meRole').textContent=me.adm?'Admin':'Team';$('meAv').style.setProperty('--uc',u.c);$('meAv').textContent=u.n[0];
  document.querySelector('.navbtn[data-v=tresor]').hidden=true;/* Reiter Passwörter abgeschaltet (1.5.9, Tiry) – Daten bleiben unberührt */document.querySelector('.navbtn[data-v=notes]').hidden=!me.adm;$('whoOv').hidden=true;navForUser();startLive();show(ls.get('vc_view','planer'));toast('Hallo '+u.n+' 👋');pwForceChk();db.doc('meta/users').get().then(d=>{USERSET=d.exists?d.data():{};}).catch(()=>{});}
 
 /* Passwort ändern / zurücksetzen */
@@ -1433,7 +1439,7 @@ function render(){const g=$('grid');if(document.querySelector('#grid .edit'))ret
    let its=items.filter(e=>e.spalte===c.k&&(!openOnly||e.erledigt!=='1'));if(/^t[12]$/.test(c.k))its=its.sort(tmSort);
    const hit=e=>q&&(e.text+' '+e.zeit).toLowerCase().includes(q);
    h+=`<div class="c" style="--cc:${c.c}" data-iso="${ds}" data-col="${c.k}">`+(c.dot?its.map(e=>`<button class="dot${hit(e)?' hit':''}" type="button" data-dot="${esc(e.id)}" aria-label="Anfrage: ${esc(e.text)}"><span class="tip"><b>Anfrage Abholung/Reparatur</b>${esc(e.text)}<small>${U(e.von).n?'von '+esc(U(e.von).n)+' · ':''}Klick = bearbeiten</small></span></button>`).join(''):
-    its.map(e=>`<div class="e k-${c.k}${hit(e)?' hit':''}" draggable="true" data-id="${esc(e.id)}">${e.zeit&&!/^t[12]$/.test(c.k)?`<span class="tm">${esc(e.zeit)}</span>`:''}<span class="tx" data-ed="${esc(e.id)}">${esc(e.text)}</span><button class="x" type="button" data-x="${esc(e.id)}" aria-label="Eintrag löschen" title="Löschen">×</button>${av(e.von,'eingetragen von')}</div>`).join(''))+`<button class="plus" type="button" aria-label="Eintrag hinzufügen" data-add="1">+</button></div>`;});
+    its.map(e=>`<div class="e k-${c.k}${hit(e)?' hit':''}" draggable="true" data-id="${esc(e.id)}">${e.zeit&&!/^t[12]$/.test(c.k)?`<span class="tm">${esc(e.zeit)}</span>`:''}<span class="tx" data-ed="${esc(e.id)}">${esc(e.text)}</span><button class="x" type="button" data-x="${esc(e.id)}" aria-label="Eintrag löschen" title="Löschen">×</button>${av(e.von,'eingetragen von','P',e.id)}</div>`).join(''))+`<button class="plus" type="button" aria-label="Eintrag hinzufügen" data-add="1">+</button></div>`;});
   h+='</div>';});
  g.innerHTML=h;
  const wk=kw(fromIso(today));$('cToday').textContent=P.filter(e=>e.datum===today).length;
@@ -1586,6 +1592,16 @@ function lvPick(t){const b=V.find(x=>x.id===t.dataset.lvi),f=t.dataset.lvf;if(!b
 async function putV(b){vAutoVon(b);const i=V.findIndex(x=>x.id===b.id);if(i<0)V.unshift(b);else V[i]=b;rv();try{await save('V',b);}catch(_){}}
 /* 1.6.5: Status setzen – who = Person-ID oder '' (entfernen). Admins wählen die Person, Team setzt nur sich selbst. */
 $('cards').addEventListener('click',e=>{const t=e.target.closest('.lvon');if(!t)return;e.stopPropagation();e.preventDefault();lvPick(t);},true);
+/* 1.8.8: Admins können JEDEN Kürzel-Kreis ändern (Planer, Bestellungen, Trinkgeld, Verkauf-Notiz) */
+const AVARR={P:()=>P,B:()=>B,T:()=>T,V:()=>V};
+function avPick(anchor,cur,title,cb,list){if(kdPop&&kdPop.av===anchor){kdPopClose();return;}const el=kdPopOpen(anchor,`<div class="vstp"><div class="kph">${esc(title)} – von wem?</div><div class="vstl">${(list||USERS).map(u=>`<button type="button" class="vstu${cur===u.id?' on':''}" style="--uc:${u.c}" data-vsu="${u.id}"><span class="av">${esc(u.n[0])}</span>${esc(u.n)}</button>`).join('')}</div></div>`);kdPop.av=anchor;
+ el.addEventListener('click',e=>{const x=e.target.closest('[data-vsu]');if(!x)return;kdPopClose();if(x.dataset.vsu!==cur)cb(x.dataset.vsu);});}
+document.addEventListener('click',e=>{if(!ME||!ME.adm)return;const a=e.target.closest('.av[data-avk]');
+ if(a){e.preventDefault();e.stopPropagation();const k=a.dataset.avk,id=a.dataset.avi,o=(AVARR[k]()||[]).find(x=>String(x.id)===id);if(!o)return;
+  avPick(a,o.von,{P:'Eintrag',B:'Bestellung',T:'Trinkgeld'}[k]||'Eintrag',w=>{db.collection(COL[k]).doc(String(id)).update({von:w}).then(()=>toast('Geändert: '+U(w).n)).catch(fail);});return;}
+ const n=e.target.closest('td.vnote[data-von]');if(n&&e.clientX>n.getBoundingClientRect().right-24){e.preventDefault();e.stopPropagation();const b=V.find(x=>x.id===n.dataset.vid);if(!b)return;
+  avPick(n,b.notizVon,'Notiz',w=>putV(Object.assign({},b,{notizVon:w})));}},true);
+document.addEventListener('mousedown',e=>{if(ME&&ME.adm&&(e.target.closest('.av[data-avk]')||(e.target.closest('td.vnote[data-von]')&&e.clientX>e.target.closest('td.vnote').getBoundingClientRect().right-24))){e.preventDefault();}},true);
 function vStSet(b,k,who){const n=Object.assign({},b);n[k]=who?'1':'';if(n[k]){n[k+'Von']=who;const _d=new Date(),_s=String(_d.getDate()).padStart(2,'0')+'.'+String(_d.getMonth()+1).padStart(2,'0')+'.';n[k+'Am']=_s;if(k==='a')n.aTs=Date.now();if(k==='b'&&!n.ok)n.ok=_s+_d.getFullYear();}else{n[k+'Von']='';n[k+'Am']='';if(k==='a')n.aTs='';}putV(n);if(n[k]){if(k==='a')toast('Abgeholt – '+(b.name||b.modell)+' (unter „Abgeholte zeigen“)',()=>{putV(Object.assign({},b));toast('Wieder offen');});else toast({an:'Angeliefert',m:'Montiert',b:'O.K.'}[k]+' – '+U(who).n);}}
 const VSTN={an:'Angeliefert',m:'Montiert',b:'O.K.',a:'Abgeholt'};
 function vStPick(t,b,k){if(kdPop&&kdPop.vst===b.id+k){kdPopClose();return;}const cur=b[k]==='1'?b[k+'Von']:null;
@@ -1647,7 +1663,7 @@ function rb(){const m=b=>true;
  const cols=bShowDone?[...BST,['fertig','Erledigt']]:BST;
  $('bCols').style.gridTemplateColumns=`repeat(${cols.length},minmax(0,1fr))`;
  $('bCols').innerHTML=cols.map(([k,n])=>{const it=B.filter(b=>(b.status||'offen')===k&&m(b));return `<div class="col" data-k="${k}"><h3><i></i>${n} <span>${it.length}</span></h3>${it.length?'':'<p class="empty">Nichts hier ✓</p>'}${it.map(b=>`<div class="order"><b>${esc(b.artikel||'–')}</b><small>${esc(b.kunde)}${b.telefon?' · <a href="tel:'+esc(b.telefon.replace(/\s/g,''))+'">'+esc(b.telefon)+'</a>':''}</small><small>${b.lieferant?'Lieferant: '+esc(b.lieferant):''}${b.lieferzeit?' · '+esc(b.lieferzeit):''}${b.datum?' · '+esc(b.datum):''}</small>${b.notiz?`<small>📝 ${esc(b.notiz)}</small>`:''}
- <div class="oacts"><span class="paid ${b.bezahlt==='ja'?'y':''}" data-bpaid="${esc(b.id)}" role="button" tabindex="0">${b.bezahlt==='ja'?'✓ bezahlt':'nicht bezahlt'}</span>${av(b.von,'angelegt von')}<span style="flex:1"></span>
+ <div class="oacts"><span class="paid ${b.bezahlt==='ja'?'y':''}" data-bpaid="${esc(b.id)}" role="button" tabindex="0">${b.bezahlt==='ja'?'✓ bezahlt':'nicht bezahlt'}</span>${av(b.von,'angelegt von','B',b.id)}<span style="flex:1"></span>
  ${k!=='offen'?`<button class="mini" type="button" data-bmv="${esc(b.id)}" data-to="${k==='fertig'?'da':k==='da'?'bestellt':'offen'}" title="zurück">←</button>`:''}${k!=='fertig'?`<button class="mini go" type="button" data-bmv="${esc(b.id)}" data-to="${k==='offen'?'bestellt':k==='bestellt'?'da':'fertig'}">${k==='offen'?'bestellt →':k==='bestellt'?'ist da →':'✓ erledigt'}</button>`:''}<button class="mini" type="button" data-bedit="${esc(b.id)}" title="bearbeiten">✎</button></div></div>`).join('')}</div>`;}).join('');
  $('nBest').textContent=B.filter(b=>(b.status||'offen')!=='fertig').length;}
 function bForm(b){return `<form class="edf card" data-bf="${esc(b.id)}" autocomplete="off"><b>${b.id==='new'?'Neue Bestellung':'Bestellung bearbeiten'}</b><div class="g2">${BF.map(([k,n])=>`<label>${n}<input name="${k}" value="${esc(b[k]||'')}"${k==='artikel'?' required':''}></label>`).join('')}<label>Bezahlt<select name="bezahlt"><option value="">nein</option><option value="ja"${b.bezahlt==='ja'?' selected':''}>ja</option></select></label></div>
@@ -2419,7 +2435,7 @@ let kdPop=null;
 function kdPopClose(){if(kdPop){kdPop.el.remove();kdPop=null;}}
 function kdPopOpen(anchor,html,o){kdPopClose();const el=document.createElement('div');el.className='kdpop';el.innerHTML=html;document.body.appendChild(el);kdPop=Object.assign({el,t0:Date.now()},o);kdPopPos(anchor);const i=el.querySelector('input:not([type=checkbox])');if(i)i.focus();return el;}
 function kdPopPos(anchor){const el=kdPop.el,rc=anchor.getBoundingClientRect(),W=el.offsetWidth,H=el.offsetHeight;el.style.left=Math.max(8,Math.min(innerWidth-W-8,rc.left))+'px';el.style.top=(rc.bottom+4+H>innerHeight-8?Math.max(8,rc.top-4-H):rc.bottom+4)+'px';}
-document.addEventListener('pointerdown',e=>{if(kdPop&&!kdPop.el.contains(e.target)&&!e.target.closest('[data-kpick],.kdh[data-kc],.stb .st,.lvon,#meChip'))kdPopClose();},true);
+document.addEventListener('pointerdown',e=>{if(kdPop&&!kdPop.el.contains(e.target)&&!e.target.closest('[data-kpick],.kdh[data-kc],.stb .st,.lvon,#meChip,.av[data-avk],td.vnote[data-von]'))kdPopClose();},true);
 document.addEventListener('keydown',e=>{if(kdPop&&e.key==='Escape')kdPopClose();});
 document.addEventListener('scroll',e=>{if(kdPop&&!kdPop.el.contains(e.target)&&Date.now()-kdPop.t0>250)kdPopClose();},true);
 function kdFltOpen(hd){const k=hd.dataset.kc,c=KDC.find(x=>x.k===k);if(kdPop&&kdPop.t==='flt'&&kdPop.k===k){kdPopClose();return;}
@@ -2621,7 +2637,7 @@ function rtg(){const now=new Date(),list=T.map(t=>Object.assign({},t,{_d:tgDate(
  const mx=Math.max(1,...months.map(m=>m.v));
  $('tgBars').innerHTML='<h4>Letzte 6 Monate</h4><div class="bars">'+months.map(m=>`<div class="bar${m.cur?' cur':''}"><span class="bv">${m.v?eur(m.v).replace(' €',''):''}</span><i style="height:${Math.max(4,Math.round(m.v/mx*100))}%"></i><span class="bl">${esc(m.l)}</span></div>`).join('')+'</div>';
  let last='',h='';list.forEach(t=>{const k=t._d?t._d.toLocaleDateString('de-DE',{month:'long',year:'numeric'}):'Ohne Datum';if(k!==last){const tot=sum(x=>(x._d?x._d.toLocaleDateString('de-DE',{month:'long',year:'numeric'}):'Ohne Datum')===k);h+=`<tr class="grp"><td colspan="3">${esc(k)}</td><td colspan="2" class="r">${eur(tot)}</td></tr>`;last=k;}
-  h+=`<tr><td>${t._d?t._d.toLocaleDateString('de-DE',{weekday:'short',day:'2-digit',month:'2-digit'}):esc(t.datum)}</td><td><b class="amt">${eur(num(t.betrag))}</b></td><td>${esc(t.notiz)}</td><td>${av(t.von)}</td><td class="r"><button class="mini" type="button" data-tdel="${esc(t.id)}" title="löschen">×</button></td></tr>`;});
+  h+=`<tr><td>${t._d?t._d.toLocaleDateString('de-DE',{weekday:'short',day:'2-digit',month:'2-digit'}):esc(t.datum)}</td><td><b class="amt">${eur(num(t.betrag))}</b></td><td>${esc(t.notiz)}</td><td>${av(t.von,'eingetragen von','T',t.id)}</td><td class="r"><button class="mini" type="button" data-tdel="${esc(t.id)}" title="löschen">×</button></td></tr>`;});
  $('tgTab').innerHTML='<thead><tr><th>Datum</th><th>Betrag</th><th>Notiz</th><th>Von</th><th></th></tr></thead><tbody>'+(h||'<tr><td colspan="5" class="empty">Noch keine Einträge</td></tr>')+'</tbody>';}
 if(!$('tgDate').value)$('tgDate').value=TODAY();
 $('tgForm').addEventListener('submit',async e=>{e.preventDefault();const a=$('tgAmt').value.trim();if(!num(a)){toast('Bitte Betrag eingeben');return;}const t={id:nid('t'),datum:$('tgDate').value||TODAY(),betrag:a.replace(/\s*€/,''),notiz:$('tgNote').value.trim(),von:ME.id};T.push(t);rtg();$('tgAmt').value='';$('tgNote').value='';try{await save('T',t);toast('Eingetragen: '+eur(num(a)));}catch(_){}});
