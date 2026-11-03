@@ -39,7 +39,12 @@ const HOL={};[2026,2027,2028].forEach(y=>{const e=easter(y),add=(d,n)=>{HOL[iso(
  add(new Date(y,0,1,12),'Neujahr');add(off(-2),'Karfreitag');add(off(1),'Ostermontag');add(new Date(y,4,1,12),'1. Mai');add(off(39),'Himmelfahrt');add(off(50),'Pfingstmontag');add(off(60),'Fronleichnam');add(new Date(y,9,3,12),'Dt. Einheit');add(new Date(y,10,1,12),'Allerheiligen');add(new Date(y,11,24,12),'Heiligabend');add(new Date(y,11,25,12),'1. Weihnachtstag');add(new Date(y,11,26,12),'2. Weihnachtstag');add(new Date(y,11,31,12),'Silvester');});
 /* 1.8.1: Listen füllen die ganze Höhe bis zum unteren Rand */
 function fitH(){for(const el of document.querySelectorAll('.vtab,.board,.rktab,.nboard,.kdboard,#v-lief .tbl,#v-kasse .tbl')){if(!el.offsetParent)continue;const t=el.getBoundingClientRect().top;el.style.maxHeight=Math.max(240,innerHeight-t-12)+'px';}if(typeof ltBarPos==='function')ltBarPos();}
-addEventListener('resize',()=>requestAnimationFrame(fitH));{let q=0;new MutationObserver(()=>{if(q)return;q=requestAnimationFrame(()=>{q=0;fitH();});}).observe(document.body,{childList:true,subtree:true});}
+/* 1.8.6: Scroll-Position aller Listen bleibt beim Neuaufbau erhalten (vorher sprang die Liste nach jeder Änderung nach oben) */
+const SCRSEL='.vtab,.board,.rktab,.nboard,.kdboard,.tbl,.bcols,.cols';const SCR={};
+const scrKey=el=>((el.closest('.view')||{}).id||'')+'|'+[...el.classList].filter(c=>!/^(on|wfx)$/.test(c)).sort().join('.');
+document.addEventListener('scroll',e=>{const el=e.target;if(!(el instanceof Element)||!el.matches(SCRSEL))return;SCR[scrKey(el)]={t:el.scrollTop,l:el.scrollLeft};el.dataset.scr='1';},true);
+function scrRestore(){for(const el of document.querySelectorAll(SCRSEL)){if(el.dataset.scr)continue;el.dataset.scr='1';const v=SCR[scrKey(el)];if(v&&el.offsetParent){el.scrollTop=v.t;el.scrollLeft=v.l;}}}
+addEventListener('resize',()=>requestAnimationFrame(fitH));{let q=0;new MutationObserver(()=>{scrRestore();if(q)return;q=requestAnimationFrame(()=>{q=0;fitH();scrRestore();});}).observe(document.body,{childList:true,subtree:true});}
 function tick(){const d=new Date();$('clock').innerHTML=String(d.getHours()).padStart(2,'0')+'<i>:</i>'+String(d.getMinutes()).padStart(2,'0');$('dWd').textContent=WD[d.getDay()];$('dKw').textContent='KW '+kw(d);$('nKw').innerHTML='KW '+kw(d);$('nKwN').textContent=kw(d);$('nKwD').textContent=d.toLocaleDateString('de-DE',{weekday:'short',day:'numeric',month:'short'});$('dDate').innerHTML=d.getDate()+'. <span class="mL">'+d.toLocaleDateString('de-DE',{month:'long'})+'</span><span class="mS">'+d.toLocaleDateString('de-DE',{month:'short'})+'</span> '+d.getFullYear();}
 tick();setInterval(tick,15000);
 
