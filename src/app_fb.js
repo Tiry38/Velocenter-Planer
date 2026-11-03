@@ -74,7 +74,7 @@ function toast(t,undo){const el=$('toast');el.textContent=t;el.classList.toggle(
 
 /* ---------- Anmeldung ---------- */
 let pwU=null;
-async function showLogin(){ME=null;document.body.classList.remove('navmini');stopLive();$('whoOv').hidden=false;pwBack();
+async function showLogin(){ME=null;try{KD={};KDT={};kdDirty=true;}catch(_){}document.body.classList.remove('navmini');stopLive();$('whoOv').hidden=false;pwBack();
  try{const d=await db.doc('meta/users').get({source:'server'});USERSET=d.exists?d.data():{};}catch(e){try{const d=await db.doc('meta/users').get();USERSET=d.exists?d.data():{};}catch(_){USERSET={};}}
  $('whoGrid').innerHTML=USERS.map(u=>`<button class="wt" type="button" data-u="${u.id}" style="--uc:${u.c}"><span class="ring">${esc(u.n[0])}</span><b>${esc(u.n)}</b></button>`).join('');}
 function pwOpen(id){pwU=U(id);const f=$('pwForm'),first=!USERSET[id];f.style.setProperty('--uc',pwU.c);$('pwRing').textContent=pwU.n[0];$('pwName').textContent=pwU.n;
@@ -101,7 +101,7 @@ $('pwForm').addEventListener('submit',async e=>{e.preventDefault();clearTimeout(
  finally{go.disabled=false;}});
 $('switchUser').addEventListener('click',async()=>{relock();await auth.signOut();});
 async function start(me){if(ME&&ME.id===me.id)return;ME=me;document.body.classList.toggle('isadm',!!me.adm);$('bmTog').hidden=!me.adm;const u=U(me.id);$('meName').textContent=u.n;$('meRole').textContent=me.adm?'Admin':'Team';$('meAv').style.setProperty('--uc',u.c);$('meAv').textContent=u.n[0];
- document.querySelector('.navbtn[data-v=tresor]').hidden=true;/* Reiter Passwörter abgeschaltet (1.5.9, Tiry) – Daten bleiben unberührt */document.querySelector('.navbtn[data-v=notes]').hidden=!me.adm;$('whoOv').hidden=true;navForUser();startLive();show(ls.get('vc_view','planer'));toast('Hallo '+u.n+' 👋');pwForceChk();db.doc('meta/users').get().then(d=>{USERSET=d.exists?d.data():{};}).catch(()=>{});}
+ document.querySelector('.navbtn[data-v=tresor]').hidden=true;/* Reiter Passwörter abgeschaltet (1.5.9, Tiry) – Daten bleiben unberührt */document.querySelector('.navbtn[data-v=notes]').hidden=!me.adm;document.querySelector('.navbtn[data-v=kunden]').hidden=!me.adm;/* 1.9.6: Kunden nur Admins */$('whoOv').hidden=true;navForUser();startLive();show(ls.get('vc_view','planer'));toast('Hallo '+u.n+' 👋');pwForceChk();db.doc('meta/users').get().then(d=>{USERSET=d.exists?d.data():{};}).catch(()=>{});}
 
 /* Passwort ändern / zurücksetzen */
 function dlg(html){$('dlgBox').innerHTML=html;$('dlg').hidden=false;const f=$('dlgBox').querySelector('input');if(f)f.focus();}
@@ -234,8 +234,8 @@ function startLive(){stopLive();const from=iso(new Date(Date.now()-35*864e5));
  listen('L',x=>{L=x.map(o=>Object.assign({},o,{k:o.k||o.id}));if(!x.length)seedLeasing();else recLeasing();});
  listen('I',x=>{I={};x.forEach(o=>I[o.id]=o.wert);});
  if(ME&&ME.adm)unsubs.push(db.doc('tresor/pw').onSnapshot(d=>{if(KEY&&NOTES&&d.exists&&d.data().ct&&d.data().tsVon!==ME.id&&!document.querySelector('#nGrid [contenteditable]:focus'))open_(KEY,d.data()).then(x=>{if(!Array.isArray(x)){NOTES=x.notes||[];PWGRID=x.grid||PWGRID;rn();}}).catch(()=>{});},()=>{}));
- for(let y=1995;y<=new Date().getFullYear()+1;y++)unsubs.push(db.doc('meta/kd_'+y).onSnapshot(d=>{KD[y]=(d.exists&&d.data().items)||{};kdDirty=true;scheduleRender();},()=>{}));
- unsubs.push(db.doc('meta/kd_trash').onSnapshot(d=>{const it=(d.exists&&d.data().items)||{},o={};for(const k in it)if(it[k])o[k]=it[k];KDT=o;kdDirty=true;scheduleRender();kdBinPrune();},()=>{}));
+ if(ME&&ME.adm)for(let y=1995;y<=new Date().getFullYear()+1;y++)unsubs.push(db.doc('meta/kd_'+y).onSnapshot(d=>{KD[y]=(d.exists&&d.data().items)||{};kdDirty=true;scheduleRender();},()=>{}));
+ if(ME&&ME.adm)unsubs.push(db.doc('meta/kd_trash').onSnapshot(d=>{const it=(d.exists&&d.data().items)||{},o={};for(const k in it)if(it[k])o[k]=it[k];KDT=o;kdDirty=true;scheduleRender();kdBinPrune();},()=>{}));
  unsubs.push(db.doc('meta/kd_x').onSnapshot(d=>{KD.x=(d.exists&&d.data().items)||{};kdDirty=true;scheduleRender();},()=>{}));
  unsubs.push(db.doc('meta/layout').onSnapshot(d=>{const x=d.exists?d.data():{},j=JSON.stringify(x);if(j===LAYJ)return;LAYJ=j;LAYALL=x;layPlaner();layRefresh();},()=>{}));
  unsubs.push(db.doc('meta/import').onSnapshot(d=>{KDIMP=!!(d.exists&&d.data().kunden);if($('kdImp'))$('kdImp').hidden=!(ME&&ME.adm)||KDIMP;},()=>{}));
