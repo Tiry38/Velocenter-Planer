@@ -1002,7 +1002,7 @@ body.isadm .vtab td.ce.vnote[data-von]:hover::after{transform:translateY(-50%) s
 /* Bearbeitungsmodus */
 .layhid{display:none!important}
 #bmTog[aria-pressed="true"]{background:rgba(250,204,21,.16);color:#FDE68A;box-shadow:inset 0 0 0 1px rgba(250,204,21,.5)}
-#bmBar{position:fixed;bottom:14px;right:14px;z-index:80;display:flex;align-items:center;gap:12px;padding:7px 8px 7px 14px;border-radius:12px;background:rgba(20,18,8,.92);border:1px solid rgba(250,204,21,.55);box-shadow:0 0 18px rgba(250,204,21,.25);font:500 12.5px "Outfit",sans-serif;color:#FEF3C7}
+#bmBar{position:fixed;bottom:14px;left:236px;max-width:calc(100vw - 680px);z-index:80;display:flex;align-items:center;gap:12px;padding:7px 8px 7px 14px;border-radius:12px;background:rgba(20,18,8,.92);border:1px solid rgba(250,204,21,.55);box-shadow:0 0 18px rgba(250,204,21,.25);font:500 12.5px "Outfit",sans-serif;color:#FEF3C7}
 #bmBar b{color:#FDE68A}#bmBar span{color:#CBD5E1}#bmBar .btn{padding:5px 12px;font-size:12px}
 body.bm .view.on thead th[data-ck]:not([data-bmno]),body.bm #grid .hd[data-pk]{cursor:pointer;outline:1px dashed rgba(250,204,21,.6);outline-offset:-3px}
 body.bm .view.on thead th[data-ck]:hover,body.bm #grid .hd[data-pk]:hover{background:rgba(250,204,21,.12)!important}
@@ -1034,6 +1034,12 @@ body.bmdrag{cursor:col-resize!important;user-select:none}
 .order .olgt{position:absolute;top:10px;right:12px;max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font:700 10.5px/1 "Outfit",sans-serif;letter-spacing:.04em;text-transform:uppercase;color:#E2E8F0;padding:4px 8px;border-radius:7px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14)}
 .order:has(.olg)>b,.order:has(.olgt)>b{display:block;padding-right:100px}
 .paid.u{border-color:#334155;color:#94A3B8}.paid.n{border-color:#5a1a22;color:#FCA5A5}
+/* 1.9.4: Zeilen-Griff im Bearbeitungsmodus */
+.bmrow{display:none}
+body.bm .bmrow{all:unset;display:inline-grid;place-items:center;width:16px;height:22px;margin-right:4px;vertical-align:middle;border-radius:5px;cursor:pointer;font:800 15px/1 "Outfit",sans-serif;color:#FACC15;background:rgba(250,204,21,.12);box-shadow:inset 0 0 0 1px rgba(250,204,21,.45)}
+body.bm .bmrow:hover{background:rgba(250,204,21,.3)}
+.bmrow2{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+body.navmini #bmBar{left:100px}#bmBar span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 
 [hidden]{display:none!important}
 #sTab td.b{font-weight:700}#sTab .pwm.ed{outline:none;padding:2px 6px;border-radius:6px;font-family:var(--mono)}#sTab td{vertical-align:top}
@@ -1069,7 +1075,7 @@ body.bmdrag{cursor:col-resize!important;user-select:none}
 </nav>
 
 <main>
-<div id="bmBar" hidden><b>✎ Bearbeitungsmodus</b><span>Spaltenkopf anklicken: umbenennen · verschieben · ausblenden · neue Spalte</span><button type="button" class="btn" id="bmOff">Fertig</button></div>
+<div id="bmBar" hidden><b>✎ Bearbeitungsmodus</b><span>Spaltenkopf anklicken = Spalte bearbeiten · ⋮ an der Zeile (oder Rechtsklick) = Zeile einfügen, verschieben, löschen</span><button type="button" class="btn" id="bmOff">Fertig</button></div>
   <div class="top">
     <div class="tt"><span class="tile" id="tIco"></span><div><small id="tSub"></small><h1 id="title">Planer</h1></div></div>
     <div class="dt">
@@ -1210,7 +1216,7 @@ body.bmdrag{cursor:col-resize!important;user-select:none}
 <script>
 const FB_CONFIG={apiKey:"AIzaSyC_uZPvc5rJETwlS4JbfCoTkkE4ckjtp0M",authDomain:"velocenter-planer.firebaseapp.com",projectId:"velocenter-planer",storageBucket:"velocenter-planer.firebasestorage.app",messagingSenderId:"1018330488700",appId:"1:1018330488700:web:262a4d1660353e6fde8ef9"};
 /* ================= Velocenter Werkstatt-Cockpit – Oberfläche ================= */
-const CLIENT_VERSION='1.9.3';
+const CLIENT_VERSION='1.9.4';
 const USERS=[{id:'kevin',n:'Kevin',c:'#E2232D'},{id:'stefan',n:'Stefan',c:'#F59E0B'},{id:'martina',n:'Martina',c:'#EC4899'},{id:'sascha',n:'Sascha',c:'#22D3EE'},{id:'rene',n:'René',c:'#34D399'}];
 const U=id=>USERS.find(u=>u.id===id)||{n:'',c:'#64748B',id:''};
 const $=id=>document.getElementById(id);
@@ -1587,10 +1593,10 @@ const ltShow=s=>{const p=ltParse(s);return p?'KW '+p.k+'<small class="lty">'+Str
 const vkRank=b=>b.a==='1'?5:b.b==='1'?4:b.m==='1'?3:b.an==='1'?2:1;
 // Sortieren: Klick auf Spaltenkopf (1. Klick aufsteigend, 2. Klick absteigend) oder Auswahl oben links; leere Felder immer unten
 const VKH=[['',''],['name','Kunde · Modell'],['form','Form','thf'],['gr','Größe','thf'],['dat','Vom Kunde<br>bestellt am','thb'],['lt','LT'],['notiz','Notiz','thn'],['firma','Anbieter'],['antrag','Antrag<br>gestellt am','thl'],['ok','Leasing<br>genehmigt','thl'],['lende','Leasing&shy;ende','thl'],['verk','Beratung'],['status','Status'],['','']];
-const VKSL=[['dat:-1','Neueste zuerst (frische Aufträge)'],['dat:1','Älteste zuerst (wartet am längsten)'],['okf:1','Genehmigung fehlt zuerst'],['lt:1','Nach Liefertermin'],['status:1','Nach Status']];
+const VKSL=[['dat:-1','Neueste zuerst (frische Aufträge)'],['dat:1','Älteste zuerst (wartet am längsten)'],['okf:1','Genehmigung fehlt zuerst'],['lt:1','Nach Liefertermin'],['status:1','Nach Status'],['o:1','Eigene Reihenfolge']];
 const tx=v=>{v=String(v||'').trim().toLowerCase();return v||null;},dt=v=>vkDate(v)||null;
 const VKS={name:b=>tx(b.name),form:b=>tx(b.form),gr:b=>{const m=String(b.gr||'').match(/\d+/);return m?(/"/.test(b.gr)?+m[0]*2.54:+m[0]):null;},dat:b=>dt(b.dat),lt:b=>b.lt?vkLt(b.lt):null,notiz:b=>tx([b.notiz,b.montieren].filter(Boolean).join(' ')),
- firma:b=>tx(FN[b.firma]||b.firma),antrag:b=>dt(b.antrag),ok:b=>dt(b.ok),lende:b=>dt(b.lende),verk:b=>b.verk?tx(U(b.verk).n):null,status:b=>vkRank(b),okf:b=>b.firma&&!b.ok?0:1};
+ firma:b=>tx(FN[b.firma]||b.firma),antrag:b=>dt(b.antrag),ok:b=>dt(b.ok),lende:b=>dt(b.lende),verk:b=>b.verk?tx(U(b.verk).n):null,status:b=>vkRank(b),o:b=>b.o===undefined||b.o===''||b.o===null?null:+b.o,okf:b=>b.firma&&!b.ok?0:1};
 function vkCmp(a,b){const [k,d]=vkSort.split(':'),f=VKS[k]||VKS.dat,x=f(a),y=f(b);if(x==null&&y==null)return vkDate(a.dat)-vkDate(b.dat);if(x==null)return 1;if(y==null)return -1;
  const r=typeof x==='string'?x.localeCompare(y,'de'):x-y;return r*(+d||1)||(k==='okf'?vkDate(b.dat)-vkDate(a.dat):vkDate(a.dat)-vkDate(b.dat));}
 function vkHead(){const [k,d]=vkSort.split(':');return VKH.map(([sk,n,c])=>sk?`<th class="${c||''} srt${sk===k?' on':''}" data-sk="${sk}" title="Klick = sortieren${sk===k?' (nochmal = umdrehen)':''}">${n}<i class="sar">${sk===k?(d==='-1'?'▼':'▲'):'⇅'}</i></th>`:'<th></th>').join('');}
@@ -1668,10 +1674,14 @@ document.addEventListener('mousedown',e=>{if(ME&&ME.adm&&(e.target.closest('.av[
 let LAYALL={},LAYJ='{}',BM=false;const COLS0=COLS.map(c=>Object.assign({},c));
 const ckNorm=t=>String(t||'').replace(/[▲▼↕▾⇅↑↓]/g,'').toLowerCase().replace(/[^a-z0-9äöüß]/g,'');
 const LAYT={
- verkauf:{tbl:()=>document.querySelector('#cards .vtab table'),id:r=>{const e=r.querySelector('[data-vid],[data-vi]');return e&&(e.dataset.vid||e.dataset.vi);},get:id=>V.find(x=>x.id===id),set:(o,f,v)=>putV(Object.assign({},o,{[f]:v})),grp:['anbieter','antraggestelltam','leasinggenehmigt','leasingende']},
- lief:{tbl:()=>$('sTab'),id:r=>{const e=r.querySelector('[data-sid]');return e&&e.dataset.sid;},get:id=>S.find(x=>x.id===id),set:(o,f,v)=>{const n=Object.assign({},o,{[f]:v});delete n.hasLogin;save('S',n).catch(()=>{});}},
- rekla:{tbl:()=>$('rkTab'),id:r=>{const e=r.querySelector('[data-rid]');return e&&e.dataset.rid;},get:id=>rkAll().find(x=>x.id===id),set:(o,f,v)=>db.doc('meta/reklam').update({['items.'+o.id+'.'+f]:v}).catch(fail)},
- kasse:{tbl:()=>$('tgTab'),id:r=>{const e=r.querySelector('[data-tdel]');return e&&e.dataset.tdel;},get:id=>T.find(x=>x.id===id),set:(o,f,v)=>save('T',Object.assign({},o,{[f]:v})).catch(()=>{})}};
+ verkauf:{mv:1,mk:r=>({id:nid('v'),dat:r&&r.dat||'',name:'',ts:Date.now()}),put:o=>putV(o),rm:o=>{V=V.filter(x=>x.id!==o.id);rv();del('V',o.id);},man:()=>vkSort==='o:1',setMan:()=>vkSetSort('o:1'),
+  tbl:()=>document.querySelector('#cards .vtab table'),id:r=>{const e=r.querySelector('[data-vid],[data-vi]');return e&&(e.dataset.vid||e.dataset.vi);},get:id=>V.find(x=>x.id===id),set:(o,f,v)=>putV(Object.assign({},o,{[f]:v})),grp:['anbieter','antraggestelltam','leasinggenehmigt','leasingende']},
+ lief:{mv:1,mk:()=>({id:nid('s'),name:''}),put:o=>{const n=Object.assign({},o);delete n.hasLogin;const i=S.findIndex(x=>x.id===o.id);if(i<0)S.push(n);else S[i]=Object.assign({},S[i],n);rs();save('S',n).catch(()=>{});},rm:o=>{S=S.filter(x=>x.id!==o.id);rs();del('S',o.id);},man:()=>sSort.k==='o',setMan:()=>{sSort={k:'o',d:1};ls.set('vc_ssort','o:1');rs();},
+  tbl:()=>$('sTab'),id:r=>{const e=r.querySelector('[data-sid]');return e&&e.dataset.sid;},get:id=>S.find(x=>x.id===id),set:(o,f,v)=>{const n=Object.assign({},o,{[f]:v});delete n.hasLogin;save('S',n).catch(()=>{});}},
+ rekla:{mk:r=>({id:nid('r'),datum:deDate(new Date()),st:'offen',von:ME.id}),put:o=>putR(o),rm:o=>delR(o.id),
+  tbl:()=>$('rkTab'),id:r=>{const e=r.querySelector('[data-rid]');return e&&e.dataset.rid;},get:id=>rkAll().find(x=>x.id===id),set:(o,f,v)=>db.doc('meta/reklam').update({['items.'+o.id+'.'+f]:v}).catch(fail)},
+ kasse:{mk:r=>({id:nid('t'),datum:r&&r.datum||iso(new Date()),betrag:'',notiz:'',von:ME.id}),put:o=>{const i=T.findIndex(x=>x.id===o.id);if(i<0)T.push(o);else T[i]=o;rtg();save('T',o).catch(()=>{});},rm:o=>{T=T.filter(x=>x.id!==o.id);rtg();del('T',o.id);},
+  tbl:()=>$('tgTab'),id:r=>{const e=r.querySelector('[data-tdel]');return e&&e.dataset.tdel;},get:id=>T.find(x=>x.id===id),set:(o,f,v)=>save('T',Object.assign({},o,{[f]:v})).catch(()=>{})}};
 const layCfg=v=>LAYALL[v]||{};
 function layApply(){for(const hd of document.querySelectorAll('#grid .hd[data-pk]:not([data-bmh])')){hd.dataset.bmh='1';const h=document.createElement('span');h.className='bmres';h.title='Ziehen = Breite ändern · Doppelklick = Standard';hd.append(h);}
  for(const v in LAYT){const A=LAYT[v],t=A.tbl();if(!t||!t.tHead)continue;const hdr=t.tHead.rows[t.tHead.rows.length-1];if(!hdr)continue;
@@ -1686,7 +1696,7 @@ function layApply(){for(const hd of document.querySelectorAll('#grid .hd[data-pk
    if(hL&&lg&&hR){if(fi<0||!ng){lg.style.display='none';hL.colSpan=Math.max(1,vis.length-3);hR.colSpan=3;}else{lg.style.display='';hL.colSpan=Math.max(1,fi);lg.colSpan=ng;hR.colSpan=Math.max(1,vis.length-fi-ng);}}
    const gv=vis.filter(p=>A.grp.includes(p.k));t._g1=gv.length?gv[0].k:'';t._g2=gv.length?gv[gv.length-1].k:'';}}
  const P0=t._plan;if(!P0)continue;
- for(const tb of t.tBodies)for(const r of tb.rows){if(r.dataset.lay)continue;r.dataset.lay='1';const cs=[...r.cells];if(cs.length!==P0.n)continue;const id=A.id(r),o=id?A.get(id):null;
+ for(const tb of t.tBodies)for(const r of tb.rows){if(r.dataset.lay)continue;r.dataset.lay='1';const cs=[...r.cells];if(cs.length!==P0.n)continue;const id=A.id(r),o=id?A.get(id):null;if(id){r.dataset.rid2=id;if(!cs[0].querySelector('.bmrow')){const hb=document.createElement('button');hb.type='button';hb.className='bmrow';hb.title='Zeile: einfügen, duplizieren, verschieben, löschen';hb.textContent='⋮';cs[0].prepend(hb);}}
   r.replaceChildren(...P0.plan.map(p=>{let c;if(p.t==='o')c=cs[p.i];else{c=document.createElement('td');c.className='ce xce';c.contentEditable='true';c.spellcheck=false;c.dataset.xk=p.k;c.textContent=o?String(o[p.k]||''):'';}
    c.dataset.ck=p.k;if(P0.hid.has(p.k))c.classList.add('layhid');{const bw=(P0.wid||{})[p.k];if(bw){c.style.minWidth=c.style.maxWidth=bw+'px';}}if(t._g1&&p.k===t._g1)c.classList.add('lgL');if(t._g2&&p.k===t._g2)c.classList.add('lgR');return c;}));}
  if(t._g1)t.classList.add('lgx');}}
@@ -1725,6 +1735,22 @@ function bmMenu(anchor,v,k,name){const cfg=layCfg(v),hid=(cfg.hid||[]),isAdd=/^x
  setTimeout(()=>{nm.focus();nm.select();},30);}
 function bmSet(on){BM=!!on&&!!(ME&&ME.adm);document.body.classList.toggle('bm',BM);$('bmBar').hidden=!BM;$('bmTog').setAttribute('aria-pressed',BM);if(!BM)kdPopClose();}
 $('bmTog').addEventListener('click',()=>bmSet(!BM));$('bmOff').addEventListener('click',()=>bmSet(false));
+/* Zeilen-Menü im BM (1.9.4): einfügen darüber/darunter, duplizieren, verschieben, löschen */
+function bmRowMenu(anchor,tr){const v=bmView(),A=LAYT[v];if(!A||!A.mk)return;const id=tr.dataset.rid2,o=A.get(id);if(!o)return;
+ const el=kdPopOpen(anchor,`<div class="bmm"><div class="kph">Zeile</div><div class="bmrow2"><button type="button" class="btn" data-br="above">⬆ Zeile darüber</button><button type="button" class="btn" data-br="below">⬇ Zeile darunter</button></div>
+  <button type="button" class="btn" data-br="dup">⧉ Zeile duplizieren</button>${A.mv?`<div class="bmrow2"><button type="button" class="btn" data-br="up">▲ Nach oben</button><button type="button" class="btn" data-br="down">▼ Nach unten</button></div>`:''}
+  <button type="button" class="btn del" data-br="del">🗑 Zeile löschen</button>${A.mv?'<p class="hint" style="margin:0">Verschieben stellt die Sortierung auf „Eigene Reihenfolge“.</p>':''}</div>`);
+ el.addEventListener('click',e=>{const b=e.target.closest('[data-br]');if(!b)return;kdPopClose();bmRowDo(v,A,tr,o,b.dataset.br);});}
+function bmRowIds(tr){return [...tr.parentElement.rows].map(r=>r.dataset.rid2).filter(Boolean);}
+function bmReorder(v,A,ids){const objs=ids.map(i=>A.get(i)).filter(Boolean);objs.forEach((x,i)=>{const no=(i+1)*10;if(+x.o!==no)A.put(Object.assign({},x,{o:no}));});if(!A.man())A.setMan();}
+function bmRowDo(v,A,tr,o,a){const ids=bmRowIds(tr),i=ids.indexOf(o.id);
+ if(a==='del'){A.rm(o);toast('Zeile gelöscht',()=>{A.put(o);toast('Wiederhergestellt');});return;}
+ if(a==='up'||a==='down'){const j=a==='up'?i-1:i+1;if(j<0||j>=ids.length)return;[ids[i],ids[j]]=[ids[j],ids[i]];bmReorder(v,A,ids);return;}
+ let n=a==='dup'?Object.assign({},o,{id:A.mk(o).id}):A.mk(o);if(a==='dup'){['a','aVon','aAm','aTs','b','bVon','bAm','m','mVon','mAm','an','anVon','anAm'].forEach(k=>delete n[k]);}
+ if(A.mv&&A.man()){const ni=ids.slice();ni.splice(a==='above'?i:i+1,0,n.id);A.put(n);setTimeout(()=>bmReorder(v,A,ni),60);}else A.put(n);
+ toast(a==='dup'?'Zeile dupliziert':'Neue Zeile eingefügt');}
+document.addEventListener('click',e=>{if(!BM)return;const h=e.target.closest('.bmrow');if(!h)return;e.preventDefault();e.stopPropagation();const tr=h.closest('tr');if(tr)bmRowMenu(h,tr);},true);
+document.addEventListener('contextmenu',e=>{if(!BM)return;const tr=e.target.closest('.view.on tbody tr[data-rid2]');if(!tr)return;e.preventDefault();bmRowMenu(tr.cells[0],tr);},true);
 /* Spaltenbreite ziehen (nur im BM) */
 let BMD=null;
 document.addEventListener('pointerdown',e=>{if(!BM)return;const h=e.target.closest('.bmres');if(!h)return;e.preventDefault();e.stopPropagation();const th=h.parentElement,pk=th.dataset.pk,v=pk?'planer':bmView(),k=pk||th.dataset.ck;BMD={th,v,k,x:e.clientX,w:th.getBoundingClientRect().width,t:th.closest('table')};h.setPointerCapture(e.pointerId);document.body.classList.add('bmdrag');},true);
@@ -2572,7 +2598,7 @@ let kdPop=null;
 function kdPopClose(){if(kdPop){kdPop.el.remove();kdPop=null;}}
 function kdPopOpen(anchor,html,o){kdPopClose();const el=document.createElement('div');el.className='kdpop';el.innerHTML=html;document.body.appendChild(el);kdPop=Object.assign({el,t0:Date.now()},o);kdPopPos(anchor);const i=el.querySelector('input:not([type=checkbox])');if(i)i.focus();return el;}
 function kdPopPos(anchor){const el=kdPop.el,rc=anchor.getBoundingClientRect(),W=el.offsetWidth,H=el.offsetHeight;el.style.left=Math.max(8,Math.min(innerWidth-W-8,rc.left))+'px';el.style.top=(rc.bottom+4+H>innerHeight-8?Math.max(8,rc.top-4-H):rc.bottom+4)+'px';}
-document.addEventListener('pointerdown',e=>{if(kdPop&&!kdPop.el.contains(e.target)&&!e.target.closest('[data-kpick],.kdh[data-kc],.stb .st,.lvon,#meChip,.av[data-avk],td.vnote[data-von],.bm thead th,.bm #grid .hd'))kdPopClose();},true);
+document.addEventListener('pointerdown',e=>{if(kdPop&&!kdPop.el.contains(e.target)&&!e.target.closest('[data-kpick],.kdh[data-kc],.stb .st,.lvon,#meChip,.av[data-avk],td.vnote[data-von],.bm thead th,.bm #grid .hd,.bmrow'))kdPopClose();},true);
 document.addEventListener('keydown',e=>{if(kdPop&&e.key==='Escape')kdPopClose();});
 document.addEventListener('scroll',e=>{if(kdPop&&!kdPop.el.contains(e.target)&&Date.now()-kdPop.t0>250)kdPopClose();},true);
 function kdFltOpen(hd){const k=hd.dataset.kc,c=KDC.find(x=>x.k===k);if(kdPop&&kdPop.t==='flt'&&kdPop.k===k){kdPopClose();return;}
@@ -2750,8 +2776,8 @@ $('sTab').addEventListener('focusout',async e=>{const c=e.target.closest('[conte
  if(f==='login'||f==='pass'){const l=(LOGINS||[]).find(x=>x.id===id)||{};if(v!==(l[f]||''))await setLogin(id,f,v);setTimeout(rs,50);return;}
  const o=S.find(x=>x.id===id);const vv=f==='mbw'?euro(v):v;if(!o||vv===(o[f]||''))return;const n=Object.assign({},o,{[f]:vv});delete n.hasLogin;const i=S.indexOf(o);S[i]=Object.assign({},n,{hasLogin:o.hasLogin});try{await save('S',n);toast('Gespeichert');}catch(_){}});
 // Lieferanten sortieren (1.6.0): Spaltenkopf antippen = A–Z, nochmal = Z–A; Leere immer unten; gemerkt in vc_ssort
-var sSort=(()=>{const [k,d]=String(ls.get('vc_ssort','name:1')).split(':');return{k:['name','kdnr','mbw','notiz'].includes(k)?k:'name',d:d==='-1'?-1:1};})();
-function sVal(o,k){const v=String(o[k]||'').trim();if(k==='mbw'){const n=parseFloat(v.replace(/[^\d,.-]/g,'').replace(/\./g,'').replace(',','.'));return isNaN(n)?'':n;}return v;}
+var sSort=(()=>{const [k,d]=String(ls.get('vc_ssort','name:1')).split(':');return{k:['name','kdnr','mbw','notiz','o'].includes(k)?k:'name',d:d==='-1'?-1:1};})();
+function sVal(o,k){if(k==='o')return o.o===undefined||o.o===''||o.o===null?'':+o.o;const v=String(o[k]||'').trim();if(k==='mbw'){const n=parseFloat(v.replace(/[^\d,.-]/g,'').replace(/\./g,'').replace(',','.'));return isNaN(n)?'':n;}return v;}
 function sCmp(a,b){const x=sVal(a,sSort.k),y=sVal(b,sSort.k);if(x===''&&y!=='')return 1;if(y===''&&x!=='')return -1;
  const r=typeof x==='number'&&typeof y==='number'?x-y:String(x).localeCompare(String(y),'de',{numeric:true,sensitivity:'base'});return (r||String(a.name||'').localeCompare(String(b.name||''),'de',{sensitivity:'base'}))*(r?sSort.d:1);}
 $('sTab').addEventListener('click',e=>{const sh=e.target.closest('[data-ssort]');if(sh){const k=sh.dataset.ssort;sSort=sSort.k===k?{k,d:-sSort.d}:{k,d:1};ls.set('vc_ssort',sSort.k+':'+sSort.d);rs();return;}if(e.target.closest('[data-unlock]')){pinDlg();return;}
