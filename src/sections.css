@@ -716,3 +716,13 @@ body.bm .bmrow{all:unset;display:inline-grid;place-items:center;width:16px;heigh
 body.bm .bmrow:hover{background:rgba(250,204,21,.3)}
 .bmrow2{display:grid;grid-template-columns:1fr 1fr;gap:6px}
 body.navmini #bmBar{left:100px}#bmBar span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+/* 1.9.5: Marken je Jahrgang (Hover-Karte) */
+.kytip{position:fixed;z-index:9998;width:330px;padding:12px 14px;border-radius:14px;background:#0F131C;border:1px solid rgba(177,92,255,.55);box-shadow:0 18px 40px rgba(0,0,0,.6),0 0 22px rgba(177,92,255,.25);pointer-events:none;display:grid;gap:6px}
+.kyth{display:flex;justify-content:space-between;align-items:baseline;padding-bottom:6px;margin-bottom:2px;border-bottom:1px solid #2A3344}
+.kyth b{font:800 18px "Outfit",sans-serif;color:#fff}.kyth span{font:500 12px "Outfit",sans-serif;color:#94A3B8}
+.kytr{display:grid;grid-template-columns:112px 1fr 44px 34px;align-items:center;gap:8px;font:500 12.5px "Outfit",sans-serif;color:#E2E8F0}
+.kytn{display:flex;align-items:center;gap:6px;min-width:0}.kytn img{height:14px;max-width:46px;object-fit:contain}.kytn em{font-style:normal;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.kytn:has(img) em{font-size:11px;color:#94A3B8}
+.kytr i{height:7px;border-radius:4px;background:linear-gradient(90deg,#B15CFF var(--p),rgba(255,255,255,.06) var(--p))}
+.kytr b{text-align:right;font-variant-numeric:tabular-nums}.kytr small{text-align:right;color:#94A3B8;font-size:11px}
+.kytm{font:500 11.5px "Outfit",sans-serif;color:#94A3B8;padding-top:4px}
