@@ -1236,7 +1236,7 @@ body.navmini #bmBar{left:100px}#bmBar span{overflow:hidden;text-overflow:ellipsi
 <script>
 const FB_CONFIG={apiKey:"AIzaSyC_uZPvc5rJETwlS4JbfCoTkkE4ckjtp0M",authDomain:"velocenter-planer.firebaseapp.com",projectId:"velocenter-planer",storageBucket:"velocenter-planer.firebasestorage.app",messagingSenderId:"1018330488700",appId:"1:1018330488700:web:262a4d1660353e6fde8ef9"};
 /* ================= Velocenter Werkstatt-Cockpit – Oberfläche ================= */
-const CLIENT_VERSION='1.9.9';
+const CLIENT_VERSION='1.10.0';
 const USERS=[{id:'kevin',n:'Kevin',c:'#E2232D'},{id:'stefan',n:'Stefan',c:'#F59E0B'},{id:'martina',n:'Martina',c:'#EC4899'},{id:'sascha',n:'Sascha',c:'#22D3EE'},{id:'rene',n:'René',c:'#34D399'}];
 const U=id=>USERS.find(u=>u.id===id)||{n:'',c:'#64748B',id:''};
 const $=id=>document.getElementById(id);
@@ -1280,7 +1280,7 @@ function fitH(){for(const el of document.querySelectorAll('.vtab,.board,.rktab,.
 const SCRSEL='.vtab,.board,.rktab,.nboard,.kdboard,.tbl,.bcols,.cols';const SCR={};
 const scrKey=el=>((el.closest('.view')||{}).id||'')+'|'+[...el.classList].filter(c=>!/^(on|wfx)$/.test(c)).sort().join('.');
 document.addEventListener('scroll',e=>{const el=e.target;if(!(el instanceof Element)||!el.matches(SCRSEL))return;SCR[scrKey(el)]={t:el.scrollTop,l:el.scrollLeft};el.dataset.scr='1';},true);
-function scrRestore(){for(const el of document.querySelectorAll(SCRSEL)){if(el.dataset.scr)continue;el.dataset.scr='1';const v=SCR[scrKey(el)];if(v&&el.offsetParent){el.scrollTop=v.t;el.scrollLeft=v.l;}}}
+function scrRestore(){const vw=document.querySelector('.view.on');if(!vw)return;for(const el of vw.querySelectorAll(SCRSEL)){if(el.dataset.scr)continue;el.dataset.scr='1';const v=SCR[scrKey(el)];if(v&&el.offsetParent){el.scrollTop=v.t;el.scrollLeft=v.l;}}}
 addEventListener('resize',()=>requestAnimationFrame(fitH));{let q=0;new MutationObserver(()=>{layApply();scrRestore();if(q)return;q=requestAnimationFrame(()=>{q=0;fitH();scrRestore();});}).observe(document.body,{childList:true,subtree:true});}
 function tick(){const d=new Date();$('clock').innerHTML=String(d.getHours()).padStart(2,'0')+'<i>:</i>'+String(d.getMinutes()).padStart(2,'0');$('dWd').textContent=WD[d.getDay()];$('dKw').textContent='KW '+kw(d);$('nKw').innerHTML='KW '+kw(d);$('nKwN').textContent=kw(d);$('nKwD').textContent=d.toLocaleDateString('de-DE',{weekday:'short',day:'numeric',month:'short'});$('dDate').innerHTML=d.getDate()+'. <span class="mL">'+d.toLocaleDateString('de-DE',{month:'long'})+'</span><span class="mS">'+d.toLocaleDateString('de-DE',{month:'short'})+'</span> '+d.getFullYear();}
 tick();setInterval(tick,15000);
@@ -1290,7 +1290,7 @@ const titles={planer:'Planer',verkauf:'Verkaufte Räder',bestell:'Bestellungen',
 function show(v){const nb=document.querySelector(`.navbtn[data-v=${v}]`);if(!nb||nb.hidden)v='planer';const b=document.querySelector(`.navbtn[data-v=${v}]`),top=document.querySelector('.top');
  top.style.setProperty('--ac',b.style.getPropertyValue('--ac'));document.querySelector('main').style.setProperty('--ac',b.style.getPropertyValue('--ac'));$('tIco').innerHTML=b.querySelector('.tile').innerHTML;$('tSub').textContent=b.querySelector('.lbl small').textContent;
  document.querySelectorAll('.view').forEach(s=>s.classList.toggle('on',s.id==='v-'+v));document.querySelectorAll('.navbtn').forEach(x=>x.setAttribute('aria-current',x.dataset.v===v));$('title').textContent=titles[v];
- if(!['tresor','notes'].includes(v)&&(!$('vault').hidden||NOTES))relock();ls.set('vc_view',v);document.body.dataset.v=v;}
+ if(!['tresor','notes'].includes(v)&&(!$('vault').hidden||NOTES))relock();ls.set('vc_view',v);document.body.dataset.v=v;if(window.STALE&&STALE.has(v)&&VIEWR[v]){STALE.delete(v);VIEWR[v]();}}
 document.querySelectorAll('.navbtn').forEach(b=>b.addEventListener('click',()=>show(b.dataset.v)));
 /* Navigation einklappen */
 document.querySelectorAll('.navbtn').forEach(b=>{b.title=b.querySelector('.lbl').childNodes[0].textContent.trim();});
@@ -1456,7 +1456,10 @@ $('meSet').addEventListener('click',async()=>{try{const d=await db.doc('meta/use
 /* ---------- Live-Daten (Firestore, sofort auf allen Geräten) ---------- */
 let unsubs=[],rTimer=null,dirty=false;
 const editing=()=>!!document.querySelector('#grid .edit, .edf, #dlg:not([hidden])')||(document.activeElement&&document.activeElement.isContentEditable);
-function renderAll(){renderInfo();render();rv();rb();rr();rk();rl();rs();rtg();}
+/* 1.10.0: nur den sichtbaren Reiter neu zeichnen, die anderen beim Öffnen (vorher bei jeder Änderung alle 8 → Planer ruckelte) */
+var VIEWR={planer:()=>render(),verkauf:()=>rv(),bestell:()=>rb(),rekla:()=>rr(),kunden:()=>rk(),leasing:()=>rl(),lief:()=>rs(),kasse:()=>rtg()};var STALE=new Set();
+function navCounts(){try{$('nOffen').textContent=V.filter(b=>b.a!=='1').length;$('nBest').textContent=B.filter(b=>(b.status||'offen')!=='fertig').length;$('nRekla').textContent=rkAll().filter(r=>rkSt(r)!=='erl').length;let n=0;for(const y in KD)n+=Object.keys(KD[y]||{}).length;$('nKunden').textContent=n?n.toLocaleString('de-DE'):'–';}catch(_){}}
+function renderAll(){renderInfo();const cur=document.body.dataset.v||'planer';for(const v in VIEWR){if(v===cur){STALE.delete(v);VIEWR[v]();}else STALE.add(v);}navCounts();}
 function scheduleRender(){clearTimeout(rTimer);rTimer=setTimeout(()=>{if(editing()){dirty=true;return;}dirty=false;renderAll();},60);}
 document.addEventListener('focusout',()=>setTimeout(()=>{if(dirty&&!editing()){dirty=false;renderAll();}},120));
 function ping(fromOther){const l=$('live');if(l&&fromOther){l.classList.remove('ping');void l.offsetWidth;l.classList.add('ping');}}
