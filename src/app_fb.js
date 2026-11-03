@@ -933,13 +933,13 @@ $('kdGrid').addEventListener('drop',e=>{if(kdDrag)return;const km=e.target.close
 function kdYrStats(y){const rows=kdAll().filter(r=>!y||String(kdYear(r))===y),m=new Map();
  rows.forEach(r=>{const b=(r.marke||r.modell)?brandOfB({marke:r.marke,modell:r.modell}):null;const k=b?b.k:(String(r.marke||'').trim().toLowerCase()||'_');const n=b?b.n:(String(r.marke||'').trim()||'ohne Marke');const e=m.get(k)||{n,c:0,lg:b&&(BUSER.logos||{})[b.k]};e.c++;m.set(k,e);});
  return {tot:rows.length,list:[...m.values()].sort((a,b)=>b.c-a.c||a.n.localeCompare(b.n,'de'))};}
-let kyTip=null;
+let kyTip=null,kyT=0;
 function kyTipHide(){if(kyTip){kyTip.remove();kyTip=null;}}
-$('kdYrs').addEventListener('mouseover',e=>{const b=e.target.closest('.kyc');if(!b||(kyTip&&kyTip._b===b))return;kyTipHide();const y=b.dataset.kyr,st=kdYrStats(y),mx=st.list.length?st.list[0].c:1,top=st.list.slice(0,14),rest=st.list.slice(14);
+$('kdYrs').addEventListener('mouseover',e=>{const b=e.target.closest('.kyc');if(!b||(kyTip&&kyTip._b===b))return;kyTipHide();clearTimeout(kyT);const y=b.dataset.kyr,st=kdYrStats(y),mx=st.list.length?st.list[0].c:1,top=st.list,rest=[];
  const el=document.createElement('div');el.className='kytip';el._b=b;
- el.innerHTML=`<div class="kyth"><b>${y?esc(y):'Alle Jahre'}</b><span>${st.tot.toLocaleString('de-DE')} Räder · ${st.list.length} Marken</span></div>`+top.map(x=>`<div class="kytr"><span class="kytn">${x.lg?`<img src="${x.lg}" alt="">`:''}<em>${esc(x.n)}</em></span><i style="--p:${(x.c/mx*100).toFixed(1)}%"></i><b>${x.c.toLocaleString('de-DE')}</b><small>${Math.round(x.c/st.tot*100)} %</small></div>`).join('')+(rest.length?`<div class="kytm">+ ${rest.length} weitere Marken (${rest.reduce((a,x)=>a+x.c,0).toLocaleString('de-DE')} Räder)</div>`:'');
- document.body.append(el);kyTip=el;const rc=b.getBoundingClientRect();el.style.left=Math.max(8,Math.min(innerWidth-el.offsetWidth-8,rc.left))+'px';el.style.top=(rc.bottom+8+el.offsetHeight>innerHeight?Math.max(8,rc.top-8-el.offsetHeight):rc.bottom+8)+'px';});
-$('kdYrs').addEventListener('mouseleave',kyTipHide);document.addEventListener('scroll',kyTipHide,true);
+ el.innerHTML=`<div class="kyth"><b>${y?esc(y):'Alle Jahre'}</b><span>${st.tot.toLocaleString('de-DE')} Räder · ${st.list.length} Marken</span></div><div class="kytl">`+top.map(x=>`<div class="kytr"><span class="kytn">${x.lg?`<img src="${x.lg}" alt="">`:''}<em>${esc(x.n)}</em></span><i style="--p:${(x.c/mx*100).toFixed(1)}%"></i><b>${x.c.toLocaleString('de-DE')}</b><small>${Math.round(x.c/st.tot*100)} %</small></div>`).join('')+'</div>'+(rest.length?`<div class="kytm">+ ${rest.length} weitere Marken (${rest.reduce((a,x)=>a+x.c,0).toLocaleString('de-DE')} Räder)</div>`:'');
+ document.body.append(el);kyTip=el;el.addEventListener('mouseenter',()=>clearTimeout(kyT));el.addEventListener('mouseleave',()=>{kyT=setTimeout(kyTipHide,200);});const rc=b.getBoundingClientRect();el.style.left=Math.max(8,Math.min(innerWidth-el.offsetWidth-8,rc.left))+'px';el.style.top=(rc.bottom+8+el.offsetHeight>innerHeight?Math.max(8,rc.top-8-el.offsetHeight):rc.bottom+8)+'px';});
+$('kdYrs').addEventListener('mouseleave',()=>{kyT=setTimeout(kyTipHide,250);});document.addEventListener('scroll',e=>{if(kyTip&&kyTip.contains(e.target))return;kyTipHide();},true);
 $('kdYrs').addEventListener('click',e=>{const b=e.target.closest('[data-kyr]');if(!b)return;kdYr=b.dataset.kyr;ls.set('vc_kdyr',kdYr);kdPopClose();rk();const bd=document.querySelector('.kdboard');if(bd)bd.scrollTop=0;});
 $('kdFx').addEventListener('click',()=>{kdF={};kdPopClose();rk();});
 // Zeile verschieben: ganze Jahresliste neu durchnummerieren (o ab 1. Januar, je Zeile 1 min) – ein Schreibvorgang je Jahres-Paket
