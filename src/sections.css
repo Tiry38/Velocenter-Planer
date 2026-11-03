@@ -111,7 +111,7 @@ body.navmini .app{grid-template-columns:84px 1fr}
 .vtab td.d-ok.miss:empty::before{content:"Genehmigung\A fehlt";white-space:pre;display:block;line-height:1.15;font-size:11px;text-align:center;color:#FCA5A5;font-weight:700}
 .vtab td.d-lende{color:#67E8F9}
 .edit.din{width:132px;padding:3px 4px;font:700 12px var(--mono);color-scheme:dark;background:var(--panel2);color:#fff;border:1px solid var(--cyan);border-radius:7px}
-.vtab thead tr.h2 th:nth-child(9){color:#C4B5FD}.vtab thead tr.h2 th:nth-child(10){color:#34D399}.vtab thead tr.h2 th:nth-child(11){color:#67E8F9}
+
 
 .vtab td.vnote{font-family:var(--body);font-size:12.5px;color:#FDE68A;min-width:180px;max-width:280px;white-space:normal}.vtab td.vnote:empty::before{content:"–";color:var(--muted)}.vtab thead th.thn{color:#FDE68A}
 
@@ -198,10 +198,10 @@ body.navmini .app{grid-template-columns:84px 1fr}
 .vtab thead tr.h1 th{height:24px;padding:6px 8px 0;border-bottom:0}
 .vtab thead tr.h2 th{top:30px}
 .vtab thead th.lgrp{text-align:center;font:700 11px/1 Outfit,var(--display),sans-serif;letter-spacing:.22em;text-transform:uppercase;color:#E9D5FF;border-left:1px solid rgba(167,139,250,.35);border-right:1px solid rgba(103,232,249,.35);border-top:1px solid rgba(167,139,250,.25);border-radius:8px 8px 0 0;background:linear-gradient(90deg,rgba(196,181,253,.10),rgba(52,211,153,.08),rgba(103,232,249,.10)),#0d1119;text-shadow:0 0 10px rgba(196,181,253,.45)}
-.vtab thead tr.h2 th:nth-child(8),.vtab tbody td:nth-child(8){border-left:1px solid rgba(167,139,250,.35)}
-.vtab thead tr.h2 th:nth-child(11),.vtab tbody td:nth-child(11){border-right:1px solid rgba(103,232,249,.35)}
-.vtab thead tr.h2 th:nth-child(8),.vtab thead tr.h2 th:nth-child(9),.vtab thead tr.h2 th:nth-child(10),.vtab thead tr.h2 th:nth-child(11),.vtab tbody td:nth-child(8),.vtab tbody td:nth-child(9),.vtab tbody td:nth-child(10),.vtab tbody td:nth-child(11){text-align:center}
-.vtab tbody td:nth-child(8) .lcell{justify-content:center}
+
+
+
+
 .vtab thead th.thb{line-height:1.25;white-space:normal;min-width:96px}
 .vtab td.kcell{cursor:pointer;font-family:var(--mono);font-size:12.5px;font-weight:700;color:#E2E8F0;min-width:64px;white-space:nowrap;border-bottom:1px dashed #2A3446}
 .vtab td.kcell:hover{background:rgba(255,255,255,.05)}.vtab td.kcell:focus-visible{outline:2px solid var(--cyan)}
@@ -669,3 +669,22 @@ body.isadm .av.ave:hover{transform:scale(1.2);box-shadow:0 0 0 2px #0b0e15,0 0 8
 body.isadm .vtab td.ce.vnote[data-von]::after{pointer-events:none}
 body.isadm .vtab td.ce.vnote[data-von]:hover::after{transform:translateY(-50%) scale(1.15)}
 [contenteditable]:empty{cursor:text;min-width:24px}
+
+/* 1.8.9: Verkauf-Spaltenfarben/Leasing-Rahmen per Spaltenschlüssel statt Position (Spalten sind verschiebbar) */
+.vtab thead tr.h2 th[data-ck=antraggestelltam]{color:#C4B5FD}.vtab thead tr.h2 th[data-ck=leasinggenehmigt]{color:#34D399}.vtab thead tr.h2 th[data-ck=leasingende]{color:#67E8F9}
+.vtab [data-ck=anbieter],.vtab [data-ck=antraggestelltam],.vtab [data-ck=leasinggenehmigt],.vtab [data-ck=leasingende]{text-align:center}
+.vtab td[data-ck=anbieter] .lcell{justify-content:center}
+.vtab .lgL{border-left:1px solid rgba(167,139,250,.35)!important}.vtab .lgR{border-right:1px solid rgba(103,232,249,.35)!important}
+/* Bearbeitungsmodus */
+.layhid{display:none!important}
+#bmTog[aria-pressed="true"]{background:rgba(250,204,21,.16);color:#FDE68A;box-shadow:inset 0 0 0 1px rgba(250,204,21,.5)}
+#bmBar{position:fixed;bottom:14px;right:14px;z-index:80;display:flex;align-items:center;gap:12px;padding:7px 8px 7px 14px;border-radius:12px;background:rgba(20,18,8,.92);border:1px solid rgba(250,204,21,.55);box-shadow:0 0 18px rgba(250,204,21,.25);font:500 12.5px "Outfit",sans-serif;color:#FEF3C7}
+#bmBar b{color:#FDE68A}#bmBar span{color:#CBD5E1}#bmBar .btn{padding:5px 12px;font-size:12px}
+body.bm .view.on thead th[data-ck]:not([data-bmno]),body.bm #grid .hd[data-pk]{cursor:pointer;outline:1px dashed rgba(250,204,21,.6);outline-offset:-3px}
+body.bm .view.on thead th[data-ck]:hover,body.bm #grid .hd[data-pk]:hover{background:rgba(250,204,21,.12)!important}
+th.xcol{color:#FDE68A!important}td.xce{min-width:110px;color:#FEF3C7}
+.bmm{display:grid;gap:7px}.bmm .btn{justify-content:center;font-size:12.5px}.bmrow{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.bmr{display:grid;gap:4px;font:600 11px "Outfit",sans-serif;color:#94A3B8}
+.bmh{display:grid;gap:5px;padding-top:6px;border-top:1px solid #2A3344}.bmh small{color:#94A3B8}
+.bmreset{color:#FCA5A5!important;margin-top:4px}
+.kdpop:has(.bmm){width:270px}

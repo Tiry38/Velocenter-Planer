@@ -19,6 +19,7 @@
   </div>
   <div class="metools">
     <button class="tico" type="button" id="meFull" data-l="Vollbild" title="Vollbild" aria-label="Vollbild"><svg viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button>
+    <button class="tico" type="button" id="bmTog" data-l="Bearbeiten" title="Bearbeitungsmodus (Spalten umbenennen, verschieben, ausblenden, hinzufügen)" aria-label="Bearbeitungsmodus" hidden><svg viewBox="0 0 24 24"><path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M14 6l4 4"/></svg></button>
     <button class="tico" type="button" id="meSet" data-l="Passwort" title="Passwort ändern" aria-label="Passwort ändern"><svg viewBox="0 0 24 24"><circle cx="8" cy="15" r="4"/><path d="M10.8 12.2 20 3M16 7l3 3M18 5l2 2"/></svg></button>
     <button class="tico" type="button" id="switchUser" data-l="Abmelden" title="Abmelden / Benutzer wechseln" aria-label="Abmelden / Benutzer wechseln"><svg viewBox="0 0 24 24"><path d="M4 8h13l-3.5-3.5M20 16H7l3.5 3.5"/></svg></button>
     <button class="tico navtog" id="navTog" data-l="Einklappen" type="button" aria-label="Navigation einklappen" title="Navigation einklappen"><svg viewBox="0 0 24 24"><path d="M13 6l-6 6 6 6"/><path d="M19 6l-6 6 6 6" opacity=".45"/></svg></button>
@@ -26,6 +27,7 @@
 </nav>
 
 <main>
+<div id="bmBar" hidden><b>✎ Bearbeitungsmodus</b><span>Spaltenkopf anklicken: umbenennen · verschieben · ausblenden · neue Spalte</span><button type="button" class="btn" id="bmOff">Fertig</button></div>
   <div class="top">
     <div class="tt"><span class="tile" id="tIco"></span><div><small id="tSub"></small><h1 id="title">Planer</h1></div></div>
     <div class="dt">
