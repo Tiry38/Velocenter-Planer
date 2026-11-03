@@ -918,6 +918,10 @@ body[data-v=kunden] .tt small{background:var(--rb);-webkit-background-clip:text;
 /* 1.7.5: Spaltenköpfe Verkauf rund statt kantig – normale Groß-/Kleinschreibung */
 .vtab thead tr.h2 th{text-transform:none!important;letter-spacing:0!important;font-size:13px;font-weight:600}
 .vtab thead tr.h2 th *{letter-spacing:0!important}
+/* 1.7.8: Händler-Kontakte der Lieferanten */
+#sTab th.skh{font-size:11px;white-space:nowrap}
+#sTab td.sk{font-size:12px;line-height:1.35;color:#BAE6FD;min-width:150px;max-width:230px;white-space:normal;word-break:break-word}
+#sTab td.sk:empty::before{content:"–";color:var(--muted)}
 
 [hidden]{display:none!important}
 #sTab td.b{font-weight:700}#sTab .pwm.ed{outline:none;padding:2px 6px;border-radius:6px;font-family:var(--mono)}#sTab td{vertical-align:top}
@@ -1092,7 +1096,7 @@ body[data-v=kunden] .tt small{background:var(--rb);-webkit-background-clip:text;
 <script>
 const FB_CONFIG={apiKey:"AIzaSyC_uZPvc5rJETwlS4JbfCoTkkE4ckjtp0M",authDomain:"velocenter-planer.firebaseapp.com",projectId:"velocenter-planer",storageBucket:"velocenter-planer.firebasestorage.app",messagingSenderId:"1018330488700",appId:"1:1018330488700:web:262a4d1660353e6fde8ef9"};
 /* ================= Velocenter Werkstatt-Cockpit – Oberfläche ================= */
-const CLIENT_VERSION='1.7.7';
+const CLIENT_VERSION='1.7.8';
 const USERS=[{id:'kevin',n:'Kevin',c:'#E2232D'},{id:'stefan',n:'Stefan',c:'#F59E0B'},{id:'martina',n:'Martina',c:'#EC4899'},{id:'sascha',n:'Sascha',c:'#22D3EE'},{id:'rene',n:'René',c:'#34D399'}];
 const U=id=>USERS.find(u=>u.id===id)||{n:'',c:'#64748B',id:''};
 const $=id=>document.getElementById(id);
@@ -1291,7 +1295,7 @@ function listen(k,setter,q){let first=true;const ref=q||db.collection(COL[k]);un
 function stopLive(){unsubs.forEach(u=>{try{u();}catch(_){}});unsubs=[];}
 function startLive(){stopLive();const from=iso(new Date(Date.now()-35*864e5));
  listen('P',x=>P=x,db.collection('planer').where('datum','>=',from));
- listen('V',x=>V=x);listen('B',x=>B=x);listen('T',x=>T=x);listen('S',x=>{S=x;smbwSeed();});
+ listen('V',x=>V=x);listen('B',x=>B=x);listen('T',x=>T=x);listen('S',x=>{S=x;smbwSeed().then(()=>skonSeed());});
  listen('L',x=>{L=x.map(o=>Object.assign({},o,{k:o.k||o.id}));if(!x.length)seedLeasing();else recLeasing();});
  listen('I',x=>{I={};x.forEach(o=>I[o.id]=o.wert);});
  if(ME&&ME.adm)unsubs.push(db.doc('tresor/pw').onSnapshot(d=>{if(KEY&&NOTES&&d.exists&&d.data().ct&&d.data().tsVon!==ME.id&&!document.querySelector('#nGrid [contenteditable]:focus'))open_(KEY,d.data()).then(x=>{if(!Array.isArray(x)){NOTES=x.notes||[];PWGRID=x.grid||PWGRID;rn();}}).catch(()=>{});},()=>{}));
@@ -2412,13 +2416,71 @@ async function importKunden(file){await loadXLSX();const wb=XLSX.read(await file
 
 /* ================= LIEFERANTEN ================= */
 let sEdit=null,LOGINS=null;
-const SF=[['name','Lieferant'],['kdnr','Kunden-Nr.'],['mbw','Mindestbestellwert'],['notiz','Notiz']];
+const SF=[['name','Lieferant'],['kdnr','Kunden-Nr.'],['mbw','Mindestbestellwert'],['notiz','Notiz'],['tel','Telefon (Händler)'],['mail','E-Mail (Händler)'],['web','Händler-Portal / Shop'],['rekla','Reklamation / Service']];
 let sAZ='';
 // Recherchierte Mindestbestellwerte (Websuche 02.11.2026, nur Belegtes) – einmalig, nur in LEERE Felder, sobald ein Admin angemeldet ist
 const SMBW_VER=1,SMBW={'böttcher':'kein Mindestbestellwert (B2B-Shop)','bbf':'kein fester MBW · unter 50 € netto +6,95 € Mindermenge · ab 50 € netto 9,90 € Fracht'};
 /* 1.7.7: alle Lieferanten-Namen kopieren (nur Namen, keine Kd-Nr./Logins) */
 $('sExp').addEventListener('click',async()=>{const t=S.map(o=>String(o.name||'').trim()).filter(Boolean).sort((a,b)=>a.localeCompare(b,'de')).join('\n');
  try{await navigator.clipboard.writeText(t);toast(S.length+' Namen kopiert – jetzt einfach in den Chat einfügen');}catch(_){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([t],{type:'text/plain'}));a.download='lieferanten-namen.txt';a.click();toast('Als Datei gespeichert (Download-Ordner)');}});
+// Händler-Kontakte der Lieferanten (1.7.8) – nur von offiziellen Seiten der Firmen (Impressum/Kontakt), Stand 03.11.2026.
+// Wird einmalig (meta/seed.skon = SKON_VER) NUR in leere Felder geschrieben. Schlüssel = Lieferantenname klein.
+const SKON_VER=1,SKON={
+'ansmann':{tel:'+49 6294 4204-0 (Zentrale)',mail:'info@ansmann.de',web:'ansmann.de'},
+'asista':{tel:'+49 7561 9869-0',mail:'info@asista.de',web:'B2B-Händler-Shop über asista.de'},
+'airbell':{mail:'office@airbell.de',web:'airbell.de (TeamNobile GmbH, Wien)'},
+'bikeflags':{tel:'+49 8121 61629',mail:'bikeflags@traumvelo.de'},
+'bikeleasing':{tel:'05571 3026-0 (Zentrale)',mail:'info@bikeleasing.de',web:'bikeleasing.de'},
+'biketec':{tel:'+41 62 959 55 55',mail:'info@flyer.ch',web:'flyer-bikes.com'},
+'flyer':{tel:'+41 62 959 55 55',mail:'info@flyer.ch',web:'flyer-bikes.com'},
+'böttcher':{tel:'0481 795-0',mail:'info@boettcher-fahrraeder.de',web:'B2B-Shop über boettcher-fahrraeder.de'},
+'by schulz':{tel:'+49 681 959725-0',mail:'info@byschulz.com',web:'byschulz.com'},
+'cosmic sport':{tel:'+49 911 310755-0',mail:'info@cosmicsports.de',web:'B2B: b2b.cosmicsports.com'},
+'credit plus':{tel:'0711 660660 (Zentrale)',mail:'info@creditplus.de',web:'creditplus.de'},
+'enra':{tel:'Allgemein +49 2131 12436-0 · Pick-up/Pannenhilfe 0800 907 07 07',mail:'info@enra.eu · Vertragsänderungen: vertrag@enra.eu',web:'enra.eu'},
+'enviolo':{web:'Bestellportal: orders.enviolo.com',rekla:'Help Center / Tickets: support.enviolo.com'},
+'fit e-bike':{tel:'+41 62 959 53 00',mail:'info@fit-ebike.ch',web:'fit-ebike.com'},
+'grofa':{tel:'+49 6434 2008-200 (Hotline Deutschland)',mail:'grofa@grofa.com',web:'B2B-Shop über grofa.com'},
+'gudereit':{tel:'+49 521 92812-0',mail:'info@gudereit.de',web:'Händler-Login: gudereit.de'},
+'haberland':{tel:'04763 9444-0',mail:'info@haberland.de',web:'Händler-Login über haberland.de'},
+'hartje':{tel:'+49 4251 811-0',mail:'info@hartje.de',web:'B2B: meinhartje.com'},
+'hasebikes':{mail:'info@hasebikes.com',web:'Händlerportal über hasebikes.com'},
+'hercules':{tel:'+49 4473 92617-0',mail:'info@hercules-bikes.de',web:'hercules-bikes.de'},
+'hinterher':{tel:'+49 89 41554200',mail:'info@hinterher.com',web:'hinterher.com'},
+'i:sy':{mail:'info@iSY.de (ab Modelljahr 2022) · bis MJ 2021: Hartje, info@hartje.de',web:'isy.de'},
+'jbs trading':{tel:'+49 2403 7836-0',mail:'info@jbs-trading.de',web:'B2B-Onlineshop: jbs-trading.de'},
+'knoll bikeparts':{tel:'07251 61809-0',mail:'verkauf@knoll-bikeparts.de',web:'knoll-bikeparts.de'},
+'ktm':{web:'Kontaktformular ktm-bikes.at/contact → Abteilung „Customer Service B2B“'},
+'magura/bosch':{tel:'+49 7022 2170-444 (Service Fahrradkomponenten) · Zentrale +49 7125 153-0',mail:'service.de@magura.com',web:'magura.com',rekla:'service.de@magura.com · +49 7022 2170-444'},
+'mcg-parts':{tel:'Vertrieb +49 7159 9459-300 · Hotline -600',mail:'vertrieb@merida-centurion.com',web:'mcg-parts.de',rekla:'Service +49 7159 9459-700 · service@merida-centurion.com'},
+'ortlieb':{tel:'+49 9872 800-0',mail:'info@ortlieb.com',web:'ortlieb.com'},
+'paul lange':{tel:'+49 711 2588-02 (Zentrale)',web:'paul-lange.de'},
+'pitlock':{tel:'Bestellhotline +49 30 61289875 · Kundenservice +49 30 6112092',web:'pitlock.de'},
+'ra-co':{tel:'+49 36203 614-0',mail:'service@ra-co.de',web:'B2B-Shop über ra-co.de'},
+'rohloff':{tel:'+49 561 51080-0',mail:'Bestellungen: sales@rohloff.de',web:'B2B-Händler-Webshop über rohloff.de',rekla:'service@rohloff.de (Seriennummer der Nabe angeben)'},
+'rti-sports':{tel:'Bestellhotline +49 261 899998-220',mail:'order@rtisports.de',web:'Webshop: rtisports.de'},
+'saar-rad':{tel:'06841 96020',web:'B2B-Shop: saar-rad.de'},
+'ses sandmann':{tel:'02337 485950',mail:'info@ses-sandmann.de',web:'ses-sandmann.de'},
+'sports-nut':{tel:'+49 7071 94669-40',mail:'contact@sports-nut.de',web:'B2B-Bereich über sports-nut.de'},
+'sq-lab':{web:'B2B-Login über sq-lab.com'},
+'sr-suntour':{tel:'+49 8021 50793-0 (Warngau) · +49 211 54268950 (Düsseldorf)',web:'B2B-Login über srsuntour.com'},
+'suntour':{tel:'+49 8021 50793-0 (Warngau) · +49 211 54268950 (Düsseldorf)',web:'B2B-Login über srsuntour.com'},
+'stevens':{tel:'+49 40 716070-0',web:'Händlerbereich: stevensbikes.de'},
+'sunrace':{mail:'info@sunrace.com · Europa: info@sunrace.nl',web:'sunrace.com'},
+'targo bank':{tel:'0211 8984-0 (Zentrale)',mail:'kontakt@targobank.de',web:'targobank.de'},
+'tektro':{tel:'Hotline +49 6324 96797-20',mail:'service@tektro.eu',web:'tektro.eu'},
+'trelock':{tel:'+49 251 91999-0',mail:'trelock@allegion.com',web:'trelock.de'},
+'tubus-racktime':{tel:'+49 251 143223-0',mail:'contact@hebie-group.com',web:'tubus.com · racktime.com'},
+'uvex':{tel:'+49 911 9774-0',mail:'sports@uvex.de',web:'uvex-sports.com'},
+'van raam':{mail:'info@vanraam.com',web:'vanraam.com',rekla:'aftersales@vanraam.com'},
+'velo-de-ville':{tel:'+49 2505 9305-0',mail:'info@velo-de-ville.com',web:'B2B: velob2b.com'},
+'weber products':{tel:'+49 8056 902088-0',mail:'info@weber-products.de',web:'weber-products.de'},
+'zwei plus zwei':{tel:'+49 151 65110454',mail:'contact@zwei-plus-zwei.com',web:'zwei-plus-zwei.com'},
+'batavus':{web:'Nur Kontaktformular / Live-Chat auf batavus.com (Anfragen auf Englisch oder Niederländisch)'}
+};
+
+let skonDone=false;async function skonSeed(){if(skonDone||!ME||!ME.adm||!S.length)return;skonDone=true;try{const f=db.doc('meta/seed');const d=await f.get();if(d.exists&&(d.data().skon||0)>=SKON_VER)return;
+ for(const o of S){const k=SKON[String(o.name||'').trim().toLowerCase()];if(!k)continue;const n=Object.assign({},o);let ch=false;for(const fk of ['tel','mail','web','rekla'])if(k[fk]&&!String(o[fk]||'').trim()){n[fk]=k[fk];ch=true;}if(ch){delete n.hasLogin;await save('S',n);}}await f.set({skon:SKON_VER},{merge:true});}catch(e){skonDone=false;}}
 let smbwDone=false;async function smbwSeed(){if(smbwDone||!ME||!ME.adm||!S.length)return;smbwDone=true;try{const f=db.doc('meta/seed');const d=await f.get();if(d.exists&&(d.data().smbw||0)>=SMBW_VER)return;
  for(const o of S){const v=SMBW[String(o.name||'').trim().toLowerCase()];if(v&&!String(o.mbw||'').trim()){const n=Object.assign({},o,{mbw:v});delete n.hasLogin;await save('S',n);}}await f.set({smbw:SMBW_VER},{merge:true});}catch(e){smbwDone=false;}}
 // Mindestbestellwert immer in €: „500“ → „500 €“ (Text wie „frachtfrei ab 300“ bleibt unverändert)
@@ -2431,10 +2493,10 @@ function rs(){const s1=($('sSearch').value||'').toLowerCase();
  $('sForm').innerHTML=sEdit?sFormH(sEdit==='new'?{id:'new'}:S.find(x=>x.id===sEdit)||{id:'new'}):'';
  if(document.querySelector('#sTab [contenteditable]:focus'))return;
  const sh=(k,n)=>`<th class="ssort${sSort.k===k?' on':''}" data-ssort="${k}" title="Klick = sortieren (nochmal = umdrehen)">${n}<i>${sSort.k===k?(sSort.d>0?'▲':'▼'):'↕'}</i></th>`;
- $('sTab').innerHTML='<thead><tr><th class="thlg">Logo</th>'+sh('name','Lieferant')+sh('kdnr','Kunden-Nr.')+sh('mbw','Mindestbestellwert')+sh('notiz','Notiz')+'<th></th></tr></thead><tbody>'+
-  S.filter(o=>(!s1||(o.name+' '+o.kdnr+' '+o.notiz).toLowerCase().includes(s1))&&(!sAZ||String(o.name||'').trim().toUpperCase().startsWith(sAZ))).sort(sCmp).map(o=>{const l=lg(o.id);
+ $('sTab').innerHTML='<thead><tr><th class="thlg">Logo</th>'+sh('name','Lieferant')+sh('kdnr','Kunden-Nr.')+sh('mbw','Mindestbestellwert')+sh('notiz','Notiz')+'<th class="skh">📞 Telefon</th><th class="skh">✉ E-Mail</th><th class="skh">🌐 Portal / Shop</th><th class="skh">🛠 Reklamation</th><th></th></tr></thead><tbody>'+
+  S.filter(o=>(!s1||(o.name+' '+o.kdnr+' '+o.notiz+' '+(o.tel||'')+' '+(o.mail||'')).toLowerCase().includes(s1))&&(!sAZ||String(o.name||'').trim().toUpperCase().startsWith(sAZ))).sort(sCmp).map(o=>{const l=lg(o.id);
   const ce=(f,v,cls)=>`<td class="ce ${cls||''}" contenteditable="true" spellcheck="false" data-sid="${esc(o.id)}" data-f="${f}">${esc(v||'')}</td>`;
-  const lgo=sLogo(o);return `<tr><td class="slogo${lgo?' has':''}" data-slogo="${esc(o.id)}" title="${lgo?'Klick = Logo ersetzen':'Klick = Logo hochladen (wird automatisch freigestellt + geschärft)'}">${lgo?`<img src="${lgo}" alt="">`:'<span>＋ Logo</span>'}${o.logo?`<button class="sldel" type="button" data-sldel="${esc(o.id)}" title="Logo entfernen">×</button>`:''}</td>${ce('name',o.name,'b')}${ce('kdnr',o.kdnr)}${ce('mbw',euro(o.mbw),'mbw')}${ce('notiz',o.notiz,'wrap')}<td><button class="mini" type="button" data-sedit="${esc(o.id)}" title="Formular / Löschen">✎</button></td></tr>`;}).join('')+'</tbody>';
+  const lgo=sLogo(o);return `<tr><td class="slogo${lgo?' has':''}" data-slogo="${esc(o.id)}" title="${lgo?'Klick = Logo ersetzen':'Klick = Logo hochladen (wird automatisch freigestellt + geschärft)'}">${lgo?`<img src="${lgo}" alt="">`:'<span>＋ Logo</span>'}${o.logo?`<button class="sldel" type="button" data-sldel="${esc(o.id)}" title="Logo entfernen">×</button>`:''}</td>${ce('name',o.name,'b')}${ce('kdnr',o.kdnr)}${ce('mbw',euro(o.mbw),'mbw')}${ce('notiz',o.notiz,'wrap')}${ce('tel',o.tel,'sk')}${ce('mail',o.mail,'sk')}${ce('web',o.web,'sk')}${ce('rekla',o.rekla,'sk')}<td><button class="mini" type="button" data-sedit="${esc(o.id)}" title="Formular / Löschen">✎</button></td></tr>`;}).join('')+'</tbody>';
  }
 function sFormH(o){const l=LOGINS&&LOGINS.find(x=>x.id===o.id)||{};return `<form class="edf card" data-sf="${esc(o.id)}" autocomplete="off"><b>${o.id==='new'?'Neuer Lieferant':'Lieferant bearbeiten'}</b><div class="g2">${SF.map(([k,n])=>`<label>${n}<input name="${k}" value="${esc(o[k]||'')}"${k==='name'?' required':''}></label>`).join('')}
  </div>

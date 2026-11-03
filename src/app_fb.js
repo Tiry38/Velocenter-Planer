@@ -198,7 +198,7 @@ function listen(k,setter,q){let first=true;const ref=q||db.collection(COL[k]);un
 function stopLive(){unsubs.forEach(u=>{try{u();}catch(_){}});unsubs=[];}
 function startLive(){stopLive();const from=iso(new Date(Date.now()-35*864e5));
  listen('P',x=>P=x,db.collection('planer').where('datum','>=',from));
- listen('V',x=>V=x);listen('B',x=>B=x);listen('T',x=>T=x);listen('S',x=>{S=x;smbwSeed();});
+ listen('V',x=>V=x);listen('B',x=>B=x);listen('T',x=>T=x);listen('S',x=>{S=x;smbwSeed().then(()=>skonSeed());});
  listen('L',x=>{L=x.map(o=>Object.assign({},o,{k:o.k||o.id}));if(!x.length)seedLeasing();else recLeasing();});
  listen('I',x=>{I={};x.forEach(o=>I[o.id]=o.wert);});
  if(ME&&ME.adm)unsubs.push(db.doc('tresor/pw').onSnapshot(d=>{if(KEY&&NOTES&&d.exists&&d.data().ct&&d.data().tsVon!==ME.id&&!document.querySelector('#nGrid [contenteditable]:focus'))open_(KEY,d.data()).then(x=>{if(!Array.isArray(x)){NOTES=x.notes||[];PWGRID=x.grid||PWGRID;rn();}}).catch(()=>{});},()=>{}));
@@ -827,13 +827,16 @@ async function importKunden(file){await loadXLSX();const wb=XLSX.read(await file
 
 /* ================= LIEFERANTEN ================= */
 let sEdit=null,LOGINS=null;
-const SF=[['name','Lieferant'],['kdnr','Kunden-Nr.'],['mbw','Mindestbestellwert'],['notiz','Notiz']];
+const SF=[['name','Lieferant'],['kdnr','Kunden-Nr.'],['mbw','Mindestbestellwert'],['notiz','Notiz'],['tel','Telefon (Händler)'],['mail','E-Mail (Händler)'],['web','Händler-Portal / Shop'],['rekla','Reklamation / Service']];
 let sAZ='';
 // Recherchierte Mindestbestellwerte (Websuche 02.11.2026, nur Belegtes) – einmalig, nur in LEERE Felder, sobald ein Admin angemeldet ist
 const SMBW_VER=1,SMBW={'böttcher':'kein Mindestbestellwert (B2B-Shop)','bbf':'kein fester MBW · unter 50 € netto +6,95 € Mindermenge · ab 50 € netto 9,90 € Fracht'};
 /* 1.7.7: alle Lieferanten-Namen kopieren (nur Namen, keine Kd-Nr./Logins) */
 $('sExp').addEventListener('click',async()=>{const t=S.map(o=>String(o.name||'').trim()).filter(Boolean).sort((a,b)=>a.localeCompare(b,'de')).join('\n');
  try{await navigator.clipboard.writeText(t);toast(S.length+' Namen kopiert – jetzt einfach in den Chat einfügen');}catch(_){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([t],{type:'text/plain'}));a.download='lieferanten-namen.txt';a.click();toast('Als Datei gespeichert (Download-Ordner)');}});
+__SKON__
+let skonDone=false;async function skonSeed(){if(skonDone||!ME||!ME.adm||!S.length)return;skonDone=true;try{const f=db.doc('meta/seed');const d=await f.get();if(d.exists&&(d.data().skon||0)>=SKON_VER)return;
+ for(const o of S){const k=SKON[String(o.name||'').trim().toLowerCase()];if(!k)continue;const n=Object.assign({},o);let ch=false;for(const fk of ['tel','mail','web','rekla'])if(k[fk]&&!String(o[fk]||'').trim()){n[fk]=k[fk];ch=true;}if(ch){delete n.hasLogin;await save('S',n);}}await f.set({skon:SKON_VER},{merge:true});}catch(e){skonDone=false;}}
 let smbwDone=false;async function smbwSeed(){if(smbwDone||!ME||!ME.adm||!S.length)return;smbwDone=true;try{const f=db.doc('meta/seed');const d=await f.get();if(d.exists&&(d.data().smbw||0)>=SMBW_VER)return;
  for(const o of S){const v=SMBW[String(o.name||'').trim().toLowerCase()];if(v&&!String(o.mbw||'').trim()){const n=Object.assign({},o,{mbw:v});delete n.hasLogin;await save('S',n);}}await f.set({smbw:SMBW_VER},{merge:true});}catch(e){smbwDone=false;}}
 // Mindestbestellwert immer in €: „500“ → „500 €“ (Text wie „frachtfrei ab 300“ bleibt unverändert)
@@ -846,10 +849,10 @@ function rs(){const s1=($('sSearch').value||'').toLowerCase();
  $('sForm').innerHTML=sEdit?sFormH(sEdit==='new'?{id:'new'}:S.find(x=>x.id===sEdit)||{id:'new'}):'';
  if(document.querySelector('#sTab [contenteditable]:focus'))return;
  const sh=(k,n)=>`<th class="ssort${sSort.k===k?' on':''}" data-ssort="${k}" title="Klick = sortieren (nochmal = umdrehen)">${n}<i>${sSort.k===k?(sSort.d>0?'▲':'▼'):'↕'}</i></th>`;
- $('sTab').innerHTML='<thead><tr><th class="thlg">Logo</th>'+sh('name','Lieferant')+sh('kdnr','Kunden-Nr.')+sh('mbw','Mindestbestellwert')+sh('notiz','Notiz')+'<th></th></tr></thead><tbody>'+
-  S.filter(o=>(!s1||(o.name+' '+o.kdnr+' '+o.notiz).toLowerCase().includes(s1))&&(!sAZ||String(o.name||'').trim().toUpperCase().startsWith(sAZ))).sort(sCmp).map(o=>{const l=lg(o.id);
+ $('sTab').innerHTML='<thead><tr><th class="thlg">Logo</th>'+sh('name','Lieferant')+sh('kdnr','Kunden-Nr.')+sh('mbw','Mindestbestellwert')+sh('notiz','Notiz')+'<th class="skh">📞 Telefon</th><th class="skh">✉ E-Mail</th><th class="skh">🌐 Portal / Shop</th><th class="skh">🛠 Reklamation</th><th></th></tr></thead><tbody>'+
+  S.filter(o=>(!s1||(o.name+' '+o.kdnr+' '+o.notiz+' '+(o.tel||'')+' '+(o.mail||'')).toLowerCase().includes(s1))&&(!sAZ||String(o.name||'').trim().toUpperCase().startsWith(sAZ))).sort(sCmp).map(o=>{const l=lg(o.id);
   const ce=(f,v,cls)=>`<td class="ce ${cls||''}" contenteditable="true" spellcheck="false" data-sid="${esc(o.id)}" data-f="${f}">${esc(v||'')}</td>`;
-  const lgo=sLogo(o);return `<tr><td class="slogo${lgo?' has':''}" data-slogo="${esc(o.id)}" title="${lgo?'Klick = Logo ersetzen':'Klick = Logo hochladen (wird automatisch freigestellt + geschärft)'}">${lgo?`<img src="${lgo}" alt="">`:'<span>＋ Logo</span>'}${o.logo?`<button class="sldel" type="button" data-sldel="${esc(o.id)}" title="Logo entfernen">×</button>`:''}</td>${ce('name',o.name,'b')}${ce('kdnr',o.kdnr)}${ce('mbw',euro(o.mbw),'mbw')}${ce('notiz',o.notiz,'wrap')}<td><button class="mini" type="button" data-sedit="${esc(o.id)}" title="Formular / Löschen">✎</button></td></tr>`;}).join('')+'</tbody>';
+  const lgo=sLogo(o);return `<tr><td class="slogo${lgo?' has':''}" data-slogo="${esc(o.id)}" title="${lgo?'Klick = Logo ersetzen':'Klick = Logo hochladen (wird automatisch freigestellt + geschärft)'}">${lgo?`<img src="${lgo}" alt="">`:'<span>＋ Logo</span>'}${o.logo?`<button class="sldel" type="button" data-sldel="${esc(o.id)}" title="Logo entfernen">×</button>`:''}</td>${ce('name',o.name,'b')}${ce('kdnr',o.kdnr)}${ce('mbw',euro(o.mbw),'mbw')}${ce('notiz',o.notiz,'wrap')}${ce('tel',o.tel,'sk')}${ce('mail',o.mail,'sk')}${ce('web',o.web,'sk')}${ce('rekla',o.rekla,'sk')}<td><button class="mini" type="button" data-sedit="${esc(o.id)}" title="Formular / Löschen">✎</button></td></tr>`;}).join('')+'</tbody>';
  }
 function sFormH(o){const l=LOGINS&&LOGINS.find(x=>x.id===o.id)||{};return `<form class="edf card" data-sf="${esc(o.id)}" autocomplete="off"><b>${o.id==='new'?'Neuer Lieferant':'Lieferant bearbeiten'}</b><div class="g2">${SF.map(([k,n])=>`<label>${n}<input name="${k}" value="${esc(o[k]||'')}"${k==='name'?' required':''}></label>`).join('')}
  </div>
