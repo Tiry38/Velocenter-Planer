@@ -184,6 +184,25 @@ async function blMig(){if(BLMIG||BLOK.size<BLN||!Object.keys(BLEG).length||!ME||
  try{const g={};for(const k in BLEG){const n=blShard(k);if(BSH[n]&&k in BSH[n])continue;(g[n]=g[n]||{})[k]=BLEG[k];}
   for(const n in g)await db.doc('meta/blg_'+n).set({l:g[n],ts:stamp()},{merge:true});
   await db.doc('meta/brands').set({list:BUSER.list||[],ts:stamp()});}catch(e){console.warn('Logo-Umzug',e);BLMIG=false;}}
+/* 1.10.1: doppelte Marken (andere Schreibweise, Kurzform oder gleiches Logo) finden und zusammenführen */
+const bNorm=n=>{const x=String(n||'').toLowerCase().replace(/[^a-z0-9äöü]/g,'');return BALIAS[x]?BALIAS[x].toLowerCase().replace(/[^a-z0-9äöü]/g,''):x;};
+function brDupes(){const A=allBrands(),LG=BUSER.logos||{},par={};const f=k=>par[k]===k?k:(par[k]=f(par[k]));const un=(a,b)=>{a=f(a);b=f(b);if(a!==b)par[b]=a;};A.forEach(b=>par[b.k]=b.k);
+ const byN={},byL={};A.forEach(b=>{const n=bNorm(b.n);if(byN[n])un(byN[n],b.k);else byN[n]=b.k;const l=LG[b.k];if(l&&l.length>200){if(byL[l])un(byL[l],b.k);else byL[l]=b.k;}});
+ const g={};A.forEach(b=>{const r=f(b.k);(g[r]=g[r]||[]).push(b);});return Object.values(g).filter(x=>x.length>1);}
+async function brMerge(groups){const LG=BUSER.logos||{};let list=(BUSER.list||[]).slice();
+ for(const grp of groups){const pri=grp.find(b=>!b.own)||grp.find(b=>LG[b.k])||grp[0],rest=grp.filter(b=>b!==pri);
+  const words=new Set();const addW=w=>String(w||'').split(/[,;\n]/).map(x=>x.trim()).filter(Boolean).forEach(x=>words.add(x));
+  grp.forEach(b=>{const u=list.find(x=>x.k===b.k);if(u)addW(u.w);});rest.forEach(b=>addW(b.n));
+  const logo=LG[pri.k]||(rest.find(b=>LG[b.k])?LG[rest.find(b=>LG[b.k]).k]:null);
+  list=list.filter(x=>!rest.some(b=>b.k===x.k));const pu=list.find(x=>x.k===pri.k);const w=[...words].join(', ');
+  if(pu)pu.w=w;else list.push({k:pri.k,n:pri.n,w});
+  if(logo&&!LG[pri.k])await blPut(pri.k,logo);for(const b of rest)if(LG[b.k])await blPut(b.k,null);}
+ BUSER.list=list;await brSave();}
+function brDupDlg(){const G=brDupes();if(!G.length){toast('Keine doppelten Marken gefunden ✓');return;}const LG=BUSER.logos||{};
+ dlg(`<h3>🔀 Doppelte Marken</h3><p class="hint">Gefunden über gleiche Schreibweise (ohne Leer-/Sonderzeichen), Kurzform oder identisches Logo. Beim Zusammenführen bleibt die erste Marke, die anderen Namen werden als Modellwörter übernommen (Zuordnung in Verkauf/Kunden bleibt erhalten), doppelte Logos werden entfernt.</p>
+ <div class="dupl">${G.map(g=>`<div class="dupg">${g.map((b,i)=>`<span class="dupb${i?'':' pri'}">${LG[b.k]?`<img src="${LG[b.k]}" alt="">`:''}<em>${esc(b.n)}</em></span>`).join('<i>＋</i>')}</div>`).join('')}</div>
+ <div class="acts"><button class="btn" type="button" data-close>Abbrechen</button><button class="btn red" type="button" id="dupGo">${G.length} × zusammenführen</button></div>`);
+ $('dupGo').addEventListener('click',async()=>{$('dupGo').disabled=true;try{await brMerge(G);dlgClose();toast(G.length+' doppelte Marken zusammengeführt');}catch(e){fail(e);}});}
 function brSave(){return db.doc('meta/brands').set({list:BUSER.list||[],ts:stamp()},{merge:true});}
 function brandDlg(){const A0=allBrands(),A=A0.concat([...new Map(V.filter(b=>String(b.marke||'').trim()).map(b=>brandOfB(b)).filter(x=>!A0.some(a=>a.k===x.k)).map(x=>[x.k,Object.assign({own:true},x)])).values()]),LG=BUSER.logos||{},ul=BUSER.list||[];
  const miss=[...new Set(V.filter(b=>b.modell&&!brandOfB(b)).map(b=>String(b.modell).trim()))].slice(0,40);
@@ -194,7 +213,7 @@ function brandDlg(){const A0=allBrands(),A=A0.concat([...new Map(V.filter(b=>Str
  $('dlgBox').classList.add('wide');
  dlg(`<h3>🏷 Markenlogos</h3><p class="hint">Logo hochladen (PNG, JPG, SVG, WebP – Screenshot reicht). Die App stellt automatisch frei, schneidet zu, schärft und bringt es auf die passende Größe für Liste und Karten. Gilt sofort auf allen PCs.</p>
  <div id="brF" class="blist">${A.map(row).join('')}</div>
- <form id="brNew" class="bnew" autocomplete="off"><input name="n" placeholder="Neue Marke, z. B. Kalkhoff" required><input name="w" placeholder="Modellwörter, z. B. Endeavour, Image"><button class="btn red" type="submit">+ Marke</button></form>
+ <div class="acts" style="margin:6px 0 10px"><button type="button" class="btn" id="brDup">🔀 Doppelte Marken finden & zusammenführen</button></div><form id="brNew" class="bnew" autocomplete="off"><input name="n" placeholder="Neue Marke, z. B. Kalkhoff" required><input name="w" placeholder="Modellwörter, z. B. Endeavour, Image"><button class="btn red" type="submit">+ Marke</button></form>
  ${miss.length?`<p class="hint bmiss"><b>Ohne erkannte Marke:</b> ${miss.map(esc).join(' · ')}</p>`:''}
  <div class="err" id="brE"></div><div class="acts"><button class="btn" type="button" data-close>Fertig</button></div>`);
  const box=$('dlgBox'),E=t=>{$('brE').textContent=t||'';};{const cp=$('cfgPw');if(cp)cp.addEventListener('click',()=>{dlgClose();$('meSet').click();});}
@@ -204,6 +223,7 @@ function brandDlg(){const A0=allBrands(),A=A0.concat([...new Map(V.filter(b=>Str
   const del=r.querySelector('[data-bdel]');if(del)del.addEventListener('click',async()=>{try{await blPut(k,null);}catch(err){fail(err);}brandDlg();});
   const kill=r.querySelector('[data-bkill]');if(kill)kill.addEventListener('click',async()=>{BUSER.list=(BUSER.list||[]).filter(x=>x.k!==k);try{await brSave();if(BUSER.logos[k])await blPut(k,null);}catch(err){fail(err);}brandDlg();});
   r.querySelector('.bw').addEventListener('change',async e=>{const w=e.target.value.trim(),b=A.find(x=>x.k===k),l=(BUSER.list||[]).filter(x=>x.k!==k);if(w||b.own)l.push({k,n:b.n,w});BUSER.list=l;try{await brSave();toast('Erkennung gespeichert');}catch(err){fail(err);}});});
+ $('brDup').addEventListener('click',()=>brDupDlg());
  $('brNew').addEventListener('submit',async e=>{e.preventDefault();const n=e.target.n.value.trim(),w=e.target.w.value.trim();if(!n)return;const k=bKey(n);if(allBrands().some(b=>b.k===k||b.n.toLowerCase()===n.toLowerCase())){E('Marke gibt es schon');return;}BUSER.list=(BUSER.list||[]).concat([{k,n,w}]);try{await brSave();}catch(err){fail(err);}brandDlg();});}
 $('meSet').addEventListener('click',async()=>{try{const d=await db.doc('meta/users').get();USERSET=d.exists?d.data():{};}catch(_){}dlg(`<h3>Passwort ändern</h3><form id="pcF" autocomplete="off"><input id="pcO" type="password" placeholder="Altes Passwort"><input id="pcN" type="password" placeholder="Neues Passwort"><input id="pcN2" type="password" placeholder="Neues Passwort wiederholen"><div class="err" id="pcE"></div><div class="acts"><button class="btn" type="button" data-close>Abbrechen</button><button class="btn red" type="submit">Speichern</button></div></form>
  ${ME&&ME.adm?`<h3 style="margin-top:18px">🛡 Konten sichern</h3><p class="hint">Legt alle noch fehlenden Konten (${USERS.filter(u=>u.id!==ME.id&&!USERSET[u.id]).map(u=>esc(u.n)).join(', ')||'keins – alle angelegt'}) sofort mit einem <b>Startpasswort</b> an. So kann sich niemand Fremdes als diese Person registrieren. Gib das Startpasswort der Person persönlich – bei der ersten Anmeldung muss sie ein eigenes festlegen.</p><form id="ksF" autocomplete="off" class="acts" style="justify-content:flex-start"><input id="ksP" type="text" placeholder="Startpasswort, z. B. 0204" style="flex:1;min-width:180px"><button class="btn red" type="submit">Konten sichern</button></form><div class="err" id="ksE"></div>
@@ -404,7 +424,7 @@ const brandOf=m=>{m=String(m||'');if(!m)return null;const A=allBrands();return A
 /* 1.9.8: Kurzformen/Schreibweisen derselben Marke zusammenführen (Tiry: VdV = Velo de Ville) */
 const BALIAS={vdv:'Velo de Ville',velodeville:'Velo de Ville'};
 function brandOfB(b){let mk=String(b.marke||'').trim();if(mk){const al=BALIAS[mk.toLowerCase().replace(/[^a-z0-9äöü]/g,'')];if(al)mk=al;const l=mk.toLowerCase(),A=allBrands();
- return A.find(x=>x.n.toLowerCase()===l||x.k.toLowerCase()===l)||A.find(x=>(x.ux&&x.ux.test(mk))||(x.own&&x.re&&x.re.test(mk)))||{k:bKey(mk),n:mk};}return brandOf(b.modell);}
+ return A.find(x=>x.n.toLowerCase()===l||x.k.toLowerCase()===l)||A.find(x=>bNorm(x.n)===bNorm(mk))||A.find(x=>(x.ux&&x.ux.test(mk))||(x.own&&x.re&&x.re.test(mk)))||{k:bKey(mk),n:mk};}return brandOf(b.modell);}
 const bKey=n=>'U'+String(n).toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,10);
 function bStrip(m,x){let t=String(m||'');if(x){const r=new RegExp('^\\s*'+reEsc(x.n)+'\\s+','i');if(r.test(t))t=t.replace(r,'');}return t;}
 function bModelE(b){const x=brandOfB(b);return bIcoX(x)+`<span class="ef" contenteditable="true" spellcheck="false" data-vid="${esc(b.id)}" data-f="modell" title="Klick = Modell bearbeiten">${esc(bStrip(b.modell,x))}</span>`;}
