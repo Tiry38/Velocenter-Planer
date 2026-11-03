@@ -663,3 +663,9 @@ body.navpeek .navbtn .lbl,body.navpeek .kwbrand small,body.navpeek .kwbrand span
 }
 @media (max-width:720px){.kwbrand .kwn{display:none}}
 @media (min-width:721px){body:not(.navmini) nav{width:220px}}
+/* 1.8.8: Kürzel-Kreise für Admins anklickbar */
+body.isadm .av.ave{cursor:pointer;transition:transform .15s,box-shadow .15s}
+body.isadm .av.ave:hover{transform:scale(1.2);box-shadow:0 0 0 2px #0b0e15,0 0 8px var(--uc)}
+body.isadm .vtab td.ce.vnote[data-von]::after{pointer-events:none}
+body.isadm .vtab td.ce.vnote[data-von]:hover::after{transform:translateY(-50%) scale(1.15)}
+[contenteditable]:empty{cursor:text;min-width:24px}
