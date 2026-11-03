@@ -62,12 +62,13 @@ let NAVPIN=false;
 function navMini(on,keep){NAVPIN=!on;document.body.classList.remove('navpeek');document.body.classList.toggle('navmini',on);const t=$('navTog');t.setAttribute('aria-label',on?'Navigation ausklappen':'Navigation einklappen');t.title=on?'Navigation ausklappen':'Navigation einklappen';t.dataset.l=on?'Ausklappen':'Einklappen';
  if(keep||!ME)return;ls.set('vc_navpin_'+ME.id,!on);db.doc('meta/prefs').set({[ME.id]:{navpin:!on}},{merge:true}).catch(()=>{});}
 /* 1.8.5: kein Hover-Aufklappen mehr – nur manuell über den Pfeil (Tiry) */
-async function navForUser(){if(!ME)return;navMini(!ls.get('vc_navpin_'+ME.id,false),true);try{const d=await db.doc('meta/prefs').get();const x=d.exists&&d.data()[ME.id];if(x&&typeof x.navpin==='boolean'){navMini(!x.navpin,true);ls.set('vc_navpin_'+ME.id,x.navmini);}kdLayLoad(x&&x.kdlay);}catch(_){kdLayLoad(null);}}
+async function navForUser(){if(!ME)return;navMini(!ls.get('vc_navpin_'+ME.id,false),true);try{const d=await db.doc('meta/prefs').get();const x=d.exists&&d.data()[ME.id];MYPREF=x||{};if(x&&typeof x.navpin==='boolean'){navMini(!x.navpin,true);ls.set('vc_navpin_'+ME.id,x.navpin);}kdLayLoad(x&&x.kdlay);if(x&&x.start&&x.start!=='last'&&!START_DONE){START_DONE=true;show(x.start);}}catch(_){kdLayLoad(null);}}
+let MYPREF={},START_DONE=false;
 $('navTog').addEventListener('click',()=>navMini(NAVPIN));
 /* 1.8.2: Klick aufs Profil-Symbol = Menü mit Abmelden / Passwort */
-$('meChip').addEventListener('click',e=>{if(e.target.closest('#meCfg'))return;if(kdPop&&kdPop.me){kdPopClose();return;}const el=kdPopOpen($('meChip'),`<div class="mepop"><div class="kph">${esc(U(ME&&ME.id).n)}</div><button type="button" class="vstx mpo" data-mp="out">⇄ Abmelden / Benutzer wechseln</button><button type="button" class="vstu" data-mp="pw">🔑 Passwort ändern</button></div>`);kdPop.me=1;
- const rc=$('meChip').getBoundingClientRect();el.style.left=Math.min(innerWidth-el.offsetWidth-8,rc.right+8)+'px';el.style.top=Math.max(8,rc.bottom-el.offsetHeight)+'px';
- el.addEventListener('click',ev=>{const b=ev.target.closest('[data-mp]');if(!b)return;kdPopClose();if(b.dataset.mp==='out')$('switchUser').click();else $('meSet').click();});});
+$('meChip').addEventListener('click',e=>{if(e.target.closest('#meCfg'))return;if(kdPop&&kdPop.me){kdPopClose();return;}const el=kdPopOpen($('meChip'),`<div class="mepop"><div class="kph">${esc(U(ME&&ME.id).n)}</div><button type="button" class="vstu" data-mp="set">⚙ Einstellungen</button><button type="button" class="vstu" data-mp="pw">🔑 Passwort ändern</button><button type="button" class="vstx mpo" data-mp="out">⇄ Abmelden / Benutzer wechseln</button></div>`);kdPop.me=1;
+ const rc=$('meChip').getBoundingClientRect(),nr=document.querySelector('nav').getBoundingClientRect().right;el.style.left=Math.min(innerWidth-el.offsetWidth-8,nr+8)+'px';el.style.top=Math.max(8,rc.bottom-el.offsetHeight)+'px';
+ el.addEventListener('click',ev=>{const b=ev.target.closest('[data-mp]');if(!b)return;kdPopClose();if(b.dataset.mp==='out')$('switchUser').click();else if(b.dataset.mp==='set')setDlg();else $('meSet').click();});});
 
 function toast(t,undo){const el=$('toast');el.textContent=t;el.classList.toggle('act',!!undo);if(undo){const b=document.createElement('button');b.type='button';b.className='undo';b.textContent='Rückgängig';b.onclick=()=>{undo();el.classList.remove('on','act');};el.append(b);}el.classList.add('on');clearTimeout(el._t);el._t=setTimeout(()=>el.classList.remove('on','act'),undo?6000:2200);}
 
@@ -123,7 +124,23 @@ async function kontenSichern(start){const sec=((firebase.apps||[]).find(a=>a.nam
  return {neu,da};}
 function dlgClose(){if(DLGLOCK)return;$('dlg').hidden=true;$('dlgBox').innerHTML='';$('dlgBox').classList.remove('wide');}
 $('dlg').addEventListener('click',e=>{if(e.target.id==='dlg'||e.target.closest('[data-close]'))dlgClose();});
-$('meCfg').addEventListener('click',()=>brandDlg());
+$('meCfg').addEventListener('click',()=>setDlg());
+/* 1.9.1: eigene Einstellungen je Nutzer (Profil-Menü → ⚙ Einstellungen, auch eingeklappt) */
+function setDlg(){if(!ME)return;const u=U(ME.id),pin=NAVPIN,st=MYPREF.start||'last';
+ const tabs=[...document.querySelectorAll('.navbtn[data-v]')].filter(b=>!b.hidden).map(b=>[b.dataset.v,(b.querySelector('.lbl b')||b).textContent.trim()]);
+ dlg(`<h3>⚙ Einstellungen · ${esc(u.n)}</h3>
+ <div class="setg"><div class="setsec"><h4>👤 Konto</h4><div class="setrow"><span class="av big" style="--uc:${u.c}">${esc(u.n[0])}</span><div><b>${esc(u.n)}</b><small>${ME.adm?'Admin – darf alles':'Team'}</small></div></div>
+  <div class="acts"><button type="button" class="btn" id="stPw">🔑 Passwort ändern</button><button type="button" class="btn" id="stOut">⇄ Abmelden</button></div></div>
+ <div class="setsec"><h4>🖥 Ansicht</h4>
+  <label class="setl">Navi beim Start<select id="stNav"><option value="0"${pin?'':' selected'}>eingeklappt</option><option value="1"${pin?' selected':''}>ausgeklappt</option></select></label>
+  <label class="setl">Startseite nach dem Anmelden<select id="stStart"><option value="last"${st==='last'?' selected':''}>zuletzt geöffneter Reiter</option>${tabs.map(([v,n])=>`<option value="${v}"${st===v?' selected':''}>${esc(n)}</option>`).join('')}</select></label></div>
+ <div class="setsec"><h4>🏷 Markenlogos</h4><p class="hint">Logos für Marken hochladen, Erkennung anpassen.</p><button type="button" class="btn" id="stBr">Markenlogos verwalten</button></div>
+ ${ME.adm?`<div class="setsec"><h4>🛡 Admin</h4><p class="hint">Konten sichern, Sicherung herunterladen, Passwort-Hilfe für Mitarbeiter. Spalten ändern: Stift „Bearbeiten“ unten in der Navi.</p><button type="button" class="btn" id="stAdm">Konten & Sicherung</button></div>`:''}</div>
+ <div class="acts" style="justify-content:flex-end"><button type="button" class="btn red" data-close>Fertig</button></div>`);$('dlgBox').classList.add('wide');
+ $('stPw').addEventListener('click',()=>{dlgClose();$('meSet').click();});$('stOut').addEventListener('click',()=>{dlgClose();$('switchUser').click();});
+ $('stBr').addEventListener('click',()=>{dlgClose();brandDlg();});if($('stAdm'))$('stAdm').addEventListener('click',()=>{dlgClose();$('meSet').click();});
+ $('stNav').addEventListener('change',e=>{navMini(e.target.value!=='1');toast('Gespeichert');});
+ $('stStart').addEventListener('change',e=>{MYPREF.start=e.target.value;db.doc('meta/prefs').set({[ME.id]:{start:e.target.value}},{merge:true}).then(()=>toast('Startseite gespeichert')).catch(fail);});}
 /* ⚙ Einstellungen → Markenlogos: Bild hochladen → automatisch freistellen, zuschneiden, schärfen, auf Einheitshöhe bringen */
 function loadImg(file){return new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>{const i=new Image();i.onload=()=>res(i);i.onerror=()=>rej(new Error('Bild nicht lesbar'));i.src=r.result;};r.onerror=()=>rej(new Error('Datei nicht lesbar'));r.readAsDataURL(file);});}
 function cvs(w,h){const c=document.createElement('canvas');c.width=Math.max(1,w);c.height=Math.max(1,h);return c;}
@@ -175,7 +192,7 @@ function brandDlg(){const A0=allBrands(),A=A0.concat([...new Map(V.filter(b=>Str
   <div class="binfo"><b>${esc(b.n)}</b><label>${b.own?'Erkennungswörter im Modell':'Zusätzliche Erkennungswörter'}<input class="bw" value="${esc(u.w||'')}" placeholder="${b.own?'z. B. Endeavour, Image, Entice':'automatisch erkannt – optional ergänzen'}"></label></div>
   <div class="bacts"><label class="btn bup">⬆ Logo<input type="file" accept="image/*" hidden></label>${lg?`<button class="btn" type="button" data-binv title="Schwarz/Weiß-Teile tauschen">Hell ⇄</button><button class="btn" type="button" data-bdel title="Logo entfernen">✕</button>`:''}${b.own?`<button class="btn" type="button" data-bkill title="Marke löschen">🗑</button>`:''}</div></div>`;};
  $('dlgBox').classList.add('wide');
- dlg(`<h3>⚙ Einstellungen</h3><div class="cfgacc"><button type="button" class="btn" id="cfgPw">🔑 Passwort ändern${ME&&ME.adm?' · Konten · Sicherung':''}</button></div><h3 style="margin-top:14px">Markenlogos</h3><p class="hint">Logo hochladen (PNG, JPG, SVG, WebP – Screenshot reicht). Die App stellt automatisch frei, schneidet zu, schärft und bringt es auf die passende Größe für Liste und Karten. Gilt sofort auf allen PCs.</p>
+ dlg(`<h3>🏷 Markenlogos</h3><p class="hint">Logo hochladen (PNG, JPG, SVG, WebP – Screenshot reicht). Die App stellt automatisch frei, schneidet zu, schärft und bringt es auf die passende Größe für Liste und Karten. Gilt sofort auf allen PCs.</p>
  <div id="brF" class="blist">${A.map(row).join('')}</div>
  <form id="brNew" class="bnew" autocomplete="off"><input name="n" placeholder="Neue Marke, z. B. Kalkhoff" required><input name="w" placeholder="Modellwörter, z. B. Endeavour, Image"><button class="btn red" type="submit">+ Marke</button></form>
  ${miss.length?`<p class="hint bmiss"><b>Ohne erkannte Marke:</b> ${miss.map(esc).join(' · ')}</p>`:''}
