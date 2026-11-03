@@ -70,7 +70,7 @@ await p.click('.navbtn[data-v=tresor]');await wait();await p.fill('#pin','4711')
 await p.click('.navbtn[data-v=planer]');ok('Reiterwechsel sperrt',!(await p.isVisible('#vault')));
 // PW ändern
 await p.click('#meSet');await p.fill('#pcO','12');await p.fill('#pcN','99');await p.fill('#pcN2','99');await p.click('#pcF button[type=submit]');await wait(500);ok('Passwort ändern',!(await p.isVisible('#dlg')));
-await p.click('#switchUser');await wait(600);await p.click('.wt[data-u=kevin]');await wait(200);ok('Zweitlogin nur Passwort',!(await p.isVisible('#pw2')));await p.fill('#pw1','12');await p.click('#pwGo');await wait(500);ok('altes PW abgelehnt',(await p.textContent('#pwErr')).includes('falsch'));
+await p.evaluate(()=>document.getElementById('switchUser').click());await wait(600);await p.click('.wt[data-u=kevin]');await wait(200);ok('Zweitlogin nur Passwort',!(await p.isVisible('#pw2')));await p.fill('#pw1','12');await p.click('#pwGo');await wait(500);ok('altes PW abgelehnt',(await p.textContent('#pwErr')).includes('falsch'));
 await p.fill('#pw1','99');await p.click('#pwGo');await wait(900);ok('neues PW geht',!(await p.isVisible('#whoOv')));
 const sw=await (async()=>{await p.setViewportSize({width:390,height:800});await wait();return p.evaluate(()=>document.documentElement.scrollWidth);})();ok('Handy ohne Querscroll ('+sw+')',sw<=392);
 await p.setViewportSize({width:1400,height:900});await wait(300);await p.screenshot({path:'fb1.png'});

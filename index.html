@@ -961,6 +961,18 @@ body.navmini .kwbrand small,body.navmini .kwbrand span,body.navmini .kwbrand b i
 body.navmini .kwbrand b{font-size:26px}
 @media (max-width:720px){.brand.kwbrand{flex-direction:row;gap:8px;padding:6px 10px;margin:0}.kwbrand small,.kwbrand span{display:none}.kwbrand b{font-size:22px}}
 #v-lief .tbl,#v-kasse .tbl{overflow:auto}
+/* 1.8.2: Navi-Hover (aufklappen ohne die Seite zu verschieben), Profil-Menü, Beratung breiter */
+body.navpeek .app{grid-template-columns:84px 1fr}
+body.navpeek nav{width:220px;z-index:60;box-shadow:12px 0 40px rgba(0,0,0,.55);border-right:1px solid rgba(255,255,255,.08)}
+#switchUser{display:none!important}
+.metools{grid-template-columns:repeat(3,1fr)!important}
+body.navmini .metools{grid-template-columns:1fr!important}
+#meChip{cursor:pointer}#meChip:hover{border-color:rgba(255,255,255,.22)}
+.mepop{display:grid;gap:6px;min-width:220px}
+.mepop .mpo{margin-top:0;border-top:0;padding-top:6px;color:#FCA5A5;font-weight:700}
+.kdpop:has(.mepop){width:250px}
+.vtab .ssel.mini2{min-width:104px!important;width:auto!important;max-width:none!important}
+body.navpeek #navTog svg{transform:scaleX(-1)}
 
 [hidden]{display:none!important}
 #sTab td.b{font-weight:700}#sTab .pwm.ed{outline:none;padding:2px 6px;border-radius:6px;font-family:var(--mono)}#sTab td{vertical-align:top}
@@ -1135,7 +1147,7 @@ body.navmini .kwbrand b{font-size:26px}
 <script>
 const FB_CONFIG={apiKey:"AIzaSyC_uZPvc5rJETwlS4JbfCoTkkE4ckjtp0M",authDomain:"velocenter-planer.firebaseapp.com",projectId:"velocenter-planer",storageBucket:"velocenter-planer.firebasestorage.app",messagingSenderId:"1018330488700",appId:"1:1018330488700:web:262a4d1660353e6fde8ef9"};
 /* ================= Velocenter Werkstatt-Cockpit – Oberfläche ================= */
-const CLIENT_VERSION='1.8.1';
+const CLIENT_VERSION='1.8.3';
 const USERS=[{id:'kevin',n:'Kevin',c:'#E2232D'},{id:'stefan',n:'Stefan',c:'#F59E0B'},{id:'martina',n:'Martina',c:'#EC4899'},{id:'sascha',n:'Sascha',c:'#22D3EE'},{id:'rene',n:'René',c:'#34D399'}];
 const U=id=>USERS.find(u=>u.id===id)||{n:'',c:'#64748B',id:''};
 const $=id=>document.getElementById(id);
@@ -1188,10 +1200,19 @@ function show(v){const nb=document.querySelector(`.navbtn[data-v=${v}]`);if(!nb|
 document.querySelectorAll('.navbtn').forEach(b=>b.addEventListener('click',()=>show(b.dataset.v)));
 /* Navigation einklappen */
 document.querySelectorAll('.navbtn').forEach(b=>{b.title=b.querySelector('.lbl').childNodes[0].textContent.trim();});
-function navMini(on,keep){document.body.classList.toggle('navmini',on);$('navTog').setAttribute('aria-label',on?'Navigation ausklappen':'Navigation einklappen');$('navTog').title=on?'Navigation ausklappen':'Navigation einklappen';
- if(keep||!ME)return;ls.set('vc_navmini_'+ME.id,on);db.doc('meta/prefs').set({[ME.id]:{navmini:on}},{merge:true}).catch(()=>{});}
-async function navForUser(){if(!ME)return;navMini(!!ls.get('vc_navmini_'+ME.id,false),true);try{const d=await db.doc('meta/prefs').get();const x=d.exists&&d.data()[ME.id];if(x&&typeof x.navmini==='boolean'){navMini(x.navmini,true);ls.set('vc_navmini_'+ME.id,x.navmini);}kdLayLoad(x&&x.kdlay);}catch(_){kdLayLoad(null);}}
-$('navTog').addEventListener('click',()=>navMini(!document.body.classList.contains('navmini')));
+/* 1.8.2: Navi standardmäßig eingeklappt, klappt beim Drüberfahren auf; » = feststellen (navpin), « = lösen */
+let NAVPIN=false;
+function navMini(on,keep){NAVPIN=!on;document.body.classList.remove('navpeek');document.body.classList.toggle('navmini',on);const t=$('navTog');t.setAttribute('aria-label',on?'Navigation offen feststellen':'Navigation wieder einklappen');t.title=on?'Navigation offen feststellen':'Navigation wieder einklappen';t.dataset.l=on?'Feststellen':'Lösen';
+ if(keep||!ME)return;ls.set('vc_navpin_'+ME.id,!on);db.doc('meta/prefs').set({[ME.id]:{navpin:!on}},{merge:true}).catch(()=>{});}
+{let lt=0;const nv=document.querySelector('nav');
+ nv.addEventListener('mouseenter',()=>{clearTimeout(lt);if(NAVPIN||innerWidth<=720)return;document.body.classList.remove('navmini');document.body.classList.add('navpeek');});
+ nv.addEventListener('mouseleave',()=>{if(NAVPIN||innerWidth<=720)return;clearTimeout(lt);lt=setTimeout(()=>{if(NAVPIN)return;if(document.querySelector('.kdpop .mepop'))return;document.body.classList.add('navmini');document.body.classList.remove('navpeek');},220);});}
+async function navForUser(){if(!ME)return;navMini(!ls.get('vc_navpin_'+ME.id,false),true);try{const d=await db.doc('meta/prefs').get();const x=d.exists&&d.data()[ME.id];if(x&&typeof x.navpin==='boolean'){navMini(!x.navpin,true);ls.set('vc_navpin_'+ME.id,x.navmini);}kdLayLoad(x&&x.kdlay);}catch(_){kdLayLoad(null);}}
+$('navTog').addEventListener('click',()=>navMini(NAVPIN));
+/* 1.8.2: Klick aufs Profil-Symbol = Menü mit Abmelden / Passwort */
+$('meChip').addEventListener('click',e=>{if(e.target.closest('#meCfg'))return;if(kdPop&&kdPop.me){kdPopClose();return;}const el=kdPopOpen($('meChip'),`<div class="mepop"><div class="kph">${esc(U(ME&&ME.id).n)}</div><button type="button" class="vstx mpo" data-mp="out">⇄ Abmelden / Benutzer wechseln</button><button type="button" class="vstu" data-mp="pw">🔑 Passwort ändern</button></div>`);kdPop.me=1;
+ const rc=$('meChip').getBoundingClientRect();el.style.left=Math.min(innerWidth-el.offsetWidth-8,rc.right+8)+'px';el.style.top=Math.max(8,rc.bottom-el.offsetHeight)+'px';
+ el.addEventListener('click',ev=>{const b=ev.target.closest('[data-mp]');if(!b)return;kdPopClose();if(b.dataset.mp==='out')$('switchUser').click();else $('meSet').click();});});
 
 function toast(t,undo){const el=$('toast');el.textContent=t;el.classList.toggle('act',!!undo);if(undo){const b=document.createElement('button');b.type='button';b.className='undo';b.textContent='Rückgängig';b.onclick=()=>{undo();el.classList.remove('on','act');};el.append(b);}el.classList.add('on');clearTimeout(el._t);el._t=setTimeout(()=>el.classList.remove('on','act'),undo?6000:2200);}
 
@@ -1447,8 +1468,8 @@ let vkEdit=null,vkShowDone=false,vkF='',vkSort=ls.get('vc_vksort','dat:-1');vkSo
 const VF0=[['name','Kunde'],['marke','Marke'],['modell','Modell'],['dat','Vom Kunde bestellt am'],['firma','Leasing-Anbieter']],VF1=[['form','Form'],['gr','Größe'],['lt','Liefertermin'],['antrag','Antrag gestellt am'],['ok','Leasing genehmigt'],['lende','Leasingende'],['notiz','Notiz']];
 function rv(){
  const open=V.filter(b=>b.a!=='1'),F={nm:b=>b.a!=='1'&&b.m!=='1'&&b.b!=='1',mw:b=>b.a!=='1'&&b.m==='1'&&b.b!=='1',ok:b=>b.a!=='1'&&b.b==='1',lk:b=>b.a!=='1'&&b.firma&&!b.ok};
- const list=V.filter(b=>(vkShowDone||b.a!=='1'||b.id===vkEdit));
- list.sort(vkCmp);
+ const list=V.filter(b=>(vkShowDone?b.a==='1':b.a!=='1')||b.id===vkEdit);/* 1.8.3: „Abgeholte“ = nur abgeholte, zuletzt abgeholte oben */
+ if(vkShowDone)list.sort((x,y)=>vkAbT(y)-vkAbT(x));else list.sort(vkCmp);
   const form=vkEdit==='new'?vkForm({id:'new'}):vkEdit&&V.find(x=>x.id===vkEdit)?vkForm(V.find(x=>x.id===vkEdit)):'';
  if(document.querySelector('#cards [contenteditable]:focus, #cards .din'))return;
  {const hold=$('vkCtlHold');['vkSortSel','vkDone','vkAdd'].forEach(id=>hold.append($(id)));vkSelSync();
@@ -1548,7 +1569,7 @@ function lvPick(t){const b=V.find(x=>x.id===t.dataset.lvi),f=t.dataset.lvf;if(!b
 async function putV(b){vAutoVon(b);const i=V.findIndex(x=>x.id===b.id);if(i<0)V.unshift(b);else V[i]=b;rv();try{await save('V',b);}catch(_){}}
 /* 1.6.5: Status setzen – who = Person-ID oder '' (entfernen). Admins wählen die Person, Team setzt nur sich selbst. */
 $('cards').addEventListener('click',e=>{const t=e.target.closest('.lvon');if(!t)return;e.stopPropagation();e.preventDefault();lvPick(t);},true);
-function vStSet(b,k,who){const n=Object.assign({},b);n[k]=who?'1':'';if(n[k]){n[k+'Von']=who;const _d=new Date(),_s=String(_d.getDate()).padStart(2,'0')+'.'+String(_d.getMonth()+1).padStart(2,'0')+'.';n[k+'Am']=_s;if(k==='b'&&!n.ok)n.ok=_s+_d.getFullYear();}else{n[k+'Von']='';n[k+'Am']='';}putV(n);if(n[k]){if(k==='a')toast('Abgeholt – '+(b.name||b.modell)+' (unter „Abgeholte zeigen“)',()=>{putV(Object.assign({},b));toast('Wieder offen');});else toast({an:'Angeliefert',m:'Montiert',b:'O.K.'}[k]+' – '+U(who).n);}}
+function vStSet(b,k,who){const n=Object.assign({},b);n[k]=who?'1':'';if(n[k]){n[k+'Von']=who;const _d=new Date(),_s=String(_d.getDate()).padStart(2,'0')+'.'+String(_d.getMonth()+1).padStart(2,'0')+'.';n[k+'Am']=_s;if(k==='a')n.aTs=Date.now();if(k==='b'&&!n.ok)n.ok=_s+_d.getFullYear();}else{n[k+'Von']='';n[k+'Am']='';if(k==='a')n.aTs='';}putV(n);if(n[k]){if(k==='a')toast('Abgeholt – '+(b.name||b.modell)+' (unter „Abgeholte zeigen“)',()=>{putV(Object.assign({},b));toast('Wieder offen');});else toast({an:'Angeliefert',m:'Montiert',b:'O.K.'}[k]+' – '+U(who).n);}}
 const VSTN={an:'Angeliefert',m:'Montiert',b:'O.K.',a:'Abgeholt'};
 function vStPick(t,b,k){if(kdPop&&kdPop.vst===b.id+k){kdPopClose();return;}const cur=b[k]==='1'?b[k+'Von']:null;
  const el=kdPopOpen(t,`<div class="vstp"><div class="kph">${VSTN[k]} – von wem?</div><div class="vstl">${USERS.map(u=>`<button type="button" class="vstu${cur===u.id?' on':''}" style="--uc:${u.c}" data-vsu="${u.id}"><span class="av">${esc(u.n[0])}</span>${esc(u.n)}</button>`).join('')}</div>${b[k]==='1'?`<button type="button" class="vstx" data-vsu="">✕ ${VSTN[k]} entfernen</button>`:''}</div>`);kdPop.vst=b.id+k;
@@ -1595,7 +1616,8 @@ $('cards').addEventListener('keydown',e=>{const td=e.target.closest('td.dcell');
 $('cards').addEventListener('focusin',e=>{const c=e.target.closest('.ef[data-f=modell]');if(!c)return;const b=V.find(x=>x.id===c.dataset.vid);if(b&&c.textContent!==(b.modell||''))c.textContent=b.modell||'';});
 $('cards').addEventListener('focusout',e=>{const c=e.target.closest('[contenteditable][data-f]');if(!c)return;const b=V.find(x=>x.id===c.dataset.vid),f=c.dataset.f,v=c.textContent.trim();const cur=f==='notiz'?[b&&b.notiz,b&&b.montieren?'Montieren: '+b.montieren:''].filter(Boolean).join(' · '):(b&&b[f]||'');if(!b||v===cur)return;putV(Object.assign({},b,{[f]:v},f==='notiz'?{montieren:''}:{}));toast('Gespeichert');});
 $('vkAdd').addEventListener('click',()=>{vkEdit='new';rv();$('cards').scrollIntoView({block:'start'});const f=document.querySelector('[data-vf=new] input');if(f)f.focus();});
-$('vkDone').addEventListener('click',e=>{vkShowDone=!vkShowDone;e.currentTarget.setAttribute('aria-pressed',vkShowDone);rv();});
+function vkAbT(b){if(b.aTs)return +b.aTs;const t=vkDate(b.aAm);return t||vkDate(b.dat)||+b.ts||0;}
+$('vkDone').addEventListener('click',e=>{vkShowDone=!vkShowDone;const t=e.currentTarget;t.setAttribute('aria-pressed',vkShowDone);t.textContent=vkShowDone?'← Zurück zu offenen':'Abgeholte zeigen';$('vkSortSel').hidden=vkShowDone;rv();});
 
 /* ================= BESTELLUNGEN ================= */
 let bEdit=null,bShowDone=false;
@@ -2380,7 +2402,7 @@ let kdPop=null;
 function kdPopClose(){if(kdPop){kdPop.el.remove();kdPop=null;}}
 function kdPopOpen(anchor,html,o){kdPopClose();const el=document.createElement('div');el.className='kdpop';el.innerHTML=html;document.body.appendChild(el);kdPop=Object.assign({el,t0:Date.now()},o);kdPopPos(anchor);const i=el.querySelector('input:not([type=checkbox])');if(i)i.focus();return el;}
 function kdPopPos(anchor){const el=kdPop.el,rc=anchor.getBoundingClientRect(),W=el.offsetWidth,H=el.offsetHeight;el.style.left=Math.max(8,Math.min(innerWidth-W-8,rc.left))+'px';el.style.top=(rc.bottom+4+H>innerHeight-8?Math.max(8,rc.top-4-H):rc.bottom+4)+'px';}
-document.addEventListener('pointerdown',e=>{if(kdPop&&!kdPop.el.contains(e.target)&&!e.target.closest('[data-kpick],.kdh[data-kc],.stb .st,.lvon'))kdPopClose();},true);
+document.addEventListener('pointerdown',e=>{if(kdPop&&!kdPop.el.contains(e.target)&&!e.target.closest('[data-kpick],.kdh[data-kc],.stb .st,.lvon,#meChip'))kdPopClose();},true);
 document.addEventListener('keydown',e=>{if(kdPop&&e.key==='Escape')kdPopClose();});
 document.addEventListener('scroll',e=>{if(kdPop&&!kdPop.el.contains(e.target)&&Date.now()-kdPop.t0>250)kdPopClose();},true);
 function kdFltOpen(hd){const k=hd.dataset.kc,c=KDC.find(x=>x.k===k);if(kdPop&&kdPop.t==='flt'&&kdPop.k===k){kdPopClose();return;}
