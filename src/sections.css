@@ -678,7 +678,7 @@ body.isadm .vtab td.ce.vnote[data-von]:hover::after{transform:translateY(-50%) s
 /* Bearbeitungsmodus */
 .layhid{display:none!important}
 #bmTog[aria-pressed="true"]{background:rgba(250,204,21,.16);color:#FDE68A;box-shadow:inset 0 0 0 1px rgba(250,204,21,.5)}
-#bmBar{position:fixed;bottom:14px;right:14px;z-index:80;display:flex;align-items:center;gap:12px;padding:7px 8px 7px 14px;border-radius:12px;background:rgba(20,18,8,.92);border:1px solid rgba(250,204,21,.55);box-shadow:0 0 18px rgba(250,204,21,.25);font:500 12.5px "Outfit",sans-serif;color:#FEF3C7}
+#bmBar{position:fixed;bottom:14px;left:236px;max-width:calc(100vw - 680px);z-index:80;display:flex;align-items:center;gap:12px;padding:7px 8px 7px 14px;border-radius:12px;background:rgba(20,18,8,.92);border:1px solid rgba(250,204,21,.55);box-shadow:0 0 18px rgba(250,204,21,.25);font:500 12.5px "Outfit",sans-serif;color:#FEF3C7}
 #bmBar b{color:#FDE68A}#bmBar span{color:#CBD5E1}#bmBar .btn{padding:5px 12px;font-size:12px}
 body.bm .view.on thead th[data-ck]:not([data-bmno]),body.bm #grid .hd[data-pk]{cursor:pointer;outline:1px dashed rgba(250,204,21,.6);outline-offset:-3px}
 body.bm .view.on thead th[data-ck]:hover,body.bm #grid .hd[data-pk]:hover{background:rgba(250,204,21,.12)!important}
@@ -710,3 +710,9 @@ body.bmdrag{cursor:col-resize!important;user-select:none}
 .order .olgt{position:absolute;top:10px;right:12px;max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font:700 10.5px/1 "Outfit",sans-serif;letter-spacing:.04em;text-transform:uppercase;color:#E2E8F0;padding:4px 8px;border-radius:7px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14)}
 .order:has(.olg)>b,.order:has(.olgt)>b{display:block;padding-right:100px}
 .paid.u{border-color:#334155;color:#94A3B8}.paid.n{border-color:#5a1a22;color:#FCA5A5}
+/* 1.9.4: Zeilen-Griff im Bearbeitungsmodus */
+.bmrow{display:none}
+body.bm .bmrow{all:unset;display:inline-grid;place-items:center;width:16px;height:22px;margin-right:4px;vertical-align:middle;border-radius:5px;cursor:pointer;font:800 15px/1 "Outfit",sans-serif;color:#FACC15;background:rgba(250,204,21,.12);box-shadow:inset 0 0 0 1px rgba(250,204,21,.45)}
+body.bm .bmrow:hover{background:rgba(250,204,21,.3)}
+.bmrow2{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+body.navmini #bmBar{left:100px}#bmBar span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
