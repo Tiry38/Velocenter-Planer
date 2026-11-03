@@ -624,3 +624,16 @@ body[data-v=kunden] .tt small{background:var(--rb);-webkit-background-clip:text;
  .dt .sKw b{font-size:15px!important;padding:1px 12px!important}
  .dt .clock{font-size:24px!important;padding:1px 12px!important;border-radius:11px!important}
 }
+/* 1.8.1: Kopfzeile in allen Reitern weg (Tiry), KW oben links statt Logo, Listen bis zum unteren Rand */
+.top{display:none!important}
+main>*:first-child,.view>*:first-child{margin-top:0}
+.brand.kwbrand{gap:2px;padding:12px 6px 14px;margin:-4px 0 10px;border-radius:16px;background:linear-gradient(145deg,rgba(226,35,45,.22),rgba(226,35,45,.06));border:1px solid rgba(255,107,114,.35);box-shadow:0 0 22px rgba(226,35,45,.18),inset 0 1px 0 rgba(255,255,255,.06)}
+.kwbrand small{font:600 10.5px/1 "Outfit",sans-serif;letter-spacing:.16em;text-transform:uppercase;color:#FCA5A5}
+.kwbrand b{font:800 40px/1.05 "Outfit",sans-serif;color:#fff;text-shadow:0 0 18px rgba(226,35,45,.7);letter-spacing:.01em;font-variant-numeric:tabular-nums}
+.kwbrand b i{font-style:normal;font-size:.5em;font-weight:700;color:#FCA5A5;vertical-align:.45em;margin-right:2px}
+.kwbrand span{font:500 12px/1 "Outfit",sans-serif;color:#94A3B8}
+body.navmini .brand.kwbrand{width:60px;padding:8px 0 9px}
+body.navmini .kwbrand small,body.navmini .kwbrand span,body.navmini .kwbrand b i{display:none}
+body.navmini .kwbrand b{font-size:26px}
+@media (max-width:720px){.brand.kwbrand{flex-direction:row;gap:8px;padding:6px 10px;margin:0}.kwbrand small,.kwbrand span{display:none}.kwbrand b{font-size:22px}}
+#v-lief .tbl,#v-kasse .tbl{overflow:auto}
