@@ -934,6 +934,20 @@ body[data-v=kunden] .tt small{background:var(--rb);-webkit-background-clip:text;
  .navbtn{padding-top:4px;padding-bottom:4px}
  .brand img{max-height:44px;width:auto}
 }
+/* 1.8.0: Kopfzeile in allen Reitern dünner (Tiry: nimmt zu viel Platz weg) */
+@media (min-width:721px){
+ .top{padding:6px 16px!important;gap:18px!important;min-height:0!important}
+ .top h1{font-size:25px!important;line-height:1.05!important}
+ .tt{gap:11px!important}
+ .tt .tile{width:38px!important;height:38px!important;min-width:38px!important;border-radius:11px!important}
+ .tt .tile svg{width:21px!important;height:21px!important}
+ .tt small{font-size:11px!important;margin-bottom:1px!important}
+ .dt .seg{gap:1px!important;padding-top:0!important;padding-bottom:0!important}
+ .dt .seg small{font-size:10.5px!important}
+ .dt .seg b{font-size:19px!important}
+ .dt .sKw b{font-size:15px!important;padding:1px 12px!important}
+ .dt .clock{font-size:24px!important;padding:1px 12px!important;border-radius:11px!important}
+}
 
 [hidden]{display:none!important}
 #sTab td.b{font-weight:700}#sTab .pwm.ed{outline:none;padding:2px 6px;border-radius:6px;font-family:var(--mono)}#sTab td{vertical-align:top}
@@ -1108,7 +1122,7 @@ body[data-v=kunden] .tt small{background:var(--rb);-webkit-background-clip:text;
 <script>
 const FB_CONFIG={apiKey:"AIzaSyC_uZPvc5rJETwlS4JbfCoTkkE4ckjtp0M",authDomain:"velocenter-planer.firebaseapp.com",projectId:"velocenter-planer",storageBucket:"velocenter-planer.firebasestorage.app",messagingSenderId:"1018330488700",appId:"1:1018330488700:web:262a4d1660353e6fde8ef9"};
 /* ================= Velocenter Werkstatt-Cockpit – Oberfläche ================= */
-const CLIENT_VERSION='1.7.9';
+const CLIENT_VERSION='1.8.0';
 const USERS=[{id:'kevin',n:'Kevin',c:'#E2232D'},{id:'stefan',n:'Stefan',c:'#F59E0B'},{id:'martina',n:'Martina',c:'#EC4899'},{id:'sascha',n:'Sascha',c:'#22D3EE'},{id:'rene',n:'René',c:'#34D399'}];
 const U=id=>USERS.find(u=>u.id===id)||{n:'',c:'#64748B',id:''};
 const $=id=>document.getElementById(id);
