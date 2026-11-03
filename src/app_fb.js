@@ -40,7 +40,7 @@ const HOL={};[2026,2027,2028].forEach(y=>{const e=easter(y),add=(d,n)=>{HOL[iso(
 /* 1.8.1: Listen füllen die ganze Höhe bis zum unteren Rand */
 function fitH(){for(const el of document.querySelectorAll('.vtab,.board,.rktab,.nboard,.kdboard,#v-lief .tbl,#v-kasse .tbl')){if(!el.offsetParent)continue;const t=el.getBoundingClientRect().top;el.style.maxHeight=Math.max(240,innerHeight-t-12)+'px';}if(typeof ltBarPos==='function')ltBarPos();}
 addEventListener('resize',()=>requestAnimationFrame(fitH));{let q=0;new MutationObserver(()=>{if(q)return;q=requestAnimationFrame(()=>{q=0;fitH();});}).observe(document.body,{childList:true,subtree:true});}
-function tick(){const d=new Date();$('clock').innerHTML=String(d.getHours()).padStart(2,'0')+'<i>:</i>'+String(d.getMinutes()).padStart(2,'0');$('dWd').textContent=WD[d.getDay()];$('dKw').textContent='KW '+kw(d);$('nKw').innerHTML='<i>KW</i> '+kw(d);$('nKwD').textContent=d.toLocaleDateString('de-DE',{weekday:'short',day:'numeric',month:'short'});$('dDate').innerHTML=d.getDate()+'. <span class="mL">'+d.toLocaleDateString('de-DE',{month:'long'})+'</span><span class="mS">'+d.toLocaleDateString('de-DE',{month:'short'})+'</span> '+d.getFullYear();}
+function tick(){const d=new Date();$('clock').innerHTML=String(d.getHours()).padStart(2,'0')+'<i>:</i>'+String(d.getMinutes()).padStart(2,'0');$('dWd').textContent=WD[d.getDay()];$('dKw').textContent='KW '+kw(d);$('nKw').innerHTML='KW '+kw(d);$('nKwN').textContent=kw(d);$('nKwD').textContent=d.toLocaleDateString('de-DE',{weekday:'short',day:'numeric',month:'short'});$('dDate').innerHTML=d.getDate()+'. <span class="mL">'+d.toLocaleDateString('de-DE',{month:'long'})+'</span><span class="mS">'+d.toLocaleDateString('de-DE',{month:'short'})+'</span> '+d.getFullYear();}
 tick();setInterval(tick,15000);
 
 /* ---------- Navigation ---------- */
@@ -54,11 +54,9 @@ document.querySelectorAll('.navbtn').forEach(b=>b.addEventListener('click',()=>s
 document.querySelectorAll('.navbtn').forEach(b=>{b.title=b.querySelector('.lbl').childNodes[0].textContent.trim();});
 /* 1.8.2: Navi standardmäßig eingeklappt, klappt beim Drüberfahren auf; » = feststellen (navpin), « = lösen */
 let NAVPIN=false;
-function navMini(on,keep){NAVPIN=!on;document.body.classList.remove('navpeek');document.body.classList.toggle('navmini',on);const t=$('navTog');t.setAttribute('aria-label',on?'Navigation offen feststellen':'Navigation wieder einklappen');t.title=on?'Navigation offen feststellen':'Navigation wieder einklappen';t.dataset.l=on?'Feststellen':'Lösen';
+function navMini(on,keep){NAVPIN=!on;document.body.classList.remove('navpeek');document.body.classList.toggle('navmini',on);const t=$('navTog');t.setAttribute('aria-label',on?'Navigation ausklappen':'Navigation einklappen');t.title=on?'Navigation ausklappen':'Navigation einklappen';t.dataset.l=on?'Ausklappen':'Einklappen';
  if(keep||!ME)return;ls.set('vc_navpin_'+ME.id,!on);db.doc('meta/prefs').set({[ME.id]:{navpin:!on}},{merge:true}).catch(()=>{});}
-{let lt=0;const nv=document.querySelector('nav');
- nv.addEventListener('mouseenter',()=>{clearTimeout(lt);if(NAVPIN||innerWidth<=720)return;document.body.classList.remove('navmini');document.body.classList.add('navpeek');});
- nv.addEventListener('mouseleave',()=>{if(NAVPIN||innerWidth<=720)return;clearTimeout(lt);lt=setTimeout(()=>{if(NAVPIN)return;if(document.querySelector('.kdpop .mepop'))return;document.body.classList.add('navmini');document.body.classList.remove('navpeek');},220);});}
+/* 1.8.5: kein Hover-Aufklappen mehr – nur manuell über den Pfeil (Tiry) */
 async function navForUser(){if(!ME)return;navMini(!ls.get('vc_navpin_'+ME.id,false),true);try{const d=await db.doc('meta/prefs').get();const x=d.exists&&d.data()[ME.id];if(x&&typeof x.navpin==='boolean'){navMini(!x.navpin,true);ls.set('vc_navpin_'+ME.id,x.navmini);}kdLayLoad(x&&x.kdlay);}catch(_){kdLayLoad(null);}}
 $('navTog').addEventListener('click',()=>navMini(NAVPIN));
 /* 1.8.2: Klick aufs Profil-Symbol = Menü mit Abmelden / Passwort */

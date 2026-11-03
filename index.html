@@ -419,14 +419,6 @@ td.r{text-align:right}.amt{color:color-mix(in srgb,var(--ac) 50%,#fff);font-fami
 /* ===== Einklappbare Navigation ===== */
 .app{transition:grid-template-columns .25s ease}
 body.navmini .app{grid-template-columns:84px 1fr}
-body.navmini nav{padding:14px 10px;align-items:center}
-body.navmini .brand{padding:6px 0 12px}
-body.navmini .brand{width:64px;margin:0 auto 6px;align-self:center}body.navmini .brand img{width:58px;margin:0 auto}
-body.navmini .brand .tag,body.navmini .brand .halo,body.navmini .navbtn .lbl,body.navmini .secure,body.navmini .me>div{display:none!important}
-body.navmini .navbtn{padding:6px;justify-content:center;width:52px;box-sizing:border-box}
-body.navmini .navbtn[aria-current="true"]::before{left:-10px}
-body.navmini .navbtn .n{position:absolute;top:0;right:-2px;margin:0;font-size:9.5px;padding:0 5px}
-body.navmini .navsep{width:40px;margin:8px auto}
 
 
 @media (max-width:720px){.navtog{display:none}body.navmini .app{grid-template-columns:1fr}}
@@ -589,11 +581,6 @@ nav{overflow-x:hidden}
 .tico.navtog:hover{background:linear-gradient(180deg,rgba(226,35,45,.95),#8b1c25);box-shadow:0 0 16px rgba(226,35,45,.45);color:#fff}
 #switchUser:hover{background:rgba(96,165,250,.16);color:#BFDBFE}
 .mico:focus-visible,.tico:focus-visible{outline:2px solid var(--cyan);outline-offset:1px}
-body.navmini .me{flex-direction:column;gap:8px;padding:9px 6px;width:60px;align-self:center}
-body.navmini .me .mi{display:none}body.navmini .mico{width:32px;height:28px}
-body.navmini .metools{grid-template-columns:1fr 1fr;width:64px;align-self:center;gap:3px;padding:4px}
-body.navmini .tico{height:28px}
-body.navmini .navtog svg{transform:rotate(180deg)}
 body.navmini .navtog svg{transform:rotate(180deg)}
 /* Status „angeliefert“ (blau) + Namensfeld-Verlauf aus allen gesetzten Status */
 .who2.wfx .wp{background:var(--wpbg);box-shadow:inset 0 0 0 1px var(--wpbd),0 0 14px var(--wpgl)}
@@ -926,9 +913,9 @@ body[data-v=kunden] .tt small{background:var(--rb);-webkit-background-clip:text;
 @media (min-width:721px){
  nav .me{position:sticky;bottom:72px;z-index:4;background-color:#15171e}
  nav .metools{position:sticky;bottom:0;z-index:4;background:#121419;margin-bottom:-6px;padding-bottom:8px;box-shadow:0 12px 0 #121419}
- body:not(.navmini) .metools .tico{height:auto;padding:6px 0 5px;row-gap:3px}
- body:not(.navmini) .metools .tico::after{content:attr(data-l);font:600 9.5px/1 "Outfit",var(--body),sans-serif;color:#9AA4B5;letter-spacing:.01em}
- body:not(.navmini) .metools #switchUser::after{color:#FCA5A5}
+ .metools .tico{height:auto;padding:6px 0 5px;row-gap:3px}
+ .metools .tico::after{content:attr(data-l);font:600 9.5px/1 "Outfit",var(--body),sans-serif;color:#9AA4B5;letter-spacing:.01em}
+ .metools #switchUser::after{color:#FCA5A5}
 }
 @media (min-width:721px) and (max-height:820px){
  .navbtn{padding-top:4px;padding-bottom:4px}
@@ -956,9 +943,6 @@ main>*:first-child,.view>*:first-child{margin-top:0}
 .kwbrand b{font:800 40px/1.05 "Outfit",sans-serif;color:#fff;text-shadow:0 0 18px rgba(226,35,45,.7);letter-spacing:.01em;font-variant-numeric:tabular-nums}
 .kwbrand b i{font-style:normal;font-size:.5em;font-weight:700;color:#FCA5A5;vertical-align:.45em;margin-right:2px}
 .kwbrand span{font:500 12px/1 "Outfit",sans-serif;color:#94A3B8}
-body.navmini .brand.kwbrand{width:60px;padding:8px 0 9px}
-body.navmini .kwbrand small,body.navmini .kwbrand span,body.navmini .kwbrand b i{display:none}
-body.navmini .kwbrand b{font-size:26px}
 @media (max-width:720px){.brand.kwbrand{flex-direction:row;gap:8px;padding:6px 10px;margin:0}.kwbrand small,.kwbrand span{display:none}.kwbrand b{font-size:22px}}
 #v-lief .tbl,#v-kasse .tbl{overflow:auto}
 /* 1.8.2: Navi-Hover (aufklappen ohne die Seite zu verschieben), Profil-Menü, Beratung breiter */
@@ -966,7 +950,6 @@ body.navpeek .app{grid-template-columns:84px 1fr}
 body.navpeek nav{width:220px;z-index:60;box-shadow:12px 0 40px rgba(0,0,0,.55);border-right:1px solid rgba(255,255,255,.08)}
 #switchUser{display:none!important}
 .metools{grid-template-columns:repeat(3,1fr)!important}
-body.navmini .metools{grid-template-columns:1fr!important}
 #meChip{cursor:pointer}#meChip:hover{border-color:rgba(255,255,255,.22)}
 .mepop{display:grid;gap:6px;min-width:220px}
 .mepop .mpo{margin-top:0;border-top:0;padding-top:6px;color:#FCA5A5;font-weight:700}
@@ -975,8 +958,35 @@ body.navmini .metools{grid-template-columns:1fr!important}
 body.navpeek #navTog svg{transform:scaleX(-1)}
 /* 1.8.4: Velocenter-„Aufkleber“ oben rechts am Kunden, sobald O.K. (fertig & abholbereit) */
 .who2 .wp{position:relative}
-.who2 .oklg{position:absolute;top:3px;right:4px;width:44px;height:auto;pointer-events:auto;filter:drop-shadow(0 1px 1.5px rgba(0,0,0,.7)) drop-shadow(0 0 5px rgba(226,35,45,.35));image-rendering:auto}
-.who2 .wp:has(.oklg) b{padding-right:48px}
+.who2 .oklg{position:absolute;top:3px;right:4px;width:30px;height:auto;pointer-events:auto;filter:drop-shadow(0 1px 1.5px rgba(0,0,0,.7)) drop-shadow(0 0 5px rgba(226,35,45,.35));image-rendering:auto}
+.who2 .wp:has(.oklg) b{padding-right:34px}
+/* 1.8.5: Navi gleitet langsam und weich auf/zu */
+nav{transition:width .5s cubic-bezier(.22,.61,.36,1),box-shadow .5s ease}
+body.navmini nav{width:84px}
+body.navpeek nav{width:220px}
+.app{transition:grid-template-columns .5s cubic-bezier(.22,.61,.36,1)!important}
+@keyframes navFade{from{opacity:0;transform:translateX(-6px)}to{opacity:1;transform:none}}
+body.navpeek .navbtn .lbl,body.navpeek .kwbrand small,body.navpeek .kwbrand span,body.navpeek .me .mi,body.navpeek .metools .tico::after{animation:navFade .45s .12s cubic-bezier(.22,.61,.36,1) both}
+
+/* 1.8.5: echtes Gleiten – Inhalt behält immer die volle Breite (196 px), die Navi schneidet nur ab und gleitet weich */
+@media (min-width:721px){
+ nav{overflow:hidden!important;transition:width .55s cubic-bezier(.22,.61,.36,1),box-shadow .55s ease}
+ nav>*{width:196px;min-width:196px;max-width:196px;box-sizing:border-box;flex:none}
+ nav>.navsep{width:180px}
+ body.navmini nav{width:84px}
+ body.navpeek nav{width:220px}
+ .app{transition:grid-template-columns .55s cubic-bezier(.22,.61,.36,1)!important}
+ .navbtn .lbl,.navbtn .n,.me .mi,.me .mico,.kwbrand .kwt{transition:opacity .35s ease}
+ body.navmini .navbtn .lbl,body.navmini .navbtn .n,body.navmini .me .mi,body.navmini .me .mico,body.navmini .kwbrand .kwt{opacity:0}
+ .metools #navTog{order:-1}
+ /* KW-Kachel: links die Zahl im Quadrat (bleibt eingeklappt sichtbar), rechts Text */
+ .brand.kwbrand{display:grid;grid-template-columns:60px 1fr;align-items:center;column-gap:12px;padding:8px;text-align:left}
+ .kwbrand .kwn{width:60px;height:60px;border-radius:14px;display:grid;place-items:center;background:linear-gradient(145deg,#F0333D,#9E0F17);border:1px solid #FF6B72;box-shadow:0 0 16px rgba(226,35,45,.55);font:800 28px/1 "Outfit",sans-serif;color:#fff}
+ .kwbrand .kwt{display:flex;flex-direction:column;gap:3px}
+ .kwbrand .kwt b{font:800 20px/1 "Outfit",sans-serif;color:#fff}
+}
+@media (max-width:720px){.kwbrand .kwn{display:none}}
+@media (min-width:721px){body:not(.navmini) nav{width:220px}}
 
 [hidden]{display:none!important}
 #sTab td.b{font-weight:700}#sTab .pwm.ed{outline:none;padding:2px 6px;border-radius:6px;font-family:var(--mono)}#sTab td{vertical-align:top}
@@ -985,7 +995,7 @@ body.navpeek #navTog svg{transform:scaleX(-1)}
 </style></head><body>
 <div class="app">
 <nav aria-label="Bereiche">
-  <div class="brand kwbrand" title="Aktuelle Kalenderwoche"><small>Kalenderwoche</small><b id="nKw">KW –</b><span id="nKwD"></span></div>
+  <div class="brand kwbrand" title="Aktuelle Kalenderwoche"><span class="kwn" id="nKwN">–</span><div class="kwt"><small>Kalenderwoche</small><b id="nKw">KW –</b><span id="nKwD"></span></div></div>
   <button class="navbtn" data-v="planer" aria-current="true" style="--ac:#E2232D"><span class="tile"><svg viewBox="0 0 24 24"><rect class="f" x="3" y="5" width="18" height="5" rx="2"/><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M8 3v4M16 3v4M7.5 15l2.5 2.5 5-5"/></svg></span><span class="lbl">Planer<small>Tagesplanung</small></span></button>
   <button class="navbtn" data-v="verkauf" style="--ac:#FBBF24"><span class="tile"><svg viewBox="0 0 24 24"><circle class="f" cx="6" cy="16.5" r="3.6"/><circle class="f" cx="18" cy="16.5" r="3.6"/><circle cx="6" cy="16.5" r="3.6"/><circle cx="18" cy="16.5" r="3.6"/><path d="M6 16.5 9.5 9h6.5L18 16.5M9.5 9 8.3 6H6.5M16 9l-4 7.5h-6M14 6h2.5"/><path d="M20.5 3.5l.6 1.4 1.4.6-1.4.6-.6 1.4-.6-1.4-1.4-.6 1.4-.6z"/></svg></span><span class="lbl">Verkauf<small>Räder · Leasing</small></span><span class="n" id="nOffen">–</span></button>
   <button class="navbtn" data-v="bestell" style="--ac:#39F26B"><span class="tile"><svg viewBox="0 0 24 24"><path class="f" d="M3 8l9-5 9 5-9 5z"/><path d="M3 8l9-5 9 5v8l-9 5-9-5z"/><path d="M3 8l9 5 9-5M12 13v8M7.5 5.5l9 5"/></svg></span><span class="lbl">Bestellungen<small>Teile · Kunden</small></span><span class="n" id="nBest">–</span></button>
@@ -1151,7 +1161,7 @@ body.navpeek #navTog svg{transform:scaleX(-1)}
 <script>
 const FB_CONFIG={apiKey:"AIzaSyC_uZPvc5rJETwlS4JbfCoTkkE4ckjtp0M",authDomain:"velocenter-planer.firebaseapp.com",projectId:"velocenter-planer",storageBucket:"velocenter-planer.firebasestorage.app",messagingSenderId:"1018330488700",appId:"1:1018330488700:web:262a4d1660353e6fde8ef9"};
 /* ================= Velocenter Werkstatt-Cockpit – Oberfläche ================= */
-const CLIENT_VERSION='1.8.4';
+const CLIENT_VERSION='1.8.5';
 const USERS=[{id:'kevin',n:'Kevin',c:'#E2232D'},{id:'stefan',n:'Stefan',c:'#F59E0B'},{id:'martina',n:'Martina',c:'#EC4899'},{id:'sascha',n:'Sascha',c:'#22D3EE'},{id:'rene',n:'René',c:'#34D399'}];
 const U=id=>USERS.find(u=>u.id===id)||{n:'',c:'#64748B',id:''};
 const $=id=>document.getElementById(id);
@@ -1192,7 +1202,7 @@ const HOL={};[2026,2027,2028].forEach(y=>{const e=easter(y),add=(d,n)=>{HOL[iso(
 /* 1.8.1: Listen füllen die ganze Höhe bis zum unteren Rand */
 function fitH(){for(const el of document.querySelectorAll('.vtab,.board,.rktab,.nboard,.kdboard,#v-lief .tbl,#v-kasse .tbl')){if(!el.offsetParent)continue;const t=el.getBoundingClientRect().top;el.style.maxHeight=Math.max(240,innerHeight-t-12)+'px';}if(typeof ltBarPos==='function')ltBarPos();}
 addEventListener('resize',()=>requestAnimationFrame(fitH));{let q=0;new MutationObserver(()=>{if(q)return;q=requestAnimationFrame(()=>{q=0;fitH();});}).observe(document.body,{childList:true,subtree:true});}
-function tick(){const d=new Date();$('clock').innerHTML=String(d.getHours()).padStart(2,'0')+'<i>:</i>'+String(d.getMinutes()).padStart(2,'0');$('dWd').textContent=WD[d.getDay()];$('dKw').textContent='KW '+kw(d);$('nKw').innerHTML='<i>KW</i> '+kw(d);$('nKwD').textContent=d.toLocaleDateString('de-DE',{weekday:'short',day:'numeric',month:'short'});$('dDate').innerHTML=d.getDate()+'. <span class="mL">'+d.toLocaleDateString('de-DE',{month:'long'})+'</span><span class="mS">'+d.toLocaleDateString('de-DE',{month:'short'})+'</span> '+d.getFullYear();}
+function tick(){const d=new Date();$('clock').innerHTML=String(d.getHours()).padStart(2,'0')+'<i>:</i>'+String(d.getMinutes()).padStart(2,'0');$('dWd').textContent=WD[d.getDay()];$('dKw').textContent='KW '+kw(d);$('nKw').innerHTML='KW '+kw(d);$('nKwN').textContent=kw(d);$('nKwD').textContent=d.toLocaleDateString('de-DE',{weekday:'short',day:'numeric',month:'short'});$('dDate').innerHTML=d.getDate()+'. <span class="mL">'+d.toLocaleDateString('de-DE',{month:'long'})+'</span><span class="mS">'+d.toLocaleDateString('de-DE',{month:'short'})+'</span> '+d.getFullYear();}
 tick();setInterval(tick,15000);
 
 /* ---------- Navigation ---------- */
@@ -1206,11 +1216,9 @@ document.querySelectorAll('.navbtn').forEach(b=>b.addEventListener('click',()=>s
 document.querySelectorAll('.navbtn').forEach(b=>{b.title=b.querySelector('.lbl').childNodes[0].textContent.trim();});
 /* 1.8.2: Navi standardmäßig eingeklappt, klappt beim Drüberfahren auf; » = feststellen (navpin), « = lösen */
 let NAVPIN=false;
-function navMini(on,keep){NAVPIN=!on;document.body.classList.remove('navpeek');document.body.classList.toggle('navmini',on);const t=$('navTog');t.setAttribute('aria-label',on?'Navigation offen feststellen':'Navigation wieder einklappen');t.title=on?'Navigation offen feststellen':'Navigation wieder einklappen';t.dataset.l=on?'Feststellen':'Lösen';
+function navMini(on,keep){NAVPIN=!on;document.body.classList.remove('navpeek');document.body.classList.toggle('navmini',on);const t=$('navTog');t.setAttribute('aria-label',on?'Navigation ausklappen':'Navigation einklappen');t.title=on?'Navigation ausklappen':'Navigation einklappen';t.dataset.l=on?'Ausklappen':'Einklappen';
  if(keep||!ME)return;ls.set('vc_navpin_'+ME.id,!on);db.doc('meta/prefs').set({[ME.id]:{navpin:!on}},{merge:true}).catch(()=>{});}
-{let lt=0;const nv=document.querySelector('nav');
- nv.addEventListener('mouseenter',()=>{clearTimeout(lt);if(NAVPIN||innerWidth<=720)return;document.body.classList.remove('navmini');document.body.classList.add('navpeek');});
- nv.addEventListener('mouseleave',()=>{if(NAVPIN||innerWidth<=720)return;clearTimeout(lt);lt=setTimeout(()=>{if(NAVPIN)return;if(document.querySelector('.kdpop .mepop'))return;document.body.classList.add('navmini');document.body.classList.remove('navpeek');},220);});}
+/* 1.8.5: kein Hover-Aufklappen mehr – nur manuell über den Pfeil (Tiry) */
 async function navForUser(){if(!ME)return;navMini(!ls.get('vc_navpin_'+ME.id,false),true);try{const d=await db.doc('meta/prefs').get();const x=d.exists&&d.data()[ME.id];if(x&&typeof x.navpin==='boolean'){navMini(!x.navpin,true);ls.set('vc_navpin_'+ME.id,x.navmini);}kdLayLoad(x&&x.kdlay);}catch(_){kdLayLoad(null);}}
 $('navTog').addEventListener('click',()=>navMini(NAVPIN));
 /* 1.8.2: Klick aufs Profil-Symbol = Menü mit Abmelden / Passwort */
