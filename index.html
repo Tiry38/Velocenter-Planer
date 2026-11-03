@@ -1053,6 +1053,13 @@ body.navmini #bmBar{left:100px}#bmBar span{overflow:hidden;text-overflow:ellipsi
 /* 1.9.7: Marken-Karte zeigt alle Marken, scrollbar, bleibt offen solange die Maus drauf ist */
 .kytip{pointer-events:auto}
 .kytl{display:grid;gap:6px;max-height:min(62vh,560px);overflow-y:auto;overscroll-behavior:contain;padding-right:4px}
+/* 1.9.9: eingeklappt keine abgeschnittenen Kästen – nur Quadrat/Avatar/Knopf sichtbar */
+@media (min-width:721px){
+ .brand.kwbrand,nav .me,nav .metools{transition:background-color .4s,border-color .4s,box-shadow .4s}
+ body.navmini .brand.kwbrand,body.navmini nav .me,body.navmini nav .metools{background:transparent!important;border-color:transparent!important;box-shadow:none!important}
+ body.navmini .brand.kwbrand{padding-left:4px}
+}
+@media (min-width:721px){body.navmini .metools .tico::after{display:none}body.navmini .metools .tico{height:36px;padding:0}body.navmini .metools{width:60px!important;min-width:60px!important;max-width:60px!important;margin-left:6px}}
 
 [hidden]{display:none!important}
 #sTab td.b{font-weight:700}#sTab .pwm.ed{outline:none;padding:2px 6px;border-radius:6px;font-family:var(--mono)}#sTab td{vertical-align:top}
@@ -1229,7 +1236,7 @@ body.navmini #bmBar{left:100px}#bmBar span{overflow:hidden;text-overflow:ellipsi
 <script>
 const FB_CONFIG={apiKey:"AIzaSyC_uZPvc5rJETwlS4JbfCoTkkE4ckjtp0M",authDomain:"velocenter-planer.firebaseapp.com",projectId:"velocenter-planer",storageBucket:"velocenter-planer.firebasestorage.app",messagingSenderId:"1018330488700",appId:"1:1018330488700:web:262a4d1660353e6fde8ef9"};
 /* ================= Velocenter Werkstatt-Cockpit – Oberfläche ================= */
-const CLIENT_VERSION='1.9.8';
+const CLIENT_VERSION='1.9.9';
 const USERS=[{id:'kevin',n:'Kevin',c:'#E2232D'},{id:'stefan',n:'Stefan',c:'#F59E0B'},{id:'martina',n:'Martina',c:'#EC4899'},{id:'sascha',n:'Sascha',c:'#22D3EE'},{id:'rene',n:'René',c:'#34D399'}];
 const U=id=>USERS.find(u=>u.id===id)||{n:'',c:'#64748B',id:''};
 const $=id=>document.getElementById(id);
