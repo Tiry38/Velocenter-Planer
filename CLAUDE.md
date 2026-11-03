@@ -28,7 +28,7 @@ Web-App für **Velocenter Hessert** (Fahrradgeschäft, Wörth am Rhein). Ersetzt
   - `logo_small.b64` – Velocenter-Logo · `fbconfig.js` – Firebase-Konfiguration (öffentlich, kein Geheimnis)
   - `firestore.rules` – Sicherheitsregeln (Kopie; aktiv sind sie in der Firebase-Konsole)
 - **Bauen:** `cd src && python3 build.py <neue Version>` → schreibt `../index.html`, `../version.txt` usw. und `tests/test_fb.html`.
-- **Ausliefern:** commit + `git push origin main`. GitHub Pages braucht ~1 Min. **Offene Geräte prüfen alle 30 s `version.txt` und laden sich selbst neu** (mit `?v=` am Cache vorbei). Version bei jeder Auslieferung hochzählen (zuletzt **1.8.6**).
+- **Ausliefern:** commit + `git push origin main`. GitHub Pages braucht ~1 Min. **Offene Geräte prüfen alle 30 s `version.txt` und laden sich selbst neu** (mit `?v=` am Cache vorbei). Version bei jeder Auslieferung hochzählen (zuletzt **1.8.7**).
 - **Tests (lokal, ohne Internet):** `src/tests/` – `fbmock.js` baut Firebase Auth + Firestore nach (localStorage, Live-Abgleich zwischen Tabs).
   - Einmalig: `cd src/tests && npm pack xlsx@0.18.5 && tar xzf xlsx-0.18.5.tgz package/dist/xlsx.full.min.js && mv package/dist/xlsx.full.min.js . && rm -rf package xlsx-0.18.5.tgz`
   - `node quick.js` (Kurztest, ~30 s) · `node tf.js` (Gesamttest, ~2 Min). Playwright/Chromium ist vorinstalliert.
@@ -67,7 +67,7 @@ Web-App für **Velocenter Hessert** (Fahrradgeschäft, Wörth am Rhein). Ersetzt
   - **Eintrags-Look (1.6.3, Tiry: „runde Formen im Rechteck passen nicht“):** eckige Leisten (Radius 2 px) mit leuchtender Farbkante links + Verlauf, Uhrzeit-Chips ebenso eckig mit gelber Kante.
 - **Verkauf:** Standard **Liste** (umschaltbar Karten), Kennzahlen-Kacheln als Filter (Noch montieren · Montiert/wartet O.K. · O.K./abholbereit · Leasing ohne O.K.), Sortierung (Neueste, Liefertermin, Status, Name).
   - Spalten: Status-Punkt · Kunde/Modell · Leasing (Logo + Auswahl) · Verkauft · LT · Antrag · O.K. · L.-Ende · **Notiz** (ersetzt „Montieren“) · Beratung (Person) · Status 🔧 / O.K. / ✓ · ✎.
-  - **Datumsfelder (Verkauft, Antrag, O.K., L.-Ende) per Kalender, Anzeige einheitlich TT.MM. ohne Jahr** (gespeichert mit Jahr). Farben: Antrag lila, O.K. grün („fehlt“ rot), L.-Ende türkis, Notiz gelb.
+  - **Datumsfelder (Verkauft, Antrag, O.K., L.-Ende) per Kalender, Anzeige einheitlich TT.MM. ohne Jahr** (gespeichert mit Jahr). Farben: Antrag lila, O.K. grün („fehlt“ rot), L.-Ende türkis, Notiz gelb (leere Notiz = nur „–“, ohne 📝, 1.8.7).
   - **„bereit“ heißt „O.K.“**. Wer montiert/O.K./abgeholt hat, wird mit Datum gespeichert. Abgeholte verschwinden (über „Abgeholte zeigen“ zurückholbar, 6 s Rückgängig).
   - Leasing-Kürzel: BL Bikeleasing, CB Company Bike, KM Kazenmaier, BB Businessbike, JR JobRad, DD Deutsche Dienstrad, LB Lease a Bike, RD RIDE, ER Eurorad.
 - **Bestellungen** (Reiterfarbe knallgrün #39F26B, früher Pink): Spalten-Board Offen → Bestellt → Da · Kunde informieren (→ Erledigt), bezahlt-Schalter, Notizfeld oben, darunter nur „Erledigte zeigen“ + „+ Bestellung“ (keine Suche, keine Kacheln mehr).

@@ -113,7 +113,7 @@ body.navmini .app{grid-template-columns:84px 1fr}
 .edit.din{width:132px;padding:3px 4px;font:700 12px var(--mono);color-scheme:dark;background:var(--panel2);color:#fff;border:1px solid var(--cyan);border-radius:7px}
 .vtab thead tr.h2 th:nth-child(9){color:#C4B5FD}.vtab thead tr.h2 th:nth-child(10){color:#34D399}.vtab thead tr.h2 th:nth-child(11){color:#67E8F9}
 
-.vtab td.vnote{font-family:var(--body);font-size:12.5px;color:#FDE68A;min-width:180px;max-width:280px;white-space:normal}.vtab td.vnote:empty::before{content:"📝 –";color:var(--muted)}.vtab thead th.thn{color:#FDE68A}
+.vtab td.vnote{font-family:var(--body);font-size:12.5px;color:#FDE68A;min-width:180px;max-width:280px;white-space:normal}.vtab td.vnote:empty::before{content:"–";color:var(--muted)}.vtab thead th.thn{color:#FDE68A}
 
 .vtab td.d-dat{color:#E2E8F0}
 .vtab td.dcell{min-width:64px;text-align:left}
