@@ -1250,7 +1250,7 @@ body.navmini #bmBar{left:100px}#bmBar span{overflow:hidden;text-overflow:ellipsi
 <script>
 const FB_CONFIG={apiKey:"AIzaSyC_uZPvc5rJETwlS4JbfCoTkkE4ckjtp0M",authDomain:"velocenter-planer.firebaseapp.com",projectId:"velocenter-planer",storageBucket:"velocenter-planer.firebasestorage.app",messagingSenderId:"1018330488700",appId:"1:1018330488700:web:262a4d1660353e6fde8ef9"};
 /* ================= Velocenter Werkstatt-Cockpit – Oberfläche ================= */
-const CLIENT_VERSION='1.10.9';
+const CLIENT_VERSION='1.10.10';
 const USERS=[{id:'kevin',n:'Kevin',c:'#E2232D'},{id:'stefan',n:'Stefan',c:'#F59E0B'},{id:'martina',n:'Martina',c:'#EC4899'},{id:'sascha',n:'Sascha',c:'#22D3EE'},{id:'rene',n:'René',c:'#34D399'}];
 const U=id=>USERS.find(u=>u.id===id)||{n:'',c:'#64748B',id:''};
 const $=id=>document.getElementById(id);
@@ -2558,14 +2558,14 @@ let KD={},KDIMP=false,kdDirty=true,kdList=[],kdYears=2,kdEdit=null;
 const kdAll=()=>{if(kdDirty){kdList=[];for(const y in KD)for(const id in KD[y]){const r=KD[y][id];if(r&&r.id){r._d=vkDate(r.dat)||0;r._t=[r.kunde,r.marke,r.modell,r.rahmen,r.tel,r.nr,kdNr(r),r.leas,r.vers,r.dat,r.preis].join(' ').toLowerCase();r._o=(r.o!=null&&r.o!==''&&!isNaN(+r.o))?+r.o:r._d;kdList.push(r);}}kdList.sort((a,b)=>b._o-a._o||String(b.nr).localeCompare(String(a.nr),'de',{numeric:true}));kdDirty=false;}return kdList;};
 /* Spalten wie in Excel: Reihenfolge per Ziehen am Kopf, Breite am rechten Rand des Kopfs (Doppelklick = Standard).
    Je Profil in meta/prefs[ID].kdlay = {o:[Spalten], w:{Spalte:px}} (+ localStorage). Zeilen: Griff ⋮⋮ links, nur innerhalb eines Jahres (Feld o). */
-const KDC=[{k:'dat',n:'Datum',w:98,c:'kd'},{k:'nr',n:'Beleg',w:66,c:'kn'},{k:'marke',n:'Marke',w:130,c:'km'},{k:'modell',n:'Modell',min:200,fr:1.6,c:'kmo'},{k:'preis',n:'Preis',w:96,c:'kp'},{k:'leas',n:'Leasing',w:92,c:'kl2'},{k:'kunde',n:'Kunde',w:200,c:'kk'},{k:'vers',n:'Vers.',w:80,c:'kv'},{k:'rahmen',n:'Rahmen-Nr.',w:130,c:'krn'},{k:'tel',n:'Telefon',w:130,c:'kt'},{k:'ang',n:'Angeschrieben',w:118,c:'kang'}];/* 1.10.5: Spalte K raus (Daten bleiben), neue Spalte Angeschrieben */
+const KDC=[{k:'dat',n:'Datum',w:98,c:'kd'},{k:'nr',n:'Beleg',w:66,c:'kn'},{k:'marke',n:'Marke',w:130,c:'km'},{k:'modell',n:'Modell',fit:1,c:'kmo'}/* 1.10.10: so breit wie der längste Eintrag */,{k:'preis',n:'Preis',w:96,c:'kp'},{k:'leas',n:'Leasing',w:92,c:'kl2'},{k:'kunde',n:'Kunde',w:200,c:'kk'},{k:'vers',n:'Vers.',w:80,c:'kv'},{k:'rahmen',n:'Rahmen-Nr.',w:130,c:'krn'},{k:'tel',n:'Telefon',w:130,c:'kt'},{k:'ang',n:'Angeschrieben',w:118,c:'kang'}];/* 1.10.5: Spalte K raus (Daten bleiben), neue Spalte Angeschrieben */
 const KDRB=['#FF3B5C','#FF6B2C','#FF9F1C','#FFD93B','#A3E635','#3DDC84','#22D3EE','#38BDF8','#4F7BFF','#8B5CF6','#D946EF'];
 const kdDef=()=>({o:KDC.map(c=>c.k),w:{}});
 let kdLay=kdDef(),kdDrag=null;
 function kdLayLoad(x){if(!ME)return;const l=ls.get('vc_kdlay_'+ME.id,null);if(l&&Array.isArray(l.o))kdLay=l;if(x&&Array.isArray(x.o)){kdLay={o:x.o,w:x.w||{}};ls.set('vc_kdlay_'+ME.id,kdLay);}rk();}
 function kdLaySave(){if(!ME)return;ls.set('vc_kdlay_'+ME.id,kdLay);const p=db.doc('meta/prefs');p.update({[ME.id+'.kdlay']:kdLay}).catch(()=>p.set({[ME.id]:{kdlay:kdLay}},{merge:true})).catch(()=>{});}
 const kdCols=()=>{const o=(kdLay.o||[]).filter((k,i,a)=>KDC.some(c=>c.k===k)&&a.indexOf(k)===i);KDC.forEach(c=>{if(!o.includes(c.k))o.push(c.k);});return o.map(k=>KDC.find(c=>c.k===k));};
-function kdTpl(){const g=$('kdGrid');if(!g)return;let mw=66;const t=['26px'];kdCols().forEach(c=>{const w=kdLay.w&&kdLay.w[c.k];if(w){t.push(w+'px');mw+=w;}else if(c.fr){t.push(`minmax(${c.min}px,${c.fr}fr)`);mw+=c.min;}else{t.push(c.w+'px');mw+=c.w;}});t.push('40px');g.style.gridTemplateColumns=t.join(' ');g.style.minWidth=mw+'px';
+function kdTpl(){const g=$('kdGrid');if(!g)return;let mw=66;const t=['26px'];kdCols().forEach(c=>{const w=kdLay.w&&kdLay.w[c.k];if(w){t.push(w+'px');mw+=w;}else if(c.fit){t.push('max-content');mw+=120;}else if(c.fr){t.push(`minmax(${c.min}px,${c.fr}fr)`);mw+=c.min;}else{t.push(c.w+'px');mw+=c.w;}});t.push('40px');g.style.gridTemplateColumns=t.join(' ');g.style.minWidth=mw+'px';
  if($('kdRst'))$('kdRst').hidden=JSON.stringify({o:kdCols().map(c=>c.k),w:kdLay.w||{}})===JSON.stringify(kdDef());}
 // Beleg-Nr. mit Jahr: 20.12.2024 + 1422 -> R24-1422 (nur Anzeige; gespeichert bleibt die Nummer)
 function kdNr(r){const n=String(r.nr==null?'':r.nr).trim(),d=r._d||vkDate(r.dat);return /^\d+$/.test(n)&&d?'R'+String(new Date(d).getFullYear()).slice(2)+'-'+n:n;}
