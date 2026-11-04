@@ -799,3 +799,7 @@ body.navmini .navbtn .n.z{opacity:0}
 /* 1.10.19: Bestellung – Kundenbestellung sofort sichtbar */
 .order .bkd{display:inline-flex;align-items:center;gap:6px;margin:5px 0 3px;padding:3px 10px 3px 8px;border-radius:6px;font:700 12.5px var(--mono);color:#FDE68A;background:linear-gradient(90deg,rgba(250,204,21,.22),rgba(250,204,21,.05));border-left:3px solid #FACC15;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .order .bkd span{font:800 10px 'Outfit',sans-serif;letter-spacing:1px;text-transform:uppercase;color:#0b0e15;background:#FACC15;padding:1px 6px;border-radius:4px}
+/* 1.10.25: klar erkennbare 0 (Tiry) – Zahlen-Schrift Outfit statt Mono, gleich breite Ziffern */
+body{font-variant-numeric:tabular-nums}
+/* 1.10.25: kein bunter Logo-Knopf (⬆/⟳) mehr in der Marken-Zelle (Tiry) – Logos über ⚙ Einstellungen oder Bild in die Zelle ziehen */
+.kdgrid .kmup{display:none!important}

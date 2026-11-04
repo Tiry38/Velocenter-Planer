@@ -1,14 +1,14 @@
 <!doctype html>
 <html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><meta name="theme-color" content="#07090D"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icon-192.png"><link rel="apple-touch-icon" href="icon-192.png">
 <title>Velocenter Werkstatt-Cockpit</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Outfit:wght@400;500;600;700;800&family=Sora:wght@300;400;500;600&family=JetBrains+Mono:wght@400;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Outfit:wght@400;500;600;700;800&family=Sora:wght@300;400;500;600&display=swap">
 <style>
 /* Layout: Cockpit – Navigation links mit Logo, Planer als moderne Tagesliste (eine Zeile pro Tag, feste Spalten wie gewohnt) */
 :root{
   --bg:#07090D; --panel:#0E121A; --panel2:#131926; --line:#1E2633; --fg:#FFFFFF; --muted:#A7B0C0;
   --red:#E2232D; --red-soft:#3A0E14; --cyan:#22D3EE; --cyan-soft:#0B2A33;
   --ok:#34D399; --ok-soft:#0D2E22; --warn:#FBBF24; --warn-soft:#33280A; --pink:#F472B6; --blue:#60A5FA; --violet:#C084FC; --orange:#FB923C;
-  --display:"Chakra Petch",ui-sans-serif,system-ui,sans-serif; --body:"Sora",ui-sans-serif,system-ui,sans-serif; --mono:"JetBrains Mono",ui-monospace,monospace;
+  --display:"Chakra Petch",ui-sans-serif,system-ui,sans-serif; --body:"Sora",ui-sans-serif,system-ui,sans-serif; --mono:"Outfit",ui-sans-serif,system-ui,sans-serif;
   color-scheme:dark;
 }
 *{box-sizing:border-box}
@@ -1123,6 +1123,10 @@ body.navmini .navbtn .n.z{opacity:0}
 /* 1.10.19: Bestellung – Kundenbestellung sofort sichtbar */
 .order .bkd{display:inline-flex;align-items:center;gap:6px;margin:5px 0 3px;padding:3px 10px 3px 8px;border-radius:6px;font:700 12.5px var(--mono);color:#FDE68A;background:linear-gradient(90deg,rgba(250,204,21,.22),rgba(250,204,21,.05));border-left:3px solid #FACC15;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .order .bkd span{font:800 10px 'Outfit',sans-serif;letter-spacing:1px;text-transform:uppercase;color:#0b0e15;background:#FACC15;padding:1px 6px;border-radius:4px}
+/* 1.10.25: klar erkennbare 0 (Tiry) – Zahlen-Schrift Outfit statt Mono, gleich breite Ziffern */
+body{font-variant-numeric:tabular-nums}
+/* 1.10.25: kein bunter Logo-Knopf (⬆/⟳) mehr in der Marken-Zelle (Tiry) – Logos über ⚙ Einstellungen oder Bild in die Zelle ziehen */
+.kdgrid .kmup{display:none!important}
 
 [hidden]{display:none!important}
 #sTab td.b{font-weight:700}#sTab .pwm.ed{outline:none;padding:2px 6px;border-radius:6px;font-family:var(--mono)}#sTab td{vertical-align:top}
@@ -1300,7 +1304,7 @@ body.navmini .navbtn .n.z{opacity:0}
 <script>
 const FB_CONFIG={apiKey:"AIzaSyC_uZPvc5rJETwlS4JbfCoTkkE4ckjtp0M",authDomain:"velocenter-planer.firebaseapp.com",projectId:"velocenter-planer",storageBucket:"velocenter-planer.firebasestorage.app",messagingSenderId:"1018330488700",appId:"1:1018330488700:web:262a4d1660353e6fde8ef9"};
 /* ================= Velocenter Werkstatt-Cockpit – Oberfläche ================= */
-const CLIENT_VERSION='1.10.24';
+const CLIENT_VERSION='1.10.25';
 const USERS=[{id:'kevin',n:'Kevin',c:'#E2232D'},{id:'stefan',n:'Stefan',c:'#F59E0B'},{id:'martina',n:'Martina',c:'#EC4899'},{id:'sascha',n:'Sascha',c:'#22D3EE'},{id:'rene',n:'René',c:'#34D399'}];
 const U=id=>USERS.find(u=>u.id===id)||{n:'',c:'#64748B',id:''};
 const $=id=>document.getElementById(id);
