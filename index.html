@@ -1092,6 +1092,15 @@ body.navmini #bmBar{left:100px}#bmBar span{overflow:hidden;text-overflow:ellipsi
 .mcg summary{cursor:pointer;font-weight:700;color:#7DD3FC}.mcg ol{margin:8px 0 0 18px;padding:0;display:grid;gap:6px;font-size:13px;line-height:1.45}
 .mcg code{font:600 12px var(--mono);padding:1px 5px;border-radius:5px;background:#0A0D13;color:#FDE68A}
 .ktf .g4{display:grid;grid-template-columns:1fr 1fr;gap:10px}@media(max-width:640px){.ktf .g4{grid-template-columns:1fr}}
+/* 1.10.13: Mail-Fenster Sie/Du-Umschalter + Vorschau */
+.ktk{flex-wrap:wrap;align-items:center}.ktsw{display:inline-flex;gap:0;border-radius:10px;overflow:hidden;border:1px solid rgba(255,255,255,.14)}.ktsw .kyc{border:0;border-radius:0;margin:0}.ktsep{width:1px;align-self:stretch;background:rgba(255,255,255,.14);margin:0 4px}
+.ktpv{border-radius:14px;overflow:hidden;border:1px solid rgba(255,255,255,.12);background:#0E0F14}.ktpv iframe{display:block;width:100%;height:520px;border:0;background:#0E0F14}
+.ktf h4{margin:10px 0 2px;font-size:14px;color:#C084FC}
+/* 1.10.13: Telefon → WhatsApp Web */
+.kd .ktel,.ktel{display:flex;align-items:center;gap:5px;cursor:pointer}.ktel .ktn{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;outline:none}
+.ktel.wa .ktn{color:#6EE7A0}.ktel .kwa{display:inline-flex;color:#25D366;filter:drop-shadow(0 0 4px rgba(37,211,102,.55));flex:none}
+.ktel.wa:hover .ktn{text-decoration:underline;text-underline-offset:3px}.ktel .kted{flex:none;border:0;background:none;color:#9AA1B8;cursor:pointer;opacity:0;padding:0 2px;font-size:12px}.ktel:hover .kted{opacity:1}
+.ktel.ked{cursor:text}.ktel.ked .ktn{white-space:normal;color:inherit;text-decoration:none}.ktel.ked .kwa,.ktel.ked .kted{display:none}
 
 [hidden]{display:none!important}
 #sTab td.b{font-weight:700}#sTab .pwm.ed{outline:none;padding:2px 6px;border-radius:6px;font-family:var(--mono)}#sTab td{vertical-align:top}
@@ -1269,7 +1278,7 @@ body.navmini #bmBar{left:100px}#bmBar span{overflow:hidden;text-overflow:ellipsi
 <script>
 const FB_CONFIG={apiKey:"AIzaSyC_uZPvc5rJETwlS4JbfCoTkkE4ckjtp0M",authDomain:"velocenter-planer.firebaseapp.com",projectId:"velocenter-planer",storageBucket:"velocenter-planer.firebasestorage.app",messagingSenderId:"1018330488700",appId:"1:1018330488700:web:262a4d1660353e6fde8ef9"};
 /* ================= Velocenter Werkstatt-Cockpit – Oberfläche ================= */
-const CLIENT_VERSION='1.10.12';
+const CLIENT_VERSION='1.10.13';
 const USERS=[{id:'kevin',n:'Kevin',c:'#E2232D'},{id:'stefan',n:'Stefan',c:'#F59E0B'},{id:'martina',n:'Martina',c:'#EC4899'},{id:'sascha',n:'Sascha',c:'#22D3EE'},{id:'rene',n:'René',c:'#34D399'}];
 const U=id=>USERS.find(u=>u.id===id)||{n:'',c:'#64748B',id:''};
 const $=id=>document.getElementById(id);
@@ -2633,10 +2642,24 @@ function rk(){const g=$('kdGrid');if(!g)return;kdAngMig();const all=kdAll();{con
   const id=esc(r.id),ky=esc(r.y);
   h+=`<div class="row kr"><div class="c kc kgrip" draggable="true" data-kid="${id}" data-ky="${ky}" title="Ziehen = Zeile verschieben">⋮⋮</div>${cols.map(c=>kdCell(c,r,id,ky)).join('')}<div class="c kc kdel" data-kid="${id}" data-ky="${ky}"><button class="nx" type="button" data-kdel="${id}" data-ky="${ky}" title="Eintrag löschen">×</button></div></div>`;}
  g.innerHTML=h+((q||fk.length)&&!list.length?'<div class="kdempty">Nichts gefunden.</div>':'');}
+/* 1.10.13: Telefon → WhatsApp Web. Handynummern (015x/016x/017x) in jeder Schreibweise (0176-72654293, +49 176 …, 0049…) → 49176…; Festnetz = kein WhatsApp. */
+const WAICO='<svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><path fill="currentColor" d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8s-.4-.1-.6.1-.7.8-.8 1-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.3-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.8 11.8 0 0 0 4.5 4c1.7.7 2.3.8 3.2.6a2.7 2.7 0 0 0 1.8-1.2 2.2 2.2 0 0 0 .1-1.3c0-.1-.2-.2-.5-.3Z"/></svg>';
+function kdWaNums(s){const o=[],seen={};for(const m of String(s||'').match(/(?:\+|00)?\d[\d\s\/()\-.]{6,}\d/g)||[]){let d=m.replace(/\D/g,'');if(m.trim().startsWith('+'))d='00'+d;
+  if(d.startsWith('0049'))d='0'+d.slice(4);if(d.startsWith('00'))continue;if(!/^01[5-7]\d{7,9}$/.test(d))continue;const n='49'+d.slice(1);if(!seen[n]){seen[n]=1;o.push({n,d:m.trim()});}}return o;}
+function kdWaOpen(n){window.open('https://web.whatsapp.com/send?phone='+n,'vcwa');}
+function kdTelEdit(cell){const t=cell.querySelector('.ktn');if(!t)return;t.setAttribute('contenteditable','true');cell.classList.add('ked');t.focus();const s=getSelection(),rg=document.createRange();rg.selectNodeContents(t);rg.collapse(false);s.removeAllRanges();s.addRange(rg);
+ t.addEventListener('blur',()=>setTimeout(()=>{t.removeAttribute('contenteditable');cell.classList.remove('ked');},0),{once:true});}
+function kdTelClick(cell,e){if(cell.querySelector('.ktn[contenteditable]'))return;const wa=kdWaNums(cell.querySelector('.ktn').textContent);
+ if(e.target.closest('[data-kted]')||!wa.length){kdTelEdit(cell);return;}
+ if(wa.length===1){kdWaOpen(wa[0].n);return;}
+ const el=kdPopOpen(cell,`<div class="kmp"><div class="kph">💬 WhatsApp – welche Nummer?</div>${wa.map(x=>`<button type="button" class="kpv" data-kwan="${x.n}"><b>${WAICO}</b><span><em>${esc(x.d)}</em>WhatsApp Web öffnen</span></button>`).join('')}</div>`,{t:'wa'});
+ el.addEventListener('click',ev=>{const b=ev.target.closest('[data-kwan]');if(b){kdPopClose();kdWaOpen(b.dataset.kwan);}});}
 function kdCell(c,r,id,ky){if(c.k==='mail'){const m=kdMails(r);return `<div class="c kc kmail" role="button" tabindex="0" data-kmail="1" data-kid="${id}" data-ky="${ky}" data-kc="mail"${m.length?'':' title="Klick = E-Mail eintragen"'}>${m.length?`<span class="ang ml">${ANGI.mail}${m.length>1?`<i>${m.length}</i>`:''}</span>`:''}</div>`;}
  if(c.k==='ang'){const v=r.ang||'',ic={mail:'<span class="ang ok">'+ANGI.mail+'</span>',tel:'<span class="ang ok">'+ANGI.tel+'</span>',no:'<span class="ang no">✕</span>'}[v]||'';
   const t=v?(r.angSrc==='sheet'&&v==='mail'?'angeschrieben (aus der alten Liste)':r.angSrc==='sheet'&&v==='no'?'nicht angeschrieben (aus der alten Liste)':ANGL[v])+(r.angVon?' · '+U(r.angVon).n:'')+(r.angTs?' · '+fmtTs(r.angTs):''):'Klick = nachgefragt? (E-Mail / Telefon / nicht nachfragen)';
   return `<div class="c kc kang" role="button" tabindex="0" data-kang="1" data-kid="${id}" data-ky="${ky}" data-kc="ang" title="${esc(t)}">${ic}</div>`;}
+if(c.k==='tel'){const v=String(r.tel||''),wa=kdWaNums(v);
+  return `<div class="c kc kt ktel${wa.length?' wa':''}" data-ktel="1" data-kid="${id}" data-ky="${ky}" data-kc="tel" title="${wa.length?'Klick = WhatsApp Web mit '+esc(wa.map(x=>x.d).join(' / '))+' · Doppelklick oder ✎ = bearbeiten':'Klick = bearbeiten'}">${wa.length?`<span class="kwa">${WAICO}</span>`:''}<span class="ktn" spellcheck="false" data-kid="${id}" data-ky="${ky}" data-kf="tel">${esc(v)}</span>${wa.length?'<button type="button" class="kted" data-kted title="Nummer bearbeiten">✎</button>':''}</div>`;}
 if(c.k==='marke'){const b=brandOfB({marke:r.marke,modell:r.modell}),lg=b&&(BUSER.logos||{})[b.k];
   return `<div class="c kc km${lg?' haslg':''}" data-kid="${id}" data-ky="${ky}" data-kc="marke" title="${esc(r.marke||'')}">${lg?`<img src="${lg}" alt="" class="kml" draggable="false">`:''}<span class="kmt" contenteditable="true" spellcheck="false" data-kid="${id}" data-ky="${ky}" data-kf="marke">${esc(r.marke||'')}</span>${String(r.marke||'').trim()?`<label class="kmup" title="${lg?'Logo ersetzen':'Markenlogo hochladen'} (oder Bild hierher ziehen)">${lg?'⟳':'⬆'}<input type="file" accept="image/*" hidden data-kmup="${esc(r.marke)}"></label>`:''}</div>`;}
  if(c.k==='dat'||c.k==='leas'||c.k==='vers'){const v=String(r[c.k]||''),t=c.k==='dat'?'Klick = Datum wählen':(kdLab(c.k,v)+' · Klick = auswählen');
@@ -2670,6 +2693,7 @@ $('v-kunden').addEventListener('click',e=>{if(e.target.closest('[data-kcancel]')
 $('v-kunden').addEventListener('submit',async e=>{if(!e.target.dataset.kf2)return;e.preventDefault();const d=new FormData(e.target),y=String(new Date().getFullYear());const r={id:nid('k'),y};
  ['nr','marke','modell','preis','leas','kunde','vers','rahmen','tel','mail'].forEach(k=>r[k]=String(d.get(k)||'').trim());const v=String(d.get('dat')||'');r.dat=/^\d{4}-\d{2}-\d{2}$/.test(v)?deDate(fromIso(v)):'';
  kdEdit=null;await kdPut(y,r);rk();toast('Gespeichert');});
+$('kdGrid').addEventListener('dblclick',e=>{const tc=e.target.closest('[data-ktel]');if(tc){e.preventDefault();kdTelEdit(tc);}});
 $('kdGrid').addEventListener('keydown',e=>{const c=e.target.closest('[contenteditable]');if(c&&e.key==='Enter'){e.preventDefault();c.blur();}if(c&&e.key==='Escape'){c.blur();kdDirty=true;rk();}});
 $('kdGrid').addEventListener('focusout',e=>{const c=e.target.closest('[contenteditable][data-kf]');if(!c)return;const y=c.dataset.ky,id=c.dataset.kid,f=c.dataset.kf,r=KD[y]&&KD[y][id];if(!r)return;let v=c.innerText.trim();
  {const km=c.closest('.km');if(km)km.classList.remove('ked');}
@@ -2700,7 +2724,7 @@ let kdPop=null;
 function kdPopClose(){if(kdPop){kdPop.el.remove();kdPop=null;}}
 function kdPopOpen(anchor,html,o){kdPopClose();const el=document.createElement('div');el.className='kdpop';el.innerHTML=html;document.body.appendChild(el);kdPop=Object.assign({el,t0:Date.now()},o);kdPopPos(anchor);const i=el.querySelector('input:not([type=checkbox])');if(i)i.focus();return el;}
 function kdPopPos(anchor){const el=kdPop.el,rc=anchor.getBoundingClientRect(),W=el.offsetWidth,H=el.offsetHeight;el.style.left=Math.max(8,Math.min(innerWidth-W-8,rc.left))+'px';el.style.top=(rc.bottom+4+H>innerHeight-8?Math.max(8,rc.top-4-H):rc.bottom+4)+'px';}
-document.addEventListener('pointerdown',e=>{if(kdPop&&!kdPop.el.contains(e.target)&&!e.target.closest('[data-kpick],[data-kang],[data-kmail],.kdh[data-kc],.stb .st,.lvon,#meChip,.av[data-avk],td.vnote[data-von],.bm thead th,.bm #grid .hd,.bmrow'))kdPopClose();},true);
+document.addEventListener('pointerdown',e=>{if(kdPop&&!kdPop.el.contains(e.target)&&!e.target.closest('[data-kpick],[data-kang],[data-kmail],[data-ktel],.kdh[data-kc],.stb .st,.lvon,#meChip,.av[data-avk],td.vnote[data-von],.bm thead th,.bm #grid .hd,.bmrow'))kdPopClose();},true);
 document.addEventListener('keydown',e=>{if(kdPop&&e.key==='Escape')kdPopClose();});
 document.addEventListener('scroll',e=>{if(kdPop&&!kdPop.el.contains(e.target)&&Date.now()-kdPop.t0>250)kdPopClose();},true);
 function kdFltOpen(hd){const k=hd.dataset.kc,c=KDC.find(x=>x.k===k);if(kdPop&&kdPop.t==='flt'&&kdPop.k===k){kdPopClose();return;}
@@ -2741,7 +2765,7 @@ function kdPickOpen(cell){const f=cell.dataset.kpick,y=cell.dataset.ky,id=cell.d
  draw();el.querySelector('.kpq').addEventListener('input',draw);
  el.querySelector('.kpq').addEventListener('keydown',e=>{if(e.key!=='Enter')return;e.preventDefault();const q=e.target.value.trim(),vv=vis();save(vv.length===1?vv[0]:(opts.find(v=>v.toLowerCase()===q.toLowerCase())||q));});
  el.addEventListener('click',e=>{const b=e.target.closest('[data-kpv]');if(b)save(b.dataset.kpv);});}
-$('kdGrid').addEventListener('click',e=>{const ag=e.target.closest('[data-kang]');if(ag){kdAngOpen(ag);return;}const mc=e.target.closest('[data-kmail]');if(mc){kmTipHide();kdMailOpen(mc);return;}const pk=e.target.closest('[data-kpick]');if(pk){kdPickOpen(pk);return;}
+$('kdGrid').addEventListener('click',e=>{const ag=e.target.closest('[data-kang]');if(ag){kdAngOpen(ag);return;}const tc=e.target.closest('[data-ktel]');if(tc){kdTelClick(tc,e);return;}const mc=e.target.closest('[data-kmail]');if(mc){kmTipHide();kdMailOpen(mc);return;}const pk=e.target.closest('[data-kpick]');if(pk){kdPickOpen(pk);return;}
  const hd=e.target.closest('.kdh[data-kc]');if(hd&&!e.target.closest('.kres')){kdFltOpen(hd);return;}
  if(e.target.closest('.kmup'))return;
  const km=e.target.closest('.km.haslg');if(km&&!e.target.closest('.kmt')){const t=km.querySelector('.kmt');km.classList.add('ked');t.focus();const s=getSelection(),rg=document.createRange();rg.selectNodeContents(t);rg.collapse(false);s.removeAllRanges();s.addRange(rg);}});
@@ -2806,9 +2830,9 @@ let MCFG=null;
 async function mcfgGet(f){if(MCFG&&!f)return MCFG;try{const d=await db.doc('meta/mailcfg').get();MCFG=d.exists?(d.data()||{}):{};}catch(e){MCFG=MCFG||{};}return MCFG;}
 const mcfgOk=c=>!!(c&&c.svc&&c.tpl&&c.key);
 const mHtml=t=>esc(t).replace(/(https?:\/\/[^\s<]+)/g,'<a href="$1">$1</a>').replace(/\r?\n/g,'<br>');
-async function mailSend(to,subject,text){const c=await mcfgGet();if(!mcfgOk(c))throw new Error('E-Mail-Versand ist nicht eingerichtet (⚙ Einstellungen → 📧 E-Mail-Versand).');
+async function mailSend(to,subject,text,html){const c=await mcfgGet();if(!mcfgOk(c))throw new Error('E-Mail-Versand ist nicht eingerichtet (⚙ Einstellungen → 📧 E-Mail-Versand).');
  const r=await fetch('https://api.emailjs.com/api/v1.0/email/send',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({service_id:c.svc,template_id:c.tpl,user_id:c.key,
-  template_params:{to_email:to,subject,message:text,message_html:mHtml(text),reply_to:c.reply||'info@velo-center.de',bcc:c.bcc||''}})});
+  template_params:{to_email:to,subject,message:text,message_html:html||mHtml(text),reply_to:c.reply||'info@velo-center.de',bcc:c.bcc||''}})});
  if(!r.ok){let t='';try{t=await r.text();}catch(_){}throw new Error('Versand fehlgeschlagen ('+r.status+')'+(t?': '+t.slice(0,200):''));}return true;}
 async function mailCfgDlg(){if(!ME||!ME.adm)return;const c=await mcfgGet(true);
  dlg(`<h3>📧 E-Mail-Versand · info@velo-center.de</h3>
@@ -2831,8 +2855,8 @@ async function mailCfgDlg(){if(!ME||!ME.adm)return;const c=await mcfgGet(true);
  $('mcTest').addEventListener('click',async()=>{try{$('mcE').textContent='Sendet …';await put();await mailSend($('mcX').value.trim(),'Testmail aus dem Velocenter-Planer','Hallo,\n\ndas ist eine Testmail aus dem Planer ('+U(ME.id).n+', '+new Date().toLocaleString('de-DE')+').\nWenn sie ankommt, funktioniert der Direkt-Versand.\n\nMit freundlichen Grüßen\nIhr Team vom Velocenter Hessert');$('mcE').textContent='';toast('Testmail verschickt – Posteingang prüfen');$('mcE').innerHTML='<span style="color:#34D399">✓ Testmail verschickt</span>';}catch(err){$('mcE').textContent=err.message||String(err);}});}
 /* 1.10.11: Kunden – Spalte E-Mail (Feld mail, mehrere mit Komma), Maus drüber = Adressen, Klick = bearbeiten + Vorlage öffnen.
    Vorlagen (Einzelperson/Familie) in meta/mailtpl = {ein:{s,b}, fam:{s,b}, fuss} – Admins können sie dauerhaft ändern. Stammdaten wie KI-Zentrale (CLAUDE.md §11). */
-const MTPL0={
- ein:{s:'Wie gefällt Ihnen Ihr neues E-Bike?',b:`{anrede}
+const MTPL0={v:2,
+ sie:{ein:{s:'Wie gefällt Ihnen Ihr neues E-Bike?',b:`{anrede}
 
 vielen Dank, dass Sie Ihr neues E-Bike bei uns gekauft haben! Wir hoffen, Sie hatten schon viele schöne Kilometer damit.
 
@@ -2843,8 +2867,11 @@ Kommen Sie dafür bitte zwischen 500 km und 1.000 km zu uns, spätestens innerha
 Bei 500 km erscheint beim Einschalten Ihres E-Bikes automatisch der Hinweis, dass der Service fällig ist. Dann einfach kurz anrufen oder schreiben – wir machen gerne einen Termin mit Ihnen aus.
 
 Sie sind zufrieden mit uns? Über eine Google-Bewertung freuen wir uns sehr:
-https://g.page/r/CYlWWOy1HBsvEBM/review`},
- fam:{s:'Wie gefallen Ihnen Ihre neuen E-Bikes?',b:`{anrede}
+https://g.page/r/CYlWWOy1HBsvEBM/review
+
+Mit freundlichen Grüßen
+Ihr Team vom Velocenter Hessert`},
+  fam:{s:'Wie gefallen Ihnen Ihre neuen E-Bikes?',b:`{anrede}
 
 vielen Dank, dass Sie sich als Familie für neue E-Bikes aus unserem Haus entschieden haben! Wir hoffen, Sie hatten schon viele schöne gemeinsame Touren.
 
@@ -2855,7 +2882,40 @@ Kommen Sie dafür bitte zwischen 500 km und 1.000 km zu uns, spätestens innerha
 Bei 500 km erscheint beim Einschalten des E-Bikes automatisch der Hinweis, dass der Service fällig ist. Dann einfach kurz anrufen oder schreiben – wir machen gerne einen Termin mit Ihnen aus, gerne auch für mehrere Räder gleichzeitig.
 
 Sie sind zufrieden mit uns? Über eine Google-Bewertung freuen wir uns sehr:
-https://g.page/r/CYlWWOy1HBsvEBM/review`},
+https://g.page/r/CYlWWOy1HBsvEBM/review
+
+Mit freundlichen Grüßen
+Ihr Team vom Velocenter Hessert`}},
+ du:{ein:{s:'Wie gefällt dir dein neues E-Bike?',b:`{anrede}
+
+vielen Dank, dass du dein neues E-Bike bei uns gekauft hast! Wir hoffen, du hattest schon viele schöne Kilometer damit.
+
+Wie zufrieden bist du mit deinem neuen Rad? Passt alles, oder gibt es etwas, das wir noch für dich einstellen können? Antworte einfach auf diese E-Mail – wir freuen uns über deine Rückmeldung.
+
+Wichtig – 50 % Rabatt auf deine erste Inspektion:
+Komm dafür bitte zwischen 500 km und 1.000 km zu uns, spätestens innerhalb von 12 Monaten nach dem Kauf.
+Bei 500 km erscheint beim Einschalten deines E-Bikes automatisch der Hinweis, dass der Service fällig ist. Dann einfach kurz anrufen oder schreiben – wir machen gerne einen Termin mit dir aus.
+
+Du bist zufrieden mit uns? Über eine Google-Bewertung freuen wir uns sehr:
+https://g.page/r/CYlWWOy1HBsvEBM/review
+
+Viele Grüße
+Dein Team vom Velocenter Hessert`},
+  fam:{s:'Wie gefallen euch eure neuen E-Bikes?',b:`{anrede}
+
+vielen Dank, dass ihr euch als Familie für neue E-Bikes aus unserem Haus entschieden habt! Wir hoffen, ihr hattet schon viele schöne gemeinsame Touren.
+
+Wie zufrieden seid ihr mit euren neuen Rädern? Passt alles, oder gibt es etwas, das wir noch für euch einstellen können? Antwortet einfach auf diese E-Mail – wir freuen uns über eure Rückmeldung.
+
+Wichtig – 50 % Rabatt auf die erste Inspektion jedes E-Bikes:
+Kommt dafür bitte zwischen 500 km und 1.000 km zu uns, spätestens innerhalb von 12 Monaten nach dem Kauf. Das gilt für jedes Rad einzeln – auch wenn die Räder unterschiedlich viel gefahren werden.
+Bei 500 km erscheint beim Einschalten des E-Bikes automatisch der Hinweis, dass der Service fällig ist. Dann einfach kurz anrufen oder schreiben – wir machen gerne einen Termin mit euch aus, gerne auch für mehrere Räder gleichzeitig.
+
+Ihr seid zufrieden mit uns? Über eine Google-Bewertung freuen wir uns sehr:
+https://g.page/r/CYlWWOy1HBsvEBM/review
+
+Viele Grüße
+Euer Team vom Velocenter Hessert`}},
  fuss:`––––––––––––––––––––––
 Velocenter Hessert
 Hartmannstraße 25 · 76744 Wörth am Rhein
@@ -2870,16 +2930,56 @@ Sa: 09:00–12:00 Uhr
 Mi & So: geschlossen
 
 Instagram: https://www.instagram.com/velocenterhessert
-Facebook: https://www.facebook.com/velocenterhessert
-
-Mit freundlichen Grüßen
-Ihr Team vom Velocenter Hessert`};
+Facebook: https://www.facebook.com/velocenterhessert`};
 let MTPL=null;
+/* 1.10.13: Vorlagen v2 = Sie/Du × Einzelperson/Familie, Grüße direkt unter dem Bewertungslink (im Text), Fußzeile nur Kontakt. Alte gespeicherte Fassung (ohne v:2) wird ignoriert. */
 async function mtplGet(){if(MTPL)return MTPL;let d={};try{const x=await db.doc('meta/mailtpl').get();if(x.exists)d=x.data()||{};}catch(e){}
- MTPL={ein:Object.assign({},MTPL0.ein,d.ein||{}),fam:Object.assign({},MTPL0.fam,d.fam||{}),fuss:d.fuss!=null?d.fuss:MTPL0.fuss};return MTPL;}
+ if(d.v!==2)d={};const m=(a,b)=>Object.assign({},a,b||{});
+ MTPL={sie:{ein:m(MTPL0.sie.ein,d.sie&&d.sie.ein),fam:m(MTPL0.sie.fam,d.sie&&d.sie.fam)},du:{ein:m(MTPL0.du.ein,d.du&&d.du.ein),fam:m(MTPL0.du.fam,d.du&&d.du.fam)},fuss:d.fuss!=null?d.fuss:MTPL0.fuss};return MTPL;}
 // Name aus „Müller, Hans“ bzw. „Hans Müller“
 function kdNameSplit(k){k=String(k||'').replace(/\s+/g,' ').trim();if(!k)return{vn:'',nn:''};if(k.includes(',')){const [a,b]=k.split(',');return{nn:a.trim(),vn:(b||'').trim()};}const w=k.split(' ');return{nn:w.pop(),vn:w.join(' ')};}
-function kdAnrede(r,a){const {vn,nn}=kdNameSplit(r.kunde);if(a==='herr')return 'Hallo Herr '+nn+',';if(a==='frau')return 'Hallo Frau '+nn+',';if(a==='fam')return 'Hallo Familie '+nn+',';return 'Guten Tag'+((vn+' '+nn).trim()?' '+(vn+' '+nn).trim():'')+',';}
+function kdAnrede(r,a,du){const {vn,nn}=kdNameSplit(r.kunde);if(a==='fam')return 'Hallo Familie '+nn+',';
+ if(du){if(a==='neu')return 'Hallo,';return 'Hallo'+(vn?' '+vn.split(' ')[0]:'')+',';}
+ if(a==='herr')return 'Hallo Herr '+nn+',';if(a==='frau')return 'Hallo Frau '+nn+',';return 'Guten Tag'+((vn+' '+nn).trim()?' '+(vn+' '+nn).trim():'')+',';}
+/* 1.10.13: E-Mail im Design der KI-Zentrale (vcMail): dunkel, Logo, Farbverlauf, Karten, Rabatt-Box, Bewertungs-Knopf, Kontaktkarte.
+   Logo liegt öffentlich auf GitHub Pages (mail-logo.png, PNG – Outlook kann kein WebP). Text aus dem Textfeld, Fußzeile wird als Kontaktkarte gestaltet. */
+const MAIL_LOGO='https://tiry38.github.io/Velocenter-Planer/mail-logo.png';
+function kdMailHtml(text,o){o=o||{};const du=!!o.du,fam=!!o.fam;
+ const F="font-family:Poppins,'Segoe UI',Arial,sans-serif",G='background:#8B5CF6;background-image:linear-gradient(90deg,#E3343B,#8B5CF6 55%,#3B82F6)';
+ const lk=t=>esc(t).replace(/(https?:\/\/[^\s<]+)/g,u=>`<a href="${u}" style="color:#8FB0FF;text-decoration:none">${u.replace(/^https?:\/\/(www\.)?/,'')}</a>`).replace(/([A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,})(?![^<]*<\/a>)/g,'<a href="mailto:$1" style="color:#8FB0FF;text-decoration:none">$1</a>');
+ const card=(inner,pad)=>`<tr><td style="padding:0 22px 14px"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:separate"><tr><td style="padding:${pad||'22px 24px'};border-radius:18px;background:#1E2129;background-image:linear-gradient(160deg,rgba(255,255,255,.07),rgba(255,255,255,.015));border:1px solid #2E323D;${F};color:#EEF0F7">${inner}</td></tr></table></td></tr>`;
+ const kick=t=>`<div style="font-size:11px;letter-spacing:2.5px;text-transform:uppercase;font-weight:700;color:#9AA1B8;margin:0 0 6px">${esc(t)}</div>`;
+ const line=`<div style="height:2px;width:56px;margin:0 0 16px;border-radius:2px;${G}"></div>`;
+ const p=t=>`<p style="margin:0 0 12px;font-size:15px;line-height:1.65;color:#D5D8E2">${lk(t).replace(/\n/g,'<br>')}</p>`;
+ const body=String(text||'').split(/\n[–—-]{6,}\s*\n/)[0].replace(/\r/g,'').trim();
+ const par=body.split(/\n\s*\n/).map(x=>x.trim()).filter(Boolean);
+ let anr='';if(par[0]&&!par[0].includes('\n')&&/,$/.test(par[0]))anr=par.shift();
+ const out=[];let cur=anr?`<div style="font-size:16px;font-weight:600;margin:0 0 12px">${esc(anr)}</div>`:'';
+ const flush=()=>{if(cur)out.push(card(cur));cur='';};
+ for(const x of par){const L=x.split('\n');
+  if(/^wichtig/i.test(L[0])&&/%/.test(L[0])){flush();const h=L[0].replace(/^wichtig\s*[–—:-]?\s*/i,'').replace(/:$/,''),mm=h.match(/^(.*?\d+\s*%\s*Rabatt)\s*(.*)$/i);
+   out.push(card(`${kick(du?(fam?'Euer Vorteil':'Dein Vorteil'):'Ihr Vorteil als Kunde')}<div style="font-size:26px;font-weight:800;color:#FF1E2D;margin:2px 0 4px">${esc(mm?mm[1]:h)}</div>${mm&&mm[2]?`<div style="font-size:15px;font-weight:600;margin:0 0 10px">${esc(mm[2])}</div>`:''}${L.slice(1).map(t=>`<div style="font-size:13.5px;line-height:1.6;color:#D5D8E2;margin:0 0 8px">${lk(t)}</div>`).join('')}`));continue;}
+  const rv=x.match(/https?:\/\/(g\.page|search\.google|www\.google|maps\.app)[^\s]*/);
+  if(rv){const t=x.replace(rv[0],'').trim();cur+=(t?p(t):'')+`<div style="margin:4px 0 18px"><a href="${esc(rv[0])}" style="display:inline-block;padding:14px 28px;border-radius:999px;${G};color:#FFFFFF;font-size:16px;font-weight:800;text-decoration:none;${F}">★ Jetzt bei Google bewerten</a></div>`;continue;}
+  if(/^(mit freundlichen|viele|liebe|beste|herzliche) grüße/i.test(L[0])){cur+=`<div style="font-size:15px;line-height:1.6;color:#D5D8E2">${esc(L[0])}${L.slice(1).map(t=>`<br><b style="color:#FFFFFF">${esc(t)}</b>`).join('')}</div>`;continue;}
+  cur+=p(x);}
+ flush();
+ const t1=fam?'Viel Freude mit':'Viel Freude mit',t2=du?(fam?'euren neuen E-Bikes!':'deinem neuen E-Bike!'):(fam?'Ihren neuen E-Bikes!':'Ihrem neuen E-Bike!');
+ const reach=du?(fam?'So erreicht ihr uns':'So erreichst du uns'):'So erreichen Sie uns';
+ const soc=`<div style="margin-top:14px;padding-top:12px;border-top:1px solid #2E323D;font-size:13.5px;${F}"><a href="https://www.velo-center.de" style="color:#8FB0FF;text-decoration:none;font-weight:700">🌐 velo-center.de</a> &nbsp;·&nbsp; <a href="https://www.instagram.com/velocenterhessert" style="color:#8FB0FF;text-decoration:none;font-weight:700">📷 Instagram</a> &nbsp;·&nbsp; <a href="https://www.facebook.com/velocenterhessert" style="color:#8FB0FF;text-decoration:none;font-weight:700">👍 Facebook</a></div>`;
+ return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#0E0F14;background-image:radial-gradient(circle at 10% 0%,rgba(227,52,59,.35),rgba(227,52,59,0) 40%),radial-gradient(circle at 95% 100%,rgba(59,130,246,.30),rgba(59,130,246,0) 45%)"><tr><td align="center" style="padding:28px 10px">
+<table role="presentation" width="640" cellpadding="0" cellspacing="0" style="width:100%;max-width:640px;border-radius:24px;overflow:hidden;background:#14161B;border:1px solid #262A34">
+<tr><td style="padding:26px 26px 20px;background:#14161B;background-image:radial-gradient(circle at 90% 20%,rgba(139,92,246,.35),rgba(139,92,246,0) 45%),radial-gradient(circle at 15% 90%,rgba(227,52,59,.30),rgba(227,52,59,0) 45%);${F};color:#EEF0F7">
+ <img src="${MAIL_LOGO}" alt="Velocenter Hessert" width="170" style="display:block;width:170px;height:auto;border:0;margin:0 0 22px">
+ <div style="display:inline-block;padding:5px 12px;border-radius:99px;background:#22252F;border:1px solid #2E323D;font-size:11px;letter-spacing:1.5px;font-weight:700;color:#EEF0F7;margin:0 0 12px"><span style="color:#FF3D5A">●</span>&nbsp; ${du?(fam?'EURE NEUEN E-BIKES':'DEIN NEUES E-BIKE'):(fam?'IHRE NEUEN E-BIKES':'IHR NEUES E-BIKE')}</div>
+ <div style="font-size:30px;line-height:1.15;font-weight:800;letter-spacing:-.5px;color:#FFFFFF">${t1} <span style="color:#C084FC">${t2}</span></div>
+</td></tr>
+<tr><td style="height:2px;line-height:2px;font-size:0;${G}">&nbsp;</td></tr>
+<tr><td style="height:18px;line-height:18px;font-size:0">&nbsp;</td></tr>
+${out.join('\n')}
+${card(`${kick(reach)}${line}<table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td valign="top" style="width:50%;padding:0 12px 0 0;font-size:13.5px;line-height:1.75;color:#D5D8E2;${F}"><b style="color:#FFFFFF">Velocenter Hessert</b><br>Hartmannstraße 25<br>76744 Wörth am Rhein<br>Telefon: <a href="tel:+49727178033" style="color:#FFFFFF;text-decoration:none;font-weight:700">0727178033</a><br>WhatsApp: <a href="https://wa.me/491635343133" style="color:#FFFFFF;text-decoration:none;font-weight:700">01635343133</a><br><a href="mailto:info@velo-center.de" style="color:#8FB0FF;text-decoration:none">info@velo-center.de</a></td><td valign="top" style="width:50%;font-size:13.5px;line-height:1.75;color:#D5D8E2;${F}"><b style="color:#FFFFFF">Öffnungszeiten</b><br>Mo, Di, Do, Fr: 9–12 &amp; 14:30–18 Uhr<br>Sa: 9–12 Uhr<br>Mi und So: geschlossen</td></tr></table>${soc}`)}
+<tr><td align="center" style="padding:6px 26px 26px;${F};font-size:11.5px;line-height:1.6;color:#6E7590">Velocenter Stefan Hessert · Hartmannstraße 25 · 76744 Wörth am Rhein · <a href="https://www.velo-center.de" style="color:#9AA1B8">www.velo-center.de</a></td></tr>
+</table></td></tr></table>`;}
 // Maus über das E-Mail-Symbol = Adressen zeigen
 let kmTip=null;function kmTipHide(){if(kmTip){kmTip.remove();kmTip=null;}}
 $('kdGrid').addEventListener('mouseover',e=>{const c=e.target.closest('[data-kmail]');if(!c){kmTipHide();return;}if(kmTip&&kmTip._c===c)return;kmTipHide();if(kdPop)return;
@@ -2897,24 +2997,34 @@ function kdMailOpen(cell){const o=kdRowOf(cell);if(!o)return;const {y,id,r}=o;if
   const nv=list.join(', ');kdPopClose();if(nv===String(r.mail||''))return;const old=r;kdPut(y,Object.assign({},r,{mail:nv,mailSrc:'',mailVon:ME.id})).then(rk);toast(nv?'E-Mail gespeichert':'E-Mail entfernt',()=>{kdPut(y,old).then(rk);});};
  inp.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();save(inp.value);}});
  el.addEventListener('click',e=>{if(e.target.closest('[data-kmok]'))save(inp.value);else if(e.target.closest('[data-kmclr]'))save('');else{const b=e.target.closest('[data-ktpl]');if(b){kdPopClose();kdTplOpen(y,id,b.dataset.ktpl);}}});}
-async function kdTplOpen(y,id,kind){const r=KD[y]&&KD[y][id];if(!r)return;const T=await mtplGet(),m=kdMails(r),MC=await mcfgGet(),dir=mcfgOk(MC);let an=kind==='fam'?'fam':'neu';
+async function kdTplOpen(y,id,kind){const r=KD[y]&&KD[y][id];if(!r)return;const T=await mtplGet(),m=kdMails(r),MC=await mcfgGet(),dir=mcfgOk(MC);let an=kind==='fam'?'fam':'neu',du=false;try{du=localStorage.getItem('vc_mdu')==='1';}catch(_){}if(du&&an==='neu')an='vn';
  dlg(`<h3>✉ E-Mail an ${esc(r.kunde||'Kunde')}</h3><form id="ktF" class="ktf" autocomplete="off">
-  <div class="ktk"><button type="button" class="kyc${kind==='ein'?' on':''}" data-kk="ein">👤 Einzelperson</button><button type="button" class="kyc${kind==='fam'?' on':''}" data-kk="fam">👨‍👩‍👧 Familie</button></div>
+  <div class="ktk"><span class="ktsw"><button type="button" class="kyc" data-kdu="0">🤝 Sie</button><button type="button" class="kyc" data-kdu="1">👋 Du</button></span><span class="ktsep"></span><button type="button" class="kyc${kind==='ein'?' on':''}" data-kk="ein">👤 Einzelperson</button><button type="button" class="kyc${kind==='fam'?' on':''}" data-kk="fam">👨‍👩‍👧 Familie</button></div>
   <label>An<input id="ktTo" value="${esc(m.join(', '))}"></label>
-  <label>Anrede<span class="ktan"><input id="ktAn"><button type="button" class="btn" data-an="herr">Herr</button><button type="button" class="btn" data-an="frau">Frau</button><button type="button" class="btn" data-an="fam">Familie</button><button type="button" class="btn" data-an="neu">neutral</button></span></label>
+  <label>Anrede<span class="ktan"><input id="ktAn"><button type="button" class="btn" data-an="herr" data-sie>Herr</button><button type="button" class="btn" data-an="frau" data-sie>Frau</button><button type="button" class="btn" data-an="vn" data-du>Vorname</button><button type="button" class="btn" data-an="fam">Familie</button><button type="button" class="btn" data-an="neu">neutral</button></span></label>
   <label>Betreff<input id="ktS"></label><label>Text<textarea id="ktB" rows="16"></textarea></label>
-  <p class="hint">${dir?'<b>📤 Direkt senden</b> verschickt sofort über <b>info@velo-center.de</b>. „Im Mailprogramm“ öffnet sie stattdessen in Outlook.':'Öffnet die E-Mail in eurem Mailprogramm (Text zu lang für den Link → automatisch kopiert, im Mailprogramm <b>Strg+V</b>). Direkt-Versand: ⚙ Einstellungen → 📧 E-Mail-Versand.'} Danach steht beim Kunden „angeschrieben“.</p><div class="err" id="ktE"></div>
-  <div class="acts">${ME&&ME.adm?'<button type="button" class="btn" data-kted>✎ Vorlagen dauerhaft ändern</button>':''}<button class="btn" type="button" data-close>Abbrechen</button><button class="btn" type="button" data-ktcp>📋 Text kopieren</button>${dir?'<button class="btn" type="button" data-ktmp>📧 Im Mailprogramm</button><button class="btn red" type="button" data-ktsend>📤 Direkt senden</button>':'<button class="btn red" type="submit">📧 E-Mail öffnen</button>'}</div></form>`);
+  <div class="ktpv" id="ktPv" hidden><iframe id="ktIf" title="Vorschau"></iframe></div>
+  <p class="hint">${dir?'<b>📤 Direkt senden</b> verschickt sofort im <b>Velocenter-Design</b> (wie die KI-Zentrale). „Im Mailprogramm“ öffnet nur den Text in Outlook.':'Öffnet die E-Mail in eurem Mailprogramm (nur Text; zu lang für den Link → automatisch kopiert, im Mailprogramm <b>Strg+V</b>). Direkt-Versand im Design: ⚙ Einstellungen → 📧 E-Mail-Versand.'} Danach steht beim Kunden „angeschrieben“.</p><div class="err" id="ktE"></div>
+  <div class="acts">${ME&&ME.adm?'<button type="button" class="btn" data-kted>✎ Vorlagen dauerhaft ändern</button>':''}<button class="btn" type="button" data-close>Abbrechen</button><button class="btn" type="button" data-ktpv>👁 Vorschau</button><button class="btn" type="button" data-ktcp>📋 Text kopieren</button>${dir?'<button class="btn" type="button" data-ktmp>📧 Im Mailprogramm</button><button class="btn red" type="button" data-ktsend>📤 Direkt senden</button>':'<button class="btn red" type="submit">📧 E-Mail öffnen</button>'}</div></form>`);
  $('dlgBox').classList.add('wide');
- const fill=()=>{$('ktAn').value=kdAnrede(r,an);$('ktS').value=T[kind].s;$('ktB').value=(T[kind].b.replace(/\{anrede\}/g,$('ktAn').value)+'\n\n'+T.fuss).trim();};fill();
- $('ktAn').addEventListener('change',()=>{const v=$('ktAn').value;$('ktB').value=(T[kind].b.replace(/\{anrede\}/g,v)+'\n\n'+T.fuss).trim();});
- $('ktF').addEventListener('click',e=>{const k=e.target.closest('[data-kk]');if(k){kind=k.dataset.kk;if(kind==='fam')an='fam';else if(an==='fam')an='neu';$('ktF').querySelectorAll('[data-kk]').forEach(b=>b.classList.toggle('on',b===k));fill();return;}
+ const html=()=>kdMailHtml($('ktB').value,{du,fam:kind==='fam'});
+ const pv=()=>{if($('ktPv').hidden)return;$('ktIf').srcdoc='<!doctype html><meta charset="utf-8"><body style="margin:0;background:#0E0F14">'+html();};
+ const body=()=>(T[du?'du':'sie'][kind].b.replace(/\{anrede\}/g,$('ktAn').value)+'\n\n'+T.fuss).trim();
+ const fill=()=>{$('ktF').querySelectorAll('[data-kdu]').forEach(b=>b.classList.toggle('on',(b.dataset.kdu==='1')===du));
+  $('ktF').querySelectorAll('[data-sie]').forEach(b=>b.hidden=du);$('ktF').querySelectorAll('[data-du]').forEach(b=>b.hidden=!du);
+  if(du&&(an==='herr'||an==='frau'))an='vn';if(!du&&an==='vn')an='neu';
+  $('ktAn').value=kdAnrede(r,an,du);$('ktS').value=T[du?'du':'sie'][kind].s;$('ktB').value=body();pv();};fill();
+ $('ktAn').addEventListener('change',()=>{$('ktB').value=body();pv();});
+ $('ktB').addEventListener('input',()=>{clearTimeout($('ktB')._t);$('ktB')._t=setTimeout(pv,400);});
+ $('ktF').addEventListener('click',e=>{const k=e.target.closest('[data-kk]');if(k){kind=k.dataset.kk;if(kind==='fam')an='fam';else if(an==='fam')an=du?'vn':'neu';$('ktF').querySelectorAll('[data-kk]').forEach(b=>b.classList.toggle('on',b===k));fill();return;}
+  const d=e.target.closest('[data-kdu]');if(d){du=d.dataset.kdu==='1';if(an!=='fam')an=du?'vn':'neu';try{localStorage.setItem('vc_mdu',du?'1':'0');}catch(_){}fill();return;}
   const a=e.target.closest('[data-an]');if(a){an=a.dataset.an;fill();return;}
+  if(e.target.closest('[data-ktpv]')){$('ktPv').hidden=!$('ktPv').hidden;pv();return;}
   if(e.target.closest('[data-ktcp]')){kdCopy($('ktB').value).then(ok=>toast(ok?'Text kopiert':'Kopieren nicht möglich'));return;}
   if(e.target.closest('[data-kted]')){dlgClose();kdTplEdit();return;}
   if(e.target.closest('[data-ktmp]')){$('ktF').requestSubmit();return;}
   const sb=e.target.closest('[data-ktsend]');if(sb){const to=$('ktTo').value.split(/[\s,;]+/).filter(Boolean),bad=to.filter(x=>!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(x));if(!to.length||bad.length){$('ktE').textContent='Empfänger prüfen'+(bad.length?': '+bad[0]:'');return;}
-   sb.disabled=true;sb.textContent='Sendet …';const subj=$('ktS').value;mailSend(to.join(','),subj,$('ktB').value).then(()=>{dlgClose();const cur=KD[y]&&KD[y][id];if(cur){const old=cur;kdPut(y,Object.assign({},cur,{ang:'mail',angVon:ME.id,angTs:stamp(),angSrc:'',angVia:'direkt',angBetr:subj})).then(rk);}toast('✓ E-Mail an '+to.join(', ')+' verschickt');})
+   sb.disabled=true;sb.textContent='Sendet …';const subj=$('ktS').value;mailSend(to.join(','),subj,$('ktB').value,html()).then(()=>{dlgClose();const cur=KD[y]&&KD[y][id];if(cur){kdPut(y,Object.assign({},cur,{ang:'mail',angVon:ME.id,angTs:stamp(),angSrc:'',angVia:'direkt',angBetr:subj})).then(rk);}toast('✓ E-Mail an '+to.join(', ')+' verschickt');})
     .catch(err=>{sb.disabled=false;sb.textContent='📤 Direkt senden';$('ktE').textContent=err.message||String(err);});}});
  $('ktF').addEventListener('submit',async ev=>{ev.preventDefault();const to=$('ktTo').value.split(/[\s,;]+/).filter(Boolean).join(','),s=$('ktS').value,b=$('ktB').value.replace(/\r?\n/g,'\r\n');
   let u='mailto:'+encodeURI(to)+'?subject='+encodeURIComponent(s)+'&body='+encodeURIComponent(b),cp=false;
@@ -2924,14 +3034,14 @@ async function kdTplOpen(y,id,kind){const r=KD[y]&&KD[y][id];if(!r)return;const 
   else toast(cp?'Text kopiert – im Mailprogramm mit Strg+V einfügen':'Mailprogramm geöffnet');});}
 async function kdCopy(t){try{await navigator.clipboard.writeText(t);return true;}catch(_){try{const x=document.createElement('textarea');x.value=t;document.body.append(x);x.select();const ok=document.execCommand('copy');x.remove();return ok;}catch(e){return false;}}}
 async function kdTplEdit(){if(!ME||!ME.adm)return;const T=await mtplGet();
- dlg(`<h3>✎ E-Mail-Vorlagen</h3><p class="hint"><b>{anrede}</b> wird automatisch ersetzt (z. B. „Hallo Frau Müller,“). Die Fußzeile hängt an beiden Vorlagen. Gilt für alle.</p><form id="kteF" class="ktf" autocomplete="off">
-  <label>👤 Einzelperson – Betreff<input id="kteS1" value="${esc(T.ein.s)}"></label><label>👤 Einzelperson – Text<textarea id="kteB1" rows="9">${esc(T.ein.b)}</textarea></label>
-  <label>👨‍👩‍👧 Familie – Betreff<input id="kteS2" value="${esc(T.fam.s)}"></label><label>👨‍👩‍👧 Familie – Text<textarea id="kteB2" rows="9">${esc(T.fam.b)}</textarea></label>
-  <label>Fußzeile (Kontakt, Öffnungszeiten, Social Media, Grüße)<textarea id="kteF2" rows="9">${esc(T.fuss)}</textarea></label>
+ const f=(k,d,ic,n)=>`<label>${ic} ${n} – Betreff<input id="kteS_${k}_${d}" value="${esc(T[k][d].s)}"></label><label>${ic} ${n} – Text<textarea id="kteB_${k}_${d}" rows="8">${esc(T[k][d].b)}</textarea></label>`;
+ dlg(`<h3>✎ E-Mail-Vorlagen</h3><p class="hint"><b>{anrede}</b> wird automatisch ersetzt (z. B. „Hallo Frau Müller,“ bzw. „Hallo Hans,“). Grüße stehen im Text direkt unter dem Bewertungslink. Absatz mit „Wichtig … % Rabatt“ wird im Design zur roten Rabatt-Box, der Google-Link zum Knopf. Gilt für alle.</p><form id="kteF" class="ktf" autocomplete="off">
+  <h4>🤝 Sie</h4>${f('sie','ein','👤','Einzelperson')}${f('sie','fam','👨‍👩‍👧','Familie')}<h4>👋 Du</h4>${f('du','ein','👤','Einzelperson')}${f('du','fam','👨‍👩‍👧','Familie')}
+  <label>Fußzeile im Text (Kontakt, Öffnungszeiten, Social Media) – im Design als Kontaktkarte<textarea id="kteF2" rows="8">${esc(T.fuss)}</textarea></label>
   <div class="err" id="kteE"></div><div class="acts"><button class="btn" type="button" data-kterst>↺ Standard</button><button class="btn" type="button" data-close>Abbrechen</button><button class="btn red" type="submit">Speichern</button></div></form>`);
- $('dlgBox').classList.add('wide');
- $('kteF').addEventListener('click',e=>{if(!e.target.closest('[data-kterst]'))return;$('kteS1').value=MTPL0.ein.s;$('kteB1').value=MTPL0.ein.b;$('kteS2').value=MTPL0.fam.s;$('kteB2').value=MTPL0.fam.b;$('kteF2').value=MTPL0.fuss;});
- $('kteF').addEventListener('submit',async ev=>{ev.preventDefault();const n={ein:{s:$('kteS1').value,b:$('kteB1').value},fam:{s:$('kteS2').value,b:$('kteB2').value},fuss:$('kteF2').value,ts:stamp(),von:ME.id};
+ $('dlgBox').classList.add('wide');const KK=[['sie','ein'],['sie','fam'],['du','ein'],['du','fam']];
+ $('kteF').addEventListener('click',e=>{if(!e.target.closest('[data-kterst]'))return;KK.forEach(([k,d])=>{$('kteS_'+k+'_'+d).value=MTPL0[k][d].s;$('kteB_'+k+'_'+d).value=MTPL0[k][d].b;});$('kteF2').value=MTPL0.fuss;});
+ $('kteF').addEventListener('submit',async ev=>{ev.preventDefault();const n={v:2,sie:{},du:{},fuss:$('kteF2').value,ts:stamp(),von:ME.id};KK.forEach(([k,d])=>{n[k][d]={s:$('kteS_'+k+'_'+d).value,b:$('kteB_'+k+'_'+d).value};});
   try{await db.doc('meta/mailtpl').set(n);MTPL=null;dlgClose();toast('Vorlagen gespeichert');}catch(err){$('kteE').textContent=err.message||String(err);}});}
 /* E-Mails aus dem Veloport-Export (dieselben CSV-Dateien wie in der KI-Zentrale: Kunden + optional Fahrzeuge).
    Zuordnung: 1. Rahmen-Nr. (Fahrzeuge → KdNr → E-Mail), 2. Telefon/Mobil, 3. Vor- + Nachname. Nur eindeutige Treffer, nur leere Felder. Daten nur in die Datenbank. */
