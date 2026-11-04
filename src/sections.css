@@ -742,3 +742,11 @@ body.navmini #bmBar{left:100px}#bmBar span{overflow:hidden;text-overflow:ellipsi
 .dupg>i{font-style:normal;color:#94A3B8}
 .dupb{display:inline-flex;align-items:center;gap:6px;padding:4px 8px;border-radius:8px;background:#0A0D13;border:1px solid #2A3344;font:600 12.5px "Outfit",sans-serif}
 .dupb.pri{border-color:#34D399;box-shadow:0 0 8px rgba(52,211,153,.3)}.dupb img{height:16px;max-width:60px;object-fit:contain}.dupb em{font-style:normal}
+/* 1.10.5: Kunden – Spalte Angeschrieben */
+.kdboard .kang{cursor:pointer;justify-content:center;text-align:center}
+.kdboard .kang:hover{background:rgba(255,255,255,.05)}
+.ang{display:inline-grid;place-items:center;width:24px;height:24px;border-radius:7px;font:700 14px/1 "Outfit",sans-serif}
+.ang.ok{color:#34D399;background:rgba(52,211,153,.14);box-shadow:inset 0 0 0 1px rgba(52,211,153,.5),0 0 8px rgba(52,211,153,.3)}
+.ang.no{color:#F87171;background:rgba(248,113,113,.12);box-shadow:inset 0 0 0 1px rgba(248,113,113,.5)}
+.vstu .ang{width:22px;height:22px;font-size:12px}
+.kdboard .c.kang{display:flex!important;align-items:center;justify-content:center!important}
