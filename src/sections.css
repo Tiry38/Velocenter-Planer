@@ -750,3 +750,16 @@ body.navmini #bmBar{left:100px}#bmBar span{overflow:hidden;text-overflow:ellipsi
 .ang.no{color:#F87171;background:rgba(248,113,113,.12);box-shadow:inset 0 0 0 1px rgba(248,113,113,.5)}
 .vstu .ang{width:22px;height:22px;font-size:12px}
 .kdboard .c.kang{display:flex!important;align-items:center;justify-content:center!important}
+/* 1.10.11: Kunden – Spalte E-Mail, Hover-Karte, Vorlagen */
+.kdboard .c.kmail{display:flex!important;align-items:center;justify-content:center!important;cursor:pointer}
+.kdboard .kmail:hover{background:rgba(255,255,255,.05)}
+.ang.ml{position:relative;color:#38BDF8;background:rgba(56,189,248,.14);box-shadow:inset 0 0 0 1px rgba(56,189,248,.5),0 0 8px rgba(56,189,248,.3)}
+.ang.ml i{position:absolute;top:-6px;right:-7px;min-width:14px;height:14px;padding:0 3px;border-radius:7px;background:#38BDF8;color:#06121C;font:800 9.5px/14px "Outfit",sans-serif;font-style:normal}
+.kmtip{position:fixed;z-index:9999;display:flex;flex-direction:column;gap:3px;max-width:340px;padding:10px 12px;border-radius:12px;background:#0F131C;border:1px solid rgba(56,189,248,.55);box-shadow:0 10px 30px rgba(0,0,0,.6),0 0 16px rgba(56,189,248,.25);pointer-events:none}
+.kmtip b{font:700 13px "Outfit",sans-serif;color:#fff}.kmtip span{font:600 13px var(--mono);color:#7DD3FC;overflow-wrap:anywhere}.kmtip small{color:#64748B;font-size:11px}
+.kdpop:has(.kmp){width:320px}
+.kmp .kmh{margin:10px 0 4px;font:700 11px "Outfit",sans-serif;letter-spacing:.06em;text-transform:uppercase;color:#64748B}
+.kmp .kpv span{display:flex;flex-direction:column;font-size:11.5px}.kmp .kpv span em{font-style:normal;font-weight:700;font-size:13px;color:#fff}
+.ktf{display:grid;gap:10px}.ktf label{display:grid;gap:4px}
+.ktf textarea{width:100%;box-sizing:border-box;padding:10px;border-radius:10px;border:1px solid #2A3344;background:#0A0D13;color:#E2E8F0;font:500 13px/1.45 var(--body);resize:vertical}
+.ktk{display:flex;gap:8px}.ktan{display:flex;gap:6px;align-items:center}.ktan input{flex:1;min-width:0}.ktan .btn{padding:6px 10px;font-size:12px}
