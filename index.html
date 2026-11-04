@@ -1242,7 +1242,7 @@ body.navmini #bmBar{left:100px}#bmBar span{overflow:hidden;text-overflow:ellipsi
 <script>
 const FB_CONFIG={apiKey:"AIzaSyC_uZPvc5rJETwlS4JbfCoTkkE4ckjtp0M",authDomain:"velocenter-planer.firebaseapp.com",projectId:"velocenter-planer",storageBucket:"velocenter-planer.firebasestorage.app",messagingSenderId:"1018330488700",appId:"1:1018330488700:web:262a4d1660353e6fde8ef9"};
 /* ================= Velocenter Werkstatt-Cockpit – Oberfläche ================= */
-const CLIENT_VERSION='1.10.3';
+const CLIENT_VERSION='1.10.4';
 const USERS=[{id:'kevin',n:'Kevin',c:'#E2232D'},{id:'stefan',n:'Stefan',c:'#F59E0B'},{id:'martina',n:'Martina',c:'#EC4899'},{id:'sascha',n:'Sascha',c:'#22D3EE'},{id:'rene',n:'René',c:'#34D399'}];
 const U=id=>USERS.find(u=>u.id===id)||{n:'',c:'#64748B',id:''};
 const $=id=>document.getElementById(id);
@@ -1871,7 +1871,7 @@ $('vkDone').addEventListener('click',e=>{vkShowDone=!vkShowDone;const t=e.curren
 /* ================= BESTELLUNGEN ================= */
 let bEdit=null,bShowDone=false;
 const BST=[['offen','Offen'],['bestellt','Bestellt'],['da','Da · Kunde informieren']];
-const BF=[['datum','Datum'],['artikel','Artikel'],['_gap',''],['kunde','Artikel-Info'],['lieferant','Lieferant'],['lieferzeit','Kommt voraussichtlich'],['telefon','Telefon']];/* 1.10.3: Reihenfolge nach Tiry, Notiz-Feld raus (alte Notizen bleiben gespeichert) */
+const BF=[['datum','Datum'],['artikel','Artikel'],['_gap',''],['kunde','Artikel-Info'],['lieferant','Lieferant'],['lieferzeit','Kommt voraussichtlich am'],['telefon','Telefon']];/* 1.10.3: Reihenfolge nach Tiry, Notiz-Feld raus (alte Notizen bleiben gespeichert) */
 let bF='';
 function rb(){const m=b=>true;
  const st=k=>B.filter(b=>(b.status||'offen')===k).length;
