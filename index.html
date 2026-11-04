@@ -1098,7 +1098,9 @@ body.navmini #bmBar{left:100px}#bmBar span{overflow:hidden;text-overflow:ellipsi
 .ktf h4{margin:10px 0 2px;font-size:14px;color:#C084FC}
 /* 1.10.13: Telefon → WhatsApp Web */
 .kd .ktel,.ktel{display:flex;align-items:center;gap:5px;cursor:pointer}.ktel .ktn{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;outline:none}
-.ktel.wa .ktn{color:#6EE7A0}.ktel .kwa{display:inline-flex;color:#25D366;filter:drop-shadow(0 0 4px rgba(37,211,102,.55));flex:none}
+.ktel.wa .ktn{color:#6EE7A0}.ktel .kwa{display:inline-flex;color:#25D366;flex:none;cursor:pointer;padding:1px;border-radius:5px}.ktel .kwa svg{display:block}.ktel .kwa:hover{background:rgba(255,255,255,.08)}
+.ktel.nowa .kwa{color:#FF3B4E}.ktel.nowa .ktn{color:#CBD5E1}.ktel.nowa:hover .ktn{text-decoration:none}
+.kwarow{display:flex;gap:6px;align-items:center;margin:0 0 6px}.kwarow .kpv{flex:1;margin:0}.kwarow .btn{flex:none;font-size:12px;padding:6px 9px}.kwarow .kpv b{color:#25D366}.kwarow.no .kpv{opacity:.55}.kwarow.no .kpv b{color:#FF3B4E}
 .ktel.wa:hover .ktn{text-decoration:underline;text-underline-offset:3px}.ktel .kted{flex:none;border:0;background:none;color:#9AA1B8;cursor:pointer;opacity:0;padding:0 2px;font-size:12px}.ktel:hover .kted{opacity:1}
 .ktel.ked{cursor:text}.ktel.ked .ktn{white-space:normal;color:inherit;text-decoration:none}.ktel.ked .kwa,.ktel.ked .kted{display:none}
 
@@ -1278,7 +1280,7 @@ body.navmini #bmBar{left:100px}#bmBar span{overflow:hidden;text-overflow:ellipsi
 <script>
 const FB_CONFIG={apiKey:"AIzaSyC_uZPvc5rJETwlS4JbfCoTkkE4ckjtp0M",authDomain:"velocenter-planer.firebaseapp.com",projectId:"velocenter-planer",storageBucket:"velocenter-planer.firebasestorage.app",messagingSenderId:"1018330488700",appId:"1:1018330488700:web:262a4d1660353e6fde8ef9"};
 /* ================= Velocenter Werkstatt-Cockpit – Oberfläche ================= */
-const CLIENT_VERSION='1.10.15';
+const CLIENT_VERSION='1.10.16';
 const USERS=[{id:'kevin',n:'Kevin',c:'#E2232D'},{id:'stefan',n:'Stefan',c:'#F59E0B'},{id:'martina',n:'Martina',c:'#EC4899'},{id:'sascha',n:'Sascha',c:'#22D3EE'},{id:'rene',n:'René',c:'#34D399'}];
 const U=id=>USERS.find(u=>u.id===id)||{n:'',c:'#64748B',id:''};
 const $=id=>document.getElementById(id);
@@ -2643,23 +2645,29 @@ function rk(){const g=$('kdGrid');if(!g)return;kdAngMig();const all=kdAll();{con
   h+=`<div class="row kr"><div class="c kc kgrip" draggable="true" data-kid="${id}" data-ky="${ky}" title="Ziehen = Zeile verschieben">⋮⋮</div>${cols.map(c=>kdCell(c,r,id,ky)).join('')}<div class="c kc kdel" data-kid="${id}" data-ky="${ky}"><button class="nx" type="button" data-kdel="${id}" data-ky="${ky}" title="Eintrag löschen">×</button></div></div>`;}
  g.innerHTML=h+((q||fk.length)&&!list.length?'<div class="kdempty">Nichts gefunden.</div>':'');}
 /* 1.10.13: Telefon → WhatsApp Web. Handynummern (015x/016x/017x) in jeder Schreibweise (0176-72654293, +49 176 …, 0049…) → 49176…; Festnetz = kein WhatsApp. */
-const WAICO='<svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><path fill="currentColor" d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8s-.4-.1-.6.1-.7.8-.8 1-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.3-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.8 11.8 0 0 0 4.5 4c1.7.7 2.3.8 3.2.6a2.7 2.7 0 0 0 1.8-1.2 2.2 2.2 0 0 0 .1-1.3c0-.1-.2-.2-.5-.3Z"/></svg>';
+const WAICO='<svg viewBox="0 0 24 24" width="17" height="17" shape-rendering="geometricPrecision" aria-hidden="true"><path fill="currentColor" d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>';
 function kdWaNums(s){const o=[],seen={};for(const m of String(s||'').match(/(?:\+|00)?\d[\d\s\/()\-.]{6,}\d/g)||[]){let d=m.replace(/\D/g,'');if(m.trim().startsWith('+'))d='00'+d;
   if(d.startsWith('0049'))d='0'+d.slice(4);if(d.startsWith('00'))continue;if(!/^01[5-7]\d{7,9}$/.test(d))continue;const n='49'+d.slice(1);if(!seen[n]){seen[n]=1;o.push({n,d:m.trim()});}}return o;}
 function kdWaOpen(n){window.open('https://web.whatsapp.com/send?phone='+n,'vcwa');}
 function kdTelEdit(cell){const t=cell.querySelector('.ktn');if(!t)return;t.setAttribute('contenteditable','true');cell.classList.add('ked');t.focus();const s=getSelection(),rg=document.createRange();rg.selectNodeContents(t);rg.collapse(false);s.removeAllRanges();s.addRange(rg);
  t.addEventListener('blur',()=>setTimeout(()=>{t.removeAttribute('contenteditable');cell.classList.remove('ked');},0),{once:true});}
-function kdTelClick(cell,e){if(cell.querySelector('.ktn[contenteditable]'))return;const wa=kdWaNums(cell.querySelector('.ktn').textContent);
+function kdTelClick(cell,e){if(cell.querySelector('.ktn[contenteditable]'))return;const o=kdRowOf(cell);const wa=kdWaNums(cell.querySelector('.ktn').textContent);
  if(e.target.closest('[data-kted]')||!wa.length){kdTelEdit(cell);return;}
- if(wa.length===1){kdWaOpen(wa[0].n);return;}
- const el=kdPopOpen(cell,`<div class="kmp"><div class="kph">💬 WhatsApp – welche Nummer?</div>${wa.map(x=>`<button type="button" class="kpv" data-kwan="${x.n}"><b>${WAICO}</b><span><em>${esc(x.d)}</em>WhatsApp Web öffnen</span></button>`).join('')}</div>`,{t:'wa'});
- el.addEventListener('click',ev=>{const b=ev.target.closest('[data-kwan]');if(b){kdPopClose();kdWaOpen(b.dataset.kwan);}});}
+ const no=(o&&o.r.waNo)||[],has=wa.filter(x=>!no.includes(x.n));
+ if(!e.target.closest('[data-kwam]')&&has.length===1){kdWaOpen(has[0].n);return;}
+ kdWaMenu(cell,o,wa);}
+/* 1.10.16: Ob eine Nummer WhatsApp hat, kann kein Browser prüfen (nur über die kostenpflichtige WhatsApp-Business-API) → von Hand markieren: Feld waNo = [49…] = kein WhatsApp → rotes Symbol. */
+function kdWaMenu(cell,o,wa){const no=(o&&o.r.waNo)||[];
+ const el=kdPopOpen(cell,`<div class="kmp"><div class="kph">💬 WhatsApp</div>${wa.map(x=>{const n=no.includes(x.n);return `<div class="kwarow${n?' no':''}"><button type="button" class="kpv" data-kwan="${x.n}"${n?' disabled':''}><b>${WAICO}</b><span><em>${esc(x.d)}</em>${n?'kein WhatsApp':'WhatsApp Web öffnen'}</span></button><button type="button" class="btn" data-kwano="${x.n}">${n?'✓ hat doch WhatsApp':'🚫 kein WhatsApp'}</button></div>`;}).join('')}<p class="kpm">Ob jemand WhatsApp hat, kann der Planer nicht selbst prüfen. Zeigt WhatsApp Web „Nummer nicht bei WhatsApp“, hier <b>🚫</b> drücken → Symbol wird rot.</p></div>`,{t:'wa'});
+ el.addEventListener('click',ev=>{const b=ev.target.closest('[data-kwan]');if(b){kdPopClose();kdWaOpen(b.dataset.kwan);return;}
+  const t=ev.target.closest('[data-kwano]');if(t&&o){const n=t.dataset.kwano,cur=KD[o.y][o.id],l=(cur.waNo||[]).slice(),i=l.indexOf(n);if(i<0)l.push(n);else l.splice(i,1);kdPopClose();
+   const old=cur;kdPut(o.y,Object.assign({},cur,{waNo:l})).then(rk);toast(i<0?'Als „kein WhatsApp“ markiert':'WhatsApp wieder aktiv',()=>{kdPut(o.y,old).then(rk);});}});}
 function kdCell(c,r,id,ky){if(c.k==='mail'){const m=kdMails(r);return `<div class="c kc kmail" role="button" tabindex="0" data-kmail="1" data-kid="${id}" data-ky="${ky}" data-kc="mail"${m.length?'':' title="Klick = E-Mail eintragen"'}>${m.length?`<span class="ang ml">${ANGI.mail}${m.length>1?`<i>${m.length}</i>`:''}</span>`:''}</div>`;}
  if(c.k==='ang'){const v=r.ang||'',ic={mail:'<span class="ang ok">'+ANGI.mail+'</span>',tel:'<span class="ang ok">'+ANGI.tel+'</span>',no:'<span class="ang no">✕</span>'}[v]||'';
   const t=v?(r.angSrc==='sheet'&&v==='mail'?'angeschrieben (aus der alten Liste)':r.angSrc==='sheet'&&v==='no'?'nicht angeschrieben (aus der alten Liste)':ANGL[v])+(r.angVon?' · '+U(r.angVon).n:'')+(r.angTs?' · '+fmtTs(r.angTs):''):'Klick = nachgefragt? (E-Mail / Telefon / nicht nachfragen)';
   return `<div class="c kc kang" role="button" tabindex="0" data-kang="1" data-kid="${id}" data-ky="${ky}" data-kc="ang" title="${esc(t)}">${ic}</div>`;}
-if(c.k==='tel'){const v=String(r.tel||''),wa=kdWaNums(v);
-  return `<div class="c kc kt ktel${wa.length?' wa':''}" data-ktel="1" data-kid="${id}" data-ky="${ky}" data-kc="tel" title="${wa.length?'Klick = WhatsApp Web mit '+esc(wa.map(x=>x.d).join(' / '))+' · Doppelklick oder ✎ = bearbeiten':'Klick = bearbeiten'}">${wa.length?`<span class="kwa">${WAICO}</span>`:''}<span class="ktn" spellcheck="false" data-kid="${id}" data-ky="${ky}" data-kf="tel">${esc(v)}</span>${wa.length?'<button type="button" class="kted" data-kted title="Nummer bearbeiten">✎</button>':''}</div>`;}
+if(c.k==='tel'){const v=String(r.tel||''),wa=kdWaNums(v),no=r.waNo||[],has=wa.filter(x=>!no.includes(x.n)),red=wa.length&&!has.length;
+  return `<div class="c kc kt ktel${wa.length?' wa':''}${red?' nowa':''}" data-ktel="1" data-kid="${id}" data-ky="${ky}" data-kc="tel" title="${red?'Kein WhatsApp (markiert) · Klick aufs Symbol = ändern':wa.length?'Klick = WhatsApp Web mit '+esc(has.map(x=>x.d).join(' / '))+' · Symbol = kein WhatsApp markieren · Doppelklick oder ✎ = bearbeiten':'Klick = bearbeiten'}">${wa.length?`<span class="kwa" data-kwam title="${red?'kein WhatsApp – Klick = ändern':'WhatsApp – Klick = öffnen / „kein WhatsApp“ markieren'}">${WAICO}</span>`:''}<span class="ktn" spellcheck="false" data-kid="${id}" data-ky="${ky}" data-kf="tel">${esc(v)}</span>${wa.length?'<button type="button" class="kted" data-kted title="Nummer bearbeiten">✎</button>':''}</div>`;}
 if(c.k==='marke'){const b=brandOfB({marke:r.marke,modell:r.modell}),lg=b&&(BUSER.logos||{})[b.k];
   return `<div class="c kc km${lg?' haslg':''}" data-kid="${id}" data-ky="${ky}" data-kc="marke" title="${esc(r.marke||'')}">${lg?`<img src="${lg}" alt="" class="kml" draggable="false">`:''}<span class="kmt" contenteditable="true" spellcheck="false" data-kid="${id}" data-ky="${ky}" data-kf="marke">${esc(r.marke||'')}</span>${String(r.marke||'').trim()?`<label class="kmup" title="${lg?'Logo ersetzen':'Markenlogo hochladen'} (oder Bild hierher ziehen)">${lg?'⟳':'⬆'}<input type="file" accept="image/*" hidden data-kmup="${esc(r.marke)}"></label>`:''}</div>`;}
  if(c.k==='dat'||c.k==='leas'||c.k==='vers'){const v=String(r[c.k]||''),t=c.k==='dat'?'Klick = Datum wählen':(kdLab(c.k,v)+' · Klick = auswählen');
