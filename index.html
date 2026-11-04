@@ -1286,6 +1286,28 @@ body[data-v=ausw]{--ac:#F5B83D}
 .auln{font-style:normal;color:#f1f5f9}.auln small{color:#B15CFF;margin-left:4px}
 .aus1.on>span{color:#FFD93B;font-weight:800}.aus1.on .aus1b{box-shadow:0 0 0 2px #FFD93B,0 0 14px rgba(245,184,61,.5)}
 .auspk i.sel{outline:2px solid #FFD93B;opacity:1}
+/* Marken-Filter (1.10.30) */
+.aubf{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.aubf .auseg button{padding:5px 11px;font-size:12.5px}.aubf .auseg small{opacity:.7;margin-left:3px}
+.aubpk{font:600 12.5px Outfit,sans-serif;color:#e2e8f0;background:rgba(34,211,238,.1);border:1px solid rgba(34,211,238,.4);border-radius:10px;padding:6px 12px;cursor:pointer}
+.aubpk:hover,.aubpk.on{background:rgba(34,211,238,.25);color:#fff}
+.aubsel{flex-basis:100%;margin:6px 0 4px;padding:10px;border-radius:12px;background:rgba(8,11,20,.9);border:1px solid rgba(34,211,238,.35)}
+.aubsel input[type=search]{width:100%;box-sizing:border-box;font:500 14px Outfit,sans-serif;color:#fff;background:#121828;border:1px solid rgba(148,163,184,.3);border-radius:9px;padding:7px 10px;margin-bottom:8px}
+.aubsl{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:4px 10px;max-height:260px;overflow:auto}
+.aubsl label{display:flex;align-items:center;gap:7px;padding:4px 6px;border-radius:7px;cursor:pointer;font:500 13px Outfit,sans-serif;color:#e2e8f0}
+.aubsl label:hover{background:rgba(34,211,238,.1)}
+.aubsl label[hidden]{display:none}
+.aubsl input{accent-color:#22D3EE;width:15px;height:15px}
+.aubsl img{height:16px;max-width:54px;object-fit:contain}
+.aubsl span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.aubsl small{color:#7c8aa0;font-size:11px}
+.aubsb{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.aubgh{font:700 11.5px Outfit,sans-serif;text-transform:uppercase;letter-spacing:.06em;color:#FFD93B;padding:10px 10px 4px}
+.aubgh.o2{color:#8b98ad;border-top:1px solid rgba(148,163,184,.15);margin-top:6px}
+.austar{flex:none;width:22px;height:22px;padding:0;border:0;background:none;font-size:15px;line-height:22px;color:#475569;cursor:pointer;transition:.15s}
+.austar:hover{color:#FFD93B;transform:scale(1.2)}
+.austar.on{color:#FFD93B;text-shadow:0 0 8px rgba(255,217,59,.7)}
+.aubr.own .aubn em{color:#fff}
 
 [hidden]{display:none!important}
 #sTab td.b{font-weight:700}#sTab .pwm.ed{outline:none;padding:2px 6px;border-radius:6px;font-family:var(--mono)}#sTab td{vertical-align:top}
@@ -1470,7 +1492,7 @@ body[data-v=ausw]{--ac:#F5B83D}
 <script>
 const FB_CONFIG={apiKey:"AIzaSyC_uZPvc5rJETwlS4JbfCoTkkE4ckjtp0M",authDomain:"velocenter-planer.firebaseapp.com",projectId:"velocenter-planer",storageBucket:"velocenter-planer.firebasestorage.app",messagingSenderId:"1018330488700",appId:"1:1018330488700:web:262a4d1660353e6fde8ef9"};
 /* ================= Velocenter Werkstatt-Cockpit – Oberfläche ================= */
-const CLIENT_VERSION='1.10.29';
+const CLIENT_VERSION='1.10.30';
 const USERS=[{id:'kevin',n:'Kevin',c:'#E2232D'},{id:'stefan',n:'Stefan',c:'#F59E0B'},{id:'martina',n:'Martina',c:'#EC4899'},{id:'sascha',n:'Sascha',c:'#22D3EE'},{id:'rene',n:'René',c:'#34D399'}];
 const U=id=>USERS.find(u=>u.id===id)||{n:'',c:'#64748B',id:''};
 const $=id=>document.getElementById(id);
@@ -3574,6 +3596,9 @@ function auBars(cols,o){const mx=Math.max(1,...cols.map(c=>Math.max(c.v,c.tick||
  return `<div class="aubars${o&&o.sm?' sm':''}" style="--nc:${cols.length}">`+cols.map(c=>`<div class="aubc${c.cls?' '+c.cls:''}" data-tip="${esc(c.t||'')}"><span class="aubv">${c.vl!=null?c.vl:''}</span><div class="aubt"><i style="height:${(c.v/mx*100).toFixed(2)}%${c.c?';--bc:'+c.c:''}"></i>${c.tick?`<s style="bottom:${(c.tick/mx*100).toFixed(2)}%"></s>`:''}</div><span class="aubl">${c.l}</span>${c.sub!=null?`<span class="aubs">${c.sub}</span>`:''}</div>`).join('')+'</div>';}
 const auTbl=(hd,rows,cls)=>`<div class="autbl${cls?' '+cls:''}"><table><thead><tr>${hd.map(h=>`<th>${h}</th>`).join('')}</tr></thead><tbody>${rows.length?rows.map(r=>`<tr>${r.map(c=>`<td>${c}</td>`).join('')}</tr>`).join(''):`<tr><td colspan="${hd.length}" class="auhint">Keine Daten</td></tr>`}</tbody></table></div>`;
 const auHb=(v,mx,c)=>`<span class="auhb"><i style="width:${Math.min(100,v/Math.max(1e-9,mx)*100).toFixed(1)}%${c?';background:'+c:''}"></i></span>`;
+const AUOWN0=['KTM','Gudereit','Velo de Ville','i:SY','QiO','Van Raam','Victoria'].map(n=>bNorm(n));let AUBP=false,AUBQ='';
+function auBf(bl,own,vl){const f=AU.bf||'all',ns=(AU.bs||[]).length;let h=`<div class="aubf"><div class="auseg"><button type="button" data-aubf="all" class="${f==='all'?'on':''}">Alle <small>${bl.length}</small></button><button type="button" data-aubf="own" class="${f==='own'?'on':''}">⭐ Unsere <small>${own.length}</small></button><button type="button" data-aubf="sel" class="${f==='sel'?'on':''}">✓ Auswahl <small>${ns}</small></button></div><button type="button" class="aubpk${AUBP?' on':''}" data-aubp>🔎 Marken wählen</button></div>`;
+ if(AUBP)h+=`<div class="aubsel"><input id="auBq" type="search" placeholder="Marke suchen …" value="${esc(AUBQ)}" autocomplete="off"><div class="aubsl">${bl.map(x=>`<label data-n="${esc(x.n.toLowerCase())}"${AUBQ&&!x.n.toLowerCase().includes(AUBQ.toLowerCase())?' hidden':''}><input type="checkbox" data-aubs="${esc(x.k)}"${(AU.bs||[]).includes(x.k)?' checked':''}>${x.lg?`<img src="${x.lg}" alt="">`:''}<span>${esc(x.n)}</span><small>${vl(x.t)}</small></label>`).join('')}</div><div class="aubsb"><button type="button" class="btn" data-aubsx="own">⭐ Unsere übernehmen</button><button type="button" class="btn" data-aubsx="top10">Top 10</button><button type="button" class="btn" data-aubsx="none">Keine</button><button type="button" class="btn pri" data-aubp>✓ Fertig</button></div></div>`;return h;}
 function rau(){const host=$('auBody');if(!host||!ME||!ME.adm)return;const D=auData(),cy=D.cy;
  if(!D.ys.length){$('auTools').innerHTML='';host.innerHTML='<div class="auempty">Noch keine Verkaufsdaten. Die Auswertung liest den Reiter <b>Kunden</b> – dort zuerst „📥 Kunden aus Sheet übernehmen“.</div>';return;}
  const Ymin=D.ys[0],Ymax=Math.max(cy,D.ys[D.ys.length-1]);
@@ -3596,8 +3621,10 @@ function rau(){const host=$('auBody');if(!host||!ME||!ME.adm)return;const D=auDa
  const bt={};span.forEach(y=>{const b=g(y).b;for(const k in b){const t=bt[k]||(bt[k]={n:0,e:0});t.n+=b[k].n;t.e+=b[k].e;}});
  const spanTot=span.reduce((s,y)=>s+val(g(y)),0),spanN=span.reduce((s,y)=>s+g(y).n,0),spanE=span.reduce((s,y)=>s+g(y).e,0),spanP=span.reduce((s,y)=>s+g(y).pn,0);
  const bl=Object.keys(bt).map(k=>Object.assign({},D.B[k],{t:eur?bt[k].e:bt[k].n,cn:bt[k].n,ce:bt[k].e})).filter(x=>x.t>0).sort((a,b)=>b.t-a.t||a.n.localeCompare(b.n,'de'));
- const colOf={};bl.slice(0,8).forEach((x,i)=>colOf[x.k]=AUCOL[i]);
- if(!AU.b||!D.B[AU.b]||!bt[AU.b])AU.b=bl[0]?bl[0].k:'';
+ const isOwn=x=>AU.own?AU.own.includes(x.k):AUOWN0.includes(bNorm(x.n)),own=bl.filter(isOwn),oth=bl.filter(x=>!isOwn(x));
+ const blv=AU.bf==='own'?own:AU.bf==='sel'?[...own,...oth].filter(x=>(AU.bs||[]).includes(x.k)):[...own,...oth];
+ const colOf={};blv.slice(0,8).forEach((x,i)=>colOf[x.k]=AUCOL[i]);
+ if(!AU.b||!D.B[AU.b]||!blv.some(x=>x.k===AU.b))AU.b=blv[0]?blv[0].k:'';
  const best=span.reduce((a,y)=>val(g(y))>val(g(a))?y:a,span[0]);
  const lq=o=>o.n?(o.leas+o.fin)/o.n*100:null,avg=o=>o.pn?o.e/o.pn:null;
  const logo=x=>x&&x.lg?`<img src="${x.lg}" alt="">`:'';
@@ -3619,19 +3646,20 @@ function rau(){const host=$('auBody');if(!host||!ME||!ME.adm)return;const D=auDa
   auBars(span.map((y,i)=>{const o=g(y),pv=g(y-1),v=val(o),pp=auPct(v,val(pv));return {l:"'"+String(y).slice(2),v,vl:vl(v),tick:y<cy?(eur?o.ye:o.yn):0,cls:(y===cy?'cur':y===best?'best':'')+' auyb" data-auy="'+y,sub:i?auDl(pp):'',
    t:`${y}${y===cy?' (bis heute)':''}\n${auN(o.n)} Räder${o.e?'\nUmsatz: '+auE(o.e)+(o.pn<o.n?' ('+o.pn+' mit Preis)':''):''}${avg(o)?'\nØ Preis: '+auE(avg(o)):''}${lq(o)!=null?'\nLeasing/Finanz.: '+Math.round(lq(o))+' %':''}${y<cy?'\nbis '+tdS+': '+(eur?auE(o.ye):auN(o.yn)):''}${pp!=null&&i?'\nzum Vorjahr: '+(pp>0?'+':'')+pp.toFixed(1).replace('.',',')+' %':''}\nKlick = nur ${y}`};}))+`</div>`;
  /* 2. Marken-Entwicklung */
- const showB=AU.all?bl:bl.slice(0,15),bb=(y,k)=>g(y).b[k]||{n:0,e:0,yn:0,ye:0};
- h+=`<div class="aucard auwide"><div class="auch"><h3>🏷 Marken-Entwicklung ${one?lo:lo+'–'+hi}</h3><span class="auhint">${bl.length} Marken · Zeile anklicken = Detail-Diagramm · „${F}${isCur?' bis heute':''}“ im Vergleich zu ${vsTxt}</span></div>
+ const showB=AU.all?blv:AU.bf==='all'||!AU.bf?[...own,...oth.slice(0,Math.max(8,15-own.length))]:blv.slice(0,15),bmx=Math.max(1,...showB.map(x=>x.t)),bb=(y,k)=>g(y).b[k]||{n:0,e:0,yn:0,ye:0};
+ h+=`<div class="aucard auwide"><div class="auch"><h3>🏷 Marken-Entwicklung ${one?lo:lo+'–'+hi}</h3>${auBf(bl,own,vl)}<span class="auhint">${blv.length} von ${bl.length} Marken · ★ = unsere Marke (anklicken zum Ändern) · Zeile anklicken = Detail-Diagramm · „${F}${isCur?' bis heute':''}“ im Vergleich zu ${vsTxt}</span></div>
  <div class="aubtab"><div class="aubr auhd"><span>Marke</span><span>Verlauf ${cs[0]}–${cs[cs.length-1]}</span><span>Gesamt</span><span>Anteil</span><span>${F-1}</span><span>${F}${isCur?' bis heute':''}</span></div>`+
-  showB.map(x=>{const vs=cs.map(y=>{const b=g(y).b[x.k];return b?(eur?b.e:b.n):0;}),mx=Math.max(1,...vs),a=bb(F-1,x.k),b2=bb(F-2,x.k),c=bb(F,x.k);
+  showB.map((x,ix)=>{const vs=cs.map(y=>{const b=g(y).b[x.k];return b?(eur?b.e:b.n):0;}),mx=Math.max(1,...vs),a=bb(F-1,x.k),b2=bb(F-2,x.k),c=bb(F,x.k);
    const cv=eur?c.e:c.n,pv=isCur?(eur?a.ye:a.yn):(eur?a.e:a.n);
-   return `<div class="aubr${AU.b===x.k?' on':''}" data-aub="${esc(x.k)}"><span class="aubn">${logo(x)}<em>${esc(x.n)}</em></span><span class="auspk">${vs.map((v,i)=>`<i style="height:${Math.max(v?6:0,v/mx*100).toFixed(1)}%${colOf[x.k]?';--bc:'+colOf[x.k]:''}" ${one&&cs[i]===F?' class="sel"':''} data-tip="${esc(x.n+' '+cs[i]+'\n'+vt(v))}"></i>`).join('')}</span><b>${vl(x.t)}</b><span class="aush"><i style="width:${Math.min(100,x.t/Math.max(1,bl[0].t)*100).toFixed(1)}%"></i>${auF1(x.t/Math.max(1,spanTot)*100)} %</span><span>${auDl(auPct(eur?a.e:a.n,eur?b2.e:b2.n))}<small>${vl(eur?a.e:a.n)}</small></span><span>${auDl(auPct(cv,pv))}<small>${vl(cv)}</small></span></div>`;}).join('')+
-  `</div>${bl.length>15?`<button class="btn auall" type="button" data-auall>${AU.all?'Nur Top 15 zeigen':'Alle '+bl.length+' Marken zeigen'}</button>`:''}${D.noBr?`<p class="auhint">${auN(D.noBr)} Räder (alle Jahre) ohne erkennbare Marke sind nicht in der Marken-Liste (in den Jahressummen schon).</p>`:''}</div>`;
+   const gh=(AU.bf==='all'||!AU.bf)&&own.length?(ix===0?'<div class="aubgh">⭐ Unsere Marken</div>':ix===own.length?'<div class="aubgh o2">Weitere Marken</div>':''):'';
+   return gh+`<div class="aubr${AU.b===x.k?' on':''}${isOwn(x)?' own':''}" data-aub="${esc(x.k)}"><span class="aubn"><button type="button" class="austar${isOwn(x)?' on':''}" data-auown="${esc(x.k)}" title="${isOwn(x)?'Unsere Marke – Klick = entfernen':'Als unsere Marke markieren'}">★</button>${logo(x)}<em>${esc(x.n)}</em></span><span class="auspk">${vs.map((v,i)=>`<i style="height:${Math.max(v?6:0,v/mx*100).toFixed(1)}%${colOf[x.k]?';--bc:'+colOf[x.k]:''}" ${one&&cs[i]===F?' class="sel"':''} data-tip="${esc(x.n+' '+cs[i]+'\n'+vt(v))}"></i>`).join('')}</span><b>${vl(x.t)}</b><span class="aush"><i style="width:${Math.min(100,x.t/bmx*100).toFixed(1)}%"></i>${auF1(x.t/Math.max(1,spanTot)*100)} %</span><span>${auDl(auPct(eur?a.e:a.n,eur?b2.e:b2.n))}<small>${vl(eur?a.e:a.n)}</small></span><span>${auDl(auPct(cv,pv))}<small>${vl(cv)}</small></span></div>`;}).join('')+
+  `${showB.length?'':'<p class="auhint">Keine Marke ausgewählt – oben „🔎 Marken wählen“.</p>'}</div>${blv.length>showB.length||AU.all&&blv.length>15?`<button class="btn auall" type="button" data-auall>${AU.all?'Weniger zeigen':'Alle '+blv.length+' Marken zeigen'}</button>`:''}${D.noBr?`<p class="auhint">${auN(D.noBr)} Räder (alle Jahre) ohne erkennbare Marke sind nicht in der Marken-Liste (in den Jahressummen schon).</p>`:''}</div>`;
  /* 3. Detail einer Marke */
  const X=D.B[AU.b];if(X){const tot=y=>val(g(y));h+=`<div class="aucard"><div class="auch"><h3>${logo(X)} ${esc(X.n)} – je Jahr</h3><span class="auhint">Zahl unter dem Jahr = Marktanteil im Laden</span></div>`+
   auBars(cs.map(y=>{const b=g(y).b[X.k]||{n:0,e:0,pn:0,leas:0},v=eur?b.e:b.n,sh=tot(y)?v/tot(y)*100:0;return {l:"'"+String(y).slice(2),v,vl:v?vl(v):'',c:colOf[X.k]||'#B15CFF',cls:hl(y)?'cur':'',sub:`<span class="aush2">${sh?Math.round(sh)+' %':''}</span>`,
    t:`${X.n} ${y}${y===cy?' (bis heute)':''}\n${auN(b.n)} Räder${b.e?'\nUmsatz: '+auE(b.e):''}${b.pn?'\nØ Preis: '+auE(b.e/b.pn):''}\nAnteil: ${sh.toFixed(1).replace('.',',')} %${b.n?'\nLeasing/Finanz.: '+Math.round(b.leas/b.n*100)+' %':''}`};}))+`</div>`;}
  /* 4. Marktanteile */
- const top6=bl.slice(0,7);h+=`<div class="aucard"><div class="auch"><h3>🥧 Marktanteile je Jahr</h3><span class="auhint">Top ${top6.length} Marken + Sonstige · ${eur?'nach Umsatz':'nach Stück'}</span></div><div class="aulg">${top6.map(x=>`<span><i style="background:${colOf[x.k]}"></i>${esc(x.n)}</span>`).join('')}<span><i style="background:#475569"></i>Sonstige</span></div><div class="aush100">`+
+ const top6=blv.slice(0,7);h+=`<div class="aucard"><div class="auch"><h3>🥧 Marktanteile je Jahr</h3><span class="auhint">Top ${top6.length} Marken + Sonstige · ${eur?'nach Umsatz':'nach Stück'}</span></div><div class="aulg">${top6.map(x=>`<span><i style="background:${colOf[x.k]}"></i>${esc(x.n)}</span>`).join('')}<span><i style="background:#475569"></i>Sonstige</span></div><div class="aush100">`+
   cs.slice().reverse().map(y=>{const o=g(y),T=val(o);if(!T)return `<div class="aus1"><span>${y}</span><div class="aus1b"></div><b>–</b></div>`;let rest=T;const seg=top6.map(x=>{const b=o.b[x.k];const v=b?(eur?b.e:b.n):0;rest-=v;return [x,v];});
    return `<div class="aus1${hl(y)&&one?' on':''}"><span>${y}</span><div class="aus1b">`+seg.filter(s=>s[1]>0).map(([x,v])=>`<i style="width:${(v/T*100).toFixed(2)}%;background:${colOf[x.k]}" data-tip="${esc(x.n+' '+y+'\n'+(v/T*100).toFixed(1).replace('.',',')+' % · '+vt(v))}">${v/T>=.09?Math.round(v/T*100)+'%':''}</i>`).join('')+(rest>0?`<i style="width:${(rest/T*100).toFixed(2)}%;background:#475569" data-tip="${esc('Sonstige '+y+'\n'+(rest/T*100).toFixed(1).replace('.',',')+' % · '+vt(rest))}">${rest/T>=.09?Math.round(rest/T*100)+'%':''}</i>`:'')+`</div><b>${vl(T)}</b></div>`;}).join('')+`</div></div>`;
  /* 5. Saison */
@@ -3682,12 +3710,19 @@ function auDetail(k,c){const {g,F,isCur,span,lo,hi,bl,colOf,eur,vt,vl,avg,lq,log
    two(sec('Je Jahr',auTbl(['Jahr','Räder','Anteil','zum Vorjahr','Ø Preis','Leasing/Finanz.'],span.slice().reverse().filter(y=>g(y).b[X.k]).map(y=>{const b=g(y).b[X.k],pb=g(y-1).b[X.k]||{n:0};return [`<b>${y}</b>`,auN(b.n),auF1(g(y).n?b.n/g(y).n*100:0)+' %',auDl(auPct(b.n,pb.n)),b.pn?auE(b.e/b.pn):'–',b.n?Math.round(b.leas/b.n*100)+' %':'–'];}),'aumax')),sec('Meistverkaufte Modelle',models(rows,20))));}
  return '';}
 $('v-ausw').addEventListener('click',e=>{const t=e.target;let x;
+ if(x=t.closest('[data-auown]')){const D=auData(),all=Object.values(D.B),cur=AU.own||all.filter(b=>AUOWN0.includes(bNorm(b.n))).map(b=>b.k),k=x.dataset.auown;AU.own=cur.includes(k)?cur.filter(z=>z!==k):[...cur,k];auSave();rau();return;}
+ if(x=t.closest('[data-aubs]')){const k=x.dataset.aubs,s=new Set(AU.bs||[]);s.has(k)?s.delete(k):s.add(k);AU.bs=[...s];AU.bf='sel';auSave();rau();return;}
+ if(x=t.closest('[data-aubsx]')){const v=x.dataset.aubsx,D=auData(),bs=Object.values(D.B);if(v==='none')AU.bs=[];else if(v==='own')AU.bs=bs.filter(b=>AU.own?AU.own.includes(b.k):AUOWN0.includes(bNorm(b.n))).map(b=>b.k);else{const c={};D.ys.forEach(y=>{const o=D.Y[y].b;for(const k in o)c[k]=(c[k]||0)+o[k].n;});AU.bs=Object.keys(c).sort((a,b)=>c[b]-c[a]).slice(0,10);}AU.bf='sel';auSave();rau();return;}
+ if(t.closest('[data-aubp]')){AUBP=!AUBP;rau();if(AUBP)$('auBq')?.focus();return;}
+ if(x=t.closest('[data-aubf]')){AU.bf=x.dataset.aubf;if(AU.bf==='sel'&&!(AU.bs||[]).length)AUBP=true;auSave();rau();return;}
+ if(t.closest('.aubsel'))return;
  if(x=t.closest('[data-aurng]')){const r=x.dataset.aurng,D=auData(),Ymax=Math.max(D.cy,D.ys[D.ys.length-1]);if(r==='all'){AU.f=null;AU.t=null;}else{AU.t=Ymax;AU.f=Math.max(D.ys[0],Ymax-(+r)+1);}}
  else if(x=t.closest('[data-auy]')){const y=+x.dataset.auy;if(e.shiftKey&&AU.a!=null){AU.f=Math.min(+AU.a,y);AU.t=Math.max(+AU.a,y);}else{AU.f=y;AU.t=y;AU.a=y;}}
  else if(x=t.closest('[data-aum]'))AU.m=x.dataset.aum;
  else if(x=t.closest('[data-auk]'))AU.k=AU.k===x.dataset.auk?'':x.dataset.auk;
  else if(x=t.closest('[data-aub]'))AU.b=x.dataset.aub;
  else if(t.closest('[data-auall]'))AU.all=!AU.all;else return;auSave();rau();});
+$('v-ausw').addEventListener('input',e=>{if(e.target.id!=='auBq')return;AUBQ=e.target.value;const q=AUBQ.toLowerCase();document.querySelectorAll('.aubsl label').forEach(l=>l.hidden=!!q&&!l.dataset.n.includes(q));});
 $('v-ausw').addEventListener('change',e=>{if(e.target.id==='auF'||e.target.id==='auT'){AU.f=+$('auF').value;AU.t=+$('auT').value;if(AU.f>AU.t)[AU.f,AU.t]=[AU.t,AU.f];auSave();rau();}});
 {let tip=null;const hide=()=>{if(tip){tip.remove();tip=null;}};
  $('v-ausw').addEventListener('mouseover',e=>{const t=e.target.closest('[data-tip]');if(!t||!t.dataset.tip){hide();return;}if(!tip){tip=document.createElement('div');tip.className='autip';document.body.append(tip);}tip.textContent=t.dataset.tip;const r=t.getBoundingClientRect();tip.style.left=Math.max(8,Math.min(innerWidth-tip.offsetWidth-8,r.left+r.width/2-tip.offsetWidth/2))+'px';tip.style.top=(r.top-tip.offsetHeight-8<8?r.bottom+8:r.top-tip.offsetHeight-8)+'px';});
