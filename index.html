@@ -1250,7 +1250,7 @@ body.navmini #bmBar{left:100px}#bmBar span{overflow:hidden;text-overflow:ellipsi
 <script>
 const FB_CONFIG={apiKey:"AIzaSyC_uZPvc5rJETwlS4JbfCoTkkE4ckjtp0M",authDomain:"velocenter-planer.firebaseapp.com",projectId:"velocenter-planer",storageBucket:"velocenter-planer.firebasestorage.app",messagingSenderId:"1018330488700",appId:"1:1018330488700:web:262a4d1660353e6fde8ef9"};
 /* ================= Velocenter Werkstatt-Cockpit – Oberfläche ================= */
-const CLIENT_VERSION='1.10.8';
+const CLIENT_VERSION='1.10.9';
 const USERS=[{id:'kevin',n:'Kevin',c:'#E2232D'},{id:'stefan',n:'Stefan',c:'#F59E0B'},{id:'martina',n:'Martina',c:'#EC4899'},{id:'sascha',n:'Sascha',c:'#22D3EE'},{id:'rene',n:'René',c:'#34D399'}];
 const U=id=>USERS.find(u=>u.id===id)||{n:'',c:'#64748B',id:''};
 const $=id=>document.getElementById(id);
@@ -1509,7 +1509,7 @@ function stopLive(){unsubs.forEach(u=>{try{u();}catch(_){}});unsubs=[];}
 function startLive(){stopLive();const from=iso(new Date(Date.now()-35*864e5));
  listen('P',x=>P=x,db.collection('planer').where('datum','>=',from));
  listen('V',x=>V=x);listen('B',x=>B=x);listen('T',x=>T=x);listen('S',x=>{S=x;smbwSeed().then(()=>skonSeed());});
- listen('L',x=>{L=x.map(o=>Object.assign({},o,{k:o.k||o.id}));if(!x.length)seedLeasing();else recLeasing();});
+ listen('L',x=>{L=x.map(o=>Object.assign({},o,{k:o.k||o.id}));fnUpd();setTimeout(leasRename,0);if(!x.length)seedLeasing();else recLeasing();});
  listen('I',x=>{I={};x.forEach(o=>I[o.id]=o.wert);});
  if(ME&&ME.adm)unsubs.push(db.doc('tresor/pw').onSnapshot(d=>{if(KEY&&NOTES&&d.exists&&d.data().ct&&d.data().tsVon!==ME.id&&!document.querySelector('#nGrid [contenteditable]:focus'))open_(KEY,d.data()).then(x=>{if(!Array.isArray(x)){NOTES=x.notes||[];PWGRID=x.grid||PWGRID;rn();}}).catch(()=>{});},()=>{}));
  if(ME&&ME.adm)for(let y=1995;y<=new Date().getFullYear()+1;y++)unsubs.push(db.doc('meta/kd_'+y).onSnapshot(d=>{KD[y]=(d.exists&&d.data().items)||{};kdDirty=true;scheduleRender();},()=>{}));
@@ -1618,7 +1618,10 @@ function stats(el,list,active){$(el).innerHTML=list.map(x=>`<button class="stat$
 let FN={BL:'Bikeleasing',CB:'Company Bike',KM:'Kazenmaier',BB:'Businessbike',JR:'JobRad',DD:'Deutsche Dienstrad',LB:'Lease a Bike',RD:'RIDE',ER:'Eurorad'};
 let vkEdit=null,vkShowDone=false,vkF='',vkSort=ls.get('vc_vksort','dat:-1');vkSort={neu:'dat:-1',lt:'lt:1',status:'status:1'}[vkSort]||vkSort;if(!/^[a-z]+:-?1$/.test(vkSort))vkSort='dat:-1';
 const VF0=[['name','Kunde'],['marke','Marke'],['modell','Modell'],['dat','Vom Kunde bestellt am'],['firma','Leasing-Anbieter']],VF1=[['form','Form'],['gr','Größe'],['lt','Liefertermin'],['antrag','Antrag gestellt am'],['ok','Leasing genehmigt'],['lende','Leasingende'],['notiz','Notiz']];
-function rv(){
+/* 1.10.9: Kürzel in Leasing-Infos umbenannt (z. B. LB → LaB) → offene Räder im Verkauf einmalig mitziehen (nur Admin) */
+function leasRename(){if(!ME||!ME.adm||!L.length||!V.length)return;const mp={};L.forEach(l=>{if(l.id&&l.k&&l.id!==l.k)mp[l.id]=l.k;});if(!Object.keys(mp).length)return;
+ V.forEach(b=>{if(b.firma&&mp[b.firma]&&!FN[b.firma])putV(Object.assign({},b,{firma:mp[b.firma]}));});}
+function rv(){setTimeout(leasRename,0);
  const open=V.filter(b=>b.a!=='1'),F={nm:b=>b.a!=='1'&&b.m!=='1'&&b.b!=='1',mw:b=>b.a!=='1'&&b.m==='1'&&b.b!=='1',ok:b=>b.a!=='1'&&b.b==='1',lk:b=>b.a!=='1'&&b.firma&&!b.ok};
  const list=V.filter(b=>(vkShowDone?b.a==='1':b.a!=='1')||b.id===vkEdit);/* 1.8.3: „Abgeholte“ = nur abgeholte, zuletzt abgeholte oben */
  if(vkShowDone)list.sort((x,y)=>vkAbT(y)-vkAbT(x));else list.sort(vkCmp);
@@ -1686,7 +1689,7 @@ function bModelE(b){const x=brandOfB(b);return bIcoX(x)+`<span class="ef" conten
 function bModel(m){const x=brandOf(m);return bIcoX(x)+esc(bStrip(m,x));}
 function bIco(m){return bIcoX(brandOf(m));}
 function bIcoX(b){if(!b)return'🚲 ';const lg=(BUSER.logos||{})[b.k];return lg?`<img class="blg" src="${lg}" alt="${esc(b.n)}" title="${esc(b.n)}">`:`<span class="bchip" title="${esc(b.n)}"${b.c?` style="color:${b.c}"`:''}>${esc(b.n)}</span>`;}
-function leasLogo(f){if(!f)return'';const x=L.find(l=>l.k===f);const lg=x?logoOf(x):(LOGOS[f]||'');return lg?`<img class="llg" src="${esc(lg)}" alt="${esc(FN[f]||f)}" title="${esc(FN[f]||f)}">`:`<span class="lchip">${esc(f)}</span>`;}
+function leasLogo(f){if(!f)return'';const x=L.find(l=>l.k===f)||L.find(l=>l.id===f||kdKey(l.k)===kdKey(f));const lg=x?logoOf(x):(LOGOS[f]||'');return lg?`<img class="llg" src="${esc(lg)}" alt="${esc(FN[f]||f)}" title="${esc(FN[f]||f)}">`:`<span class="lchip">${esc(f)}</span>`;}
 // Status-Farbe am Namen: angeliefert = gelb, montiert = rot, O.K. = grün – mehrere = Verlauf in dieser Reihenfolge
 const VKC=[['an','251,191,36','#FDE68A'],['m','239,68,68','#FECACA'],['b','52,211,153','#A7F3D0']];
 function vkSty(b){const c=VKC.filter(x=>b[x[0]]==='1');if(!c.length)return'';const L=c[c.length-1];
@@ -2406,7 +2409,7 @@ const LOGOS={AS:'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAOQAAABgCAMAAAA6q
 let lsQ='',lsDrei=false,lsEdit=-1;
 const hl=t=>{let x=esc(t);if(lsQ){const i=x.toLowerCase().indexOf(esc(lsQ));if(i>=0)x=x.slice(0,i)+'<mark>'+x.slice(i,i+esc(lsQ).length)+'</mark>'+x.slice(i+esc(lsQ).length);}return x;};
 const li=t=>`<li class="${t[0]==='!'?'w':''}">${hl(t.replace(/^!/,''))}</li>`;
-const logoOf=f=>f.logo||LOGOS[f.k]||'';
+const logoOf=f=>f.logo||LOGOS[f.k]||LOGOS[f.id]||'';/* 1.10.9: Logo bleibt, auch wenn das Kürzel umbenannt wird (z. B. LB → LaB) */
 // Feste Fragen je Anbieter (Tirys Liste) – [Feld, Frage, 't' = ja/nein/offen]
 const LQG=[['🔧 Inspektion & Verschleiß',[['isz','Inspektion – wir bekommen'],['vsd','Verschleiß dabei?'],['abMon','Einreichen ab Monat'],['isCode','Inspektionscode für Kunden?']]],
  ['🛡 Versicherung',[['vers','Versicherung dabei?']]],
@@ -2438,7 +2441,8 @@ function lsCard(f,i){const nj=(f.zubJa||[]).length,nn=(f.zubNein||[]).length;
 function rl(){
  $('lgrid').innerHTML=lOrd().filter(([f,i])=>i===lsEdit||((!lsDrei||f.drei===true)&&(!lsQ||JSON.stringify(Object.assign({},f,{logo:'',alt:''})).toLowerCase().includes(lsQ)))).map(([f,i])=>i===lsEdit?editCard(f,i):lsCard(f,i)).join('')||'<p class="hint">Nichts gefunden.</p>';
  if(!document.querySelector('#ltab [contenteditable]:focus'))$('ltab').innerHTML='<thead><tr><th>Anbieter</th><th>E-Dreirad</th><th>S-Pedelec</th><th>Inspektion – wir bekommen</th><th>Verschleiß</th><th>Versicherung</th></tr></thead><tbody>'+lOrd().map(([f,i])=>`<tr><td><b style="color:${esc(f.ac)}">●</b> ${esc(f.n)}</td>${['drei','spe'].map(k=>`<td class="tg ${f[k]===true?'y':f[k]===false?'n':''}" data-lt="${i}" data-f="${k}" role="button" tabindex="0" title="Klick = ✓ / ✗ / offen">${f[k]===true?'✓':f[k]===false?'✗':'–'}</td>`).join('')}${['isz','vsd','vers'].map(k=>`<td class="ce" contenteditable="true" spellcheck="false" data-lt="${i}" data-f="${k}">${esc(f[k]||'')}</td>`).join('')}</tr>`).join('')+'</tbody>';
- FN=Object.assign({BL:'Bikeleasing',CB:'Company Bike',KM:'Kazenmaier',BB:'Businessbike',JR:'JobRad',DD:'Deutsche Dienstrad',LB:'Lease a Bike',RD:'RIDE',ER:'Eurorad'},Object.fromEntries(L.filter(f=>!/versicherung|schäden/i.test(f.sub||'')).map(f=>[f.k,f.n])));}
+ fnUpd();}
+function fnUpd(){FN=Object.assign(Object.fromEntries(Object.entries({BL:'Bikeleasing',CB:'Company Bike',KM:'Kazenmaier',BB:'Businessbike',JR:'JobRad',DD:'Deutsche Dienstrad',LB:'Lease a Bike',RD:'RIDE',ER:'Eurorad'}).filter(([k])=>!L.some(l=>l.id===k&&l.k&&l.k!==k))),Object.fromEntries(L.filter(f=>!/versicherung|schäden/i.test(f.sub||'')).map(f=>[f.k,f.n])));}
 function zubDlg(f){const L1=a=>(a||[]).map(t=>`<li>${esc(t)}</li>`).join(''),E='<p class="qe"><span class="qo">offen</span></p>';
  dlg(`<div class="zubd" style="--ac:${esc(f.ac||'#94A3B8')}"><h3>🧩 Leasingfähiges Zubehör · ${esc(f.n)}</h3>
  <div class="zcols"><div class="zj"><h4>✓ Leasingfähig</h4>${(f.zubJa||[]).length?`<ul>${L1(f.zubJa)}</ul>`:E}</div>
@@ -2572,19 +2576,22 @@ function kdVN(){const m={E:'ENRA',EP:'ENRA PLUS'};(L||[]).filter(isVers).forEach
 const kdKey=v=>{let k=String(v||'').toUpperCase().replace(/PLUS/g,'P').replace(/\+/g,'P').replace(/[^A-ZÄÖÜ]/g,'');if(k==='ENRAP'||k==='ENP')k='EP';if(k==='ENRA'||k==='E')k='EN';return k;};
 /* 1.10.7: Finanzierer, die nicht bei den Leasing-Infos stehen – Logo aus dem Lieferanten-Reiter (Tiry: TB = Targo Bank) */
 const KFIN={TB:{n:'Targo Bank',lief:'targo bank'},CP:{n:'Credit Plus',lief:'credit plus'}};
-function kdLogo(v){let k=kdKey(v);if(!k)return'';if(k==='EP')k='EN';const x=(L||[]).find(l=>l.k===k)||(L||[]).find(l=>kdKey(l.n)===k);if(x)return logoOf(x);if(LOGOS[k])return LOGOS[k];
+function kdLogo(v){let k=kdKey(v);if(!k)return'';if(k==='EP')k='EN';const x=(L||[]).find(l=>l.k===k)||(L||[]).find(l=>kdKey(l.k)===k||l.id===k)||(L||[]).find(l=>kdKey(l.n)===k);if(x)return logoOf(x);if(LOGOS[k])return LOGOS[k];
  const f=KFIN[k];if(f){const o=(S||[]).find(s=>String(s.name||'').trim().toLowerCase()===f.lief);return o?sLogo(o):'';}return'';}
 const kdLogoH=v=>{const lg=kdLogo(v);return lg?`<img class="llg kll" src="${esc(lg)}" alt="${esc(v)}" draggable="false">${kdKey(v)==='EP'?'<i class="kplus" title="ENRA PLUS">+</i>':''}`:'';};
 const ANGI={mail:'<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>',tel:'<svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor"><path d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1A17 17 0 0 1 3 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.3 0 .7-.2 1z"/></svg>'};const ANGL={mail:'per E-Mail angeschrieben',tel:'per Telefon nachgefragt',no:'✕ nicht nachfragen'};
 const kdVal=(k,r)=>k==='ang'?(ANGL[r.ang]||''):k==='nr'?kdNr(r):k==='preis'?kdPreis(r.preis):String(r[k]==null?'':r[k]).trim();
-const kdLab=(k,v)=>v===''?'(leer)':k==='leas'&&FN[v]?v+' · '+FN[v]:k==='leas'&&KFIN[kdKey(v)]?v+' · '+KFIN[kdKey(v)].n:k==='vers'&&kdVN()[v]?v+' · '+kdVN()[v]:v;
+const KDNC='\u0001nc';
+const kdFv=(k,r)=>{const v=kdVal(k,r);if(!(k==='leas'||k==='vers')||v==='')return v;const c=kdKey(v);if(!c)return KDNC;
+ if(k==='leas'){const l=(L||[]).find(x=>kdKey(x.k)===c)||(L||[]).find(x=>kdKey(x.id)===c);if(l)return l.k;if(KFIN[c])return c;}else{const kk=Object.keys(kdVN()).find(x=>kdKey(x)===c);if(kk)return kk;}return c;};
+const kdLab=(k,v)=>v===KDNC?'📅 Datum / ohne Kürzel (altes Sheet)':v===''?'(leer)':k==='leas'&&FN[v]?v+' · '+FN[v]:k==='leas'&&(L||[]).find(l=>kdKey(l.k)===kdKey(v))?v+' · '+(L||[]).find(l=>kdKey(l.k)===kdKey(v)).n:k==='leas'&&KFIN[kdKey(v)]?v+' · '+KFIN[kdKey(v)].n:k==='vers'&&kdVN()[v]?v+' · '+kdVN()[v]:v;
 let kdF={},kdYr=String(ls.get('vc_kdyr','')||'');  // Filter je Spalte: {Spalte: Set(Werte)} wie der Excel-Autofilter
 const kdYear=r=>{const d=r._d?new Date(r._d):null;return d?d.getFullYear():'ohne Datum';};
 const kdPreis=v=>{v=String(v==null?'':v).trim();if(/^\d+([.,]\d+)?$/.test(v)){const n=parseFloat(v.replace(',','.'));return n.toLocaleString('de-DE',{maximumFractionDigits:2})+' €';}return v;};
 function rk(){const g=$('kdGrid');if(!g)return;kdAngMig();const all=kdAll();{const cy=new Date().getFullYear();$('nKunden').textContent=all.length?all.length.toLocaleString('de-DE'):'–';$('nKunden').title=all.length.toLocaleString('de-DE')+' Verkäufe gesamt seit 1995 · davon '+all.filter(r=>r._d&&new Date(r._d).getFullYear()===cy).length+' in '+cy;}
  if(document.querySelector('#kdGrid [contenteditable]:focus'))return;
  const q=($('kdSearch').value||'').trim().toLowerCase();const now=new Date().getFullYear();
- const fk=Object.keys(kdF),fo=r=>fk.every(k=>kdF[k].has(kdVal(k,r)));if($('kdFx')){$('kdFx').hidden=!fk.length;$('kdFx').textContent='✕ Filter aus ('+fk.length+')';}
+ const fk=Object.keys(kdF),fo=r=>fk.every(k=>kdF[k].has(kdFv(k,r)));if($('kdFx')){$('kdFx').hidden=!fk.length;$('kdFx').textContent='✕ Filter aus ('+fk.length+')';}
  // Jahres-Leiste: Klick auf einen Jahrgang zeigt nur dieses Jahr (Suche/Filter wirken dann innerhalb des Jahres)
  const yc={};all.forEach(r=>{const y=String(kdYear(r));yc[y]=(yc[y]||0)+1;});if(kdYr&&!yc[kdYr]&&all.length)kdYr='';
  const ys=Object.keys(yc).sort((a,b)=>(+b||0)-(+a||0)),de=n=>n.toLocaleString('de-DE');
@@ -2673,7 +2680,7 @@ document.addEventListener('pointerdown',e=>{if(kdPop&&!kdPop.el.contains(e.targe
 document.addEventListener('keydown',e=>{if(kdPop&&e.key==='Escape')kdPopClose();});
 document.addEventListener('scroll',e=>{if(kdPop&&!kdPop.el.contains(e.target)&&Date.now()-kdPop.t0>250)kdPopClose();},true);
 function kdFltOpen(hd){const k=hd.dataset.kc,c=KDC.find(x=>x.k===k);if(kdPop&&kdPop.t==='flt'&&kdPop.k===k){kdPopClose();return;}
- const cnt=new Map();kdAll().forEach(r=>{const v=kdVal(k,r);cnt.set(v,(cnt.get(v)||0)+1);});
+ const cnt=new Map();kdAll().forEach(r=>{const v=kdFv(k,r);cnt.set(v,(cnt.get(v)||0)+1);});
  const vals=[...cnt].sort((a,b)=>k==='dat'||k==='nr'?0:(b[1]-a[1]||String(a[0]).localeCompare(String(b[0]),'de',{numeric:true}))),cur=new Set(kdF[k]||vals.map(x=>x[0]));
  const el=kdPopOpen(hd,`<div class="kph">${esc(c.n||'Spalte')} filtern</div><input class="kpq" placeholder="Suchen …"><div class="kpl"></div><div class="kpa"><button type="button" class="btn" data-kpall>Alle</button><button type="button" class="btn" data-kpnone>Keine</button><button type="button" class="btn red" data-kpok>Filtern</button></div>`,{t:'flt',k});
  const vis=()=>{const q=el.querySelector('.kpq').value.trim().toLowerCase();return q?vals.filter(([v])=>kdLab(k,v).toLowerCase().includes(q)):vals;};
