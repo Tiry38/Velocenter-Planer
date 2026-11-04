@@ -1310,6 +1310,14 @@ body[data-v=ausw]{--ac:#F5B83D}
 .aubr.own .aubn em{color:#fff}
 /* 1.10.31: farbige Navi-Symbole (Tiry) – Kachelfarbe bleibt, Symbol mehrfarbig; Schatten für Kontrast auf der aktiven Kachel */
 .navbtn:not([data-v=kunden]) .tile svg{filter:drop-shadow(0 1px 1.2px rgba(0,0,0,.55))}
+/* 1.10.33: Knopf „Marken-Verkaufsentwicklung“ oben in der Auswertung */
+.aumkb{display:inline-flex;align-items:center;gap:8px;padding:8px 14px;border-radius:12px;border:1px solid rgba(255,217,59,.6);background:linear-gradient(135deg,rgba(255,217,59,.28),rgba(255,138,31,.18));color:#FFE58A;font:700 13px Outfit,sans-serif;cursor:pointer;box-shadow:0 0 16px -6px #FFD93B;transition:transform .15s,box-shadow .15s}
+.aumkb:hover{transform:translateY(-1px);box-shadow:0 0 22px -4px #FFD93B}
+.aumkb small{font-size:11px;padding:2px 7px;border-radius:8px;background:rgba(0,0,0,.35);color:#FFD93B}
+.aumkb.on{background:linear-gradient(135deg,#FFD93B,#FF8A1F);color:#1a1205}.aumkb.on small{color:#1a1205;background:rgba(255,255,255,.4)}
+#auMk{scroll-margin-top:12px}
+#auMk.auflash{animation:auFl 1.4s ease}
+@keyframes auFl{0%,100%{box-shadow:none}25%{box-shadow:0 0 0 2px #FFD93B,0 0 30px -4px #FFD93B}}
 
 [hidden]{display:none!important}
 #sTab td.b{font-weight:700}#sTab .pwm.ed{outline:none;padding:2px 6px;border-radius:6px;font-family:var(--mono)}#sTab td{vertical-align:top}
@@ -1494,7 +1502,7 @@ body[data-v=ausw]{--ac:#F5B83D}
 <script>
 const FB_CONFIG={apiKey:"AIzaSyC_uZPvc5rJETwlS4JbfCoTkkE4ckjtp0M",authDomain:"velocenter-planer.firebaseapp.com",projectId:"velocenter-planer",storageBucket:"velocenter-planer.firebasestorage.app",messagingSenderId:"1018330488700",appId:"1:1018330488700:web:262a4d1660353e6fde8ef9"};
 /* ================= Velocenter Werkstatt-Cockpit – Oberfläche ================= */
-const CLIENT_VERSION='1.10.32';
+const CLIENT_VERSION='1.10.33';
 const USERS=[{id:'kevin',n:'Kevin',c:'#E2232D'},{id:'stefan',n:'Stefan',c:'#F59E0B'},{id:'martina',n:'Martina',c:'#EC4899'},{id:'sascha',n:'Sascha',c:'#22D3EE'},{id:'rene',n:'René',c:'#34D399'}];
 const U=id=>USERS.find(u=>u.id===id)||{n:'',c:'#64748B',id:''};
 const $=id=>document.getElementById(id);
@@ -3622,7 +3630,7 @@ function rau(){const host=$('auBody');if(!host||!ME||!ME.adm)return;const D=auDa
  $('auTools').innerHTML=`<div class="autop"><div class="auseg"><button type="button" data-aurng="all" class="${isAll?'on':''}">Alle Jahre</button><button type="button" data-aurng="10" class="${!isAll&&rng(10)?'on':''}">Letzte 10</button><button type="button" data-aurng="5" class="${!isAll&&rng(5)?'on':''}">Letzte 5</button><button type="button" data-aurng="1" class="${one&&hi===Ymax?'on':''}">Nur ${Ymax}</button></div>
   <label class="aurg">von <select id="auF">${yOpt(lo)}</select> bis <select id="auT">${yOpt(hi)}</select></label>
   <div class="auseg"><button type="button" data-aum="n" class="${!eur?'on':''}">Stück</button><button type="button" data-aum="e" class="${eur?'on':''}">Umsatz €</button></div>
-  <span class="ausel">Auswahl: <b>${one?lo:lo+' – '+hi}</b>${one?'':` · ${span.length} Jahre`}</span></div>
+  <button type="button" class="aumkb${AU.bf==='own'?' on':''}" data-aumk title="Springt zur Marken-Entwicklung und zeigt nur unsere Marken">🏷 Marken-Verkaufsentwicklung <small>⭐ Unsere ${(AU.own||AUOWN0).length}</small></button><span class="ausel">Auswahl: <b>${one?lo:lo+' – '+hi}</b>${one?'':` · ${span.length} Jahre`}</span></div>
   <div class="auyrs">${yc}</div><div class="auhint auyh">Jahr anklicken = nur dieses Jahr · <b>Umschalt</b> + Klick = Zeitraum bis dahin · oder oben „von – bis“ wählen. Kacheln anklicken = alle Details.</div>`;
  /* ---- Marken im Zeitraum ---- */
  const bt={};span.forEach(y=>{const b=g(y).b;for(const k in b){const t=bt[k]||(bt[k]={n:0,e:0});t.n+=b[k].n;t.e+=b[k].e;}});
@@ -3660,7 +3668,7 @@ function rau(){const host=$('auBody');if(!host||!ME||!ME.adm)return;const D=auDa
    t:`${y}${y===cy?' (bis heute)':''}\n${auN(o.n)} Räder${o.e?'\nUmsatz: '+auE(o.e)+(o.pn<o.n?' ('+o.pn+' mit Preis)':''):''}${avg(o)?'\nØ Preis: '+auE(avg(o)):''}${lq(o)!=null?'\nLeasing/Finanz.: '+Math.round(lq(o))+' %':''}${y<cy?'\nbis '+tdS+': '+(eur?auE(o.ye):auN(o.yn)):''}${pp!=null&&i?'\nzum Vorjahr: '+(pp>0?'+':'')+pp.toFixed(1).replace('.',',')+' %':''}\nKlick = nur ${y}`};}))+`</div>`;
  /* 2. Marken-Entwicklung */
  const showB=AU.all?blv:AU.bf==='all'||!AU.bf?[...own,...oth.slice(0,Math.max(8,15-own.length))]:blv.slice(0,15),bmx=Math.max(1,...showB.map(x=>x.t)),bb=(y,k)=>g(y).b[k]||{n:0,e:0,yn:0,ye:0};
- h+=`<div class="aucard auwide"><div class="auch"><h3>🏷 Marken-Entwicklung ${one?lo:lo+'–'+hi}</h3>${auBf(bl,own,vl)}<span class="auhint">${blv.length} von ${bl.length} Marken · ★ = unsere Marke (anklicken zum Ändern) · Zeile anklicken = Detail-Diagramm · „${F}${isCur?' bis heute':''}“ im Vergleich zu ${vsTxt}</span></div>
+ h+=`<div class="aucard auwide" id="auMk"><div class="auch"><h3>🏷 Marken-Entwicklung ${one?lo:lo+'–'+hi}</h3>${auBf(bl,own,vl)}<span class="auhint">${blv.length} von ${bl.length} Marken · ★ = unsere Marke (anklicken zum Ändern) · Zeile anklicken = Detail-Diagramm · „${F}${isCur?' bis heute':''}“ im Vergleich zu ${vsTxt}</span></div>
  <div class="aubtab"><div class="aubr auhd"><span>Marke</span><span>Verlauf ${cs[0]}–${cs[cs.length-1]}</span><span>Gesamt</span><span>Anteil</span><span>${F-1}</span><span>${F}${isCur?' bis heute':''}</span></div>`+
   showB.map((x,ix)=>{const vs=cs.map(y=>{const b=g(y).b[x.k];return b?(eur?b.e:b.n):0;}),mx=Math.max(1,...vs),a=bb(F-1,x.k),b2=bb(F-2,x.k),c=bb(F,x.k);
    const cv=eur?c.e:c.n,pv=isCur?(eur?a.ye:a.yn):(eur?a.e:a.n);
@@ -3727,6 +3735,7 @@ $('v-ausw').addEventListener('click',e=>{const t=e.target;let x;
  if(x=t.closest('[data-auown]')){const D=auData(),all=Object.values(D.B),cur=AU.own||all.filter(b=>AUOWN0.includes(bNorm(b.n))).map(b=>b.k),k=x.dataset.auown;AU.own=cur.includes(k)?cur.filter(z=>z!==k):[...cur,k];auSave();rau();return;}
  if(x=t.closest('[data-aubs]')){const k=x.dataset.aubs,s=new Set(AU.bs||[]);s.has(k)?s.delete(k):s.add(k);AU.bs=[...s];AU.bf='sel';auSave();rau();return;}
  if(x=t.closest('[data-aubsx]')){const v=x.dataset.aubsx,D=auData(),bs=Object.values(D.B);if(v==='none')AU.bs=[];else if(v==='own')AU.bs=bs.filter(b=>AU.own?AU.own.includes(b.k):AUOWN0.includes(bNorm(b.n))).map(b=>b.k);else{const c={};D.ys.forEach(y=>{const o=D.Y[y].b;for(const k in o)c[k]=(c[k]||0)+o[k].n;});AU.bs=Object.keys(c).sort((a,b)=>c[b]-c[a]).slice(0,10);}AU.bf='sel';auSave();rau();return;}
+ if(t.closest('[data-aumk]')){AU.bf='own';AU.all=false;AUBP=false;auSave();rau();const m=$('auMk');if(m){m.scrollIntoView({behavior:'smooth',block:'start'});m.classList.remove('auflash');void m.offsetWidth;m.classList.add('auflash');}return;}
  if(t.closest('[data-aubp]')){AUBP=!AUBP;rau();if(AUBP)$('auBq')?.focus();return;}
  if(x=t.closest('[data-aubf]')){AU.bf=x.dataset.aubf;if(AU.bf==='sel'&&!(AU.bs||[]).length)AUBP=true;auSave();rau();return;}
  if(t.closest('.aubsel'))return;
