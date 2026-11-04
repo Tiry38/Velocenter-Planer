@@ -432,7 +432,7 @@ body.navmini .app{grid-template-columns:84px 1fr}
 .vtab td.dcell:empty::before{content:"📅 –";color:var(--muted);font-weight:400}
 .vtab td.d-antrag{color:#C4B5FD}
 .vtab td.d-ok{color:#34D399}
-.vtab td.d-ok.miss:empty::before{content:"Genehmigung\A fehlt";white-space:pre;display:block;line-height:1.15;font-size:11px;text-align:center;color:#FCA5A5;font-weight:700}
+.vtab td.d-ok.miss:empty::before{content:"–";display:block;text-align:center;color:var(--muted);font-weight:400}
 .vtab td.d-lende{color:#67E8F9}
 .edit.din{width:132px;padding:3px 4px;font:700 12px var(--mono);color-scheme:dark;background:var(--panel2);color:#fff;border:1px solid var(--cyan);border-radius:7px}
 
@@ -1526,7 +1526,7 @@ body.uidense .vtab td,body.uidense #kdTab td{line-height:1.25}
 <script>
 const FB_CONFIG={apiKey:"AIzaSyC_uZPvc5rJETwlS4JbfCoTkkE4ckjtp0M",authDomain:"velocenter-planer.firebaseapp.com",projectId:"velocenter-planer",storageBucket:"velocenter-planer.firebasestorage.app",messagingSenderId:"1018330488700",appId:"1:1018330488700:web:262a4d1660353e6fde8ef9"};
 /* ================= Velocenter Werkstatt-Cockpit – Oberfläche ================= */
-const CLIENT_VERSION='1.10.37';
+const CLIENT_VERSION='1.10.38';
 const USERS=[{id:'kevin',n:'Kevin',c:'#E2232D'},{id:'stefan',n:'Stefan',c:'#F59E0B'},{id:'martina',n:'Martina',c:'#EC4899'},{id:'sascha',n:'Sascha',c:'#22D3EE'},{id:'rene',n:'René',c:'#34D399'}];
 const U=id=>USERS.find(u=>u.id===id)||{n:'',c:'#64748B',id:''};
 /* 1.10.37: Profilfarbe je Nutzer (meta/prefs[ID].col, für alle sichtbar) – Cache für den Login-Bildschirm */
@@ -2082,7 +2082,7 @@ function lvB(b,f){const u=U(b[f+'Von']),ok=b[f+'Von']&&u.n;return `<button class
 function lvPick(t){const b=V.find(x=>x.id===t.dataset.lvi),f=t.dataset.lvf;if(!b)return;if(kdPop&&kdPop.lv===b.id+f){kdPopClose();return;}const cur=b[f+'Von'];
  const el=kdPopOpen(t,`<div class="vstp"><div class="kph">${VLN[f]} – von wem?</div><div class="vstl">${USERS.filter(u=>ADMINS.includes(u.id)).map(u=>`<button type="button" class="vstu${cur===u.id?' on':''}" style="--uc:${u.c}" data-vsu="${u.id}"><span class="av">${esc(u.n[0])}</span>${esc(u.n)}</button>`).join('')}</div>${cur?`<button type="button" class="vstx" data-vsu="">✕ Person entfernen</button>`:''}</div>`);kdPop.lv=b.id+f;
  el.addEventListener('click',e=>{const x=e.target.closest('[data-vsu]');if(!x)return;kdPopClose();const bb=V.find(v=>v.id===b.id);if(!bb||(bb[f+'Von']||'')===x.dataset.vsu)return;putV(Object.assign({},bb,{[f+'Von']:x.dataset.vsu,[f+'Ts']:bb[f+'Ts']||stamp()}));});}
-async function putV(b){vAutoVon(b);const i=V.findIndex(x=>x.id===b.id);if(i<0)V.unshift(b);else V[i]=b;rv();try{await save('V',b);}catch(_){}}
+async function putV(b){{const o=V.find(x=>x.id===b.id)||{};/* 1.10.38: Leasing neu gewählt → Antrag gestellt = heute */if(b.firma&&!o.firma&&!/\d/.test(b.antrag||'')){const d=new Date();b.antrag=String(d.getDate()).padStart(2,'0')+'.'+String(d.getMonth()+1).padStart(2,'0')+'.'+d.getFullYear();}}vAutoVon(b);const i=V.findIndex(x=>x.id===b.id);if(i<0)V.unshift(b);else V[i]=b;rv();try{await save('V',b);}catch(_){}}
 /* 1.6.5: Status setzen – who = Person-ID oder '' (entfernen). Admins wählen die Person, Team setzt nur sich selbst. */
 $('cards').addEventListener('click',e=>{const t=e.target.closest('.lvon');if(!t)return;e.stopPropagation();e.preventDefault();lvPick(t);},true);
 /* 1.8.8: Admins können JEDEN Kürzel-Kreis ändern (Planer, Bestellungen, Trinkgeld, Verkauf-Notiz) */
