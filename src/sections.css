@@ -784,3 +784,7 @@ body.navmini #bmBar{left:100px}#bmBar span{overflow:hidden;text-overflow:ellipsi
 .bfg>.bf-datum{grid-column:span 2}.bfg>.bf-artikel,.bfg>.bf-kunde{grid-column:span 5}
 .bfg input.bfd{cursor:pointer;color-scheme:dark}.bfg .bfold{display:block;margin-top:4px;font-size:11px;color:#FACC15;text-transform:none;letter-spacing:0}
 @media (max-width:900px){.bfg>label,.bfg>.bf-datum,.bfg>.bf-artikel,.bfg>.bf-kunde{grid-column:span 6}}
+/* 1.10.18: eingeklappte Navi – Zahl als kleines Schild oben rechts auf der Kachel (nicht bei Kunden) */
+body.navmini .navbtn .n{opacity:1;position:absolute;left:31px;top:-3px;margin:0;padding:0 5px;min-width:9px;text-align:center;font-size:10px;line-height:15px;border-radius:99px;z-index:3;background:color-mix(in srgb,var(--ac) 55%,#0b0e15);border-color:color-mix(in srgb,var(--ac) 80%,#fff 0%);box-shadow:0 0 0 2px #0b0e15;pointer-events:none}
+body.navmini .navbtn[data-v=kunden] .n{opacity:0}
+body.navmini .navbtn .n.z{opacity:0}
