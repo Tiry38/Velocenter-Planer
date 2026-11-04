@@ -1310,6 +1310,26 @@ body[data-v=ausw]{--ac:#F5B83D}
 .aubr.own .aubn em{color:#fff}
 /* 1.10.31: farbige Navi-Symbole (Tiry) – Kachelfarbe bleibt, Symbol mehrfarbig; Schatten für Kontrast auf der aktiven Kachel */
 .navbtn:not([data-v=kunden]) .tile svg{filter:drop-shadow(0 1px 1.2px rgba(0,0,0,.55))}
+/* 1.10.36 ⚙ Einstellungen neu */
+#kdImp,#kdMailImp,#kdClr,#sExp{display:none!important}
+.dlg-box.wide.stwide{width:min(1120px,96vw);max-height:92vh}
+.sthd{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:14px}.sthd h3{margin:0;font:800 22px "Outfit",sans-serif;background:linear-gradient(90deg,#fff,#9FE8FF);-webkit-background-clip:text;background-clip:text;color:transparent}
+.sttabs{display:flex;gap:4px;padding:4px;border-radius:14px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);margin-left:auto}
+.sttabs button{border:0;cursor:pointer;padding:9px 16px;border-radius:10px;background:transparent;color:#94A3B8;font:700 13px "Outfit",sans-serif;transition:.2s}
+.sttabs button:hover{color:#fff}.sttabs button.on{color:#fff;background:linear-gradient(135deg,#E2232D,#A21CAF);box-shadow:0 4px 16px rgba(226,35,45,.4)}
+.stgrp{margin-bottom:18px}.stgrp h4{margin:0 0 10px;font:800 12px "Outfit",sans-serif;letter-spacing:.12em;text-transform:uppercase;color:#7DD3FC}
+.stgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:12px}
+.stc{--tc:#22D3EE;position:relative;display:flex;flex-direction:column;gap:9px;padding:15px 16px 14px;border-radius:16px;background:linear-gradient(160deg,color-mix(in srgb,var(--tc) 13%,transparent),rgba(255,255,255,.025) 55%);border:1px solid color-mix(in srgb,var(--tc) 35%,transparent);box-shadow:0 6px 22px rgba(0,0,0,.25);overflow:hidden}
+.stc::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--tc);box-shadow:0 0 12px var(--tc)}
+.stch{display:flex;align-items:center;gap:11px}.stch b{display:block;font:800 16px "Outfit",sans-serif;color:#fff}.stch em{font:800 10px "Outfit",sans-serif;font-style:normal;letter-spacing:.1em;color:var(--tc)}
+.stic{display:grid;place-items:center;width:40px;height:40px;flex:none;border-radius:12px;font-size:21px;background:color-mix(in srgb,var(--tc) 20%,#0A0D13);border:1px solid color-mix(in srgb,var(--tc) 50%,transparent)}
+.stcr{display:grid;grid-template-columns:96px 1fr;gap:8px;font-size:12.5px;line-height:1.45}.stcr span{font:700 11px "Outfit",sans-serif;color:var(--tc);text-transform:uppercase;letter-spacing:.04em;padding-top:2px}.stcr p{margin:0;color:#CBD5E1}.stcr b{color:#fff}
+.stp{margin:0;font-size:12.5px;color:#CBD5E1;line-height:1.45}
+.stst{font:600 12px "Outfit",sans-serif;color:#E2E8F0;padding:6px 10px;border-radius:9px;background:rgba(0,0,0,.28);border:1px solid rgba(255,255,255,.07)}
+.stcb{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:auto;padding-top:4px}.stcb .err{font-size:12px}
+.stno{font:600 12px "Outfit",sans-serif;color:#64748B}
+.stdel{background:linear-gradient(160deg,rgba(255,77,109,.14),rgba(255,255,255,.02) 55%)}
+@media(max-width:600px){.stcr{grid-template-columns:1fr;gap:2px}.sttabs{margin-left:0;width:100%}.sttabs button{flex:1;padding:9px 6px}}
 
 [hidden]{display:none!important}
 #sTab td.b{font-weight:700}#sTab .pwm.ed{outline:none;padding:2px 6px;border-radius:6px;font-family:var(--mono)}#sTab td{vertical-align:top}
@@ -1494,7 +1514,7 @@ body[data-v=ausw]{--ac:#F5B83D}
 <script>
 const FB_CONFIG={apiKey:"AIzaSyC_uZPvc5rJETwlS4JbfCoTkkE4ckjtp0M",authDomain:"velocenter-planer.firebaseapp.com",projectId:"velocenter-planer",storageBucket:"velocenter-planer.firebasestorage.app",messagingSenderId:"1018330488700",appId:"1:1018330488700:web:262a4d1660353e6fde8ef9"};
 /* ================= Velocenter Werkstatt-Cockpit – Oberfläche ================= */
-const CLIENT_VERSION='1.10.35';
+const CLIENT_VERSION='1.10.36';
 const USERS=[{id:'kevin',n:'Kevin',c:'#E2232D'},{id:'stefan',n:'Stefan',c:'#F59E0B'},{id:'martina',n:'Martina',c:'#EC4899'},{id:'sascha',n:'Sascha',c:'#22D3EE'},{id:'rene',n:'René',c:'#34D399'}];
 const U=id=>USERS.find(u=>u.id===id)||{n:'',c:'#64748B',id:''};
 const $=id=>document.getElementById(id);
@@ -1626,21 +1646,49 @@ function dlgClose(){if(DLGLOCK)return;$('dlg').hidden=true;$('dlgBox').innerHTML
 document.addEventListener('keydown',e=>{if(e.key!=='Escape'||$('dlg').hidden||e.defaultPrevented)return;if(typeof kdPop!=='undefined'&&kdPop)return;const t=e.target;if(t&&t.closest&&t.closest('#dlg')&&t.matches('input[type=date],select'))return;dlgClose();});
 $('meCfg').addEventListener('click',()=>setDlg());
 /* 1.9.1: eigene Einstellungen je Nutzer (Profil-Menü → ⚙ Einstellungen, auch eingeklappt) */
-function setDlg(){if(!ME)return;const u=U(ME.id),pin=NAVPIN,st=MYPREF.start||'last';
- const tabs=[...document.querySelectorAll('.navbtn[data-v]')].filter(b=>!b.hidden).map(b=>[b.dataset.v,(b.querySelector('.lbl b')||b).textContent.trim()]);
- dlg(`<h3>⚙ Einstellungen · ${esc(u.n)}</h3>
- <div class="setg"><div class="setsec"><h4>👤 Konto</h4><div class="setrow"><span class="av big" style="--uc:${u.c}">${esc(u.n[0])}</span><div><b>${esc(u.n)}</b><small>${ME.adm?'Admin – darf alles':'Team'}</small></div></div>
-  <div class="acts"><button type="button" class="btn" id="stPw">🔑 Passwort ändern</button><button type="button" class="btn" id="stOut">⇄ Abmelden</button></div></div>
- <div class="setsec"><h4>🖥 Ansicht</h4>
-  <label class="setl">Navi beim Start<select id="stNav"><option value="0"${pin?'':' selected'}>eingeklappt</option><option value="1"${pin?' selected':''}>ausgeklappt</option></select></label>
-  <label class="setl">Startseite nach dem Anmelden<select id="stStart"><option value="last"${st==='last'?' selected':''}>zuletzt geöffneter Reiter</option>${tabs.map(([v,n])=>`<option value="${v}"${st===v?' selected':''}>${esc(n)}</option>`).join('')}</select></label></div>
- <div class="setsec"><h4>🏷 Markenlogos</h4><p class="hint">Logos für Marken hochladen, Erkennung anpassen.</p><button type="button" class="btn" id="stBr">Markenlogos verwalten</button></div>
- ${ME.adm?`<div class="setsec"><h4>🛡 Admin</h4><p class="hint">Konten sichern, Sicherung herunterladen, Passwort-Hilfe für Mitarbeiter. Spalten ändern: Stift „Bearbeiten“ unten in der Navi.</p><button type="button" class="btn" id="stAdm">Konten & Sicherung</button></div><div class="setsec"><h4>📧 E-Mail-Versand</h4><p class="hint">Mails an Kunden direkt über info@velo-center.de verschicken.</p><button type="button" class="btn" id="stMail">Einrichten</button></div>`:''}</div>
- <div class="acts" style="justify-content:flex-end"><button type="button" class="btn red" data-close>Fertig</button></div>`);$('dlgBox').classList.add('wide');
- $('stPw').addEventListener('click',()=>{dlgClose();$('meSet').click();});$('stOut').addEventListener('click',()=>{dlgClose();$('switchUser').click();});
- $('stBr').addEventListener('click',()=>{dlgClose();brandDlg();});if($('stAdm'))$('stAdm').addEventListener('click',()=>{dlgClose();$('meSet').click();});if($('stMail'))$('stMail').addEventListener('click',()=>{dlgClose();mailCfgDlg();});
- $('stNav').addEventListener('change',e=>{navMini(e.target.value!=='1');toast('Gespeichert');});
- $('stStart').addEventListener('change',e=>{MYPREF.start=e.target.value;db.doc('meta/prefs').set({[ME.id]:{start:e.target.value}},{merge:true}).then(()=>toast('Startseite gespeichert')).catch(fail);});}
+/* 1.10.36: ⚙ Einstellungen neu – Reiter Nutzer/Admin, jeder Import/Export als eigene Karte mit Beschreibung */
+let IMPX={};
+function setDlg(tab){if(!ME)return;const u=U(ME.id),pin=NAVPIN,st=MYPREF.start||'last',adm=!!ME.adm;
+ tab=adm?(tab||ls.get('vc_settab','u')):'u';if(tab!=='a')tab='u';
+ const tabs=[...document.querySelectorAll('.navbtn[data-v]')].filter(b=>!b.hidden).map(b=>[b.dataset.v,(b.querySelector('.lbl b')||b.querySelector('.lbl')||b).childNodes[0].textContent.trim()]);
+ const nK=adm?kdAll().length:0,dd=t=>t?esc(String(t).slice(0,10).split('-').reverse().join('.')):'';
+ const TAG={imp:['IMPORT','#22D3EE'],exp:['EXPORT','#39F26B'],set:['EINRICHTEN','#F5B83D'],sec:['SICHERHEIT','#A78BFA'],del:['GEFAHR','#FF4D6D']};
+ const card=(ic,t,tg,rows,btn,stt,cls)=>`<div class="stc ${cls||''}" style="--tc:${TAG[tg][1]}"><div class="stch"><span class="stic">${ic}</span><div><b>${t}</b><em>${TAG[tg][0]}</em></div></div>${rows.map(([l,h])=>`<div class="stcr"><span>${l}</span><p>${h}</p></div>`).join('')}${stt?`<div class="stst">${stt}</div>`:''}<div class="stcb">${btn}</div></div>`;
+ const U1=`<div class="stgrp"><h4>👤 Konto & Ansicht</h4><div class="stgrid">
+  <div class="stc" style="--tc:${u.c}"><div class="stch"><span class="av big" style="--uc:${u.c}">${esc(u.n[0])}</span><div><b>${esc(u.n)}</b><em>${adm?'ADMIN – DARF ALLES':'TEAM'}</em></div></div><p class="stp">Angemeldet auf diesem Gerät. Die Anmeldung bleibt gespeichert, bis du dich abmeldest.</p><div class="stcb"><button type="button" class="btn" id="stPw">🔑 Passwort ändern</button><button type="button" class="btn" id="stOut">⇄ Abmelden</button></div></div>
+  <div class="stc" style="--tc:#22D3EE"><div class="stch"><span class="stic">🖥</span><div><b>Ansicht</b><em>GILT FÜR DICH – AUF ALLEN GERÄTEN</em></div></div>
+   <label class="setl">Navi beim Start<select id="stNav"><option value="0"${pin?'':' selected'}>eingeklappt</option><option value="1"${pin?' selected':''}>ausgeklappt</option></select></label>
+   <label class="setl">Startseite nach dem Anmelden<select id="stStart"><option value="last"${st==='last'?' selected':''}>zuletzt geöffneter Reiter</option>${tabs.map(([v,n])=>`<option value="${v}"${st===v?' selected':''}>${esc(n)}</option>`).join('')}</select></label></div>
+  <div class="stc" style="--tc:#FB923C"><div class="stch"><span class="stic">🏷</span><div><b>Markenlogos</b><em>GILT FÜR ALLE</em></div></div><p class="stp">Logos für Marken hochladen (werden automatisch freigestellt, zugeschnitten und geschärft), eigene Marken mit Modellwörtern anlegen, doppelte Marken zusammenführen.</p><div class="stcb"><button type="button" class="btn" id="stBr">Markenlogos verwalten</button></div></div>
+ </div></div>
+ <div class="stgrp"><h4>⇅ Exporte</h4><div class="stgrid">
+  ${card('📋','Lieferanten-Namen kopieren','exp',[['Wofür','Liste aller Lieferanten-Namen, z. B. um Kontaktdaten recherchieren zu lassen.'],['Du brauchst','nichts – kommt direkt aus dem Reiter Lieferanten.'],['Was passiert','Alle Namen A–Z (nur Namen, <b>keine</b> Kunden-Nr., keine Logins) landen in der Zwischenablage → mit Strg+V einfügen. Geht das nicht, kommt eine Textdatei in den Download-Ordner.']],'<button type="button" class="btn" data-sx="sExp">📋 Namen kopieren</button>',(typeof S!=='undefined'?S.length:0)+' Lieferanten')}
+ </div></div>`;
+ const A1=adm?`<div class="stgrp"><h4>📥 Importe</h4><div class="stgrid">
+  ${card('📊','Kunden aus dem Sheet übernehmen','imp',[['Wofür','Holt die Verkaufshistorie (seit 1995) aus dem Google-Sheet in den Reiter <b>Kunden</b> – Grundlage für Kundenliste, E-Mails und 📊 Auswertung.'],['Du brauchst','Die Excel-Datei (.xlsx) des Google-Sheets „Abhol-Werkstattplaner“ mit dem Reiter <b>„Kunden“</b>.'],['So geht’s','Sheet in Chrome öffnen → <b>Datei → Herunterladen → Microsoft Excel (.xlsx)</b> → hier die Datei wählen.'],['Was passiert','Nur der Reiter „Kunden“ wird gelesen, das Sheet bleibt unverändert. <b>Achtung:</b> je Jahr wird der komplette Bestand in der App ersetzt – was in der App nachgetragen wurde (E-Mail, Angeschrieben, Änderungen) geht in diesen Jahren verloren. Vorher 💾 Sicherung machen.']],'<button type="button" class="btn red" data-sx="kdImp">📥 Datei wählen & übernehmen</button>',KDIMP?`✓ übernommen${IMPX.kundenAm?' am '+dd(IMPX.kundenAm):''}${IMPX.kundenN?' · '+Number(IMPX.kundenN).toLocaleString('de-DE')+' Zeilen':''} · jetzt ${nK.toLocaleString('de-DE')} Kunden in der App`:'noch nicht übernommen')}
+  ${card('📧','E-Mails aus Veloport zuordnen','imp',[['Wofür','Ergänzt bei den Kunden fehlende <b>E-Mail-Adressen</b> – für Inspektions-/Bewertungs-Mails direkt aus der Kundenliste.'],['Du brauchst','<b>1. Kunden-Export</b> aus Veloport (.csv, Pflicht)<br><b>2. Fahrzeuge-Export</b> aus Veloport (.csv, optional – macht die Zuordnung über die Rahmen-Nr. möglich und damit am genauesten)'],['So geht’s','Dieselben Veloport-Exporte wie für die KI-Zentrale (Ordner „Veloport-Export“). Veloport hat keine Schnittstelle – die Dateien werden in Veloport von Hand exportiert.'],['Was passiert','Zuordnung zuerst über <b>Rahmen-Nr.</b>, dann <b>Telefon/Mobil</b>, dann <b>Vor- + Nachname</b>. Nur eindeutige Treffer, nur Kunden <b>ohne</b> E-Mail – Eingetragenes bleibt. Danach Übersicht, wie viele zugeordnet wurden.']],nK?'<button type="button" class="btn red" data-sx="kdMailImp">📧 Dateien wählen & zuordnen</button>':'<span class="stno">Erst Kunden übernehmen</span>',nK?nK.toLocaleString('de-DE')+' Kunden · davon mit E-Mail: '+kdAll().filter(r=>String(r.mail||'').trim()).length.toLocaleString('de-DE'):'')}
+  ${card('🔐','Passwortliste & Lieferanten-Logins','imp',[['Wofür','Holt die Passwortliste (Reiter „PW“) und die Lieferanten-Logins (Reiter „Lieferanten“) aus dem Google-Sheet in den verschlüsselten Tresor.'],['Du brauchst','Die Tresor-PIN und die Excel-Datei (.xlsx) des Google-Sheets „Abhol-Werkstattplaner“.'],['So geht’s','Sheet → <b>Datei → Herunterladen → Microsoft Excel (.xlsx)</b> → hier wählen → PIN eingeben.'],['Was passiert','Alles wird mit der PIN verschlüsselt gespeichert (nur Admins). Planer, Verkauf, Trinkgeld und Lieferanten sind schon übernommen und werden <b>nicht</b> doppelt angelegt.']],'<button type="button" class="btn red" data-sx="imp">🔐 Mit PIN übernehmen</button>',IMPX.tresor===true?'✓ bereits übernommen':'noch nicht übernommen')}
+  ${card('🗒','Notizen aus der Passwortliste','imp',[['Wofür','Füllt die 🔒 Notizen einmalig mit den Zeilen der Passwortliste.'],['Du brauchst','Tresor-PIN; die Notizen müssen noch leer sein.'],['Was passiert','Jede Zeile wird eine Notiz (1. Spalte = Eintrag, Rest = Zusatz). Bleibt im Tresor verschlüsselt.']],'<button type="button" class="btn" data-sx="nImp">🔒 Zu den Notizen</button>','')}
+ </div></div>
+ <div class="stgrp"><h4>📤 Exporte & Sicherheit</h4><div class="stgrid">
+  ${card('💾','Sicherung herunterladen','exp',[['Wofür','Komplette Sicherung aller Daten – der kostenlose Firebase-Tarif macht selbst <b>keine</b> Backups. Am besten 1× pro Woche.'],['Was drin ist','Planer, Verkauf, Bestellungen, Reklamationen, Kunden, Leasing, Lieferanten, Trinkgeld, Einstellungen. Tresor/Notizen <b>nicht</b>.'],['Was passiert','Eine .json-Datei landet im Download-Ordner. <b>Enthält Kundendaten – nur auf dem Büro-PC speichern, nie verschicken.</b>']],'<button type="button" class="btn red" id="stBk">💾 Jetzt sichern</button><span class="err" id="stBkE"></span>',BK_LAST?'Letzte Sicherung: '+esc(BK_LAST):'auf diesem Gerät noch keine Sicherung')}
+  ${card('📨','E-Mail-Versand','set',[['Wofür','Mails an Kunden direkt aus der App verschicken (über EmailJS).'],['Du brauchst','Service-ID, Template-ID und Public Key aus dem EmailJS-Konto. Passwörter werden <b>nur bei EmailJS</b> eingetragen, nie hier.']],'<button type="button" class="btn" id="stMail">Einrichten</button>','')}
+  ${card('🛡','Konten & Passwort-Hilfe','sec',[['Wofür','Fehlende Konten mit Startpasswort anlegen; Anleitung, wenn ein Mitarbeiter sein Passwort vergessen hat.'],['Spalten ändern','Stift „Bearbeiten“ unten in der Navi.']],'<button type="button" class="btn" id="stAdm">Konten öffnen</button>','')}
+  ${card('🗑','Alle Kunden löschen','del',[['Wofür','Nur für einen kompletten Neu-Import aus dem Sheet.'],['Was passiert','Löscht <b>alle</b> Kunden für alle Nutzer (zur Bestätigung LÖSCHEN eintippen). Geht <b>nicht</b> in den Papierkorb. Das Sheet bleibt unverändert.']],nK?'<button type="button" class="btn kdclr" data-sx="kdClr">🗑 Alle löschen …</button>':'<span class="stno">keine Kunden vorhanden</span>','','stdel')}
+ </div></div>`:'';
+ dlg(`<div class="sthd"><h3>⚙ Einstellungen</h3>${adm?`<div class="sttabs"><button type="button" data-st="u" class="${tab==='u'?'on':''}">👤 Nutzer-Einstellungen</button><button type="button" data-st="a" class="${tab==='a'?'on':''}">🛡 Admin-Einstellungen</button></div>`:''}</div>
+ <div class="stbody">${tab==='a'?A1:U1}</div>
+ <div class="acts" style="justify-content:flex-end"><button type="button" class="btn red" data-close>Fertig</button></div>`);$('dlgBox').classList.add('wide','stwide');
+ const box=$('dlgBox'),go=f=>()=>{dlgClose();f();};
+ box.querySelectorAll('[data-st]').forEach(b=>b.addEventListener('click',()=>{ls.set('vc_settab',b.dataset.st);setDlg(b.dataset.st);}));
+ box.querySelectorAll('[data-sx]').forEach(b=>b.addEventListener('click',()=>{const x=b.dataset.sx;
+  if(x==='sExp'){$('sExp').click();return;}dlgClose();
+  if(x==='imp')importDlg();else if(x==='nImp'){if(NOTES&&PWGRID&&PWGRID.length&&!NOTES.length)$('nImp').click();else{show('notes');toast(NOTES?(NOTES.length?'Notizen sind schon gefüllt':'Keine Passwortliste vorhanden'):'Erst mit der PIN öffnen, dann „Aus Passwort-Liste übernehmen“');}}else $(x).click();}));
+ if($('stPw'))$('stPw').addEventListener('click',go(()=>$('meSet').click()));if($('stOut'))$('stOut').addEventListener('click',go(()=>$('switchUser').click()));
+ if($('stBr'))$('stBr').addEventListener('click',go(brandDlg));if($('stAdm'))$('stAdm').addEventListener('click',go(()=>$('meSet').click()));if($('stMail'))$('stMail').addEventListener('click',go(mailCfgDlg));
+ const bk=$('stBk');if(bk)bk.addEventListener('click',async()=>{bk.disabled=true;$('stBkE').textContent='Sammle Daten …';try{const n=await backupDl();$('stBkE').textContent='✓ '+n+' Einträge – liegt im Download-Ordner';}catch(err){$('stBkE').textContent=err.message||String(err);}finally{bk.disabled=false;}});
+ if($('stNav'))$('stNav').addEventListener('change',e=>{navMini(e.target.value!=='1');toast('Gespeichert');});
+ if($('stStart'))$('stStart').addEventListener('change',e=>{MYPREF.start=e.target.value;db.doc('meta/prefs').set({[ME.id]:{start:e.target.value}},{merge:true}).then(()=>toast('Startseite gespeichert')).catch(fail);});}
 /* ⚙ Einstellungen → Markenlogos: Bild hochladen → automatisch freistellen, zuschneiden, schärfen, auf Einheitshöhe bringen */
 function loadImg(file){return new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>{const i=new Image();i.onload=()=>res(i);i.onerror=()=>rej(new Error('Bild nicht lesbar'));i.src=r.result;};r.onerror=()=>rej(new Error('Datei nicht lesbar'));r.readAsDataURL(file);});}
 function cvs(w,h){const c=document.createElement('canvas');c.width=Math.max(1,w);c.height=Math.max(1,h);return c;}
@@ -1761,7 +1809,7 @@ function startLive(){stopLive();const from=iso(new Date(Date.now()-35*864e5));
  if(ME&&ME.adm)unsubs.push(db.doc('meta/kd_trash').onSnapshot(d=>{const it=(d.exists&&d.data().items)||{},o={};for(const k in it)if(it[k])o[k]=it[k];KDT=o;kdDirty=true;scheduleRender();kdBinPrune();},()=>{}));
  unsubs.push(db.doc('meta/kd_x').onSnapshot(d=>{KD.x=(d.exists&&d.data().items)||{};kdDirty=true;scheduleRender();},()=>{}));
  unsubs.push(db.doc('meta/layout').onSnapshot(d=>{const x=d.exists?d.data():{},j=JSON.stringify(x);if(j===LAYJ)return;LAYJ=j;LAYALL=x;layPlaner();layRefresh();},()=>{}));
- unsubs.push(db.doc('meta/import').onSnapshot(d=>{KDIMP=!!(d.exists&&d.data().kunden);if($('kdImp'))$('kdImp').hidden=!(ME&&ME.adm)||KDIMP;},()=>{}));
+ unsubs.push(db.doc('meta/import').onSnapshot(d=>{IMPX=d.exists?d.data():{};KDIMP=!!(d.exists&&d.data().kunden);if($('kdImp'))$('kdImp').hidden=!(ME&&ME.adm)||KDIMP;},()=>{}));
  unsubs.push(db.doc('meta/reklam').onSnapshot(d=>{RKD=(d.exists&&d.data().items)||{};scheduleRender();},()=>{}));
  unsubs.push(db.doc('meta/brands').onSnapshot(d=>{const x=d.exists?d.data():{};BUSER.list=x.list||[];BLEG=x.logos||{};blMerge();scheduleRender();blMig();},()=>{}));
  for(let n=0;n<BLN;n++)unsubs.push(db.doc('meta/blg_'+n).onSnapshot(d=>{BSH[n]=d.exists&&d.data().l||{};BLOK.add(n);blMerge();scheduleRender();blMig();},()=>{}));
