@@ -53,7 +53,7 @@ function tick(){const d=new Date();$('clock').innerHTML=String(d.getHours()).pad
 tick();setInterval(tick,15000);
 
 /* ---------- Navigation ---------- */
-const titles={planer:'Planer',verkauf:'Verkaufte Räder',bestell:'Bestellungen',rekla:'Reklamationen',kunden:'Kunden',leasing:'Leasing-Infos',lief:'Lieferanten',kasse:'Trinkgeld EC',tresor:'Passwörter',notes:'Notizen'};
+const titles={planer:'Planer',verkauf:'Verkaufte Räder',bestell:'Bestellungen',rekla:'Reklamationen',kunden:'Kunden',ausw:'Auswertung',leasing:'Leasing-Infos',lief:'Lieferanten',kasse:'Trinkgeld EC',tresor:'Passwörter',notes:'Notizen'};
 function show(v){const nb=document.querySelector(`.navbtn[data-v=${v}]`);if(!nb||nb.hidden)v='planer';const b=document.querySelector(`.navbtn[data-v=${v}]`),top=document.querySelector('.top');
  top.style.setProperty('--ac',b.style.getPropertyValue('--ac'));document.querySelector('main').style.setProperty('--ac',b.style.getPropertyValue('--ac'));$('tIco').innerHTML=b.querySelector('.tile').innerHTML;$('tSub').textContent=b.querySelector('.lbl small').textContent;
  document.querySelectorAll('.view').forEach(s=>s.classList.toggle('on',s.id==='v-'+v));document.querySelectorAll('.navbtn').forEach(x=>x.setAttribute('aria-current',x.dataset.v===v));$('title').textContent=titles[v];
@@ -105,7 +105,7 @@ $('pwForm').addEventListener('submit',async e=>{e.preventDefault();clearTimeout(
  finally{go.disabled=false;}});
 $('switchUser').addEventListener('click',async()=>{relock();await auth.signOut();});
 async function start(me){if(ME&&ME.id===me.id)return;ME=me;document.body.classList.toggle('isadm',!!me.adm);$('bmTog').hidden=!me.adm;const u=U(me.id);$('meName').textContent=u.n;$('meRole').textContent=me.adm?'Admin':'Team';$('meAv').style.setProperty('--uc',u.c);$('meAv').textContent=u.n[0];
- document.querySelector('.navbtn[data-v=tresor]').hidden=true;/* Reiter Passwörter abgeschaltet (1.5.9, Tiry) – Daten bleiben unberührt */document.querySelector('.navbtn[data-v=notes]').hidden=!me.adm;document.querySelector('.navbtn[data-v=kunden]').hidden=!me.adm;/* 1.9.6: Kunden nur Admins */$('whoOv').hidden=true;navForUser();startLive();show(ls.get('vc_view','planer'));toast('Hallo '+u.n+' 👋');pwForceChk();db.doc('meta/users').get().then(d=>{USERSET=d.exists?d.data():{};}).catch(()=>{});}
+ document.querySelector('.navbtn[data-v=tresor]').hidden=true;/* Reiter Passwörter abgeschaltet (1.5.9, Tiry) – Daten bleiben unberührt */document.querySelector('.navbtn[data-v=notes]').hidden=!me.adm;document.querySelector('.navbtn[data-v=kunden]').hidden=!me.adm;document.querySelector('.navbtn[data-v=ausw]').hidden=!me.adm;/* 1.9.6: Kunden nur Admins */$('whoOv').hidden=true;navForUser();startLive();show(ls.get('vc_view','planer'));toast('Hallo '+u.n+' 👋');pwForceChk();db.doc('meta/users').get().then(d=>{USERSET=d.exists?d.data():{};}).catch(()=>{});}
 
 /* Passwort ändern / zurücksetzen */
 function dlg(html){$('dlgBox').innerHTML=html;$('dlg').hidden=false;const f=$('dlgBox').querySelector('input');if(f)f.focus();}
@@ -245,7 +245,7 @@ $('meSet').addEventListener('click',async()=>{try{const d=await db.doc('meta/use
 let unsubs=[],rTimer=null,dirty=false;
 const editing=()=>!!document.querySelector('#grid .edit, .edf, #dlg:not([hidden])')||(document.activeElement&&document.activeElement.isContentEditable);
 /* 1.10.0: nur den sichtbaren Reiter neu zeichnen, die anderen beim Öffnen (vorher bei jeder Änderung alle 8 → Planer ruckelte) */
-var VIEWR={planer:()=>render(),verkauf:()=>rv(),bestell:()=>rb(),rekla:()=>rr(),kunden:()=>rk(),leasing:()=>rl(),lief:()=>rs(),kasse:()=>rtg()};var STALE=new Set();
+var VIEWR={planer:()=>render(),verkauf:()=>rv(),bestell:()=>rb(),rekla:()=>rr(),kunden:()=>rk(),ausw:()=>rau(),leasing:()=>rl(),lief:()=>rs(),kasse:()=>rtg()};var STALE=new Set();
 function navCounts(){try{$('nOffen').textContent=V.filter(b=>b.a!=='1').length;$('nBest').textContent=B.filter(b=>(b.status||'offen')!=='fertig').length;$('nRekla').textContent=rkAll().filter(r=>rkSt(r)!=='erl').length;let n=0;for(const y in KD)n+=Object.keys(KD[y]||{}).length;$('nKunden').textContent=n?n.toLocaleString('de-DE'):'–';document.querySelectorAll('.navbtn .n').forEach(e=>e.classList.toggle('z',/^[0–]?$/.test(e.textContent.trim())));}catch(_){}}
 function renderAll(){renderInfo();const cur=document.body.dataset.v||'planer';for(const v in VIEWR){if(v===cur){STALE.delete(v);VIEWR[v]();}else STALE.add(v);}navCounts();}
 function scheduleRender(){clearTimeout(rTimer);rTimer=setTimeout(()=>{if(editing()){dirty=true;return;}dirty=false;renderAll();},60);}
@@ -1493,6 +1493,99 @@ async function importXlsx(file){await loadXLSX();const wb=XLSX.read(await file.a
  if(done){await db.doc('meta/import').set({tresor:true,tresorAm:ts},{merge:true});LOGINS=Object.entries(logins).map(([id,v])=>({id,login:v.login,pass:v.pass}));if(grid){PWGRID=grid;showVault();}rs();return 'Passwortliste und '+Object.keys(logins).length+' Lieferanten-Logins (verschlüsselt)';}
  await db.doc('meta/import').set({am:ts,von:ME.id,tresor:true});try{await db.doc('meta/rollover').delete();}catch(_){}await rollover();LOGINS=Object.entries(logins).map(([id,v])=>({id,login:v.login,pass:v.pass}));if(grid){PWGRID=grid;showVault();}
  return cP+' Planer-Einträge, '+cV+' Räder, '+cT+' Trinkgeld, '+cS+' Lieferanten'+(grid?', Passwortliste':'');}
+
+/* ================= 📊 AUSWERTUNG (1.10.27, nur Admins) =================
+   Liest nur die Verkaufshistorie aus dem Reiter Kunden (KD / kdAll), schreibt nichts.
+   Zeitraum + Messgröße (Stück / Umsatz) je Gerät in localStorage vc_au. */
+let AU=(()=>{try{return Object.assign({span:'10',m:'n',b:'',all:false},JSON.parse(localStorage.getItem('vc_au')||'{}'));}catch(_){return {span:'10',m:'n',b:'',all:false};}})();
+const auSave=()=>{try{localStorage.setItem('vc_au',JSON.stringify(AU));}catch(_){}};
+const AUCOL=['#FF3B5C','#FF8A1F','#FFD93B','#3DDC84','#22D3EE','#4F7BFF','#B15CFF','#FF4FD8'];
+const auP=v=>{let s=String(v==null?'':v).replace(/[€\s]/g,'').replace(/,-+$/,'');if(!s)return NaN;
+ if(/^\d{1,3}(\.\d{3})+(,\d+)?$/.test(s))s=s.replace(/\./g,'').replace(',','.');else if(/^\d+(,\d+)?$/.test(s))s=s.replace(',','.');else if(/^\d{1,3}(,\d{3})+(\.\d+)?$/.test(s))s=s.replace(/,/g,'');else if(!/^\d+(\.\d+)?$/.test(s))return NaN;
+ const n=parseFloat(s);return n>=50&&n<100000?n:NaN;};
+const auN=n=>Math.round(n).toLocaleString('de-DE');
+const auE=n=>n>=1e6?(n/1e6).toLocaleString('de-DE',{maximumFractionDigits:2})+' Mio. €':Math.round(n).toLocaleString('de-DE')+' €';
+const auEk=n=>n>=1e6?(n/1e6).toLocaleString('de-DE',{maximumFractionDigits:1})+' Mio':n>=1e4?Math.round(n/1e3).toLocaleString('de-DE')+' T':auN(n);
+const auPct=(a,b)=>b>0?(a-b)/b*100:null;
+const auDl=(p,suf)=>p==null||!isFinite(p)?'<span class="aud z">–</span>':`<span class="aud ${p>0.5?'up':p<-0.5?'dn':'z'}">${p>0.5?'▲':p<-0.5?'▼':'■'} ${Math.abs(p).toLocaleString('de-DE',{maximumFractionDigits:p<10&&p>-10?1:0})}${suf||' %'}</span>`;
+const auLt=v=>{const s=String(v||'').trim();if(!s)return '';const k=s.toUpperCase().replace(/[^A-Z]/g,'');if(KFIN[k])return 'fin';return 'leas';};
+let auMemo=null;
+function auData(){const all=kdAll(),lg=BUSER.logos||{};if(auMemo&&auMemo.src===all&&auMemo.lg===lg&&auMemo.bl===(BUSER.list||[]).length)return auMemo;
+ const bc=new Map(),Y={},B={};let noDat=0,noBr=0;const now=new Date(),cy=now.getFullYear(),tmd=(now.getMonth()+1)*100+now.getDate();
+ for(const r of all){if(!r._d){noDat++;continue;}const d=new Date(r._d),y=d.getFullYear();if(y<1990||y>cy+1)continue;
+  const ky=String(r.marke||'').trim()+'|'+String(r.modell||'').trim();let b=bc.get(ky);
+  if(b===undefined){b=null;if(r.marke||r.modell){const x=brandOfB({marke:r.marke,modell:r.modell});if(x&&x.n)b={k:x.k,n:x.n};}if(!b&&String(r.marke||'').trim())b={k:'M'+String(r.marke).trim().toLowerCase(),n:String(r.marke).trim()};bc.set(ky,b);}
+  const p=auP(r.preis),lt=auLt(r.leas),m=d.getMonth(),ytd=(m+1)*100+d.getDate()<=tmd;
+  const o=Y[y]||(Y[y]={n:0,e:0,pn:0,leas:0,fin:0,mo:Array(12).fill(0),yn:0,ye:0,yl:0,b:{}});o.n++;if(p){o.e+=p;o.pn++;}if(lt==='leas')o.leas++;else if(lt==='fin')o.fin++;o.mo[m]++;if(ytd){o.yn++;if(p)o.ye+=p;if(lt==='leas')o.yl++;}
+  if(!b){noBr++;continue;}const ob=o.b[b.k]||(o.b[b.k]={n:0,e:0,yn:0,ye:0,pn:0,leas:0});ob.n++;if(p){ob.e+=p;ob.pn++;}if(ytd){ob.yn++;if(p)ob.ye+=p;}if(lt)ob.leas++;
+  if(!B[b.k])B[b.k]={k:b.k,n:b.n,lg:lg[b.k]||''};}
+ const ys=Object.keys(Y).map(Number).sort((a,b)=>a-b);
+ return auMemo={src:all,lg,bl:(BUSER.list||[]).length,Y,B,ys,cy,noDat,noBr,tot:all.length};}
+function auBars(cols,o){/* cols:[{l,v,t,tick,cls,sub,c}] */const mx=Math.max(1,...cols.map(c=>Math.max(c.v,c.tick||0)));
+ return `<div class="aubars${o&&o.sm?' sm':''}" style="--nc:${cols.length}">`+cols.map(c=>`<div class="aubc${c.cls?' '+c.cls:''}" data-tip="${esc(c.t||'')}"><span class="aubv">${c.vl!=null?c.vl:''}</span><div class="aubt"><i style="height:${(c.v/mx*100).toFixed(2)}%${c.c?';--bc:'+c.c:''}"></i>${c.tick?`<s style="bottom:${(c.tick/mx*100).toFixed(2)}%"></s>`:''}</div><span class="aubl">${c.l}</span>${c.sub!=null?`<span class="aubs">${c.sub}</span>`:''}</div>`).join('')+'</div>';}
+function rau(){const host=$('auBody');if(!host||!ME||!ME.adm)return;const D=auData(),cy=D.cy;
+ if(!D.ys.length){host.innerHTML='<div class="auempty">Noch keine Verkaufsdaten. Die Auswertung liest den Reiter <b>Kunden</b> – dort zuerst „📥 Kunden aus Sheet übernehmen“.</div>';return;}
+ const y0=AU.span==='all'?D.ys[0]:Math.max(D.ys[0],cy-(+AU.span)+1),span=[];for(let y=y0;y<=Math.max(cy,D.ys[D.ys.length-1]);y++)span.push(y);
+ const g=y=>D.Y[y]||{n:0,e:0,pn:0,leas:0,fin:0,mo:Array(12).fill(0),yn:0,ye:0,yl:0,b:{}};const eur=AU.m==='e',val=(o)=>eur?o.e:o.n,vt=v=>eur?auE(v):auN(v)+' Räder',vl=v=>eur?auEk(v):auN(v);
+ const C=g(cy),P=g(cy-1),P2=g(cy-2);
+ /* Marken im Zeitraum */
+ const bt={};span.forEach(y=>{const b=g(y).b;for(const k in b){const t=bt[k]||(bt[k]={n:0,e:0});t.n+=b[k].n;t.e+=b[k].e;}});
+ const spanTot=span.reduce((s,y)=>s+val(g(y)),0),spanN=span.reduce((s,y)=>s+g(y).n,0),spanP=span.reduce((s,y)=>s+g(y).pn,0);
+ const bl=Object.keys(bt).map(k=>Object.assign({},D.B[k],{t:eur?bt[k].e:bt[k].n})).filter(x=>x.t>0).sort((a,b)=>b.t-a.t||a.n.localeCompare(b.n,'de'));
+ const colOf={};bl.slice(0,8).forEach((x,i)=>colOf[x.k]=AUCOL[i]);
+ if(!AU.b||!D.B[AU.b]||!bt[AU.b])AU.b=bl[0]?bl[0].k:'';
+ const best=span.reduce((a,y)=>val(g(y))>val(g(a))?y:a,span[0]);
+ const lq=o=>o.n?(o.leas+o.fin)/o.n*100:null;
+ const avg=o=>o.pn?o.e/o.pn:null;
+ const logo=x=>x&&x.lg?`<img src="${x.lg}" alt="">`:'';
+ const kpi=(t,v,s,ex)=>`<div class="aukpi"><small>${t}</small><b>${v}</b><span>${s||''}</span>${ex?`<em>${ex}</em>`:''}</div>`;
+ const td=new Date(),tdS=td.getDate()+'.'+(td.getMonth()+1)+'.';
+ let h=`<div class="aukpis">`+
+  kpi(`Räder ${cy} bis heute`,auN(C.yn),auDl(auPct(C.yn,P.yn))+` <i>vs. ${cy-1} bis ${tdS}: ${auN(P.yn)}</i>`)+
+  kpi(`Umsatz ${cy} bis heute`,C.ye?auE(C.ye):'–',auDl(auPct(C.ye,P.ye))+` <i>vs. ${cy-1}: ${P.ye?auE(P.ye):'–'}</i>`,C.yn&&C.ye?`Preis bei ${Math.round(C.pn/Math.max(1,C.n)*100)} % eingetragen`:'')+
+  kpi(`Ø Preis ${cy}`,avg(C)?auE(avg(C)):'–',auDl(avg(C)&&avg(P)?auPct(avg(C),avg(P)):null)+` <i>${cy-1}: ${avg(P)?auE(avg(P)):'–'}</i>`)+
+  kpi(`${cy-1} komplett`,auN(P.n)+' Räder',auDl(auPct(P.n,P2.n))+` <i>vs. ${cy-2}: ${auN(P2.n)}</i>`)+
+  kpi(`Bestes Jahr (${span[0]}–${span[span.length-1]})`,String(best),vt(val(g(best))))+
+  kpi(`Leasing/Finanz. ${cy}`,lq(C)!=null?Math.round(lq(C))+' %':'–',auDl(lq(C)!=null&&lq(P)!=null?lq(C)-lq(P):null,' Pkt.')+` <i>${cy-1}: ${lq(P)!=null?Math.round(lq(P))+' %':'–'}</i>`)+
+  kpi(`Top-Marke (${span[0]}–${span[span.length-1]})`,bl[0]?`${logo(bl[0])}<span class="aukn">${esc(bl[0].n)}</span>`:'–',bl[0]?Math.round(bl[0].t/Math.max(1,spanTot)*100)+' % Anteil · '+vt(bl[0].t):'')+
+  `</div>`;
+ /* 1. Verkäufe je Jahr */
+ h+=`<div class="aucard auwide"><div class="auch"><h3>📈 ${eur?'Umsatz':'Verkaufte Räder'} je Jahr</h3><span class="auhint">Strich im Balken = Stand bis ${tdS} des jeweiligen Jahres (fairer Vergleich mit ${cy})</span></div>`+
+  auBars(span.map((y,i)=>{const o=g(y),pv=g(y-1),v=val(o),pp=auPct(v,val(pv));return {l:"'"+String(y).slice(2),v,vl:vl(v),tick:y<cy?(eur?o.ye:o.yn):0,cls:y===cy?'cur':y===best?'best':'',sub:i?auDl(pp):'',
+   t:`${y}${y===cy?' (bis heute)':''}\n${auN(o.n)} Räder${o.e?'\nUmsatz: '+auE(o.e)+(o.pn<o.n?' ('+o.pn+' mit Preis)':''):''}${avg(o)?'\nØ Preis: '+auE(avg(o)):''}${lq(o)!=null?'\nLeasing/Finanz.: '+Math.round(lq(o))+' %':''}${y<cy?'\nbis '+tdS+': '+(eur?auE(o.ye):auN(o.yn)):''}${pp!=null&&i?'\nzum Vorjahr: '+(pp>0?'+':'')+pp.toFixed(1).replace('.',',')+' %':''}`};}))+`</div>`;
+ /* 2. Marken-Entwicklung */
+ const showB=AU.all?bl:bl.slice(0,15);
+ h+=`<div class="aucard auwide"><div class="auch"><h3>🏷 Marken-Entwicklung</h3><span class="auhint">${bl.length} Marken · Zeile anklicken = Detail-Diagramm · Trend = ${cy-1} zu ${cy-2} · „${cy} bis heute“ zum gleichen Stand ${cy-1}</span></div>
+ <div class="aubtab"><div class="aubr auhd"><span>Marke</span><span>Verlauf ${span[0]}–${span[span.length-1]}</span><span>Gesamt</span><span>Anteil</span><span>Trend ${cy-1}</span><span>${cy} bis heute</span></div>`+
+  showB.map(x=>{const vs=span.map(y=>{const b=g(y).b[x.k];return b?(eur?b.e:b.n):0;}),mx=Math.max(1,...vs),bb=k=>g(k).b[x.k]||{n:0,e:0,yn:0,ye:0},a=bb(cy-1),b2=bb(cy-2),c=bb(cy);
+   return `<div class="aubr${AU.b===x.k?' on':''}" data-aub="${esc(x.k)}"><span class="aubn">${logo(x)}<em>${esc(x.n)}</em></span><span class="auspk">${vs.map((v,i)=>`<i style="height:${Math.max(v?6:0,v/mx*100).toFixed(1)}%${colOf[x.k]?';--bc:'+colOf[x.k]:''}" data-tip="${esc(x.n+' '+span[i]+'\n'+vt(v))}"></i>`).join('')}</span><b>${vl(x.t)}</b><span class="aush"><i style="width:${Math.min(100,x.t/Math.max(1,bl[0].t)*100).toFixed(1)}%"></i>${(x.t/Math.max(1,spanTot)*100).toLocaleString('de-DE',{maximumFractionDigits:1})} %</span><span>${auDl(auPct(eur?a.e:a.n,eur?b2.e:b2.n))}<small>${vl(eur?a.e:a.n)}</small></span><span>${auDl(auPct(eur?c.ye:c.yn,eur?a.ye:a.yn))}<small>${vl(eur?c.ye:c.yn)}</small></span></div>`;}).join('')+
+  `</div>${bl.length>15?`<button class="btn auall" type="button" data-auall>${AU.all?'Nur Top 15 zeigen':'Alle '+bl.length+' Marken zeigen'}</button>`:''}${D.noBr?`<p class="auhint">${auN(D.noBr)} Räder ohne erkennbare Marke sind nicht in der Marken-Liste (in den Jahressummen schon).</p>`:''}</div>`;
+ /* 3. Detail einer Marke */
+ const X=D.B[AU.b];if(X){const tot=y=>val(g(y));h+=`<div class="aucard"><div class="auch"><h3>${logo(X)} ${esc(X.n)} – je Jahr</h3><span class="auhint">Zahl unter dem Jahr = Marktanteil im Laden</span></div>`+
+  auBars(span.map(y=>{const b=g(y).b[X.k]||{n:0,e:0,pn:0,leas:0},v=eur?b.e:b.n,sh=tot(y)?v/tot(y)*100:0;return {l:"'"+String(y).slice(2),v,vl:v?vl(v):'',c:colOf[X.k]||'#B15CFF',cls:y===cy?'cur':'',sub:`<span class="aush2">${sh?sh.toLocaleString('de-DE',{maximumFractionDigits:0})+' %':''}</span>`,
+   t:`${X.n} ${y}${y===cy?' (bis heute)':''}\n${auN(b.n)} Räder${b.e?'\nUmsatz: '+auE(b.e):''}${b.pn?'\nØ Preis: '+auE(b.e/b.pn):''}\nAnteil: ${sh.toFixed(1).replace('.',',')} %${b.n?'\nLeasing/Finanz.: '+Math.round(b.leas/b.n*100)+' %':''}`};}))+`</div>`;}
+ /* 4. Marktanteile je Jahr (100 %) */
+ const top6=bl.slice(0,7);h+=`<div class="aucard"><div class="auch"><h3>🥧 Marktanteile je Jahr</h3><span class="auhint">Top ${top6.length} Marken + Sonstige · ${eur?'nach Umsatz':'nach Stück'}</span></div><div class="aulg">${top6.map(x=>`<span><i style="background:${colOf[x.k]}"></i>${esc(x.n)}</span>`).join('')}<span><i style="background:#475569"></i>Sonstige</span></div><div class="aush100">`+
+  span.slice().reverse().map(y=>{const o=g(y),T=val(o);if(!T)return `<div class="aus1"><span>${y}</span><div class="aus1b"></div><b>–</b></div>`;let rest=T;const seg=top6.map(x=>{const b=o.b[x.k];const v=b?(eur?b.e:b.n):0;rest-=v;return [x,v];});
+   return `<div class="aus1"><span>${y}</span><div class="aus1b">`+seg.filter(s=>s[1]>0).map(([x,v])=>`<i style="width:${(v/T*100).toFixed(2)}%;background:${colOf[x.k]}" data-tip="${esc(x.n+' '+y+'\n'+(v/T*100).toFixed(1).replace('.',',')+' % · '+vt(v))}">${v/T>=.09?Math.round(v/T*100)+'%':''}</i>`).join('')+(rest>0?`<i style="width:${(rest/T*100).toFixed(2)}%;background:#475569" data-tip="${esc('Sonstige '+y+'\n'+(rest/T*100).toFixed(1).replace('.',',')+' % · '+vt(rest))}">${rest/T>=.09?Math.round(rest/T*100)+'%':''}</i>`:'')+`</div><b>${vl(T)}</b></div>`;}).join('')+`</div></div>`;
+ /* 5. Saison */
+ const MN=['Jan','Feb','Mär','Apr','Mai','Jun','Jul','Aug','Sep','Okt','Nov','Dez'],full=span.filter(y=>y<cy&&g(y).n),av=MN.map((_,m)=>full.length?full.reduce((s,y)=>s+g(y).mo[m],0)/full.length:0),mxm=Math.max(1,...C.mo,...P.mo,...av);
+ h+=`<div class="aucard"><div class="auch"><h3>📅 Saison – Räder je Monat</h3><span class="auhint"><i class="aulgd aulc"></i>${cy} <i class="aulgd aulp"></i>${cy-1} <i class="aulgd aula"></i>Ø ${full.length?full[0]+'–'+full[full.length-1]:''}</span></div><div class="aumo">`+
+  MN.map((n,m)=>`<div class="aumc" data-tip="${esc(n+'\n'+cy+': '+C.mo[m]+'\n'+(cy-1)+': '+P.mo[m]+'\nØ: '+av[m].toLocaleString('de-DE',{maximumFractionDigits:1}))}"><div class="aumt"><i class="aup" style="height:${(P.mo[m]/mxm*100).toFixed(1)}%"></i><i class="auc" style="height:${(C.mo[m]/mxm*100).toFixed(1)}%"></i><s style="bottom:${(av[m]/mxm*100).toFixed(1)}%"></s></div><span>${n}</span></div>`).join('')+`</div></div>`;
+ /* 6. Leasing / Finanzierung / Kauf */
+ h+=`<div class="aucard"><div class="auch"><h3>💼 Leasing · Finanzierung · Kauf</h3><span class="auhint"><i class="aulgd aull"></i>Leasing <i class="aulgd aulf"></i>Finanzierung (TB/CP) <i class="aulgd aulk"></i>Kauf/ohne Eintrag</span></div><div class="aush100">`+
+  span.slice().reverse().map(y=>{const o=g(y);if(!o.n)return '';const k=o.n-o.leas-o.fin,pc=v=>(v/o.n*100);return `<div class="aus1"><span>${y}</span><div class="aus1b">${[['l',o.leas,'Leasing'],['f',o.fin,'Finanzierung'],['k',k,'Kauf/ohne Eintrag']].filter(x=>x[1]>0).map(([c,v,n])=>`<i class="au${c}" style="width:${pc(v).toFixed(2)}%" data-tip="${esc(n+' '+y+'\n'+v+' Räder · '+pc(v).toFixed(1).replace('.',',')+' %')}">${pc(v)>=9?Math.round(pc(v))+'%':''}</i>`).join('')}</div><b>${auN(o.n)}</b></div>`;}).join('')+`</div></div>`;
+ /* 7. Ø Preis */
+ const ap=span.filter(y=>avg(g(y)));if(ap.length)h+=`<div class="aucard"><div class="auch"><h3>💶 Ø Verkaufspreis je Jahr</h3><span class="auhint">nur Räder mit eingetragenem Preis</span></div>`+auBars(ap.map(y=>{const a=avg(g(y)),pa=avg(g(y-1));return {l:"'"+String(y).slice(2),v:a,vl:auEk(a),c:'#FFD93B',cls:y===cy?'cur':'',sub:auDl(pa?auPct(a,pa):null),t:`${y}\nØ ${auE(a)}\n${g(y).pn} Räder mit Preis`};}),{sm:1})+`</div>`;
+ h+=`<p class="auhint aufoot">Quelle: Reiter <b>Kunden</b> (${auN(D.tot)} Einträge${D.noDat?', davon '+auN(D.noDat)+' ohne gültiges Datum – nicht mitgezählt':''}). Marke wie in der Kundenliste (Marke, sonst aus dem Modell erkannt). Leasing = Feld „Leasing“ gefüllt (TB/CP = Finanzierung).</p>`;
+ host.innerHTML=h;
+ document.querySelectorAll('#v-ausw [data-auspan]').forEach(b=>b.classList.toggle('on',b.dataset.auspan===AU.span));document.querySelectorAll('#v-ausw [data-aum]').forEach(b=>b.classList.toggle('on',b.dataset.aum===AU.m));}
+$('v-ausw').addEventListener('click',e=>{const s=e.target.closest('[data-auspan]'),m=e.target.closest('[data-aum]'),b=e.target.closest('[data-aub]');
+ if(s){AU.span=s.dataset.auspan;}else if(m){AU.m=m.dataset.aum;}else if(b){AU.b=b.dataset.aub;}else if(e.target.closest('[data-auall]')){AU.all=!AU.all;}else return;auSave();rau();});
+{let tip=null;const hide=()=>{if(tip){tip.remove();tip=null;}};
+ $('v-ausw').addEventListener('mouseover',e=>{const t=e.target.closest('[data-tip]');if(!t||!t.dataset.tip){hide();return;}if(!tip){tip=document.createElement('div');tip.className='autip';document.body.append(tip);}tip.textContent=t.dataset.tip;const r=t.getBoundingClientRect();tip.style.left=Math.max(8,Math.min(innerWidth-tip.offsetWidth-8,r.left+r.width/2-tip.offsetWidth/2))+'px';tip.style.top=(r.top-tip.offsetHeight-8<8?r.bottom+8:r.top-tip.offsetHeight-8)+'px';});
+ $('v-ausw').addEventListener('mouseleave',hide);document.addEventListener('scroll',hide,true);}
+
 
 /* ================= START ================= */
 auth.onAuthStateChanged(u=>{if(u&&u.email&&u.email.endsWith(DOMAIN)){const id=u.email.slice(0,-DOMAIN.length);if(U(id).n){start({id,n:U(id).n,adm:ADMINS.includes(id)});return;}}ME=null;showLogin();});
