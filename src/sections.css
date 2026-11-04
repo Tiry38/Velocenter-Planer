@@ -179,6 +179,11 @@ body.navmini .app{grid-template-columns:84px 1fr}
 .zubbtn:hover{background:color-mix(in srgb,var(--ac) 38%,#0b0e15)}.zubbtn:focus-visible{outline:2px solid var(--cyan)}
 .zubbtn span{font:500 11.5px "Outfit",sans-serif;color:#CBD5E1}
 .dlg-box.wide{width:min(760px,100%);max-height:88vh;overflow:auto}
+.dlg-box.wide.xwide{width:min(1180px,96vw);height:92vh;max-height:92vh;overflow:auto;display:flex;flex-direction:column}
+.dlg-box.xwide>h3{flex:none}.dlg-box.xwide #ktF{flex:1;min-height:0;display:flex;flex-direction:column;gap:10px}
+.dlg-box.xwide #ktF>*{flex:none}.dlg-box.xwide #ktF>label:has(#ktB){flex:1;min-height:120px;display:flex;flex-direction:column}
+.dlg-box.xwide #ktB{flex:1;min-height:0;resize:none}
+.dlg-box.xwide #ktPv:not([hidden]){flex:1;min-height:160px;display:flex}.dlg-box.xwide #ktIf{height:auto;flex:1}
 .zubd h3{margin:0 0 12px;color:color-mix(in srgb,var(--ac) 45%,#fff)}
 .zcols{display:grid;grid-template-columns:1fr 1fr;gap:14px}
 .zcols h4{margin:0 0 8px;font:700 13px "Outfit",sans-serif}.zj h4{color:var(--ok)}.zn h4{color:#FCA5A5}

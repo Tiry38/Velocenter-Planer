@@ -126,7 +126,7 @@ async function backupDl(){const out={app:'Velocenter-Planer',version:document.qu
 async function kontenSichern(start){const sec=((firebase.apps||[]).find(a=>a.name==='vcsec')||firebase.initializeApp(FB_CONFIG,'vcsec')).auth();const neu=[],da=[];
  for(const u of USERS){if(u.id===ME.id)continue;try{await sec.createUserWithEmailAndPassword(u.id+DOMAIN,fpw(start));neu.push(u);await db.doc('meta/users').set({[u.id]:'start'},{merge:true});USERSET[u.id]='start';}catch(e){if(e.code==='auth/email-already-in-use')da.push(u);else throw e;}finally{try{await sec.signOut();}catch(_){}}}
  return {neu,da};}
-function dlgClose(){if(DLGLOCK)return;$('dlg').hidden=true;$('dlgBox').innerHTML='';$('dlgBox').classList.remove('wide');}
+function dlgClose(){if(DLGLOCK)return;$('dlg').hidden=true;$('dlgBox').innerHTML='';$('dlgBox').classList.remove('wide','xwide');}
 $('dlg').addEventListener('click',e=>{if(e.target.id==='dlg'||e.target.closest('[data-close]'))dlgClose();});
 $('meCfg').addEventListener('click',()=>setDlg());
 /* 1.9.1: eigene Einstellungen je Nutzer (Profil-Menü → ⚙ Einstellungen, auch eingeklappt) */
@@ -1177,7 +1177,9 @@ let MTPL=null;
 /* 1.10.13: Vorlagen v2 = Sie/Du × Einzelperson/Familie, Grüße direkt unter dem Bewertungslink (im Text), Fußzeile nur Kontakt. Alte gespeicherte Fassung (ohne v:2) wird ignoriert. */
 async function mtplGet(){if(MTPL)return MTPL;let d={};try{const x=await db.doc('meta/mailtpl').get();if(x.exists)d=x.data()||{};}catch(e){}
  if(d.v!==2)d={};const m=(a,b)=>Object.assign({},a,b||{});
- MTPL={sie:{ein:m(MTPL0.sie.ein,d.sie&&d.sie.ein),fam:m(MTPL0.sie.fam,d.sie&&d.sie.fam)},du:{ein:m(MTPL0.du.ein,d.du&&d.du.ein),fam:m(MTPL0.du.fam,d.du&&d.du.fam)},fuss:d.fuss!=null?d.fuss:MTPL0.fuss};return MTPL;}
+ MTPL={sie:{ein:m(MTPL0.sie.ein,d.sie&&d.sie.ein),fam:m(MTPL0.sie.fam,d.sie&&d.sie.fam)},du:{ein:m(MTPL0.du.ein,d.du&&d.du.ein),fam:m(MTPL0.du.fam,d.du&&d.du.fam)},fuss:d.fuss!=null?d.fuss:MTPL0.fuss};
+ /* 1.10.22: alter Bewertungs-Satz in gespeicherten Vorlagen → neuer automatischer Satz */
+ [['sie','ein',0,0],['sie','fam',0,1],['du','ein',1,0],['du','fam',1,1]].forEach(([k,f,du,fa])=>{const t=MTPL[k][f];if(t&&t.b)t.b=t.b.replace(/^(Sie sind|Du bist|Ihr seid) zufrieden mit uns\? Über eine Google-Bewertung freuen wir uns sehr:$/m,kdRvTxt(du,fa));});return MTPL;}
 // Name aus „Müller, Hans“ bzw. „Hans Müller“
 /* 1.10.18: Kunden-Liste schreibt „Nachname Vorname“ (z. B. „Thirolf Kevin“) → Standard: 1. Wort = Nachname. Pro Kunde umdrehbar (Feld nameOrd='vn' = „Vorname Nachname“). */
 function kdNameSplit(k,ord){k=String(k||'').replace(/\s+/g,' ').trim();if(!k)return{vn:'',nn:''};if(k.includes(',')){const [a,b]=k.split(',');return{nn:a.trim(),vn:(b||'').trim()};}const w=k.split(' ');if(w.length<2)return{nn:k,vn:''};if(ord==='vn'){const nn=w.pop();return{nn,vn:w.join(' ')};}return{nn:w[0],vn:w.slice(1).join(' ')};}
@@ -1255,7 +1257,7 @@ async function kdTplOpen(y,id,kind){let r=KD[y]&&KD[y][id];if(!r)return;const T=
   <div class="ktpv" id="ktPv" hidden><iframe id="ktIf" title="Vorschau"></iframe></div>
   <p class="hint">${dir?'<b>📤 Direkt senden</b> verschickt sofort im <b>Velocenter-Design</b> (wie die KI-Zentrale). „Im Mailprogramm“ öffnet nur den Text in Outlook.':'Öffnet die E-Mail in eurem Mailprogramm (nur Text; zu lang für den Link → automatisch kopiert, im Mailprogramm <b>Strg+V</b>). Direkt-Versand im Design: ⚙ Einstellungen → 📧 E-Mail-Versand.'} Danach steht beim Kunden „angeschrieben“.</p><div class="err" id="ktE"></div>
   <div class="acts">${ME&&ME.adm?'<button type="button" class="btn" data-kted>✎ Vorlagen dauerhaft ändern</button>':''}<button class="btn" type="button" data-close>Abbrechen</button><button class="btn" type="button" data-ktpv>👁 Vorschau</button><button class="btn" type="button" data-ktcp>📋 Text kopieren</button>${dir?'<button class="btn" type="button" data-ktmp>📧 Im Mailprogramm</button><button class="btn red" type="button" data-ktsend>📤 Direkt senden</button>':'<button class="btn red" type="submit">📧 E-Mail öffnen</button>'}</div></form>`);
- $('dlgBox').classList.add('wide');
+ $('dlgBox').classList.add('wide','xwide');
  const html=()=>{const nm=kdNameSplit(r.kunde,(KD[y]&&KD[y][id]||r).nameOrd);return kdMailHtml($('ktB').value,{du,fam:kind==='fam',name:(nm.vn+' '+nm.nn).trim(),modell:String(r.modell||'').trim()});};
  const pv=()=>{if($('ktPv').hidden)return;$('ktIf').srcdoc='<!doctype html><meta charset="utf-8"><body style="margin:0;background:#0E0F14">'+html();};
  const body=()=>(T[du?'du':'sie'][kind].b.replace(/\{anrede\}/g,$('ktAn').value)+'\n\n'+T.fuss).trim();
