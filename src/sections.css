@@ -788,3 +788,6 @@ body.navmini #bmBar{left:100px}#bmBar span{overflow:hidden;text-overflow:ellipsi
 body.navmini .navbtn .n{opacity:1;position:absolute;left:31px;top:-3px;margin:0;padding:0 5px;min-width:9px;text-align:center;font-size:10px;line-height:15px;border-radius:99px;z-index:3;background:color-mix(in srgb,var(--ac) 55%,#0b0e15);border-color:color-mix(in srgb,var(--ac) 80%,#fff 0%);box-shadow:0 0 0 2px #0b0e15;pointer-events:none}
 body.navmini .navbtn[data-v=kunden] .n{opacity:0}
 body.navmini .navbtn .n.z{opacity:0}
+/* 1.10.19: Bestellung – Kundenbestellung sofort sichtbar */
+.order .bkd{display:inline-flex;align-items:center;gap:6px;margin:5px 0 3px;padding:3px 10px 3px 8px;border-radius:6px;font:700 12.5px var(--mono);color:#FDE68A;background:linear-gradient(90deg,rgba(250,204,21,.22),rgba(250,204,21,.05));border-left:3px solid #FACC15;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.order .bkd span{font:800 10px 'Outfit',sans-serif;letter-spacing:1px;text-transform:uppercase;color:#0b0e15;background:#FACC15;padding:1px 6px;border-radius:4px}

@@ -1112,6 +1112,9 @@ body.navmini #bmBar{left:100px}#bmBar span{overflow:hidden;text-overflow:ellipsi
 body.navmini .navbtn .n{opacity:1;position:absolute;left:31px;top:-3px;margin:0;padding:0 5px;min-width:9px;text-align:center;font-size:10px;line-height:15px;border-radius:99px;z-index:3;background:color-mix(in srgb,var(--ac) 55%,#0b0e15);border-color:color-mix(in srgb,var(--ac) 80%,#fff 0%);box-shadow:0 0 0 2px #0b0e15;pointer-events:none}
 body.navmini .navbtn[data-v=kunden] .n{opacity:0}
 body.navmini .navbtn .n.z{opacity:0}
+/* 1.10.19: Bestellung – Kundenbestellung sofort sichtbar */
+.order .bkd{display:inline-flex;align-items:center;gap:6px;margin:5px 0 3px;padding:3px 10px 3px 8px;border-radius:6px;font:700 12.5px var(--mono);color:#FDE68A;background:linear-gradient(90deg,rgba(250,204,21,.22),rgba(250,204,21,.05));border-left:3px solid #FACC15;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.order .bkd span{font:800 10px 'Outfit',sans-serif;letter-spacing:1px;text-transform:uppercase;color:#0b0e15;background:#FACC15;padding:1px 6px;border-radius:4px}
 
 [hidden]{display:none!important}
 #sTab td.b{font-weight:700}#sTab .pwm.ed{outline:none;padding:2px 6px;border-radius:6px;font-family:var(--mono)}#sTab td{vertical-align:top}
@@ -1289,7 +1292,7 @@ body.navmini .navbtn .n.z{opacity:0}
 <script>
 const FB_CONFIG={apiKey:"AIzaSyC_uZPvc5rJETwlS4JbfCoTkkE4ckjtp0M",authDomain:"velocenter-planer.firebaseapp.com",projectId:"velocenter-planer",storageBucket:"velocenter-planer.firebasestorage.app",messagingSenderId:"1018330488700",appId:"1:1018330488700:web:262a4d1660353e6fde8ef9"};
 /* ================= Velocenter Werkstatt-Cockpit – Oberfläche ================= */
-const CLIENT_VERSION='1.10.18';
+const CLIENT_VERSION='1.10.19';
 const USERS=[{id:'kevin',n:'Kevin',c:'#E2232D'},{id:'stefan',n:'Stefan',c:'#F59E0B'},{id:'martina',n:'Martina',c:'#EC4899'},{id:'sascha',n:'Sascha',c:'#22D3EE'},{id:'rene',n:'René',c:'#34D399'}];
 const U=id=>USERS.find(u=>u.id===id)||{n:'',c:'#64748B',id:''};
 const $=id=>document.getElementById(id);
@@ -1921,14 +1924,14 @@ $('vkDone').addEventListener('click',e=>{vkShowDone=!vkShowDone;const t=e.curren
 /* ================= BESTELLUNGEN ================= */
 let bEdit=null,bShowDone=false;
 const BST=[['offen','Offen'],['bestellt','Bestellt'],['da','Da · Kunde informieren']];
-const BF=[['datum','Datum'],['artikel','Artikel'],['kunde','Artikel-Info'],['lieferant','Lieferant'],['lieferzeit','Kommt voraussichtlich am'],['telefon','Telefon']];/* 1.10.3: Reihenfolge nach Tiry, Notiz-Feld raus (alte Notizen bleiben gespeichert) */
+const BF=[['datum','Datum'],['artikel','Artikel'],['kunde','Artikel-Info'],['lieferant','Lieferant'],['lieferzeit','Kommt voraussichtlich am'],['telefon','Kunde / Telefon']];/* 1.10.19: Feld bleibt telefon, gefüllt = Kundenbestellung *//* 1.10.3: Reihenfolge nach Tiry, Notiz-Feld raus (alte Notizen bleiben gespeichert) */
 let bF='';
 function rb(){const m=b=>true;
  const st=k=>B.filter(b=>(b.status||'offen')===k).length;
  $('bForm').innerHTML=bEdit?bForm(bEdit==='new'?{id:'new',datum:new Date().toLocaleDateString('de-DE'),status:'offen'}:B.find(x=>x.id===bEdit)||{id:'new'}):'';
  const cols=bShowDone?[...BST,['fertig','Erledigt']]:BST;
  $('bCols').style.gridTemplateColumns=`repeat(${cols.length},minmax(0,1fr))`;
- $('bCols').innerHTML=cols.map(([k,n])=>{const it=B.filter(b=>(b.status||'offen')===k&&m(b));return `<div class="col" data-k="${k}"><h3><i></i>${n} <span>${it.length}</span></h3>${it.length?'':'<p class="empty">Nichts hier ✓</p>'}${it.map(b=>`<div class="order">${bLfBadge(b)}<b>${esc(b.artikel||'–')}</b><small>${esc(b.kunde)}${b.telefon?' · <a href="tel:'+esc(b.telefon.replace(/\s/g,''))+'">'+esc(b.telefon)+'</a>':''}</small><small>${b.lieferant?'Lieferant: '+esc(b.lieferant):''}${b.lieferzeit?' · '+esc(b.lieferzeit):''}${b.datum?' · '+esc(b.datum):''}</small>${b.notiz?`<small>📝 ${esc(b.notiz)}</small>`:''}
+ $('bCols').innerHTML=cols.map(([k,n])=>{const it=B.filter(b=>(b.status||'offen')===k&&m(b));return `<div class="col" data-k="${k}"><h3><i></i>${n} <span>${it.length}</span></h3>${it.length?'':'<p class="empty">Nichts hier ✓</p>'}${it.map(b=>`<div class="order">${bLfBadge(b)}<b>${esc(b.artikel||'–')}</b>${b.telefon?`<div class="bkd" title="Kundenbestellung">👤 <span>Kunde</span> ${esc(b.telefon)}</div>`:''}${b.kunde?`<small>${esc(b.kunde)}</small>`:''}<small>${[b.lieferant?'Lieferant: '+esc(b.lieferant):'',b.lieferzeit?'kommt '+esc(b.lieferzeit):'',b.datum?'bestellt '+esc(b.datum):''].filter(Boolean).join(' · ')}</small>${b.notiz?`<small>📝 ${esc(b.notiz)}</small>`:''}
  <div class="oacts"><span class="paid ${b.bezahlt==='ja'?'y':b.bezahlt==='nein'?'n':'u'}" data-bpaid="${esc(b.id)}" role="button" tabindex="0" title="Klick = wechseln: – → bezahlt → nicht bezahlt">${b.bezahlt==='ja'?'✓ bezahlt':b.bezahlt==='nein'?'nicht bezahlt':'bezahlt –'}</span>${av(b.von,'angelegt von','B',b.id,b.ts)}<span style="flex:1"></span>
  ${k!=='offen'?`<button class="mini" type="button" data-bmv="${esc(b.id)}" data-to="${k==='fertig'?'da':k==='da'?'bestellt':'offen'}" title="zurück">←</button>`:''}${k!=='fertig'?`<button class="mini go" type="button" data-bmv="${esc(b.id)}" data-to="${k==='offen'?'bestellt':k==='bestellt'?'da':'fertig'}">${k==='offen'?'bestellt →':k==='bestellt'?'ist da →':'✓ erledigt'}</button>`:''}<button class="mini" type="button" data-bedit="${esc(b.id)}" title="bearbeiten">✎</button></div></div>`).join('')}</div>`;}).join('');
  $('nBest').textContent=B.filter(b=>(b.status||'offen')!=='fertig').length;}
