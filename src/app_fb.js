@@ -811,7 +811,7 @@ let KD={},KDIMP=false,kdDirty=true,kdList=[],kdYears=2,kdEdit=null;
 const kdAll=()=>{if(kdDirty){kdList=[];for(const y in KD)for(const id in KD[y]){const r=KD[y][id];if(r&&r.id){r._d=vkDate(r.dat)||0;r._t=[r.kunde,r.marke,r.modell,r.rahmen,r.tel,r.nr,kdNr(r),r.leas,r.vers,r.dat,r.preis].join(' ').toLowerCase();r._o=(r.o!=null&&r.o!==''&&!isNaN(+r.o))?+r.o:r._d;kdList.push(r);}}kdList.sort((a,b)=>b._o-a._o||String(b.nr).localeCompare(String(a.nr),'de',{numeric:true}));kdDirty=false;}return kdList;};
 /* Spalten wie in Excel: Reihenfolge per Ziehen am Kopf, Breite am rechten Rand des Kopfs (Doppelklick = Standard).
    Je Profil in meta/prefs[ID].kdlay = {o:[Spalten], w:{Spalte:px}} (+ localStorage). Zeilen: Griff ⋮⋮ links, nur innerhalb eines Jahres (Feld o). */
-const KDC=[{k:'dat',n:'Datum',w:98,c:'kd'},{k:'nr',n:'Beleg',w:66,c:'kn'},{k:'marke',n:'Marke',w:130,c:'km'},{k:'modell',n:'Modell',min:200,fr:1.6,c:'kmo'},{k:'preis',n:'Preis',w:96,c:'kp'},{k:'leas',n:'Leasing',w:92,c:'kl2'},{k:'kunde',n:'Kunde',min:170,fr:1.2,c:'kk'},{k:'vers',n:'Vers.',w:80,c:'kv'},{k:'rahmen',n:'Rahmen-Nr.',w:130,c:'krn'},{k:'tel',n:'Telefon',w:130,c:'kt'},{k:'k',n:'',w:34,c:'kx'}];
+const KDC=[{k:'dat',n:'Datum',w:98,c:'kd'},{k:'nr',n:'Beleg',w:66,c:'kn'},{k:'marke',n:'Marke',w:130,c:'km'},{k:'modell',n:'Modell',min:200,fr:1.6,c:'kmo'},{k:'preis',n:'Preis',w:96,c:'kp'},{k:'leas',n:'Leasing',w:92,c:'kl2'},{k:'kunde',n:'Kunde',w:200,c:'kk'},{k:'vers',n:'Vers.',w:80,c:'kv'},{k:'rahmen',n:'Rahmen-Nr.',w:130,c:'krn'},{k:'tel',n:'Telefon',w:130,c:'kt'},{k:'ang',n:'Angeschrieben',w:118,c:'kang'}];/* 1.10.5: Spalte K raus (Daten bleiben), neue Spalte Angeschrieben */
 const KDRB=['#FF3B5C','#FF6B2C','#FF9F1C','#FFD93B','#A3E635','#3DDC84','#22D3EE','#38BDF8','#4F7BFF','#8B5CF6','#D946EF'];
 const kdDef=()=>({o:KDC.map(c=>c.k),w:{}});
 let kdLay=kdDef(),kdDrag=null;
@@ -829,7 +829,8 @@ function kdVN(){const m={E:'ENRA',EP:'ENRA PLUS'};(L||[]).filter(isVers).forEach
 const kdKey=v=>{let k=String(v||'').toUpperCase().replace(/PLUS/g,'P').replace(/\+/g,'P').replace(/[^A-ZÄÖÜ]/g,'');if(k==='ENRAP'||k==='ENP')k='EP';if(k==='ENRA'||k==='E')k='EN';return k;};
 function kdLogo(v){let k=kdKey(v);if(!k)return'';if(k==='EP')k='EN';const x=(L||[]).find(l=>l.k===k)||(L||[]).find(l=>kdKey(l.n)===k);return x?logoOf(x):(LOGOS[k]||'');}
 const kdLogoH=v=>{const lg=kdLogo(v);return lg?`<img class="llg kll" src="${esc(lg)}" alt="${esc(v)}" draggable="false">${kdKey(v)==='EP'?'<i class="kplus" title="ENRA PLUS">+</i>':''}`:'';};
-const kdVal=(k,r)=>k==='nr'?kdNr(r):k==='preis'?kdPreis(r.preis):String(r[k]==null?'':r[k]).trim();
+const ANGI={mail:'<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>',tel:'<svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor"><path d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1A17 17 0 0 1 3 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.3 0 .7-.2 1z"/></svg>'};const ANGL={mail:'per E-Mail angeschrieben',tel:'per Telefon nachgefragt',no:'✕ nicht nachfragen'};
+const kdVal=(k,r)=>k==='ang'?(ANGL[r.ang]||''):k==='nr'?kdNr(r):k==='preis'?kdPreis(r.preis):String(r[k]==null?'':r[k]).trim();
 const kdLab=(k,v)=>v===''?'(leer)':k==='leas'&&FN[v]?v+' · '+FN[v]:k==='vers'&&kdVN()[v]?v+' · '+kdVN()[v]:v;
 let kdF={},kdYr=String(ls.get('vc_kdyr','')||'');  // Filter je Spalte: {Spalte: Set(Werte)} wie der Excel-Autofilter
 const kdYear=r=>{const d=r._d?new Date(r._d):null;return d?d.getFullYear():'ohne Datum';};
@@ -856,7 +857,10 @@ function rk(){const g=$('kdGrid');if(!g)return;const all=kdAll();{const cy=new D
   const id=esc(r.id),ky=esc(r.y);
   h+=`<div class="row kr"><div class="c kc kgrip" draggable="true" data-kid="${id}" data-ky="${ky}" title="Ziehen = Zeile verschieben">⋮⋮</div>${cols.map(c=>kdCell(c,r,id,ky)).join('')}<div class="c kc kdel" data-kid="${id}" data-ky="${ky}"><button class="nx" type="button" data-kdel="${id}" data-ky="${ky}" title="Eintrag löschen">×</button></div></div>`;}
  g.innerHTML=h+((q||fk.length)&&!list.length?'<div class="kdempty">Nichts gefunden.</div>':'');}
-function kdCell(c,r,id,ky){if(c.k==='marke'){const b=brandOfB({marke:r.marke,modell:r.modell}),lg=b&&(BUSER.logos||{})[b.k];
+function kdCell(c,r,id,ky){if(c.k==='ang'){const v=r.ang||'',ic={mail:'<span class="ang ok">'+ANGI.mail+'</span>',tel:'<span class="ang ok">'+ANGI.tel+'</span>',no:'<span class="ang no">✕</span>'}[v]||'';
+  const t=v?ANGL[v]+(r.angVon?' · '+U(r.angVon).n:'')+(r.angTs?' · '+fmtTs(r.angTs):''):'Klick = nachgefragt? (E-Mail / Telefon / nicht nachfragen)';
+  return `<div class="c kc kang" role="button" tabindex="0" data-kang="1" data-kid="${id}" data-ky="${ky}" data-kc="ang" title="${esc(t)}">${ic}</div>`;}
+if(c.k==='marke'){const b=brandOfB({marke:r.marke,modell:r.modell}),lg=b&&(BUSER.logos||{})[b.k];
   return `<div class="c kc km${lg?' haslg':''}" data-kid="${id}" data-ky="${ky}" data-kc="marke" title="${esc(r.marke||'')}">${lg?`<img src="${lg}" alt="" class="kml" draggable="false">`:''}<span class="kmt" contenteditable="true" spellcheck="false" data-kid="${id}" data-ky="${ky}" data-kf="marke">${esc(r.marke||'')}</span>${String(r.marke||'').trim()?`<label class="kmup" title="${lg?'Logo ersetzen':'Markenlogo hochladen'} (oder Bild hierher ziehen)">${lg?'⟳':'⬆'}<input type="file" accept="image/*" hidden data-kmup="${esc(r.marke)}"></label>`:''}</div>`;}
  if(c.k==='dat'||c.k==='leas'||c.k==='vers'){const v=String(r[c.k]||''),t=c.k==='dat'?'Klick = Datum wählen':(kdLab(c.k,v)+' · Klick = auswählen');
   const lg=c.k!=='dat'&&kdLogoH(v);return `<div class="c kc ${c.c} kpk${lg?' kplg':''}" role="button" tabindex="0" data-kpick="${c.k}" data-kid="${id}" data-ky="${ky}" data-kc="${c.k}" title="${esc(t)}">${lg||esc(v)}</div>`;}
@@ -919,7 +923,7 @@ let kdPop=null;
 function kdPopClose(){if(kdPop){kdPop.el.remove();kdPop=null;}}
 function kdPopOpen(anchor,html,o){kdPopClose();const el=document.createElement('div');el.className='kdpop';el.innerHTML=html;document.body.appendChild(el);kdPop=Object.assign({el,t0:Date.now()},o);kdPopPos(anchor);const i=el.querySelector('input:not([type=checkbox])');if(i)i.focus();return el;}
 function kdPopPos(anchor){const el=kdPop.el,rc=anchor.getBoundingClientRect(),W=el.offsetWidth,H=el.offsetHeight;el.style.left=Math.max(8,Math.min(innerWidth-W-8,rc.left))+'px';el.style.top=(rc.bottom+4+H>innerHeight-8?Math.max(8,rc.top-4-H):rc.bottom+4)+'px';}
-document.addEventListener('pointerdown',e=>{if(kdPop&&!kdPop.el.contains(e.target)&&!e.target.closest('[data-kpick],.kdh[data-kc],.stb .st,.lvon,#meChip,.av[data-avk],td.vnote[data-von],.bm thead th,.bm #grid .hd,.bmrow'))kdPopClose();},true);
+document.addEventListener('pointerdown',e=>{if(kdPop&&!kdPop.el.contains(e.target)&&!e.target.closest('[data-kpick],[data-kang],.kdh[data-kc],.stb .st,.lvon,#meChip,.av[data-avk],td.vnote[data-von],.bm thead th,.bm #grid .hd,.bmrow'))kdPopClose();},true);
 document.addEventListener('keydown',e=>{if(kdPop&&e.key==='Escape')kdPopClose();});
 document.addEventListener('scroll',e=>{if(kdPop&&!kdPop.el.contains(e.target)&&Date.now()-kdPop.t0>250)kdPopClose();},true);
 function kdFltOpen(hd){const k=hd.dataset.kc,c=KDC.find(x=>x.k===k);if(kdPop&&kdPop.t==='flt'&&kdPop.k===k){kdPopClose();return;}
@@ -933,6 +937,13 @@ function kdFltOpen(hd){const k=hd.dataset.kc,c=KDC.find(x=>x.k===k);if(kdPop&&kd
  draw();el.querySelector('.kpq').addEventListener('input',draw);el.querySelector('.kpq').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();ok();}});
  el.addEventListener('change',e=>{const b=e.target.closest('[data-kv]');if(b){if(b.checked)cur.add(b.dataset.kv);else cur.delete(b.dataset.kv);}});
  el.addEventListener('click',e=>{if(e.target.closest('[data-kpall]')){vis().forEach(([v])=>cur.add(v));draw();}else if(e.target.closest('[data-kpnone]')){vis().forEach(([v])=>cur.delete(v));draw();}else if(e.target.closest('[data-kpok]'))ok();});}
+/* 1.10.5: Kunde nach dem Kauf angeschrieben/angerufen? */
+function kdAngOpen(cell){const id=cell.dataset.kid,y=(cell.dataset.ky&&KD[cell.dataset.ky]&&KD[cell.dataset.ky][id])?cell.dataset.ky:Object.keys(KD).find(k=>KD[k]&&KD[k][id]),r=y&&KD[y][id];if(!r)return;if(kdPop&&kdPop.ang===id){kdPopClose();return;}
+ const el=kdPopOpen(cell,`<div class="vstp"><div class="kph">Nachgefragt, ob alles passt?</div><div class="vstl">
+  <button type="button" class="vstu${r.ang==='mail'?' on':''}" style="--uc:#34D399" data-av="mail"><span class="ang ok">${ANGI.mail}</span>per E-Mail angeschrieben</button>
+  <button type="button" class="vstu${r.ang==='tel'?' on':''}" style="--uc:#34D399" data-av="tel"><span class="ang ok">${ANGI.tel}</span>per Telefon nachgefragt</button>
+  <button type="button" class="vstu${r.ang==='no'?' on':''}" style="--uc:#F87171" data-av="no"><span class="ang no">✕</span>nicht nachfragen</button></div>${r.ang?'<button type="button" class="vstx" data-av="">Leeren</button>':''}</div>`);kdPop.ang=id;
+ el.addEventListener('click',e=>{const b=e.target.closest('[data-av]');if(!b)return;kdPopClose();const v=b.dataset.av;if((r.ang||'')===v)return;kdPut(y,Object.assign({},r,{ang:v,angVon:v?ME.id:'',angTs:v?stamp():''})).then(rk);toast(v?ANGL[v]:'Geleert');});}
 function kdPickOpen(cell){const f=cell.dataset.kpick,y=cell.dataset.ky,id=cell.dataset.kid,r=KD[y]&&KD[y][id];if(!r)return;if(kdPop&&kdPop.t==='pick'&&kdPop.id===id&&kdPop.f===f){kdPopClose();return;}
  const save=v=>{kdPopClose();if(String(r[f]||'')===v)return;kdPut(y,Object.assign({},r,{[f]:v})).then(rk);toast('Gespeichert');};
  if(f==='dat'){const d=vkDate(r.dat);const el=kdPopOpen(cell,`<div class="kph">Datum</div><input type="date" class="kpd" value="${d?iso(new Date(d)):''}"><div class="kpa"><button type="button" class="btn" data-kpclr>Leeren</button><button type="button" class="btn" data-kptoday>Heute</button><button type="button" class="btn red" data-kpok>OK</button></div>`,{t:'pick',id,f});
@@ -947,7 +958,7 @@ function kdPickOpen(cell){const f=cell.dataset.kpick,y=cell.dataset.ky,id=cell.d
  draw();el.querySelector('.kpq').addEventListener('input',draw);
  el.querySelector('.kpq').addEventListener('keydown',e=>{if(e.key!=='Enter')return;e.preventDefault();const q=e.target.value.trim(),vv=vis();save(vv.length===1?vv[0]:(opts.find(v=>v.toLowerCase()===q.toLowerCase())||q));});
  el.addEventListener('click',e=>{const b=e.target.closest('[data-kpv]');if(b)save(b.dataset.kpv);});}
-$('kdGrid').addEventListener('click',e=>{const pk=e.target.closest('[data-kpick]');if(pk){kdPickOpen(pk);return;}
+$('kdGrid').addEventListener('click',e=>{const ag=e.target.closest('[data-kang]');if(ag){kdAngOpen(ag);return;}const pk=e.target.closest('[data-kpick]');if(pk){kdPickOpen(pk);return;}
  const hd=e.target.closest('.kdh[data-kc]');if(hd&&!e.target.closest('.kres')){kdFltOpen(hd);return;}
  if(e.target.closest('.kmup'))return;
  const km=e.target.closest('.km.haslg');if(km&&!e.target.closest('.kmt')){const t=km.querySelector('.kmt');km.classList.add('ked');t.focus();const s=getSelection(),rg=document.createRange();rg.selectNodeContents(t);rg.collapse(false);s.removeAllRanges();s.addRange(rg);}});
