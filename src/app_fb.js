@@ -812,10 +812,11 @@ $('v-rekla').addEventListener('submit',e=>{if(!e.target.dataset.rf)return;e.prev
    Gespeichert je Jahr in meta/kd_<Jahr> = {items:{id:{…}}} (bzw. meta/kd_x ohne Jahr) – wenige Lesevorgänge, Regel meta/* reicht.
    Felder: dat (TT.MM.JJJJ) · nr (Beleg-Nr.) · marke · modell · preis · leas · kunde · vers · rahmen · tel · k (Spalte ohne Überschrift) · y (Paket). */
 let KD={},KDIMP=false,kdDirty=true,kdList=[],kdYears=2,kdEdit=null;
-const kdAll=()=>{if(kdDirty){kdList=[];for(const y in KD)for(const id in KD[y]){const r=KD[y][id];if(r&&r.id){r._d=vkDate(r.dat)||0;r._t=[r.kunde,r.marke,r.modell,r.rahmen,r.tel,r.nr,kdNr(r),r.leas,r.vers,r.dat,r.preis].join(' ').toLowerCase();r._o=(r.o!=null&&r.o!==''&&!isNaN(+r.o))?+r.o:r._d;kdList.push(r);}}kdList.sort((a,b)=>b._o-a._o||String(b.nr).localeCompare(String(a.nr),'de',{numeric:true}));kdDirty=false;}return kdList;};
+const kdAll=()=>{if(kdDirty){kdList=[];for(const y in KD)for(const id in KD[y]){const r=KD[y][id];if(r&&r.id){r._d=vkDate(r.dat)||0;r._t=[r.kunde,r.marke,r.modell,r.rahmen,r.tel,r.mail,r.nr,kdNr(r),r.leas,r.vers,r.dat,r.preis].join(' ').toLowerCase();r._o=(r.o!=null&&r.o!==''&&!isNaN(+r.o))?+r.o:r._d;kdList.push(r);}}kdList.sort((a,b)=>b._o-a._o||String(b.nr).localeCompare(String(a.nr),'de',{numeric:true}));kdDirty=false;}return kdList;};
 /* Spalten wie in Excel: Reihenfolge per Ziehen am Kopf, Breite am rechten Rand des Kopfs (Doppelklick = Standard).
    Je Profil in meta/prefs[ID].kdlay = {o:[Spalten], w:{Spalte:px}} (+ localStorage). Zeilen: Griff ⋮⋮ links, nur innerhalb eines Jahres (Feld o). */
-const KDC=[{k:'dat',n:'Datum',w:98,c:'kd'},{k:'nr',n:'Beleg',w:66,c:'kn'},{k:'marke',n:'Marke',w:130,c:'km'},{k:'modell',n:'Modell',fit:1,c:'kmo'}/* 1.10.10: so breit wie der längste Eintrag */,{k:'preis',n:'Preis',w:96,c:'kp'},{k:'leas',n:'Leasing',w:92,c:'kl2'},{k:'kunde',n:'Kunde',w:200,c:'kk'},{k:'vers',n:'Vers.',w:80,c:'kv'},{k:'rahmen',n:'Rahmen-Nr.',w:130,c:'krn'},{k:'tel',n:'Telefon',w:130,c:'kt'},{k:'ang',n:'Angeschrieben',w:118,c:'kang'}];/* 1.10.5: Spalte K raus (Daten bleiben), neue Spalte Angeschrieben */
+/* 1.10.11: Spalten schmaler (Datum TT.MM., Jahr steht im Jahres-Trenner) + neue Spalte E-Mail zwischen Telefon und Angeschrieben */
+const KDC=[{k:'dat',n:'Datum',w:66,c:'kd'},{k:'nr',n:'Beleg',w:86,c:'kn'},{k:'marke',n:'Marke',w:110,c:'km'},{k:'modell',n:'Modell',fit:1,c:'kmo'}/* 1.10.10: so breit wie der längste Eintrag */,{k:'preis',n:'Preis',w:82,c:'kp'},{k:'leas',n:'Leas.',w:70,c:'kl2'},{k:'kunde',n:'Kunde',w:200,c:'kk'},{k:'vers',n:'Vers.',w:62,c:'kv'},{k:'rahmen',n:'Rahmen-Nr.',w:130,c:'krn'},{k:'tel',n:'Telefon',w:118,c:'kt'},{k:'mail',n:'E-Mail',w:78,c:'kmail'},{k:'ang',n:'Angeschr.',w:86,c:'kang'}];/* 1.10.5: Spalte K raus (Daten bleiben), neue Spalte Angeschrieben */
 const KDRB=['#FF3B5C','#FF6B2C','#FF9F1C','#FFD93B','#A3E635','#3DDC84','#22D3EE','#38BDF8','#4F7BFF','#8B5CF6','#D946EF'];
 const kdDef=()=>({o:KDC.map(c=>c.k),w:{}});
 let kdLay=kdDef(),kdDrag=null;
@@ -837,8 +838,11 @@ function kdLogo(v){let k=kdKey(v);if(!k)return'';if(k==='EP')k='EN';const x=(L||
  const f=KFIN[k];if(f){const o=(S||[]).find(s=>String(s.name||'').trim().toLowerCase()===f.lief);return o?sLogo(o):'';}return'';}
 const kdLogoH=v=>{const lg=kdLogo(v);return lg?`<img class="llg kll" src="${esc(lg)}" alt="${esc(v)}" draggable="false">${kdKey(v)==='EP'?'<i class="kplus" title="ENRA PLUS">+</i>':''}`:'';};
 const ANGI={mail:'<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>',tel:'<svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor"><path d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1A17 17 0 0 1 3 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.3 0 .7-.2 1z"/></svg>'};const ANGL={mail:'per E-Mail angeschrieben',tel:'per Telefon nachgefragt',no:'✕ nicht nachfragen'};
-const kdVal=(k,r)=>k==='ang'?(ANGL[r.ang]||''):k==='nr'?kdNr(r):k==='preis'?kdPreis(r.preis):String(r[k]==null?'':r[k]).trim();
+const kdVal=(k,r)=>k==='mail'?(kdMails(r).length?'✉ mit E-Mail':''):k==='ang'?(ANGL[r.ang]||''):k==='nr'?kdNr(r):k==='preis'?kdPreis(r.preis):String(r[k]==null?'':r[k]).trim();
 const KDNC='\u0001nc';
+const kdMails=r=>String(r&&r.mail||'').split(/[\s,;]+/).filter(x=>/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(x));
+// kürzestes Datum: TT.MM. (Jahr steht im Jahres-Trenner), in Leasing/Vers. TT.MM.JJ
+const kdDs=(v,yr)=>{const m=String(v||'').trim().match(/^(\d{1,2})\.(\d{1,2})\.(\d{2}|\d{4})$/);if(!m)return String(v||'');const d=m[1].padStart(2,'0')+'.'+m[2].padStart(2,'0')+'.';return yr?d+m[3].slice(-2):d;};
 const kdFv=(k,r)=>{const v=kdVal(k,r);if(!(k==='leas'||k==='vers')||v==='')return v;const c=kdKey(v);if(!c)return KDNC;
  if(k==='leas'){const l=(L||[]).find(x=>kdKey(x.k)===c)||(L||[]).find(x=>kdKey(x.id)===c);if(l)return l.k;if(KFIN[c])return c;}else{const kk=Object.keys(kdVN()).find(x=>kdKey(x)===c);if(kk)return kk;}return c;};
 const kdLab=(k,v)=>v===KDNC?'📅 Datum / ohne Kürzel (altes Sheet)':v===''?'(leer)':k==='leas'&&FN[v]?v+' · '+FN[v]:k==='leas'&&(L||[]).find(l=>kdKey(l.k)===kdKey(v))?v+' · '+(L||[]).find(l=>kdKey(l.k)===kdKey(v)).n:k==='leas'&&KFIN[kdKey(v)]?v+' · '+KFIN[kdKey(v)].n:k==='vers'&&kdVN()[v]?v+' · '+kdVN()[v]:v;
@@ -858,7 +862,7 @@ function rk(){const g=$('kdGrid');if(!g)return;kdAngMig();const all=kdAll();{con
  const cap=kdYr?3000:600,more=kdYr?false:q||fk.length?list.length>cap:all.some(r=>r._d&&new Date(r._d).getFullYear()<=now-kdYears);list=list.slice(0,cap);
  $('kdMore').hidden=!!(kdYr||q||fk.length)||!more;$('kdMore').textContent='Ältere Jahre anzeigen (bis '+(now-kdYears-1)+')';
  $('kdForm').innerHTML=kdEdit?kdFormH():'';
- if($('kdClr'))$('kdClr').hidden=!(ME&&ME.adm)||!all.length;
+ if($('kdClr'))$('kdClr').hidden=!(ME&&ME.adm)||!all.length;if($('kdMailImp'))$('kdMailImp').hidden=!(ME&&ME.adm)||!all.length;
  {const nb=Object.keys(KDT).length;$('kdBin').hidden=!nb;$('kdBinN').textContent=nb;}
  const cols=kdCols();kdTpl();
  let h=`<div class="hd kdh kgh" style="--hc:${KDRB[0]}"></div>`+cols.map((c,i)=>`<div class="hd kdh${c.k==='kunde'?' kl':''}${kdF[c.k]?' kfon':''}" draggable="true" data-kc="${c.k}" title="Klick = filtern · Ziehen = Spalte verschieben · rechter Rand = Breite" style="--hc:${KDRB[i%KDRB.length]}">${c.n||'·'}<i class="kfi">${kdF[c.k]?'▼':'▾'}</i><span class="kres" data-kres="${c.k}" title="Ziehen = Breite ändern · Doppelklick = Standard"></span></div>`).join('')+`<div class="hd kdh" style="--hc:${KDRB[KDRB.length-1]}"></div>`;let yr=null;const cnt={};list.forEach(r=>{const y=kdYear(r);cnt[y]=(cnt[y]||0)+1;});
@@ -867,13 +871,14 @@ function rk(){const g=$('kdGrid');if(!g)return;kdAngMig();const all=kdAll();{con
   const id=esc(r.id),ky=esc(r.y);
   h+=`<div class="row kr"><div class="c kc kgrip" draggable="true" data-kid="${id}" data-ky="${ky}" title="Ziehen = Zeile verschieben">⋮⋮</div>${cols.map(c=>kdCell(c,r,id,ky)).join('')}<div class="c kc kdel" data-kid="${id}" data-ky="${ky}"><button class="nx" type="button" data-kdel="${id}" data-ky="${ky}" title="Eintrag löschen">×</button></div></div>`;}
  g.innerHTML=h+((q||fk.length)&&!list.length?'<div class="kdempty">Nichts gefunden.</div>':'');}
-function kdCell(c,r,id,ky){if(c.k==='ang'){const v=r.ang||'',ic={mail:'<span class="ang ok">'+ANGI.mail+'</span>',tel:'<span class="ang ok">'+ANGI.tel+'</span>',no:'<span class="ang no">✕</span>'}[v]||'';
+function kdCell(c,r,id,ky){if(c.k==='mail'){const m=kdMails(r);return `<div class="c kc kmail" role="button" tabindex="0" data-kmail="1" data-kid="${id}" data-ky="${ky}" data-kc="mail"${m.length?'':' title="Klick = E-Mail eintragen"'}>${m.length?`<span class="ang ml">${ANGI.mail}${m.length>1?`<i>${m.length}</i>`:''}</span>`:''}</div>`;}
+ if(c.k==='ang'){const v=r.ang||'',ic={mail:'<span class="ang ok">'+ANGI.mail+'</span>',tel:'<span class="ang ok">'+ANGI.tel+'</span>',no:'<span class="ang no">✕</span>'}[v]||'';
   const t=v?(r.angSrc==='sheet'&&v==='mail'?'angeschrieben (aus der alten Liste)':r.angSrc==='sheet'&&v==='no'?'nicht angeschrieben (aus der alten Liste)':ANGL[v])+(r.angVon?' · '+U(r.angVon).n:'')+(r.angTs?' · '+fmtTs(r.angTs):''):'Klick = nachgefragt? (E-Mail / Telefon / nicht nachfragen)';
   return `<div class="c kc kang" role="button" tabindex="0" data-kang="1" data-kid="${id}" data-ky="${ky}" data-kc="ang" title="${esc(t)}">${ic}</div>`;}
 if(c.k==='marke'){const b=brandOfB({marke:r.marke,modell:r.modell}),lg=b&&(BUSER.logos||{})[b.k];
   return `<div class="c kc km${lg?' haslg':''}" data-kid="${id}" data-ky="${ky}" data-kc="marke" title="${esc(r.marke||'')}">${lg?`<img src="${lg}" alt="" class="kml" draggable="false">`:''}<span class="kmt" contenteditable="true" spellcheck="false" data-kid="${id}" data-ky="${ky}" data-kf="marke">${esc(r.marke||'')}</span>${String(r.marke||'').trim()?`<label class="kmup" title="${lg?'Logo ersetzen':'Markenlogo hochladen'} (oder Bild hierher ziehen)">${lg?'⟳':'⬆'}<input type="file" accept="image/*" hidden data-kmup="${esc(r.marke)}"></label>`:''}</div>`;}
  if(c.k==='dat'||c.k==='leas'||c.k==='vers'){const v=String(r[c.k]||''),t=c.k==='dat'?'Klick = Datum wählen':(kdLab(c.k,v)+' · Klick = auswählen');
-  const lg=c.k!=='dat'&&kdLogoH(v);return `<div class="c kc ${c.c} kpk${lg?' kplg':''}" role="button" tabindex="0" data-kpick="${c.k}" data-kid="${id}" data-ky="${ky}" data-kc="${c.k}" title="${esc(t)}">${lg||esc(v)}</div>`;}
+  const lg=c.k!=='dat'&&kdLogoH(v),sv=kdDs(v,c.k!=='dat');return `<div class="c kc ${c.c} kpk${lg?' kplg':''}" role="button" tabindex="0" data-kpick="${c.k}" data-kid="${id}" data-ky="${ky}" data-kc="${c.k}" title="${esc((sv!==v?v+' · ':'')+t)}">${lg||esc(sv)}</div>`;}
  const v=kdVal(c.k,r);return `<div class="c kc ${c.c}" contenteditable="true" spellcheck="false" data-kid="${id}" data-ky="${ky}" data-kf="${c.k}" data-kc="${c.k}">${esc(v==null?'':v)}</div>`;}
 // Papierkorb (1.5.8): gelöschte Zeilen 30 Tage in meta/kd_trash = {items:{id:{…Zeile,_y,_del,_von}}}
 let KDT={};const KDT_DAYS=30;
@@ -892,7 +897,7 @@ function kdFormH(){const opt='<option value="">–</option>'+Object.entries(FN).
  return `<form class="edf card kdf" data-kf2="new" autocomplete="off" novalidate><b>Neuer Verkauf / Kunde</b><datalist id="kdBrandL">${allBrands().map(x=>`<option value="${esc(x.n)}">`).join('')}</datalist><div class="g4">
  <label>Datum<input name="dat" type="date" value="${iso(new Date())}"></label><label>Beleg-Nr.<input name="nr"></label><label>Marke<input name="marke" list="kdBrandL"></label><label>Modell<input name="modell"></label>
  <label>Preis<input name="preis" placeholder="z. B. 3499"></label><label>Leasing<select name="leas">${opt}</select></label><label>Kunde<input name="kunde"></label><label>Vers.<input name="vers" placeholder="z. B. E, EP, FS"></label>
- <label>Rahmen-Nr.<input name="rahmen"></label><label>Telefon<input name="tel"></label></div>
+ <label>Rahmen-Nr.<input name="rahmen"></label><label>Telefon<input name="tel"></label><label>E-Mail<input name="mail" type="email" multiple></label></div>
  <div class="acts"><button class="btn red" type="submit">Speichern</button><button class="btn" type="button" data-kcancel>Abbrechen</button></div></form>`;}
 $('kdSearch').addEventListener('input',()=>{clearTimeout(window._kdT);window._kdT=setTimeout(rk,150);});
 $('kdMore').addEventListener('click',()=>{kdYears+=3;rk();});
@@ -901,7 +906,7 @@ $('v-kunden').addEventListener('click',e=>{if(e.target.closest('[data-kcancel]')
  const dl=e.target.closest('[data-kdel]');if(dl){const y=dl.dataset.ky,id=dl.dataset.kdel,old=KD[y]&&KD[y][id];if(!old)return;if(!dl.dataset.sure){dl.dataset.sure=1;dl.textContent='?';dl.title='Nochmal klicken = löschen';return;}
   const n=Object.assign({},KD[y]);delete n[id];KD[y]=n;kdDirty=true;rk();db.doc('meta/kd_'+y).update({['items.'+id]:null}).catch(fail);const tr=Object.assign({},old,{_y:y,_del:Date.now(),_von:ME?ME.id:''});delete tr._t;delete tr._d;delete tr._o;kdBinSet(id,tr);toast('Gelöscht – auch später über „↩ Gelöschte“ zurückholbar',()=>{kdRestore(id);toast('Wiederhergestellt');});}});
 $('v-kunden').addEventListener('submit',async e=>{if(!e.target.dataset.kf2)return;e.preventDefault();const d=new FormData(e.target),y=String(new Date().getFullYear());const r={id:nid('k'),y};
- ['nr','marke','modell','preis','leas','kunde','vers','rahmen','tel'].forEach(k=>r[k]=String(d.get(k)||'').trim());const v=String(d.get('dat')||'');r.dat=/^\d{4}-\d{2}-\d{2}$/.test(v)?deDate(fromIso(v)):'';
+ ['nr','marke','modell','preis','leas','kunde','vers','rahmen','tel','mail'].forEach(k=>r[k]=String(d.get(k)||'').trim());const v=String(d.get('dat')||'');r.dat=/^\d{4}-\d{2}-\d{2}$/.test(v)?deDate(fromIso(v)):'';
  kdEdit=null;await kdPut(y,r);rk();toast('Gespeichert');});
 $('kdGrid').addEventListener('keydown',e=>{const c=e.target.closest('[contenteditable]');if(c&&e.key==='Enter'){e.preventDefault();c.blur();}if(c&&e.key==='Escape'){c.blur();kdDirty=true;rk();}});
 $('kdGrid').addEventListener('focusout',e=>{const c=e.target.closest('[contenteditable][data-kf]');if(!c)return;const y=c.dataset.ky,id=c.dataset.kid,f=c.dataset.kf,r=KD[y]&&KD[y][id];if(!r)return;let v=c.innerText.trim();
@@ -933,7 +938,7 @@ let kdPop=null;
 function kdPopClose(){if(kdPop){kdPop.el.remove();kdPop=null;}}
 function kdPopOpen(anchor,html,o){kdPopClose();const el=document.createElement('div');el.className='kdpop';el.innerHTML=html;document.body.appendChild(el);kdPop=Object.assign({el,t0:Date.now()},o);kdPopPos(anchor);const i=el.querySelector('input:not([type=checkbox])');if(i)i.focus();return el;}
 function kdPopPos(anchor){const el=kdPop.el,rc=anchor.getBoundingClientRect(),W=el.offsetWidth,H=el.offsetHeight;el.style.left=Math.max(8,Math.min(innerWidth-W-8,rc.left))+'px';el.style.top=(rc.bottom+4+H>innerHeight-8?Math.max(8,rc.top-4-H):rc.bottom+4)+'px';}
-document.addEventListener('pointerdown',e=>{if(kdPop&&!kdPop.el.contains(e.target)&&!e.target.closest('[data-kpick],[data-kang],.kdh[data-kc],.stb .st,.lvon,#meChip,.av[data-avk],td.vnote[data-von],.bm thead th,.bm #grid .hd,.bmrow'))kdPopClose();},true);
+document.addEventListener('pointerdown',e=>{if(kdPop&&!kdPop.el.contains(e.target)&&!e.target.closest('[data-kpick],[data-kang],[data-kmail],.kdh[data-kc],.stb .st,.lvon,#meChip,.av[data-avk],td.vnote[data-von],.bm thead th,.bm #grid .hd,.bmrow'))kdPopClose();},true);
 document.addEventListener('keydown',e=>{if(kdPop&&e.key==='Escape')kdPopClose();});
 document.addEventListener('scroll',e=>{if(kdPop&&!kdPop.el.contains(e.target)&&Date.now()-kdPop.t0>250)kdPopClose();},true);
 function kdFltOpen(hd){const k=hd.dataset.kc,c=KDC.find(x=>x.k===k);if(kdPop&&kdPop.t==='flt'&&kdPop.k===k){kdPopClose();return;}
@@ -974,11 +979,11 @@ function kdPickOpen(cell){const f=cell.dataset.kpick,y=cell.dataset.ky,id=cell.d
  draw();el.querySelector('.kpq').addEventListener('input',draw);
  el.querySelector('.kpq').addEventListener('keydown',e=>{if(e.key!=='Enter')return;e.preventDefault();const q=e.target.value.trim(),vv=vis();save(vv.length===1?vv[0]:(opts.find(v=>v.toLowerCase()===q.toLowerCase())||q));});
  el.addEventListener('click',e=>{const b=e.target.closest('[data-kpv]');if(b)save(b.dataset.kpv);});}
-$('kdGrid').addEventListener('click',e=>{const ag=e.target.closest('[data-kang]');if(ag){kdAngOpen(ag);return;}const pk=e.target.closest('[data-kpick]');if(pk){kdPickOpen(pk);return;}
+$('kdGrid').addEventListener('click',e=>{const ag=e.target.closest('[data-kang]');if(ag){kdAngOpen(ag);return;}const mc=e.target.closest('[data-kmail]');if(mc){kmTipHide();kdMailOpen(mc);return;}const pk=e.target.closest('[data-kpick]');if(pk){kdPickOpen(pk);return;}
  const hd=e.target.closest('.kdh[data-kc]');if(hd&&!e.target.closest('.kres')){kdFltOpen(hd);return;}
  if(e.target.closest('.kmup'))return;
  const km=e.target.closest('.km.haslg');if(km&&!e.target.closest('.kmt')){const t=km.querySelector('.kmt');km.classList.add('ked');t.focus();const s=getSelection(),rg=document.createRange();rg.selectNodeContents(t);rg.collapse(false);s.removeAllRanges();s.addRange(rg);}});
-$('kdGrid').addEventListener('keydown',e=>{const pk=e.target.closest('[data-kpick]');if(pk&&(e.key==='Enter'||e.key===' ')){e.preventDefault();kdPickOpen(pk);}});
+$('kdGrid').addEventListener('keydown',e=>{const mk=e.target.closest('[data-kmail]');if(mk&&(e.key==='Enter'||e.key===' ')){e.preventDefault();kdMailOpen(mk);return;}const pk=e.target.closest('[data-kpick]');if(pk&&(e.key==='Enter'||e.key===' ')){e.preventDefault();kdPickOpen(pk);}});
 // Markenlogo aus der Kunden-Tabelle: gleiche Aufbereitung wie Einstellungen → Markenlogos (freistellen, zuschneiden, schärfen, skalieren), dort gespeichert
 async function kdLogoUp(mk,file){if(!file||!/^image\//.test(file.type||''))return toast('Bitte ein Bild wählen');const b=brandOfB({marke:mk});if(!b||!b.k)return;
  toast('Logo wird aufbereitet …');try{const u=await procLogo(file);if(u.length>300000)throw new Error('Logo zu groß');if(!allBrands().some(x=>x.k===b.k)){BUSER.list=(BUSER.list||[]).concat([{k:b.k,n:b.n,w:''}]);await brSave();}await blPut(b.k,u);kdDirty=true;rk();toast('Logo „'+b.n+'“ gespeichert – auch unter Einstellungen → Markenlogos');}catch(err){fail(err);}}
@@ -1033,6 +1038,138 @@ async function importKunden(file){await loadXLSX();const wb=XLSX.read(await file
  for(const y in by)await db.doc('meta/kd_'+y).set({items:by[y]});
  await db.doc('meta/import').set({kunden:true,kundenAm:stamp(),kundenN:list.length,kundenVon:ME.id},{merge:true});return list.length;}
 
+/* 1.10.11: Kunden – Spalte E-Mail (Feld mail, mehrere mit Komma), Maus drüber = Adressen, Klick = bearbeiten + Vorlage öffnen.
+   Vorlagen (Einzelperson/Familie) in meta/mailtpl = {ein:{s,b}, fam:{s,b}, fuss} – Admins können sie dauerhaft ändern. Stammdaten wie KI-Zentrale (CLAUDE.md §11). */
+const MTPL0={
+ ein:{s:'Wie gefällt Ihnen Ihr neues E-Bike?',b:`{anrede}
+
+vielen Dank, dass Sie Ihr neues E-Bike bei uns gekauft haben! Wir hoffen, Sie hatten schon viele schöne Kilometer damit.
+
+Wie zufrieden sind Sie mit Ihrem neuen Rad? Passt alles, oder gibt es etwas, das wir noch für Sie einstellen können? Antworten Sie einfach auf diese E-Mail – wir freuen uns über Ihre Rückmeldung.
+
+Wichtig – 50 % Rabatt auf Ihre erste Inspektion:
+Kommen Sie dafür bitte zwischen 500 km und 1.000 km zu uns, spätestens innerhalb von 12 Monaten nach dem Kauf.
+Bei 500 km erscheint beim Einschalten Ihres E-Bikes automatisch der Hinweis, dass der Service fällig ist. Dann einfach kurz anrufen oder schreiben – wir machen gerne einen Termin mit Ihnen aus.
+
+Sie sind zufrieden mit uns? Über eine Google-Bewertung freuen wir uns sehr:
+https://g.page/r/CYlWWOy1HBsvEBM/review`},
+ fam:{s:'Wie gefallen Ihnen Ihre neuen E-Bikes?',b:`{anrede}
+
+vielen Dank, dass Sie sich als Familie für neue E-Bikes aus unserem Haus entschieden haben! Wir hoffen, Sie hatten schon viele schöne gemeinsame Touren.
+
+Wie zufrieden sind Sie mit Ihren neuen Rädern? Passt alles, oder gibt es etwas, das wir noch für Sie einstellen können? Antworten Sie einfach auf diese E-Mail – wir freuen uns über Ihre Rückmeldung.
+
+Wichtig – 50 % Rabatt auf die erste Inspektion jedes E-Bikes:
+Kommen Sie dafür bitte zwischen 500 km und 1.000 km zu uns, spätestens innerhalb von 12 Monaten nach dem Kauf. Das gilt für jedes Rad einzeln – auch wenn die Räder unterschiedlich viel gefahren werden.
+Bei 500 km erscheint beim Einschalten des E-Bikes automatisch der Hinweis, dass der Service fällig ist. Dann einfach kurz anrufen oder schreiben – wir machen gerne einen Termin mit Ihnen aus, gerne auch für mehrere Räder gleichzeitig.
+
+Sie sind zufrieden mit uns? Über eine Google-Bewertung freuen wir uns sehr:
+https://g.page/r/CYlWWOy1HBsvEBM/review`},
+ fuss:`––––––––––––––––––––––
+Velocenter Hessert
+Hartmannstraße 25 · 76744 Wörth am Rhein
+Telefon: 0727178033
+WhatsApp: 01635343133
+E-Mail: info@velo-center.de
+Web: https://www.velo-center.de
+
+Öffnungszeiten:
+Mo, Di, Do, Fr: 09:00–12:00 Uhr & 14:30–18:00 Uhr
+Sa: 09:00–12:00 Uhr
+Mi & So: geschlossen
+
+Instagram: https://www.instagram.com/velocenterhessert
+Facebook: https://www.facebook.com/velocenterhessert
+
+Mit freundlichen Grüßen
+Ihr Team vom Velocenter Hessert`};
+let MTPL=null;
+async function mtplGet(){if(MTPL)return MTPL;let d={};try{const x=await db.doc('meta/mailtpl').get();if(x.exists)d=x.data()||{};}catch(e){}
+ MTPL={ein:Object.assign({},MTPL0.ein,d.ein||{}),fam:Object.assign({},MTPL0.fam,d.fam||{}),fuss:d.fuss!=null?d.fuss:MTPL0.fuss};return MTPL;}
+// Name aus „Müller, Hans“ bzw. „Hans Müller“
+function kdNameSplit(k){k=String(k||'').replace(/\s+/g,' ').trim();if(!k)return{vn:'',nn:''};if(k.includes(',')){const [a,b]=k.split(',');return{nn:a.trim(),vn:(b||'').trim()};}const w=k.split(' ');return{nn:w.pop(),vn:w.join(' ')};}
+function kdAnrede(r,a){const {vn,nn}=kdNameSplit(r.kunde);if(a==='herr')return 'Hallo Herr '+nn+',';if(a==='frau')return 'Hallo Frau '+nn+',';if(a==='fam')return 'Hallo Familie '+nn+',';return 'Guten Tag'+((vn+' '+nn).trim()?' '+(vn+' '+nn).trim():'')+',';}
+// Maus über das E-Mail-Symbol = Adressen zeigen
+let kmTip=null;function kmTipHide(){if(kmTip){kmTip.remove();kmTip=null;}}
+$('kdGrid').addEventListener('mouseover',e=>{const c=e.target.closest('[data-kmail]');if(!c){kmTipHide();return;}if(kmTip&&kmTip._c===c)return;kmTipHide();if(kdPop)return;
+ const r=KD[c.dataset.ky]&&KD[c.dataset.ky][c.dataset.kid],m=kdMails(r);if(!m.length)return;
+ const el=document.createElement('div');el.className='kmtip';el._c=c;el.innerHTML=`<b>✉ ${esc(r.kunde||'E-Mail')}</b>${m.map(x=>`<span>${esc(x)}</span>`).join('')}${r.mailSrc?`<small>${r.mailSrc==='rahmen'?'aus Veloport (über Rahmen-Nr.)':r.mailSrc==='tel'?'aus Veloport (über Telefon)':r.mailSrc==='name'?'aus Veloport (über Name)':''}</small>`:''}<small>Klick = bearbeiten / Vorlage senden</small>`;
+ document.body.append(el);kmTip=el;const rc=c.getBoundingClientRect();el.style.left=Math.max(8,Math.min(innerWidth-el.offsetWidth-8,rc.left+rc.width/2-el.offsetWidth/2))+'px';el.style.top=(rc.bottom+6+el.offsetHeight>innerHeight?rc.top-6-el.offsetHeight:rc.bottom+6)+'px';});
+$('kdGrid').addEventListener('mouseleave',kmTipHide);document.addEventListener('scroll',kmTipHide,true);
+function kdRowOf(cell){const id=cell.dataset.kid,y=(cell.dataset.ky&&KD[cell.dataset.ky]&&KD[cell.dataset.ky][id])?cell.dataset.ky:Object.keys(KD).find(k=>KD[k]&&KD[k][id]);return y?{y,id,r:KD[y][id]}:null;}
+function kdMailOpen(cell){const o=kdRowOf(cell);if(!o)return;const {y,id,r}=o;if(kdPop&&kdPop.mail===id){kdPopClose();return;}const m=kdMails(r);
+ const el=kdPopOpen(cell,`<div class="kmp"><div class="kph">✉ E-Mail · ${esc(r.kunde||'Kunde')}</div><input class="kpq" type="email" multiple value="${esc(m.join(', '))}" placeholder="name@beispiel.de – mehrere mit Komma">
+  <div class="kpa">${m.length?'<button type="button" class="btn" data-kmclr>Leeren</button>':''}<button type="button" class="btn red" data-kmok>Speichern</button></div>
+  ${m.length?`<div class="kmh">Vorlage öffnen</div><button type="button" class="kpv" data-ktpl="ein"><b>👤</b><span><em>Einzelperson</em>Zufriedenheit + 1. Inspektion</span></button><button type="button" class="kpv" data-ktpl="fam"><b>👨‍👩‍👧</b><span><em>Familie</em>Zufriedenheit + 1. Inspektion</span></button>`:'<p class="kpm">E-Mail eintragen + Enter – danach Vorlage wählbar.</p>'}</div>`,{t:'mail'});kdPop.mail=id;
+ const inp=el.querySelector('.kpq');
+ const save=v=>{const list=String(v).split(/[\s,;]+/).filter(Boolean);const bad=list.filter(x=>!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(x));if(bad.length){toast('Keine gültige E-Mail: '+bad[0]);return;}
+  const nv=list.join(', ');kdPopClose();if(nv===String(r.mail||''))return;const old=r;kdPut(y,Object.assign({},r,{mail:nv,mailSrc:'',mailVon:ME.id})).then(rk);toast(nv?'E-Mail gespeichert':'E-Mail entfernt',()=>{kdPut(y,old).then(rk);});};
+ inp.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();save(inp.value);}});
+ el.addEventListener('click',e=>{if(e.target.closest('[data-kmok]'))save(inp.value);else if(e.target.closest('[data-kmclr]'))save('');else{const b=e.target.closest('[data-ktpl]');if(b){kdPopClose();kdTplOpen(y,id,b.dataset.ktpl);}}});}
+async function kdTplOpen(y,id,kind){const r=KD[y]&&KD[y][id];if(!r)return;const T=await mtplGet(),m=kdMails(r);let an=kind==='fam'?'fam':'neu';
+ dlg(`<h3>✉ E-Mail an ${esc(r.kunde||'Kunde')}</h3><form id="ktF" class="ktf" autocomplete="off">
+  <div class="ktk"><button type="button" class="kyc${kind==='ein'?' on':''}" data-kk="ein">👤 Einzelperson</button><button type="button" class="kyc${kind==='fam'?' on':''}" data-kk="fam">👨‍👩‍👧 Familie</button></div>
+  <label>An<input id="ktTo" value="${esc(m.join(', '))}"></label>
+  <label>Anrede<span class="ktan"><input id="ktAn"><button type="button" class="btn" data-an="herr">Herr</button><button type="button" class="btn" data-an="frau">Frau</button><button type="button" class="btn" data-an="fam">Familie</button><button type="button" class="btn" data-an="neu">neutral</button></span></label>
+  <label>Betreff<input id="ktS"></label><label>Text<textarea id="ktB" rows="16"></textarea></label>
+  <p class="hint">Öffnet die E-Mail in eurem Mailprogramm. Ist der Text zu lang für den Link, wird er automatisch kopiert → im Mailprogramm <b>Strg+V</b>. Danach steht beim Kunden „angeschrieben“.</p>
+  <div class="acts">${ME&&ME.adm?'<button type="button" class="btn" data-kted>✎ Vorlagen dauerhaft ändern</button>':''}<button class="btn" type="button" data-close>Abbrechen</button><button class="btn" type="button" data-ktcp>📋 Text kopieren</button><button class="btn red" type="submit">📧 E-Mail öffnen</button></div></form>`);
+ $('dlgBox').classList.add('wide');
+ const fill=()=>{$('ktAn').value=kdAnrede(r,an);$('ktS').value=T[kind].s;$('ktB').value=(T[kind].b.replace(/\{anrede\}/g,$('ktAn').value)+'\n\n'+T.fuss).trim();};fill();
+ $('ktAn').addEventListener('change',()=>{const v=$('ktAn').value;$('ktB').value=(T[kind].b.replace(/\{anrede\}/g,v)+'\n\n'+T.fuss).trim();});
+ $('ktF').addEventListener('click',e=>{const k=e.target.closest('[data-kk]');if(k){kind=k.dataset.kk;if(kind==='fam')an='fam';else if(an==='fam')an='neu';$('ktF').querySelectorAll('[data-kk]').forEach(b=>b.classList.toggle('on',b===k));fill();return;}
+  const a=e.target.closest('[data-an]');if(a){an=a.dataset.an;fill();return;}
+  if(e.target.closest('[data-ktcp]')){kdCopy($('ktB').value).then(ok=>toast(ok?'Text kopiert':'Kopieren nicht möglich'));return;}
+  if(e.target.closest('[data-kted]')){dlgClose();kdTplEdit();}});
+ $('ktF').addEventListener('submit',async ev=>{ev.preventDefault();const to=$('ktTo').value.split(/[\s,;]+/).filter(Boolean).join(','),s=$('ktS').value,b=$('ktB').value.replace(/\r?\n/g,'\r\n');
+  let u='mailto:'+encodeURI(to)+'?subject='+encodeURIComponent(s)+'&body='+encodeURIComponent(b),cp=false;
+  if(u.length>1900){u='mailto:'+encodeURI(to)+'?subject='+encodeURIComponent(s);cp=await kdCopy($('ktB').value);}
+  const a=document.createElement('a');a.href=u;document.body.append(a);a.click();a.remove();dlgClose();
+  const cur=KD[y]&&KD[y][id];if(cur&&cur.ang!=='mail'){const old=cur;kdPut(y,Object.assign({},cur,{ang:'mail',angVon:ME.id,angTs:stamp(),angSrc:''})).then(rk);toast((cp?'Text kopiert – im Mailprogramm Strg+V · ':'')+'als angeschrieben markiert',()=>{kdPut(y,old).then(rk);});}
+  else toast(cp?'Text kopiert – im Mailprogramm mit Strg+V einfügen':'Mailprogramm geöffnet');});}
+async function kdCopy(t){try{await navigator.clipboard.writeText(t);return true;}catch(_){try{const x=document.createElement('textarea');x.value=t;document.body.append(x);x.select();const ok=document.execCommand('copy');x.remove();return ok;}catch(e){return false;}}}
+async function kdTplEdit(){if(!ME||!ME.adm)return;const T=await mtplGet();
+ dlg(`<h3>✎ E-Mail-Vorlagen</h3><p class="hint"><b>{anrede}</b> wird automatisch ersetzt (z. B. „Hallo Frau Müller,“). Die Fußzeile hängt an beiden Vorlagen. Gilt für alle.</p><form id="kteF" class="ktf" autocomplete="off">
+  <label>👤 Einzelperson – Betreff<input id="kteS1" value="${esc(T.ein.s)}"></label><label>👤 Einzelperson – Text<textarea id="kteB1" rows="9">${esc(T.ein.b)}</textarea></label>
+  <label>👨‍👩‍👧 Familie – Betreff<input id="kteS2" value="${esc(T.fam.s)}"></label><label>👨‍👩‍👧 Familie – Text<textarea id="kteB2" rows="9">${esc(T.fam.b)}</textarea></label>
+  <label>Fußzeile (Kontakt, Öffnungszeiten, Social Media, Grüße)<textarea id="kteF2" rows="9">${esc(T.fuss)}</textarea></label>
+  <div class="err" id="kteE"></div><div class="acts"><button class="btn" type="button" data-kterst>↺ Standard</button><button class="btn" type="button" data-close>Abbrechen</button><button class="btn red" type="submit">Speichern</button></div></form>`);
+ $('dlgBox').classList.add('wide');
+ $('kteF').addEventListener('click',e=>{if(!e.target.closest('[data-kterst]'))return;$('kteS1').value=MTPL0.ein.s;$('kteB1').value=MTPL0.ein.b;$('kteS2').value=MTPL0.fam.s;$('kteB2').value=MTPL0.fam.b;$('kteF2').value=MTPL0.fuss;});
+ $('kteF').addEventListener('submit',async ev=>{ev.preventDefault();const n={ein:{s:$('kteS1').value,b:$('kteB1').value},fam:{s:$('kteS2').value,b:$('kteB2').value},fuss:$('kteF2').value,ts:stamp(),von:ME.id};
+  try{await db.doc('meta/mailtpl').set(n);MTPL=null;dlgClose();toast('Vorlagen gespeichert');}catch(err){$('kteE').textContent=err.message||String(err);}});}
+/* E-Mails aus dem Veloport-Export (dieselben CSV-Dateien wie in der KI-Zentrale: Kunden + optional Fahrzeuge).
+   Zuordnung: 1. Rahmen-Nr. (Fahrzeuge → KdNr → E-Mail), 2. Telefon/Mobil, 3. Vor- + Nachname. Nur eindeutige Treffer, nur leere Felder. Daten nur in die Datenbank. */
+async function vpText(f){const buf=await f.arrayBuffer();let t=new TextDecoder('utf-8').decode(buf);if(t.includes('�')){try{t=new TextDecoder('windows-1252').decode(buf);}catch(e){}}return t.replace(/^﻿/,'');}
+function vpCSV(t){const L=t.split(/\r?\n/).filter(x=>x.trim()).slice(0,6);let del=';',best=-1;for(const d of [';',',','\t']){const c=L.map(l=>l.split(d).length-1);if(!c.length||c[0]<1)continue;const sc=c.filter(x=>x===c[0]).length*1000+c[0];if(sc>best){best=sc;del=d;}}
+ const rows=[];let row=[],f='',q=false;for(let i=0;i<t.length;i++){const ch=t[i];if(q){if(ch==='"'){if(t[i+1]==='"'){f+='"';i++;}else q=false;}else f+=ch;}else if(ch==='"')q=true;else if(ch===del){row.push(f);f='';}else if(ch==='\n'||ch==='\r'){if(ch==='\r'&&t[i+1]==='\n')i++;row.push(f);f='';if(row.some(x=>x.trim()))rows.push(row);row=[];}else f+=ch;}
+ row.push(f);if(row.some(x=>x.trim()))rows.push(row);return rows;}
+const vpCol=(h,re)=>h.findIndex(c=>re.test(String(c||'').trim()));
+const vpNorm=s=>String(s||'').toLowerCase().replace(/ä/g,'ae').replace(/ö/g,'oe').replace(/ü/g,'ue').replace(/ß/g,'ss').normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^a-z0-9]+/g,' ').trim();
+const vpTels=s=>(String(s||'').match(/[+\d][\d\s\/()\-.]{5,}\d/g)||[]).map(x=>{let d=x.replace(/\D/g,'');if(d.startsWith('0049'))d='0'+d.slice(4);else if(d.startsWith('49')&&x.trim().startsWith('+'))d='0'+d.slice(2);return d;}).filter(d=>d.length>=6);
+const vpRah=s=>String(s||'').toUpperCase().replace(/[^A-Z0-9]/g,'');
+async function kdMailImport(fk,fv){const K=vpCSV(await vpText(fk));if(K.length<2)throw new Error('Keine Kunden in der Datei gefunden.');const h=K[0];
+ const ci=vpCol(h,/^(kd\.?\s*-?\s*nr\.?|kundennr\.?|kundennummer)$/i),ni=vpCol(h,/^name1?$/i),vi=vpCol(h,/^vorname$/i),mi=vpCol(h,/^e-?mail/i),ti=vpCol(h,/^telefon/i),mo=vpCol(h,/^(mobil|handy)/i);
+ if(mi<0)throw new Error('Spalte „E-Mail“ nicht gefunden – ist das der Kunden-Export aus Veloport?');
+ const byKd={},byTel={},byName={};
+ K.slice(1).forEach(r=>{const ms=(String(r[mi]||'').match(/[^\s;,<>]+@[^\s;,<>]+\.[^\s;,<>]+/g)||[]).map(x=>x.toLowerCase());if(!ms.length)return;const c={ms,nn:vpNorm(r[ni]),vn:vpNorm(r[vi])};
+  if(ci>=0&&String(r[ci]||'').trim())byKd[String(r[ci]).trim()]=c;[...vpTels(ti>=0?r[ti]:''),...vpTels(mo>=0?r[mo]:'')].forEach(t=>{(byTel[t]=byTel[t]||[]).push(c);});if(c.nn)(byName[c.nn]=byName[c.nn]||[]).push(c);});
+ const byRah={};if(fv){const V=vpCSV(await vpText(fv));if(V.length>1){const vh=V[0],vc=vpCol(vh,/^(kd\.?\s*-?\s*nr\.?|kundennr\.?|kundennummer)$/i),vr=vpCol(vh,/^rahmen/i);
+  if(vc>=0&&vr>=0)V.slice(1).forEach(r=>{const k=vpRah(r[vr]);if(k.length>=5&&byKd[String(r[vc]||'').trim()])byRah[k]=byKd[String(r[vc]).trim()];});}}
+ const one=cs=>{const s=[...new Set((cs||[]).map(c=>c.ms.join(', ')))];return s.length===1?s[0]:null;};
+ const st={rahmen:0,tel:0,name:0,mehr:0,leer:0},up={};
+ for(const y in KD)for(const id in KD[y]){const r=KD[y][id];if(!r||kdMails(r).length)continue;let v=null,src='';
+  const rk2=vpRah(r.rahmen);if(rk2.length>=5&&byRah[rk2]){v=byRah[rk2].ms.join(', ');src='rahmen';}
+  if(!v){const ts=vpTels(r.tel);if(ts.length){const cs=ts.flatMap(t=>byTel[t]||[]);if(cs.length){v=one(cs);if(v)src='tel';}}}
+  if(!v&&r.kunde){const w=vpNorm(r.kunde).split(' ').filter(Boolean),ws=new Set(w);const cs=[];w.forEach(x=>(byName[x]||[]).forEach(c=>{if(c.vn&&c.vn.split(' ').every(p=>ws.has(p))&&c.nn.split(' ').every(p=>ws.has(p))&&!cs.includes(c))cs.push(c);}));
+   if(cs.length){v=one(cs);if(v)src='name';else{st.mehr++;continue;}}}
+  if(!v){st.leer++;continue;}st[src]++;(up[y]=up[y]||{})['items.'+id+'.mail']=v;up[y]['items.'+id+'.mailSrc']=src;KD[y][id]=Object.assign({},r,{mail:v,mailSrc:src});}
+ for(const y in up)await db.doc('meta/kd_'+y).update(up[y]);kdDirty=true;rk();return st;}
+$('kdMailImp').addEventListener('click',()=>{if(!ME||!ME.adm)return;dlg(`<h3>📧 E-Mails aus Veloport zuordnen</h3><p class="hint">Dieselben Exporte wie in der KI-Zentrale (Veloport-Export-Ordner). Zugeordnet wird zuerst über die <b>Rahmen-Nr.</b> (Fahrzeuge-Export), dann über <b>Telefon/Mobil</b>, dann über <b>Vor- + Nachname</b>. Nur eindeutige Treffer, nur Kunden <b>ohne</b> E-Mail – Eingetragenes bleibt.</p>
+ <form id="kmiF"><label>Kunden-Export (.csv, Pflicht)<input id="kmiK" type="file" accept=".csv,.txt"></label><label>Fahrzeuge-Export (.csv, optional – für Rahmen-Nr.)<input id="kmiV" type="file" accept=".csv,.txt"></label><div class="err" id="kmiE"></div><div class="acts"><button class="btn" type="button" data-close>Abbrechen</button><button class="btn red" type="submit">Zuordnen</button></div></form>`);
+ $('kmiF').addEventListener('submit',async ev=>{ev.preventDefault();const fk=$('kmiK').files[0];if(!fk){$('kmiE').textContent='Bitte den Kunden-Export wählen.';return;}
+  try{$('kmiE').textContent='Ordnet zu …';const s=await kdMailImport(fk,$('kmiV').files[0]);const n=s.rahmen+s.tel+s.name;dlgClose();
+   dlg(`<h3>📧 ${n.toLocaleString('de-DE')} E-Mails zugeordnet</h3><p>über Rahmen-Nr.: <b>${s.rahmen}</b><br>über Telefon: <b>${s.tel}</b><br>über Name: <b>${s.name}</b><br>mehrdeutig (übersprungen): <b>${s.mehr}</b><br>ohne Treffer: <b>${s.leer.toLocaleString('de-DE')}</b></p><div class="acts"><button class="btn red" type="button" data-close>OK</button></div>`);}catch(err){$('kmiE').textContent=err.message||String(err);}});});
 /* ================= LIEFERANTEN ================= */
 let sEdit=null,LOGINS=null;
 const SF=[['name','Lieferant'],['kdnr','Kunden-Nr.'],['mbw','Mindestbestellwert'],['notiz','Notiz'],['tel','Telefon (Händler)'],['mail','E-Mail (Händler)'],['web','Händler-Portal / Shop'],['rekla','Reklamation / Service']];
