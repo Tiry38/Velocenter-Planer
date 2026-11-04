@@ -16,6 +16,7 @@ Web-App für **Velocenter Hessert** (Fahrradgeschäft, Wörth am Rhein). Ersetzt
 - **Hyperspeed bei hoher Qualität.** Er unterbricht oft mit neuen Wünschen → kleine Schritte, schnell ausliefern.
 - **Lange Testläufe nerven ihn** (er bricht sie ab). Kurztest `quick.js` reicht pro Änderung; großer Test `tf.js` nur bei größeren Umbauten.
 - 100 % faktenkorrekt, Unsicheres als unsicher benennen.
+- **Am Ende jeder Antwort kurze Empfehlung zu `/compact` bzw. `/clear`** (Tiry, 04.11.): `/clear`, wenn alles ausgeliefert und in CLAUDE.md steht; `/compact <Fokus>`, wenn eine Aufgabe noch offen ist; sonst „weiter so“.
 - Design: **futuristisch, dunkel, leuchtend, stylisch** („kein 0815, nicht nach Excel aussehen“), trotzdem **sehr übersichtlich**. Schrift muss gut herausstechen.
 
 ## 3. Technik
