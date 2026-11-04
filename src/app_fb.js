@@ -828,7 +828,7 @@ function kdVN(){const m={E:'ENRA',EP:'ENRA PLUS'};(L||[]).filter(isVers).forEach
 // Kürzel wird erkannt, egal wie geschrieben („jr“, „J.R.“); E/ENRA = ENRA, EP/ENRA PLUS/E+ = ENRA-Logo + „+“ (2 Tarife)
 const kdKey=v=>{let k=String(v||'').toUpperCase().replace(/PLUS/g,'P').replace(/\+/g,'P').replace(/[^A-ZÄÖÜ]/g,'');if(k==='ENRAP'||k==='ENP')k='EP';if(k==='ENRA'||k==='E')k='EN';return k;};
 /* 1.10.7: Finanzierer, die nicht bei den Leasing-Infos stehen – Logo aus dem Lieferanten-Reiter (Tiry: TB = Targo Bank) */
-const KFIN={TB:{n:'Targo Bank',lief:'targo bank'}};
+const KFIN={TB:{n:'Targo Bank',lief:'targo bank'},CP:{n:'Credit Plus',lief:'credit plus'}};
 function kdLogo(v){let k=kdKey(v);if(!k)return'';if(k==='EP')k='EN';const x=(L||[]).find(l=>l.k===k)||(L||[]).find(l=>kdKey(l.n)===k);if(x)return logoOf(x);if(LOGOS[k])return LOGOS[k];
  const f=KFIN[k];if(f){const o=(S||[]).find(s=>String(s.name||'').trim().toLowerCase()===f.lief);return o?sLogo(o):'';}return'';}
 const kdLogoH=v=>{const lg=kdLogo(v);return lg?`<img class="llg kll" src="${esc(lg)}" alt="${esc(v)}" draggable="false">${kdKey(v)==='EP'?'<i class="kplus" title="ENRA PLUS">+</i>':''}`:'';};
