@@ -680,7 +680,7 @@ function dateEdit(td){const b=V.find(x=>x.id===td.dataset.vid),f=td.dataset.df;i
  let done=false;const fin=ok=>{if(done)return;done=true;const v=i.value;i.remove();if(ok&&v){const d=fromIso(v);const out=String(d.getDate()).padStart(2,'0')+'.'+String(d.getMonth()+1).padStart(2,'0')+'.'+d.getFullYear();if(out!==b[f]){putV(Object.assign({},b,{[f]:out}));toast({dat:'Bestellt am',antrag:'Antrag gestellt am',ok:'Leasing genehmigt',lende:'Leasingende'}[f]+': '+dshort(out));return;}}
  if(ok==='clr'&&b[f]){putV(Object.assign({},b,{[f]:''}));toast({dat:'Bestellt am',antrag:'Antrag gestellt am',ok:'Leasing genehmigt',lende:'Leasingende'}[f]+' gelöscht',()=>{const bb=V.find(x=>x.id===b.id);if(bb)putV(Object.assign({},bb,{[f]:b[f],[f+'Von']:b[f+'Von']||''}));toast('Wiederhergestellt');});return;}rv();};
  /* 1.6.9: „Löschen“ im Kalender = Feld leeren */i.addEventListener('change',()=>{fin(i.value?true:'clr');});i.addEventListener('keydown',k=>{if(k.key==='Enter'){k.preventDefault();fin(true);}if(k.key==='Escape')fin(false);});i.addEventListener('blur',()=>setTimeout(()=>fin(false),200));}
-$('cards').addEventListener('click',e=>{const td=e.target.closest('td.dcell');if(td&&!td.querySelector('input'))dateEdit(td);const tk=e.target.closest('td.kcell');if(tk&&!tk.querySelector('select'))ltEdit(tk);const tp=e.target.closest('td.pcell');if(tp&&!tp.querySelector('select'))pEdit(tp);});
+$('cards').addEventListener('click',e=>{const td=e.target.closest('td.dcell');if(td&&!td.querySelector('input'))dateEdit(td);const tk=e.target.closest('td.kcell');if(tk&&!tk.classList.contains('ltopen'))ltEdit(tk);const tp=e.target.closest('td.pcell');if(tp&&!tp.querySelector('select'))pEdit(tp);});
 // LT: Klick → Kalenderwoche wählen (Lager, KW −4 … +30 mit Datum Mo–Sa), gespeichert als „KW 47“
 function ltOpts(cur){const now=new Date();now.setHours(12,0,0,0);const mo=new Date(now);mo.setDate(mo.getDate()-((mo.getDay()+6)%7));const dd=d=>String(d.getDate()).padStart(2,'0')+'.'+String(d.getMonth()+1).padStart(2,'0')+'.';
  const isoY=d=>{const t=new Date(d);t.setDate(t.getDate()+3);return t.getFullYear();};
@@ -694,7 +694,21 @@ function ltOpts(cur){const now=new Date();now.setHours(12,0,0,0);const mo=new Da
 const VKFORM=['US','H','TZ','MTB'],VKGR=['16"','18"','20"','22"','43cm','45cm','46cm','48cm','50cm','51cm','53cm','55cm','56cm','57cm','58cm','60cm','61cm','63cm'];
 function pickOpts(list,cur){const op=v=>`<option value="${esc(v)}"${v===cur?' selected':''}>${esc(v||'–  leer')}</option>`;return op('')+(cur&&!list.includes(cur)?op(cur):'')+list.map(op).join('');}
 function pEdit(td){const b=V.find(x=>x.id===td.dataset.vid);if(!b)return;const f=td.dataset.pf;popPick(td,b,f,pickOpts(f==='form'?VKFORM:VKGR,b[f]||''),f==='form'?'Form':'Größe');}
-function ltEdit(td){const b=V.find(x=>x.id===td.dataset.vid);if(!b)return;popPick(td,b,'lt',ltOpts(ltNorm(b.lt)),'Liefertermin',ltNorm(b.lt));}
+/* 1.10.41: LT-Auswahl als eigene Liste (Tiry) – eingetragene bzw. aktuelle KW steht beim Öffnen genau in der Mitte, frei hoch/runter scrollen, ↑/↓ + Enter, Esc */
+function ltEdit(td){const b=V.find(x=>x.id===td.dataset.vid);if(!b)return;const old=document.querySelector('.ltpop');if(old){old._fin(false);if(old._td===td)return;}
+ const cur=ltNorm(b.lt),tmp=document.createElement('select');tmp.innerHTML=ltOpts(cur);const rows=[];let h='';
+ for(const el of tmp.children){if(el.tagName==='OPTGROUP'){h+=`<div class="ltyr">${esc(el.label)}</div>`;for(const o of el.children){rows.push(o);h+=`<div class="lto${o.dataset.now?' now':''}" data-v="${esc(o.value)}">${esc(o.textContent)}</div>`;}}else{rows.push(el);h+=`<div class="lto" data-v="${esc(el.value)}">${esc(el.textContent)}</div>`;}}
+ const pop=document.createElement('div');pop.className='ksel klist ltpop';pop.tabIndex=-1;pop.innerHTML=h;document.body.append(pop);pop._td=td;td.classList.add('ltopen');
+ const els=[...pop.querySelectorAll('.lto')],nowEl=pop.querySelector('.lto.now'),ni=els.indexOf(nowEl);
+ const hits=cur?els.filter(e=>e.dataset.v===cur).sort((p,q)=>Math.abs(els.indexOf(p)-ni)-Math.abs(els.indexOf(q)-ni)):[];let sel=hits[0]||nowEl||els[0];
+ const rc=td.getBoundingClientRect(),H=Math.min(420,innerHeight-24);pop.style.height=H+'px';pop.style.left=Math.max(8,Math.min(rc.left,innerWidth-330))+'px';pop.style.top=Math.max(12,Math.min(rc.top-H/2+rc.height/2,innerHeight-H-12))+'px';
+ const mark=(e,c)=>{els.forEach(x=>x.classList.remove('on'));sel=e;e.classList.add('on');if(c)pop.scrollTop=e.offsetTop-pop.clientHeight/2+e.offsetHeight/2;else e.scrollIntoView({block:'nearest'});};
+ mark(sel,true);pop.focus({preventScroll:true});
+ let done=false;const off=e=>{if(!pop.contains(e.target))fin(false);};
+ const fin=(ok,v)=>{if(done)return;done=true;pop.remove();td.classList.remove('ltopen');document.removeEventListener('mousedown',off,true);if(ok&&v!=null&&v!==(b.lt||'')&&!(v===cur&&b.lt)){putV(Object.assign({},b,{lt:v}));toast(v?'Liefertermin: '+v:'Liefertermin entfernt');return;}};pop._fin=fin;
+ setTimeout(()=>document.addEventListener('mousedown',off,true),0);
+ pop.addEventListener('click',e=>{const o=e.target.closest('.lto');if(o)fin(true,o.dataset.v);});
+ pop.addEventListener('keydown',k=>{k.stopPropagation();const i=els.indexOf(sel);if(k.key==='Escape'){k.preventDefault();fin(false);}else if(k.key==='Enter'){k.preventDefault();fin(true,sel.dataset.v);}else if(k.key==='ArrowDown'||k.key==='ArrowUp'){k.preventDefault();const j=Math.max(0,Math.min(els.length-1,i+(k.key==='ArrowDown'?1:-1)));mark(els[j]);}});}
 function popPick(td,b,f,html,lab,sel){const cur=b[f]||'',cs=sel==null?cur:sel;const sl=document.createElement('select');sl.className='edit din ksel klist'+(f==='lt'?'':' ksm');sl.innerHTML=html;sl.size=Math.min(f==='lt'?14:20,sl.options.length+sl.querySelectorAll('optgroup').length);td.textContent='';td.append(sl);
  // zur eingetragenen bzw. aktuellen Woche springen (bei doppelten KW-Nummern die nächstliegende)
  const opts=[...sl.options],now=sl.querySelector('option[data-now]'),ni=now?opts.indexOf(now):0;const hit=cs?opts.map((o,i)=>[o,i]).filter(([o])=>o.value===cs).sort((p,q)=>Math.abs(p[1]-ni)-Math.abs(q[1]-ni))[0]:null;

@@ -1018,3 +1018,11 @@ body.bgruh{background-image:none!important;background-color:#07090D!important}
 body.noanim *,body.noanim *::before,body.noanim *::after{animation:none!important;transition:none!important}
 body.uidense td,body.uidense th{padding-top:3px!important;padding-bottom:3px!important}
 body.uidense .vtab td,body.uidense #kdTab td{line-height:1.25}
+
+/* 1.10.41: LT-Auswahl eigene Liste */
+.ltpop{display:block;overscroll-behavior:contain;scroll-behavior:auto}
+.ltpop .ltyr{position:sticky;top:-4px;z-index:1;padding:6px 8px 4px;font:800 11px Outfit,var(--display),sans-serif;color:#FCA5A5;letter-spacing:.08em;background:#0E1320}
+.ltpop .lto{padding:6px 8px;border-radius:6px;color:#E2E8F0;font:600 12.5px var(--mono);white-space:pre;cursor:pointer}
+.ltpop .lto:hover{background:rgba(103,232,249,.12)}
+.ltpop .lto.now{color:#FDE68A}
+.ltpop .lto.on{background:linear-gradient(90deg,rgba(226,35,45,.55),rgba(226,35,45,.25));color:#fff}
