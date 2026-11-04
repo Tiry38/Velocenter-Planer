@@ -1006,3 +1006,15 @@ body[data-v=ausw]{--ac:#F5B83D}
 .stno{font:600 12px "Outfit",sans-serif;color:#64748B}
 .stdel{background:linear-gradient(160deg,rgba(255,77,109,.14),rgba(255,255,255,.02) 55%)}
 @media(max-width:600px){.stcr{grid-template-columns:1fr;gap:2px}.sttabs{margin-left:0;width:100%}.sttabs button{flex:1;padding:9px 6px}}
+/* 1.10.37: Nutzer-Einstellungen – Profilfarbe, Darstellung */
+.stsw{display:flex;flex-wrap:wrap;gap:7px}
+.stsw button,.stswc{width:28px;height:28px;border-radius:50%;cursor:pointer;border:2px solid rgba(255,255,255,.12);background:var(--sw);box-shadow:0 0 10px color-mix(in srgb,var(--sw) 45%,transparent);transition:transform .15s}
+.stsw button:hover,.stswc:hover{transform:scale(1.15)}.stsw button.on{border-color:#fff;box-shadow:0 0 0 2px var(--sw),0 0 14px var(--sw)}
+.stswc{position:relative;display:grid;place-items:center;background:conic-gradient(#E2232D,#FACC15,#39F26B,#22D3EE,#6366F1,#EC4899,#E2232D);color:#fff;font:800 14px "Outfit",sans-serif;text-shadow:0 1px 3px #000;overflow:hidden}
+.stswc input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;border:0;padding:0}
+.stchk{display:flex;align-items:flex-start;gap:9px;font-size:12.5px;color:#CBD5E1;cursor:pointer;line-height:1.4}.stchk input{width:17px;height:17px;margin:1px 0 0;accent-color:#A78BFA;flex:none}.stchk b{color:#fff}
+body.bgdez{background-image:radial-gradient(900px 560px at 0% 0%,rgba(70,100,220,.16),transparent 68%),radial-gradient(1000px 560px at 100% 0%,rgba(215,35,55,.14),transparent 68%),radial-gradient(900px 620px at 100% 100%,rgba(150,85,235,.12),transparent 68%),radial-gradient(900px 620px at 0% 100%,rgba(30,170,190,.08),transparent 68%)!important}
+body.bgruh{background-image:none!important;background-color:#07090D!important}
+body.noanim *,body.noanim *::before,body.noanim *::after{animation:none!important;transition:none!important}
+body.uidense td,body.uidense th{padding-top:3px!important;padding-bottom:3px!important}
+body.uidense .vtab td,body.uidense #kdTab td{line-height:1.25}
