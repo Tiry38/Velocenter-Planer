@@ -835,7 +835,7 @@ const kdLab=(k,v)=>v===''?'(leer)':k==='leas'&&FN[v]?v+' · '+FN[v]:k==='vers'&&
 let kdF={},kdYr=String(ls.get('vc_kdyr','')||'');  // Filter je Spalte: {Spalte: Set(Werte)} wie der Excel-Autofilter
 const kdYear=r=>{const d=r._d?new Date(r._d):null;return d?d.getFullYear():'ohne Datum';};
 const kdPreis=v=>{v=String(v==null?'':v).trim();if(/^\d+([.,]\d+)?$/.test(v)){const n=parseFloat(v.replace(',','.'));return n.toLocaleString('de-DE',{maximumFractionDigits:2})+' €';}return v;};
-function rk(){const g=$('kdGrid');if(!g)return;const all=kdAll();{const cy=new Date().getFullYear();$('nKunden').textContent=all.length?all.length.toLocaleString('de-DE'):'–';$('nKunden').title=all.length.toLocaleString('de-DE')+' Verkäufe gesamt seit 1995 · davon '+all.filter(r=>r._d&&new Date(r._d).getFullYear()===cy).length+' in '+cy;}
+function rk(){const g=$('kdGrid');if(!g)return;kdAngMig();const all=kdAll();{const cy=new Date().getFullYear();$('nKunden').textContent=all.length?all.length.toLocaleString('de-DE'):'–';$('nKunden').title=all.length.toLocaleString('de-DE')+' Verkäufe gesamt seit 1995 · davon '+all.filter(r=>r._d&&new Date(r._d).getFullYear()===cy).length+' in '+cy;}
  if(document.querySelector('#kdGrid [contenteditable]:focus'))return;
  const q=($('kdSearch').value||'').trim().toLowerCase();const now=new Date().getFullYear();
  const fk=Object.keys(kdF),fo=r=>fk.every(k=>kdF[k].has(kdVal(k,r)));if($('kdFx')){$('kdFx').hidden=!fk.length;$('kdFx').textContent='✕ Filter aus ('+fk.length+')';}
@@ -858,7 +858,7 @@ function rk(){const g=$('kdGrid');if(!g)return;const all=kdAll();{const cy=new D
   h+=`<div class="row kr"><div class="c kc kgrip" draggable="true" data-kid="${id}" data-ky="${ky}" title="Ziehen = Zeile verschieben">⋮⋮</div>${cols.map(c=>kdCell(c,r,id,ky)).join('')}<div class="c kc kdel" data-kid="${id}" data-ky="${ky}"><button class="nx" type="button" data-kdel="${id}" data-ky="${ky}" title="Eintrag löschen">×</button></div></div>`;}
  g.innerHTML=h+((q||fk.length)&&!list.length?'<div class="kdempty">Nichts gefunden.</div>':'');}
 function kdCell(c,r,id,ky){if(c.k==='ang'){const v=r.ang||'',ic={mail:'<span class="ang ok">'+ANGI.mail+'</span>',tel:'<span class="ang ok">'+ANGI.tel+'</span>',no:'<span class="ang no">✕</span>'}[v]||'';
-  const t=v?ANGL[v]+(r.angVon?' · '+U(r.angVon).n:'')+(r.angTs?' · '+fmtTs(r.angTs):''):'Klick = nachgefragt? (E-Mail / Telefon / nicht nachfragen)';
+  const t=v?(r.angSrc==='sheet'&&v==='mail'?'angeschrieben (aus der alten Liste)':r.angSrc==='sheet'&&v==='no'?'nicht angeschrieben (aus der alten Liste)':ANGL[v])+(r.angVon?' · '+U(r.angVon).n:'')+(r.angTs?' · '+fmtTs(r.angTs):''):'Klick = nachgefragt? (E-Mail / Telefon / nicht nachfragen)';
   return `<div class="c kc kang" role="button" tabindex="0" data-kang="1" data-kid="${id}" data-ky="${ky}" data-kc="ang" title="${esc(t)}">${ic}</div>`;}
 if(c.k==='marke'){const b=brandOfB({marke:r.marke,modell:r.modell}),lg=b&&(BUSER.logos||{})[b.k];
   return `<div class="c kc km${lg?' haslg':''}" data-kid="${id}" data-ky="${ky}" data-kc="marke" title="${esc(r.marke||'')}">${lg?`<img src="${lg}" alt="" class="kml" draggable="false">`:''}<span class="kmt" contenteditable="true" spellcheck="false" data-kid="${id}" data-ky="${ky}" data-kf="marke">${esc(r.marke||'')}</span>${String(r.marke||'').trim()?`<label class="kmup" title="${lg?'Logo ersetzen':'Markenlogo hochladen'} (oder Bild hierher ziehen)">${lg?'⟳':'⬆'}<input type="file" accept="image/*" hidden data-kmup="${esc(r.marke)}"></label>`:''}</div>`;}
@@ -938,12 +938,18 @@ function kdFltOpen(hd){const k=hd.dataset.kc,c=KDC.find(x=>x.k===k);if(kdPop&&kd
  el.addEventListener('change',e=>{const b=e.target.closest('[data-kv]');if(b){if(b.checked)cur.add(b.dataset.kv);else cur.delete(b.dataset.kv);}});
  el.addEventListener('click',e=>{if(e.target.closest('[data-kpall]')){vis().forEach(([v])=>cur.add(v));draw();}else if(e.target.closest('[data-kpnone]')){vis().forEach(([v])=>cur.delete(v));draw();}else if(e.target.closest('[data-kpok]'))ok();});}
 /* 1.10.5: Kunde nach dem Kauf angeschrieben/angerufen? */
+/* 1.10.6: alte Spalte K aus dem Sheet (a = angeschrieben, x = nicht angeschrieben) einmalig in „Angeschrieben“ übernehmen – nur leere Felder, sonst nichts ändern */
+let KANG=null,kangBusy=false;async function kdAngMig(){if(kangBusy||!ME||!ME.adm)return;kangBusy=true;
+ try{const f=db.doc('meta/seed');if(!KANG){const d=await f.get();KANG=(d.exists&&d.data().kangY)||{};}let na=0,nx=0;
+  for(const y in KD){const it=KD[y]||{};if(KANG[y]||!Object.keys(it).length)continue;const u={};
+   for(const id in it){const r=it[id];if(!r||r.ang)continue;const k=String(r.k||'').trim().toLowerCase();const v=k==='a'?'mail':k==='x'?'no':'';if(!v)continue;u['items.'+id+'.ang']=v;u['items.'+id+'.angSrc']='sheet';KD[y][id]=Object.assign({},r,{ang:v,angSrc:'sheet'});if(v==='mail')na++;else nx++;}
+   if(Object.keys(u).length)await db.doc('meta/kd_'+y).update(u);KANG[y]=1;await f.set({kangY:{[y]:1}},{merge:true});}
+  if(na||nx){kdDirty=true;rk();toast('Aus alter Spalte K übernommen: '+na+'× angeschrieben, '+nx+'× nicht angeschrieben');}}catch(e){console.warn(e);}finally{kangBusy=false;}}
 function kdAngOpen(cell){const id=cell.dataset.kid,y=(cell.dataset.ky&&KD[cell.dataset.ky]&&KD[cell.dataset.ky][id])?cell.dataset.ky:Object.keys(KD).find(k=>KD[k]&&KD[k][id]),r=y&&KD[y][id];if(!r)return;if(kdPop&&kdPop.ang===id){kdPopClose();return;}
  const el=kdPopOpen(cell,`<div class="vstp"><div class="kph">Nachgefragt, ob alles passt?</div><div class="vstl">
   <button type="button" class="vstu${r.ang==='mail'?' on':''}" style="--uc:#34D399" data-av="mail"><span class="ang ok">${ANGI.mail}</span>per E-Mail angeschrieben</button>
-  <button type="button" class="vstu${r.ang==='tel'?' on':''}" style="--uc:#34D399" data-av="tel"><span class="ang ok">${ANGI.tel}</span>per Telefon nachgefragt</button>
   <button type="button" class="vstu${r.ang==='no'?' on':''}" style="--uc:#F87171" data-av="no"><span class="ang no">✕</span>nicht nachfragen</button></div>${r.ang?'<button type="button" class="vstx" data-av="">Leeren</button>':''}</div>`);kdPop.ang=id;
- el.addEventListener('click',e=>{const b=e.target.closest('[data-av]');if(!b)return;kdPopClose();const v=b.dataset.av;if((r.ang||'')===v)return;kdPut(y,Object.assign({},r,{ang:v,angVon:v?ME.id:'',angTs:v?stamp():''})).then(rk);toast(v?ANGL[v]:'Geleert');});}
+ el.addEventListener('click',e=>{const b=e.target.closest('[data-av]');if(!b)return;kdPopClose();const v=b.dataset.av;if((r.ang||'')===v)return;kdPut(y,Object.assign({},r,{ang:v,angVon:v?ME.id:'',angTs:v?stamp():'',angSrc:''})).then(rk);toast(v?ANGL[v]:'Geleert');});}
 function kdPickOpen(cell){const f=cell.dataset.kpick,y=cell.dataset.ky,id=cell.dataset.kid,r=KD[y]&&KD[y][id];if(!r)return;if(kdPop&&kdPop.t==='pick'&&kdPop.id===id&&kdPop.f===f){kdPopClose();return;}
  const save=v=>{kdPopClose();if(String(r[f]||'')===v)return;kdPut(y,Object.assign({},r,{[f]:v})).then(rk);toast('Gespeichert');};
  if(f==='dat'){const d=vkDate(r.dat);const el=kdPopOpen(cell,`<div class="kph">Datum</div><input type="date" class="kpd" value="${d?iso(new Date(d)):''}"><div class="kpa"><button type="button" class="btn" data-kpclr>Leeren</button><button type="button" class="btn" data-kptoday>Heute</button><button type="button" class="btn red" data-kpok>OK</button></div>`,{t:'pick',id,f});
