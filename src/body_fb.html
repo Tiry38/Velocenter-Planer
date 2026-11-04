@@ -6,7 +6,7 @@
   <button class="navbtn" data-v="bestell" style="--ac:#39F26B"><span class="tile"><svg viewBox="0 0 24 24"><path class="f" d="M3 8l9-5 9 5-9 5z"/><path d="M3 8l9-5 9 5v8l-9 5-9-5z"/><path d="M3 8l9 5 9-5M12 13v8M7.5 5.5l9 5"/></svg></span><span class="lbl">Bestellungen<small>Teile · Kunden</small></span><span class="n" id="nBest">–</span></button>
   <button class="navbtn" data-v="rekla" style="--ac:#FB923C"><span class="tile"><svg viewBox="0 0 24 24"><path class="f" d="M4 7l8-4 8 4v10l-8 4-8-4z"/><path d="M4 7l8-4 8 4v10l-8 4-8-4z"/><path d="M15 10.5h-5l1.8-1.8M10 10.5l1.8 1.8M10 14.5h4"/></svg></span><span class="lbl">Reklamationen<small>Lieferanten · Ersatz</small></span><span class="n" id="nRekla">–</span></button>
   <button class="navbtn" data-v="kunden" style="--ac:#B15CFF"><span class="tile"><svg viewBox="0 0 24 24"><circle class="f" cx="9" cy="8" r="3.5"/><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.6-3.6 3.3-5.5 6.5-5.5s5.9 1.9 6.5 5.5"/><path d="M16 4.6a3.4 3.4 0 0 1 0 6.8M18 14.6c2 .7 3.2 2.5 3.5 5.4"/></svg></span><span class="lbl">Kunden<small>seit 1995</small></span><span class="n" id="nKunden">–</span></button>
-  <button class="navbtn" data-v="ausw" style="--ac:#F5B83D" hidden><span class="tile"><svg viewBox="0 0 24 24"><path d="M3 21h18"/><rect class="f" x="5" y="12" width="3" height="7"/><rect x="5" y="12" width="3" height="7"/><rect x="10.5" y="7" width="3" height="12"/><rect x="16" y="3.5" width="3" height="15.5"/></svg></span><span class="lbl">Auswertung<small>Marken &amp; Jahre</small></span></button>
+  <button class="navbtn" data-v="ausw" style="--ac:#F5B83D" hidden><span class="tile"><svg viewBox="0 0 24 24"><path d="M3 21h18"/><rect x="5" y="12" width="3" height="7" style="fill:#3DDC84;stroke:#3DDC84"/><rect x="10.5" y="7" width="3" height="12" style="fill:#22D3EE;stroke:#22D3EE"/><rect x="16" y="3.5" width="3" height="15.5" style="fill:#FF3B5C;stroke:#FF3B5C"/></svg></span><span class="lbl">Auswertung<small>Marken &amp; Jahre</small></span></button>
   <div class="navsep"></div>
   <button class="navbtn" data-v="leasing" style="--ac:#C084FC"><span class="tile"><svg viewBox="0 0 24 24"><path class="f" d="M6 3h9l4 4v14H6z"/><path d="M6 3h9l4 4v14H6zM15 3v4h4"/><path d="M9 12h7M9 15.5h7M9 9h3"/></svg></span><span class="lbl">Leasing-Infos<small>Leasing · Versicherung</small></span></button>
   <button class="navbtn" data-v="lief" style="--ac:#22D3EE"><span class="tile"><svg viewBox="0 0 24 24"><rect class="f" x="2.5" y="6" width="11" height="9" rx="1.5"/><path d="M2.5 6h11v9h-11zM13.5 9.5h4l3.5 3.5v2h-7.5"/><circle cx="7" cy="17.5" r="2"/><circle cx="17" cy="17.5" r="2"/></svg></span><span class="lbl">Lieferanten<small>Kontakte · Logins</small></span></button>
@@ -86,7 +86,7 @@
 
   <!-- AUSWERTUNG (nur Admins) -->
   <section class="view" id="v-ausw">
-    <div class="autools"><div class="auseg"><button type="button" data-auspan="5">5 Jahre</button><button type="button" data-auspan="10">10 Jahre</button><button type="button" data-auspan="20">20 Jahre</button><button type="button" data-auspan="all">Alle seit 1995</button></div><div class="auseg"><button type="button" data-aum="n">Stück</button><button type="button" data-aum="e">Umsatz €</button></div></div>
+    <div class="autools" id="auTools"></div>
     <div id="auBody"></div>
   </section>
 

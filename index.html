@@ -1242,6 +1242,50 @@ body[data-v=ausw]{--ac:#F5B83D}
 #grid .e .tlk .oklg{position:absolute;top:2px;right:3px;width:24px}
 #grid .e .tlk .wp:has(.oklg) b{padding-right:26px}
 #grid .e .tlk.tlb .wp{box-shadow:inset 3px 0 0 #39F26B,inset 0 0 0 1px rgba(57,242,107,.25)}
+/* ===== Auswertung 1.10.29: Jahrgänge + Kachel-Details ===== */
+.autools{display:block!important;grid-column:1/-1}
+.autop{display:flex;flex-wrap:wrap;gap:10px 14px;align-items:center}
+.aurg{display:inline-flex;align-items:center;gap:6px;font:600 13px Outfit,sans-serif;color:#cbd5e1;padding:4px 10px;border-radius:12px;background:rgba(10,14,24,.75);border:1px solid rgba(245,184,61,.28)}
+.aurg select{font:700 13px Outfit,sans-serif;color:#fff;background:#141a2a;border:1px solid rgba(245,184,61,.4);border-radius:8px;padding:4px 6px;cursor:pointer}
+.ausel{font:500 13px Outfit,sans-serif;color:#94a3b8}.ausel b{color:#FFD93B;font-size:15px}
+.auyrs{display:flex;flex-wrap:wrap;gap:5px;margin-top:10px}
+.auyc{display:flex;flex-direction:column;align-items:center;min-width:52px;padding:5px 6px 4px;border-radius:10px;cursor:pointer;font:700 13px Outfit,sans-serif;color:#cbd5e1;background:rgba(15,20,34,.85);border:1px solid rgba(148,163,184,.18);transition:.15s}
+.auyc small{font:500 10.5px Outfit,sans-serif;color:#7c8aa0}
+.auyc:hover{border-color:rgba(245,184,61,.6);color:#fff}
+.auyc.on{color:#1a1204;background:linear-gradient(160deg,rgba(255,217,59,.85),rgba(245,158,11,.75));border-color:#FFD93B}
+.auyc.on small{color:#3a2a06}
+.auyc.solo{box-shadow:0 0 14px rgba(245,184,61,.6)}
+.auyc.nil{opacity:.45}
+.auyh{margin:6px 2px 4px}
+.aukpi{font:inherit;text-align:left;cursor:pointer;color:inherit;transition:transform .15s,border-color .15s,box-shadow .15s}
+.aukpi:hover{transform:translateY(-2px);border-color:rgba(245,184,61,.6)}
+.aukpi.on{border-color:#FFD93B;box-shadow:0 0 0 1px #FFD93B,0 0 22px rgba(245,184,61,.35)}
+.aukpi u{display:block;text-decoration:none;font:600 10.5px Outfit,sans-serif;color:#F5B83D;margin-top:5px;opacity:.75}
+.aukpi.on u,.aukpi:hover u{opacity:1}
+.aubc.auyb{cursor:pointer}
+.audet{border-color:rgba(245,184,61,.45);box-shadow:0 0 0 1px rgba(245,184,61,.25),0 14px 36px rgba(0,0,0,.45);animation:audin .25s ease}
+@keyframes audin{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
+.audet .auch{position:relative;padding-right:40px}
+.audx{position:absolute;right:0;top:-4px;width:32px;height:32px;border-radius:10px;border:1px solid rgba(245,184,61,.4);background:rgba(245,184,61,.12);color:#FFD93B;font-size:15px;cursor:pointer}
+.audx:hover{background:rgba(245,184,61,.3)}
+.ausec{margin-top:12px}.ausec h4{margin:0 0 8px;font:700 13.5px Outfit,sans-serif;color:#FFD93B;letter-spacing:.02em}
+.audg{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+@media (max-width:1100px){.audg{grid-template-columns:1fr}}
+.autbl{overflow:auto}
+.autbl.aumax{max-height:440px}
+.autbl table{width:100%;border-collapse:collapse;font:500 13px Outfit,sans-serif}
+.autbl th{position:sticky;top:0;background:#111726;text-align:left;font:600 11px Outfit,sans-serif;color:#8b98ad;text-transform:uppercase;letter-spacing:.04em;padding:6px 8px;border-bottom:1px solid rgba(148,163,184,.2)}
+.autbl td{padding:5px 8px;color:#e2e8f0;border-bottom:1px solid rgba(148,163,184,.08);white-space:nowrap}
+.autbl tr:hover td{background:rgba(245,184,61,.06)}
+.autbl td small{color:#94a3b8}
+.autbl .aubn img{height:18px;max-width:60px}
+.autbl .aubn em{font-size:13px}
+.auhb{display:block;width:110px;height:7px;border-radius:4px;background:rgba(71,85,105,.3);overflow:hidden}
+.auhb i{display:block;height:100%;border-radius:4px;background:#F5B83D;box-shadow:0 0 8px rgba(245,184,61,.4)}
+.aulgo .llg{height:20px;max-width:70px;object-fit:contain}
+.auln{font-style:normal;color:#f1f5f9}.auln small{color:#B15CFF;margin-left:4px}
+.aus1.on>span{color:#FFD93B;font-weight:800}.aus1.on .aus1b{box-shadow:0 0 0 2px #FFD93B,0 0 14px rgba(245,184,61,.5)}
+.auspk i.sel{outline:2px solid #FFD93B;opacity:1}
 
 [hidden]{display:none!important}
 #sTab td.b{font-weight:700}#sTab .pwm.ed{outline:none;padding:2px 6px;border-radius:6px;font-family:var(--mono)}#sTab td{vertical-align:top}
@@ -1256,7 +1300,7 @@ body[data-v=ausw]{--ac:#F5B83D}
   <button class="navbtn" data-v="bestell" style="--ac:#39F26B"><span class="tile"><svg viewBox="0 0 24 24"><path class="f" d="M3 8l9-5 9 5-9 5z"/><path d="M3 8l9-5 9 5v8l-9 5-9-5z"/><path d="M3 8l9 5 9-5M12 13v8M7.5 5.5l9 5"/></svg></span><span class="lbl">Bestellungen<small>Teile · Kunden</small></span><span class="n" id="nBest">–</span></button>
   <button class="navbtn" data-v="rekla" style="--ac:#FB923C"><span class="tile"><svg viewBox="0 0 24 24"><path class="f" d="M4 7l8-4 8 4v10l-8 4-8-4z"/><path d="M4 7l8-4 8 4v10l-8 4-8-4z"/><path d="M15 10.5h-5l1.8-1.8M10 10.5l1.8 1.8M10 14.5h4"/></svg></span><span class="lbl">Reklamationen<small>Lieferanten · Ersatz</small></span><span class="n" id="nRekla">–</span></button>
   <button class="navbtn" data-v="kunden" style="--ac:#B15CFF"><span class="tile"><svg viewBox="0 0 24 24"><circle class="f" cx="9" cy="8" r="3.5"/><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.6-3.6 3.3-5.5 6.5-5.5s5.9 1.9 6.5 5.5"/><path d="M16 4.6a3.4 3.4 0 0 1 0 6.8M18 14.6c2 .7 3.2 2.5 3.5 5.4"/></svg></span><span class="lbl">Kunden<small>seit 1995</small></span><span class="n" id="nKunden">–</span></button>
-  <button class="navbtn" data-v="ausw" style="--ac:#F5B83D" hidden><span class="tile"><svg viewBox="0 0 24 24"><path d="M3 21h18"/><rect class="f" x="5" y="12" width="3" height="7"/><rect x="5" y="12" width="3" height="7"/><rect x="10.5" y="7" width="3" height="12"/><rect x="16" y="3.5" width="3" height="15.5"/></svg></span><span class="lbl">Auswertung<small>Marken &amp; Jahre</small></span></button>
+  <button class="navbtn" data-v="ausw" style="--ac:#F5B83D" hidden><span class="tile"><svg viewBox="0 0 24 24"><path d="M3 21h18"/><rect x="5" y="12" width="3" height="7" style="fill:#3DDC84;stroke:#3DDC84"/><rect x="10.5" y="7" width="3" height="12" style="fill:#22D3EE;stroke:#22D3EE"/><rect x="16" y="3.5" width="3" height="15.5" style="fill:#FF3B5C;stroke:#FF3B5C"/></svg></span><span class="lbl">Auswertung<small>Marken &amp; Jahre</small></span></button>
   <div class="navsep"></div>
   <button class="navbtn" data-v="leasing" style="--ac:#C084FC"><span class="tile"><svg viewBox="0 0 24 24"><path class="f" d="M6 3h9l4 4v14H6z"/><path d="M6 3h9l4 4v14H6zM15 3v4h4"/><path d="M9 12h7M9 15.5h7M9 9h3"/></svg></span><span class="lbl">Leasing-Infos<small>Leasing · Versicherung</small></span></button>
   <button class="navbtn" data-v="lief" style="--ac:#22D3EE"><span class="tile"><svg viewBox="0 0 24 24"><rect class="f" x="2.5" y="6" width="11" height="9" rx="1.5"/><path d="M2.5 6h11v9h-11zM13.5 9.5h4l3.5 3.5v2h-7.5"/><circle cx="7" cy="17.5" r="2"/><circle cx="17" cy="17.5" r="2"/></svg></span><span class="lbl">Lieferanten<small>Kontakte · Logins</small></span></button>
@@ -1336,7 +1380,7 @@ body[data-v=ausw]{--ac:#F5B83D}
 
   <!-- AUSWERTUNG (nur Admins) -->
   <section class="view" id="v-ausw">
-    <div class="autools"><div class="auseg"><button type="button" data-auspan="5">5 Jahre</button><button type="button" data-auspan="10">10 Jahre</button><button type="button" data-auspan="20">20 Jahre</button><button type="button" data-auspan="all">Alle seit 1995</button></div><div class="auseg"><button type="button" data-aum="n">Stück</button><button type="button" data-aum="e">Umsatz €</button></div></div>
+    <div class="autools" id="auTools"></div>
     <div id="auBody"></div>
   </section>
 
@@ -1426,7 +1470,7 @@ body[data-v=ausw]{--ac:#F5B83D}
 <script>
 const FB_CONFIG={apiKey:"AIzaSyC_uZPvc5rJETwlS4JbfCoTkkE4ckjtp0M",authDomain:"velocenter-planer.firebaseapp.com",projectId:"velocenter-planer",storageBucket:"velocenter-planer.firebasestorage.app",messagingSenderId:"1018330488700",appId:"1:1018330488700:web:262a4d1660353e6fde8ef9"};
 /* ================= Velocenter Werkstatt-Cockpit – Oberfläche ================= */
-const CLIENT_VERSION='1.10.28';
+const CLIENT_VERSION='1.10.29';
 const USERS=[{id:'kevin',n:'Kevin',c:'#E2232D'},{id:'stefan',n:'Stefan',c:'#F59E0B'},{id:'martina',n:'Martina',c:'#EC4899'},{id:'sascha',n:'Sascha',c:'#22D3EE'},{id:'rene',n:'René',c:'#34D399'}];
 const U=id=>USERS.find(u=>u.id===id)||{n:'',c:'#64748B',id:''};
 const $=id=>document.getElementById(id);
@@ -3494,11 +3538,11 @@ async function importXlsx(file){await loadXLSX();const wb=XLSX.read(await file.a
  await db.doc('meta/import').set({am:ts,von:ME.id,tresor:true});try{await db.doc('meta/rollover').delete();}catch(_){}await rollover();LOGINS=Object.entries(logins).map(([id,v])=>({id,login:v.login,pass:v.pass}));if(grid){PWGRID=grid;showVault();}
  return cP+' Planer-Einträge, '+cV+' Räder, '+cT+' Trinkgeld, '+cS+' Lieferanten'+(grid?', Passwortliste':'');}
 
-/* ================= 📊 AUSWERTUNG (1.10.27, nur Admins) =================
+/* ================= 📊 AUSWERTUNG (1.10.27/1.10.29, nur Admins) =================
    Liest nur die Verkaufshistorie aus dem Reiter Kunden (KD / kdAll), schreibt nichts.
-   Zeitraum + Messgröße (Stück / Umsatz) je Gerät in localStorage vc_au. */
-let AU=(()=>{try{return Object.assign({span:'10',m:'n',b:'',all:false},JSON.parse(localStorage.getItem('vc_au')||'{}'));}catch(_){return {span:'10',m:'n',b:'',all:false};}})();
-const auSave=()=>{try{localStorage.setItem('vc_au',JSON.stringify(AU));}catch(_){}};
+   Zeitraum (von/bis, Standard alle Jahre), Messgröße, offene Kachel-Details je Gerät in localStorage vc_au2. */
+let AU=(()=>{const d={f:null,t:null,m:'n',b:'',all:false,k:''};try{return Object.assign(d,JSON.parse(localStorage.getItem('vc_au2')||'{}'));}catch(_){return d;}})();
+const auSave=()=>{try{localStorage.setItem('vc_au2',JSON.stringify(AU));}catch(_){}};
 const AUCOL=['#FF3B5C','#FF8A1F','#FFD93B','#3DDC84','#22D3EE','#4F7BFF','#B15CFF','#FF4FD8'];
 const auP=v=>{let s=String(v==null?'':v).replace(/[€\s]/g,'').replace(/,-+$/,'');if(!s)return NaN;
  if(/^\d{1,3}(\.\d{3})+(,\d+)?$/.test(s))s=s.replace(/\./g,'').replace(',','.');else if(/^\d+(,\d+)?$/.test(s))s=s.replace(',','.');else if(/^\d{1,3}(,\d{3})+(\.\d+)?$/.test(s))s=s.replace(/,/g,'');else if(!/^\d+(\.\d+)?$/.test(s))return NaN;
@@ -3507,85 +3551,147 @@ const auN=n=>Math.round(n).toLocaleString('de-DE');
 const auE=n=>n>=1e6?(n/1e6).toLocaleString('de-DE',{maximumFractionDigits:2})+' Mio. €':Math.round(n).toLocaleString('de-DE')+' €';
 const auEk=n=>n>=1e6?(n/1e6).toLocaleString('de-DE',{maximumFractionDigits:1})+' Mio':n>=1e4?Math.round(n/1e3).toLocaleString('de-DE')+' T':auN(n);
 const auPct=(a,b)=>b>0?(a-b)/b*100:null;
+const auF1=n=>n.toLocaleString('de-DE',{maximumFractionDigits:1});
 const auDl=(p,suf)=>p==null||!isFinite(p)?'<span class="aud z">–</span>':`<span class="aud ${p>0.5?'up':p<-0.5?'dn':'z'}">${p>0.5?'▲':p<-0.5?'▼':'■'} ${Math.abs(p).toLocaleString('de-DE',{maximumFractionDigits:p<10&&p>-10?1:0})}${suf||' %'}</span>`;
-const auLt=v=>{const s=String(v||'').trim();if(!s)return '';const k=s.toUpperCase().replace(/[^A-Z]/g,'');if(KFIN[k])return 'fin';return 'leas';};
+const auLc=v=>{const s=String(v||'').trim();if(!s)return '';if(/\d/.test(s))return '#';return kdKey(s)||'?';};
+const auLt=c=>!c?'':KFIN[c]?'fin':'leas';
+const auLn=k=>{if(k==='#')return 'Datum (altes Sheet, Anbieter unbekannt)';const x=(L||[]).find(l=>kdKey(l.k)===k||l.id===k);return x?x.n:KFIN[k]?KFIN[k].n:FN[k]||k;};
+const AUMN=['Jan','Feb','Mär','Apr','Mai','Jun','Jul','Aug','Sep','Okt','Nov','Dez'];
 let auMemo=null;
 function auData(){const all=kdAll(),lg=BUSER.logos||{};if(auMemo&&auMemo.src===all&&auMemo.lg===lg&&auMemo.bl===(BUSER.list||[]).length)return auMemo;
  const bc=new Map(),Y={},B={};let noDat=0,noBr=0;const now=new Date(),cy=now.getFullYear(),tmd=(now.getMonth()+1)*100+now.getDate();
  for(const r of all){if(!r._d){noDat++;continue;}const d=new Date(r._d),y=d.getFullYear();if(y<1990||y>cy+1)continue;
   const ky=String(r.marke||'').trim()+'|'+String(r.modell||'').trim();let b=bc.get(ky);
-  if(b===undefined){b=null;if(r.marke||r.modell){const x=brandOfB({marke:r.marke,modell:r.modell});if(x&&x.n)b={k:x.k,n:x.n};}if(!b&&String(r.marke||'').trim())b={k:'M'+String(r.marke).trim().toLowerCase(),n:String(r.marke).trim()};bc.set(ky,b);}
-  const p=auP(r.preis),lt=auLt(r.leas),m=d.getMonth(),ytd=(m+1)*100+d.getDate()<=tmd;
-  const o=Y[y]||(Y[y]={n:0,e:0,pn:0,leas:0,fin:0,mo:Array(12).fill(0),yn:0,ye:0,yl:0,b:{}});o.n++;if(p){o.e+=p;o.pn++;}if(lt==='leas')o.leas++;else if(lt==='fin')o.fin++;o.mo[m]++;if(ytd){o.yn++;if(p)o.ye+=p;if(lt==='leas')o.yl++;}
+  if(b===undefined){b=null;if(r.marke||r.modell){const x=brandOfB({marke:r.marke,modell:r.modell});if(x&&x.n)b={k:x.k,n:x.n,mo:bStrip(r.modell,x).trim()};}if(!b&&String(r.marke||'').trim())b={k:'M'+String(r.marke).trim().toLowerCase(),n:String(r.marke).trim(),mo:String(r.modell||'').trim()};bc.set(ky,b);}
+  const p=auP(r.preis),lc=auLc(r.leas),lt=auLt(lc),m=d.getMonth(),ytd=(m+1)*100+d.getDate()<=tmd;
+  const o=Y[y]||(Y[y]={n:0,e:0,pn:0,leas:0,fin:0,mo:Array(12).fill(0),me:Array(12).fill(0),ymo:Array(12).fill(0),yn:0,ye:0,yl:0,b:{},r:[]});o.n++;if(p){o.e+=p;o.pn++;o.me[m]+=p;}if(lt==='leas')o.leas++;else if(lt==='fin')o.fin++;o.mo[m]++;if(ytd){o.yn++;if(p)o.ye+=p;if(lt)o.yl++;}
+  o.r.push({m,d:r._d,p,lc,b:b?b.k:'',mo:b?b.mo:String(r.modell||'').trim()});
   if(!b){noBr++;continue;}const ob=o.b[b.k]||(o.b[b.k]={n:0,e:0,yn:0,ye:0,pn:0,leas:0});ob.n++;if(p){ob.e+=p;ob.pn++;}if(ytd){ob.yn++;if(p)ob.ye+=p;}if(lt)ob.leas++;
   if(!B[b.k])B[b.k]={k:b.k,n:b.n,lg:lg[b.k]||''};}
  const ys=Object.keys(Y).map(Number).sort((a,b)=>a-b);
  return auMemo={src:all,lg,bl:(BUSER.list||[]).length,Y,B,ys,cy,noDat,noBr,tot:all.length};}
-function auBars(cols,o){/* cols:[{l,v,t,tick,cls,sub,c}] */const mx=Math.max(1,...cols.map(c=>Math.max(c.v,c.tick||0)));
+function auBars(cols,o){const mx=Math.max(1,...cols.map(c=>Math.max(c.v,c.tick||0)));
  return `<div class="aubars${o&&o.sm?' sm':''}" style="--nc:${cols.length}">`+cols.map(c=>`<div class="aubc${c.cls?' '+c.cls:''}" data-tip="${esc(c.t||'')}"><span class="aubv">${c.vl!=null?c.vl:''}</span><div class="aubt"><i style="height:${(c.v/mx*100).toFixed(2)}%${c.c?';--bc:'+c.c:''}"></i>${c.tick?`<s style="bottom:${(c.tick/mx*100).toFixed(2)}%"></s>`:''}</div><span class="aubl">${c.l}</span>${c.sub!=null?`<span class="aubs">${c.sub}</span>`:''}</div>`).join('')+'</div>';}
+const auTbl=(hd,rows,cls)=>`<div class="autbl${cls?' '+cls:''}"><table><thead><tr>${hd.map(h=>`<th>${h}</th>`).join('')}</tr></thead><tbody>${rows.length?rows.map(r=>`<tr>${r.map(c=>`<td>${c}</td>`).join('')}</tr>`).join(''):`<tr><td colspan="${hd.length}" class="auhint">Keine Daten</td></tr>`}</tbody></table></div>`;
+const auHb=(v,mx,c)=>`<span class="auhb"><i style="width:${Math.min(100,v/Math.max(1e-9,mx)*100).toFixed(1)}%${c?';background:'+c:''}"></i></span>`;
 function rau(){const host=$('auBody');if(!host||!ME||!ME.adm)return;const D=auData(),cy=D.cy;
- if(!D.ys.length){host.innerHTML='<div class="auempty">Noch keine Verkaufsdaten. Die Auswertung liest den Reiter <b>Kunden</b> – dort zuerst „📥 Kunden aus Sheet übernehmen“.</div>';return;}
- const y0=AU.span==='all'?D.ys[0]:Math.max(D.ys[0],cy-(+AU.span)+1),span=[];for(let y=y0;y<=Math.max(cy,D.ys[D.ys.length-1]);y++)span.push(y);
- const g=y=>D.Y[y]||{n:0,e:0,pn:0,leas:0,fin:0,mo:Array(12).fill(0),yn:0,ye:0,yl:0,b:{}};const eur=AU.m==='e',val=(o)=>eur?o.e:o.n,vt=v=>eur?auE(v):auN(v)+' Räder',vl=v=>eur?auEk(v):auN(v);
- const C=g(cy),P=g(cy-1),P2=g(cy-2);
- /* Marken im Zeitraum */
+ if(!D.ys.length){$('auTools').innerHTML='';host.innerHTML='<div class="auempty">Noch keine Verkaufsdaten. Die Auswertung liest den Reiter <b>Kunden</b> – dort zuerst „📥 Kunden aus Sheet übernehmen“.</div>';return;}
+ const Ymin=D.ys[0],Ymax=Math.max(cy,D.ys[D.ys.length-1]);
+ let lo=AU.f==null?Ymin:Math.max(Ymin,Math.min(Ymax,+AU.f)),hi=AU.t==null?Ymax:Math.max(Ymin,Math.min(Ymax,+AU.t));if(lo>hi)[lo,hi]=[hi,lo];
+ const span=[];for(let y=lo;y<=hi;y++)span.push(y);const one=span.length===1,isAll=lo===Ymin&&hi===Ymax,cs=[];for(let y=one?Ymin:lo;y<=(one?Ymax:hi);y++)cs.push(y);const hl=y=>one?y===F:y===cy;
+ const g=y=>D.Y[y]||{n:0,e:0,pn:0,leas:0,fin:0,mo:Array(12).fill(0),me:Array(12).fill(0),yn:0,ye:0,yl:0,b:{},r:[]};
+ const eur=AU.m==='e',val=o=>eur?o.e:o.n,vt=v=>eur?auE(v):auN(v)+' Räder',vl=v=>eur?auEk(v):auN(v);
+ const F=hi,isCur=F===cy,Fo=g(F),Po=g(F-1),P2=g(F-2),td=new Date(),tdS=td.getDate()+'.'+(td.getMonth()+1)+'.';
+ const cmpN=isCur?Po.yn:Po.n,cmpE=isCur?Po.ye:Po.e,vsTxt=isCur?`${F-1} bis ${tdS}`:String(F-1);
+ /* ---- Werkzeugleiste: Jahrgänge ---- */
+ const rng=n=>{const f=Math.max(Ymin,Ymax-n+1);return lo===f&&hi===Ymax;};
+ const yOpt=sel=>{let s='';for(let y=Ymax;y>=Ymin;y--)s+=`<option value="${y}"${y===sel?' selected':''}>${y}</option>`;return s;};
+ let yc='';for(let y=Ymax;y>=Ymin;y--){const n=g(y).n;yc+=`<button type="button" class="auyc${y>=lo&&y<=hi?' on':''}${y===lo&&y===hi?' solo':''}${!n?' nil':''}" data-auy="${y}" title="${y}: ${auN(n)} Räder\nKlick = nur ${y} · Umschalt-Klick = Zeitraum bis ${y}">${y}<small>${n?auN(n):'–'}</small></button>`;}
+ $('auTools').innerHTML=`<div class="autop"><div class="auseg"><button type="button" data-aurng="all" class="${isAll?'on':''}">Alle Jahre</button><button type="button" data-aurng="10" class="${!isAll&&rng(10)?'on':''}">Letzte 10</button><button type="button" data-aurng="5" class="${!isAll&&rng(5)?'on':''}">Letzte 5</button><button type="button" data-aurng="1" class="${one&&hi===Ymax?'on':''}">Nur ${Ymax}</button></div>
+  <label class="aurg">von <select id="auF">${yOpt(lo)}</select> bis <select id="auT">${yOpt(hi)}</select></label>
+  <div class="auseg"><button type="button" data-aum="n" class="${!eur?'on':''}">Stück</button><button type="button" data-aum="e" class="${eur?'on':''}">Umsatz €</button></div>
+  <span class="ausel">Auswahl: <b>${one?lo:lo+' – '+hi}</b>${one?'':` · ${span.length} Jahre`}</span></div>
+  <div class="auyrs">${yc}</div><div class="auhint auyh">Jahr anklicken = nur dieses Jahr · <b>Umschalt</b> + Klick = Zeitraum bis dahin · oder oben „von – bis“ wählen. Kacheln anklicken = alle Details.</div>`;
+ /* ---- Marken im Zeitraum ---- */
  const bt={};span.forEach(y=>{const b=g(y).b;for(const k in b){const t=bt[k]||(bt[k]={n:0,e:0});t.n+=b[k].n;t.e+=b[k].e;}});
- const spanTot=span.reduce((s,y)=>s+val(g(y)),0),spanN=span.reduce((s,y)=>s+g(y).n,0),spanP=span.reduce((s,y)=>s+g(y).pn,0);
- const bl=Object.keys(bt).map(k=>Object.assign({},D.B[k],{t:eur?bt[k].e:bt[k].n})).filter(x=>x.t>0).sort((a,b)=>b.t-a.t||a.n.localeCompare(b.n,'de'));
+ const spanTot=span.reduce((s,y)=>s+val(g(y)),0),spanN=span.reduce((s,y)=>s+g(y).n,0),spanE=span.reduce((s,y)=>s+g(y).e,0),spanP=span.reduce((s,y)=>s+g(y).pn,0);
+ const bl=Object.keys(bt).map(k=>Object.assign({},D.B[k],{t:eur?bt[k].e:bt[k].n,cn:bt[k].n,ce:bt[k].e})).filter(x=>x.t>0).sort((a,b)=>b.t-a.t||a.n.localeCompare(b.n,'de'));
  const colOf={};bl.slice(0,8).forEach((x,i)=>colOf[x.k]=AUCOL[i]);
  if(!AU.b||!D.B[AU.b]||!bt[AU.b])AU.b=bl[0]?bl[0].k:'';
  const best=span.reduce((a,y)=>val(g(y))>val(g(a))?y:a,span[0]);
- const lq=o=>o.n?(o.leas+o.fin)/o.n*100:null;
- const avg=o=>o.pn?o.e/o.pn:null;
+ const lq=o=>o.n?(o.leas+o.fin)/o.n*100:null,avg=o=>o.pn?o.e/o.pn:null;
  const logo=x=>x&&x.lg?`<img src="${x.lg}" alt="">`:'';
- const kpi=(t,v,s,ex)=>`<div class="aukpi"><small>${t}</small><b>${v}</b><span>${s||''}</span>${ex?`<em>${ex}</em>`:''}</div>`;
- const td=new Date(),tdS=td.getDate()+'.'+(td.getMonth()+1)+'.';
+ const kpi=(k,t,v,s,ex)=>`<button type="button" class="aukpi${AU.k===k?' on':''}" data-auk="${k}"><small>${t}</small><b>${v}</b><span>${s||''}</span>${ex?`<em>${ex}</em>`:''}<u>${AU.k===k?'▲ Details zu':'▼ Details'}</u></button>`;
+ const ZR=one?`${F-1} komplett`:`Zeitraum ${lo}–${hi}`;
  let h=`<div class="aukpis">`+
-  kpi(`Räder ${cy} bis heute`,auN(C.yn),auDl(auPct(C.yn,P.yn))+` <i>vs. ${cy-1} bis ${tdS}: ${auN(P.yn)}</i>`)+
-  kpi(`Umsatz ${cy} bis heute`,C.ye?auE(C.ye):'–',auDl(auPct(C.ye,P.ye))+` <i>vs. ${cy-1}: ${P.ye?auE(P.ye):'–'}</i>`,C.yn&&C.ye?`Preis bei ${Math.round(C.pn/Math.max(1,C.n)*100)} % eingetragen`:'')+
-  kpi(`Ø Preis ${cy}`,avg(C)?auE(avg(C)):'–',auDl(avg(C)&&avg(P)?auPct(avg(C),avg(P)):null)+` <i>${cy-1}: ${avg(P)?auE(avg(P)):'–'}</i>`)+
-  kpi(`${cy-1} komplett`,auN(P.n)+' Räder',auDl(auPct(P.n,P2.n))+` <i>vs. ${cy-2}: ${auN(P2.n)}</i>`)+
-  kpi(`Bestes Jahr (${span[0]}–${span[span.length-1]})`,String(best),vt(val(g(best))))+
-  kpi(`Leasing/Finanz. ${cy}`,lq(C)!=null?Math.round(lq(C))+' %':'–',auDl(lq(C)!=null&&lq(P)!=null?lq(C)-lq(P):null,' Pkt.')+` <i>${cy-1}: ${lq(P)!=null?Math.round(lq(P))+' %':'–'}</i>`)+
-  kpi(`Top-Marke (${span[0]}–${span[span.length-1]})`,bl[0]?`${logo(bl[0])}<span class="aukn">${esc(bl[0].n)}</span>`:'–',bl[0]?Math.round(bl[0].t/Math.max(1,spanTot)*100)+' % Anteil · '+vt(bl[0].t):'')+
-  `</div>`;
- /* 1. Verkäufe je Jahr */
- h+=`<div class="aucard auwide"><div class="auch"><h3>📈 ${eur?'Umsatz':'Verkaufte Räder'} je Jahr</h3><span class="auhint">Strich im Balken = Stand bis ${tdS} des jeweiligen Jahres (fairer Vergleich mit ${cy})</span></div>`+
-  auBars(span.map((y,i)=>{const o=g(y),pv=g(y-1),v=val(o),pp=auPct(v,val(pv));return {l:"'"+String(y).slice(2),v,vl:vl(v),tick:y<cy?(eur?o.ye:o.yn):0,cls:y===cy?'cur':y===best?'best':'',sub:i?auDl(pp):'',
-   t:`${y}${y===cy?' (bis heute)':''}\n${auN(o.n)} Räder${o.e?'\nUmsatz: '+auE(o.e)+(o.pn<o.n?' ('+o.pn+' mit Preis)':''):''}${avg(o)?'\nØ Preis: '+auE(avg(o)):''}${lq(o)!=null?'\nLeasing/Finanz.: '+Math.round(lq(o))+' %':''}${y<cy?'\nbis '+tdS+': '+(eur?auE(o.ye):auN(o.yn)):''}${pp!=null&&i?'\nzum Vorjahr: '+(pp>0?'+':'')+pp.toFixed(1).replace('.',',')+' %':''}`};}))+`</div>`;
+  kpi('rad',`Räder ${F}${isCur?' bis heute':''}`,auN(Fo.n),auDl(auPct(Fo.n,cmpN))+` <i>vs. ${vsTxt}: ${auN(cmpN)}</i>`)+
+  kpi('ums',`Umsatz ${F}${isCur?' bis heute':''}`,Fo.e?auE(Fo.e):'–',auDl(auPct(Fo.e,cmpE))+` <i>vs. ${vsTxt}: ${cmpE?auE(cmpE):'–'}</i>`,Fo.n?`Preis bei ${Math.round(Fo.pn/Fo.n*100)} % eingetragen`:'')+
+  kpi('avg',`Ø Preis ${F}`,avg(Fo)?auE(avg(Fo)):'–',auDl(avg(Fo)&&avg(Po)?auPct(avg(Fo),avg(Po)):null)+` <i>${F-1}: ${avg(Po)?auE(avg(Po)):'–'}</i>`)+
+  (one?kpi('zr',ZR,auN(Po.n)+' Räder',auDl(auPct(Po.n,P2.n))+` <i>vs. ${F-2}: ${auN(P2.n)}</i>`):kpi('zr',ZR,auN(spanN)+' Räder',`${spanE?auE(spanE):'–'} <i>· Ø ${auN(spanN/span.length)} Räder/Jahr</i>`))+
+  kpi('best',`Bestes Jahr (${lo}–${hi})`,String(best),vt(val(g(best))))+
+  kpi('leas',`Leasing/Finanz. ${F}`,lq(Fo)!=null?Math.round(lq(Fo))+' %':'–',auDl(lq(Fo)!=null&&lq(Po)!=null?lq(Fo)-lq(Po):null,' Pkt.')+` <i>${F-1}: ${lq(Po)!=null?Math.round(lq(Po))+' %':'–'}</i>`)+
+  kpi('top',`Top-Marke (${lo}–${hi})`,bl[0]?`${logo(bl[0])}<span class="aukn">${esc(bl[0].n)}</span>`:'–',bl[0]?Math.round(bl[0].t/Math.max(1,spanTot)*100)+' % Anteil · '+vt(bl[0].t):'')+`</div>`;
+ if(AU.k)h+=auDetail(AU.k,{D,g,F,isCur,span,lo,hi,bl,colOf,eur,vt,vl,val,avg,lq,logo,tdS,best,spanTot});
+ /* 1. je Jahr bzw. je Monat (ein Jahr) */
+ if(one){const mx=AUMN.map((n,m)=>({l:n,v:eur?Fo.me[m]:Fo.mo[m]}));h+=`<div class="aucard auwide"><div class="auch"><h3>📈 ${F}: ${eur?'Umsatz':'Räder'} je Monat</h3><span class="auhint">Strich = ${F-1} im selben Monat</span></div>`+
+  auBars(AUMN.map((n,m)=>{const v=eur?Fo.me[m]:Fo.mo[m],pv=eur?Po.me[m]:Po.mo[m];return {l:n,v,vl:v?vl(v):'',tick:pv,sub:auDl(auPct(v,pv)),c:'#F5B83D',t:`${n} ${F}: ${vt(v)}\n${n} ${F-1}: ${vt(pv)}`};}))+`</div>`;}
+ else h+=`<div class="aucard auwide"><div class="auch"><h3>📈 ${eur?'Umsatz':'Verkaufte Räder'} je Jahr</h3><span class="auhint">Strich im Balken = Stand bis ${tdS} des jeweiligen Jahres (fairer Vergleich mit ${cy}) · Balken anklicken = nur dieses Jahr</span></div>`+
+  auBars(span.map((y,i)=>{const o=g(y),pv=g(y-1),v=val(o),pp=auPct(v,val(pv));return {l:"'"+String(y).slice(2),v,vl:vl(v),tick:y<cy?(eur?o.ye:o.yn):0,cls:(y===cy?'cur':y===best?'best':'')+' auyb" data-auy="'+y,sub:i?auDl(pp):'',
+   t:`${y}${y===cy?' (bis heute)':''}\n${auN(o.n)} Räder${o.e?'\nUmsatz: '+auE(o.e)+(o.pn<o.n?' ('+o.pn+' mit Preis)':''):''}${avg(o)?'\nØ Preis: '+auE(avg(o)):''}${lq(o)!=null?'\nLeasing/Finanz.: '+Math.round(lq(o))+' %':''}${y<cy?'\nbis '+tdS+': '+(eur?auE(o.ye):auN(o.yn)):''}${pp!=null&&i?'\nzum Vorjahr: '+(pp>0?'+':'')+pp.toFixed(1).replace('.',',')+' %':''}\nKlick = nur ${y}`};}))+`</div>`;
  /* 2. Marken-Entwicklung */
- const showB=AU.all?bl:bl.slice(0,15);
- h+=`<div class="aucard auwide"><div class="auch"><h3>🏷 Marken-Entwicklung</h3><span class="auhint">${bl.length} Marken · Zeile anklicken = Detail-Diagramm · Trend = ${cy-1} zu ${cy-2} · „${cy} bis heute“ zum gleichen Stand ${cy-1}</span></div>
- <div class="aubtab"><div class="aubr auhd"><span>Marke</span><span>Verlauf ${span[0]}–${span[span.length-1]}</span><span>Gesamt</span><span>Anteil</span><span>Trend ${cy-1}</span><span>${cy} bis heute</span></div>`+
-  showB.map(x=>{const vs=span.map(y=>{const b=g(y).b[x.k];return b?(eur?b.e:b.n):0;}),mx=Math.max(1,...vs),bb=k=>g(k).b[x.k]||{n:0,e:0,yn:0,ye:0},a=bb(cy-1),b2=bb(cy-2),c=bb(cy);
-   return `<div class="aubr${AU.b===x.k?' on':''}" data-aub="${esc(x.k)}"><span class="aubn">${logo(x)}<em>${esc(x.n)}</em></span><span class="auspk">${vs.map((v,i)=>`<i style="height:${Math.max(v?6:0,v/mx*100).toFixed(1)}%${colOf[x.k]?';--bc:'+colOf[x.k]:''}" data-tip="${esc(x.n+' '+span[i]+'\n'+vt(v))}"></i>`).join('')}</span><b>${vl(x.t)}</b><span class="aush"><i style="width:${Math.min(100,x.t/Math.max(1,bl[0].t)*100).toFixed(1)}%"></i>${(x.t/Math.max(1,spanTot)*100).toLocaleString('de-DE',{maximumFractionDigits:1})} %</span><span>${auDl(auPct(eur?a.e:a.n,eur?b2.e:b2.n))}<small>${vl(eur?a.e:a.n)}</small></span><span>${auDl(auPct(eur?c.ye:c.yn,eur?a.ye:a.yn))}<small>${vl(eur?c.ye:c.yn)}</small></span></div>`;}).join('')+
-  `</div>${bl.length>15?`<button class="btn auall" type="button" data-auall>${AU.all?'Nur Top 15 zeigen':'Alle '+bl.length+' Marken zeigen'}</button>`:''}${D.noBr?`<p class="auhint">${auN(D.noBr)} Räder ohne erkennbare Marke sind nicht in der Marken-Liste (in den Jahressummen schon).</p>`:''}</div>`;
+ const showB=AU.all?bl:bl.slice(0,15),bb=(y,k)=>g(y).b[k]||{n:0,e:0,yn:0,ye:0};
+ h+=`<div class="aucard auwide"><div class="auch"><h3>🏷 Marken-Entwicklung ${one?lo:lo+'–'+hi}</h3><span class="auhint">${bl.length} Marken · Zeile anklicken = Detail-Diagramm · „${F}${isCur?' bis heute':''}“ im Vergleich zu ${vsTxt}</span></div>
+ <div class="aubtab"><div class="aubr auhd"><span>Marke</span><span>Verlauf ${cs[0]}–${cs[cs.length-1]}</span><span>Gesamt</span><span>Anteil</span><span>${F-1}</span><span>${F}${isCur?' bis heute':''}</span></div>`+
+  showB.map(x=>{const vs=cs.map(y=>{const b=g(y).b[x.k];return b?(eur?b.e:b.n):0;}),mx=Math.max(1,...vs),a=bb(F-1,x.k),b2=bb(F-2,x.k),c=bb(F,x.k);
+   const cv=eur?c.e:c.n,pv=isCur?(eur?a.ye:a.yn):(eur?a.e:a.n);
+   return `<div class="aubr${AU.b===x.k?' on':''}" data-aub="${esc(x.k)}"><span class="aubn">${logo(x)}<em>${esc(x.n)}</em></span><span class="auspk">${vs.map((v,i)=>`<i style="height:${Math.max(v?6:0,v/mx*100).toFixed(1)}%${colOf[x.k]?';--bc:'+colOf[x.k]:''}" ${one&&cs[i]===F?' class="sel"':''} data-tip="${esc(x.n+' '+cs[i]+'\n'+vt(v))}"></i>`).join('')}</span><b>${vl(x.t)}</b><span class="aush"><i style="width:${Math.min(100,x.t/Math.max(1,bl[0].t)*100).toFixed(1)}%"></i>${auF1(x.t/Math.max(1,spanTot)*100)} %</span><span>${auDl(auPct(eur?a.e:a.n,eur?b2.e:b2.n))}<small>${vl(eur?a.e:a.n)}</small></span><span>${auDl(auPct(cv,pv))}<small>${vl(cv)}</small></span></div>`;}).join('')+
+  `</div>${bl.length>15?`<button class="btn auall" type="button" data-auall>${AU.all?'Nur Top 15 zeigen':'Alle '+bl.length+' Marken zeigen'}</button>`:''}${D.noBr?`<p class="auhint">${auN(D.noBr)} Räder (alle Jahre) ohne erkennbare Marke sind nicht in der Marken-Liste (in den Jahressummen schon).</p>`:''}</div>`;
  /* 3. Detail einer Marke */
  const X=D.B[AU.b];if(X){const tot=y=>val(g(y));h+=`<div class="aucard"><div class="auch"><h3>${logo(X)} ${esc(X.n)} – je Jahr</h3><span class="auhint">Zahl unter dem Jahr = Marktanteil im Laden</span></div>`+
-  auBars(span.map(y=>{const b=g(y).b[X.k]||{n:0,e:0,pn:0,leas:0},v=eur?b.e:b.n,sh=tot(y)?v/tot(y)*100:0;return {l:"'"+String(y).slice(2),v,vl:v?vl(v):'',c:colOf[X.k]||'#B15CFF',cls:y===cy?'cur':'',sub:`<span class="aush2">${sh?sh.toLocaleString('de-DE',{maximumFractionDigits:0})+' %':''}</span>`,
+  auBars(cs.map(y=>{const b=g(y).b[X.k]||{n:0,e:0,pn:0,leas:0},v=eur?b.e:b.n,sh=tot(y)?v/tot(y)*100:0;return {l:"'"+String(y).slice(2),v,vl:v?vl(v):'',c:colOf[X.k]||'#B15CFF',cls:hl(y)?'cur':'',sub:`<span class="aush2">${sh?Math.round(sh)+' %':''}</span>`,
    t:`${X.n} ${y}${y===cy?' (bis heute)':''}\n${auN(b.n)} Räder${b.e?'\nUmsatz: '+auE(b.e):''}${b.pn?'\nØ Preis: '+auE(b.e/b.pn):''}\nAnteil: ${sh.toFixed(1).replace('.',',')} %${b.n?'\nLeasing/Finanz.: '+Math.round(b.leas/b.n*100)+' %':''}`};}))+`</div>`;}
- /* 4. Marktanteile je Jahr (100 %) */
+ /* 4. Marktanteile */
  const top6=bl.slice(0,7);h+=`<div class="aucard"><div class="auch"><h3>🥧 Marktanteile je Jahr</h3><span class="auhint">Top ${top6.length} Marken + Sonstige · ${eur?'nach Umsatz':'nach Stück'}</span></div><div class="aulg">${top6.map(x=>`<span><i style="background:${colOf[x.k]}"></i>${esc(x.n)}</span>`).join('')}<span><i style="background:#475569"></i>Sonstige</span></div><div class="aush100">`+
-  span.slice().reverse().map(y=>{const o=g(y),T=val(o);if(!T)return `<div class="aus1"><span>${y}</span><div class="aus1b"></div><b>–</b></div>`;let rest=T;const seg=top6.map(x=>{const b=o.b[x.k];const v=b?(eur?b.e:b.n):0;rest-=v;return [x,v];});
-   return `<div class="aus1"><span>${y}</span><div class="aus1b">`+seg.filter(s=>s[1]>0).map(([x,v])=>`<i style="width:${(v/T*100).toFixed(2)}%;background:${colOf[x.k]}" data-tip="${esc(x.n+' '+y+'\n'+(v/T*100).toFixed(1).replace('.',',')+' % · '+vt(v))}">${v/T>=.09?Math.round(v/T*100)+'%':''}</i>`).join('')+(rest>0?`<i style="width:${(rest/T*100).toFixed(2)}%;background:#475569" data-tip="${esc('Sonstige '+y+'\n'+(rest/T*100).toFixed(1).replace('.',',')+' % · '+vt(rest))}">${rest/T>=.09?Math.round(rest/T*100)+'%':''}</i>`:'')+`</div><b>${vl(T)}</b></div>`;}).join('')+`</div></div>`;
+  cs.slice().reverse().map(y=>{const o=g(y),T=val(o);if(!T)return `<div class="aus1"><span>${y}</span><div class="aus1b"></div><b>–</b></div>`;let rest=T;const seg=top6.map(x=>{const b=o.b[x.k];const v=b?(eur?b.e:b.n):0;rest-=v;return [x,v];});
+   return `<div class="aus1${hl(y)&&one?' on':''}"><span>${y}</span><div class="aus1b">`+seg.filter(s=>s[1]>0).map(([x,v])=>`<i style="width:${(v/T*100).toFixed(2)}%;background:${colOf[x.k]}" data-tip="${esc(x.n+' '+y+'\n'+(v/T*100).toFixed(1).replace('.',',')+' % · '+vt(v))}">${v/T>=.09?Math.round(v/T*100)+'%':''}</i>`).join('')+(rest>0?`<i style="width:${(rest/T*100).toFixed(2)}%;background:#475569" data-tip="${esc('Sonstige '+y+'\n'+(rest/T*100).toFixed(1).replace('.',',')+' % · '+vt(rest))}">${rest/T>=.09?Math.round(rest/T*100)+'%':''}</i>`:'')+`</div><b>${vl(T)}</b></div>`;}).join('')+`</div></div>`;
  /* 5. Saison */
- const MN=['Jan','Feb','Mär','Apr','Mai','Jun','Jul','Aug','Sep','Okt','Nov','Dez'],full=span.filter(y=>y<cy&&g(y).n),av=MN.map((_,m)=>full.length?full.reduce((s,y)=>s+g(y).mo[m],0)/full.length:0),mxm=Math.max(1,...C.mo,...P.mo,...av);
- h+=`<div class="aucard"><div class="auch"><h3>📅 Saison – Räder je Monat</h3><span class="auhint"><i class="aulgd aulc"></i>${cy} <i class="aulgd aulp"></i>${cy-1} <i class="aulgd aula"></i>Ø ${full.length?full[0]+'–'+full[full.length-1]:''}</span></div><div class="aumo">`+
-  MN.map((n,m)=>`<div class="aumc" data-tip="${esc(n+'\n'+cy+': '+C.mo[m]+'\n'+(cy-1)+': '+P.mo[m]+'\nØ: '+av[m].toLocaleString('de-DE',{maximumFractionDigits:1}))}"><div class="aumt"><i class="aup" style="height:${(P.mo[m]/mxm*100).toFixed(1)}%"></i><i class="auc" style="height:${(C.mo[m]/mxm*100).toFixed(1)}%"></i><s style="bottom:${(av[m]/mxm*100).toFixed(1)}%"></s></div><span>${n}</span></div>`).join('')+`</div></div>`;
- /* 6. Leasing / Finanzierung / Kauf */
+ const full=span.filter(y=>y<cy&&y!==F&&g(y).n),av=AUMN.map((_,m)=>full.length?full.reduce((s,y)=>s+g(y).mo[m],0)/full.length:0),mxm=Math.max(1,...Fo.mo,...Po.mo,...av);
+ h+=`<div class="aucard"><div class="auch"><h3>📅 Saison – Räder je Monat</h3><span class="auhint"><i class="aulgd aulc"></i>${F} <i class="aulgd aulp"></i>${F-1}${full.length?` <i class="aulgd aula"></i>Ø ${full[0]===full[full.length-1]?full[0]:full[0]+'–'+full[full.length-1]}`:''}</span></div><div class="aumo">`+
+  AUMN.map((n,m)=>`<div class="aumc" data-tip="${esc(n+'\n'+F+': '+Fo.mo[m]+'\n'+(F-1)+': '+Po.mo[m]+(full.length?'\nØ: '+auF1(av[m]):''))}"><div class="aumt"><i class="aup" style="height:${(Po.mo[m]/mxm*100).toFixed(1)}%"></i><i class="auc" style="height:${(Fo.mo[m]/mxm*100).toFixed(1)}%"></i>${full.length?`<s style="bottom:${(av[m]/mxm*100).toFixed(1)}%"></s>`:''}</div><span>${n}</span></div>`).join('')+`</div></div>`;
+ /* 6. Leasing */
  h+=`<div class="aucard"><div class="auch"><h3>💼 Leasing · Finanzierung · Kauf</h3><span class="auhint"><i class="aulgd aull"></i>Leasing <i class="aulgd aulf"></i>Finanzierung (TB/CP) <i class="aulgd aulk"></i>Kauf/ohne Eintrag</span></div><div class="aush100">`+
-  span.slice().reverse().map(y=>{const o=g(y);if(!o.n)return '';const k=o.n-o.leas-o.fin,pc=v=>(v/o.n*100);return `<div class="aus1"><span>${y}</span><div class="aus1b">${[['l',o.leas,'Leasing'],['f',o.fin,'Finanzierung'],['k',k,'Kauf/ohne Eintrag']].filter(x=>x[1]>0).map(([c,v,n])=>`<i class="au${c}" style="width:${pc(v).toFixed(2)}%" data-tip="${esc(n+' '+y+'\n'+v+' Räder · '+pc(v).toFixed(1).replace('.',',')+' %')}">${pc(v)>=9?Math.round(pc(v))+'%':''}</i>`).join('')}</div><b>${auN(o.n)}</b></div>`;}).join('')+`</div></div>`;
+  cs.slice().reverse().map(y=>{const o=g(y);if(!o.n)return '';const k=o.n-o.leas-o.fin,pc=v=>(v/o.n*100);return `<div class="aus1${hl(y)&&one?' on':''}"><span>${y}</span><div class="aus1b">${[['l',o.leas,'Leasing'],['f',o.fin,'Finanzierung'],['k',k,'Kauf/ohne Eintrag']].filter(x=>x[1]>0).map(([c,v,n])=>`<i class="au${c}" style="width:${pc(v).toFixed(2)}%" data-tip="${esc(n+' '+y+'\n'+v+' Räder · '+pc(v).toFixed(1).replace('.',',')+' %')}">${pc(v)>=9?Math.round(pc(v))+'%':''}</i>`).join('')}</div><b>${auN(o.n)}</b></div>`;}).join('')+`</div></div>`;
  /* 7. Ø Preis */
- const ap=span.filter(y=>avg(g(y)));if(ap.length)h+=`<div class="aucard"><div class="auch"><h3>💶 Ø Verkaufspreis je Jahr</h3><span class="auhint">nur Räder mit eingetragenem Preis</span></div>`+auBars(ap.map(y=>{const a=avg(g(y)),pa=avg(g(y-1));return {l:"'"+String(y).slice(2),v:a,vl:auEk(a),c:'#FFD93B',cls:y===cy?'cur':'',sub:auDl(pa?auPct(a,pa):null),t:`${y}\nØ ${auE(a)}\n${g(y).pn} Räder mit Preis`};}),{sm:1})+`</div>`;
+ const ap=cs.filter(y=>avg(g(y)));if(ap.length)h+=`<div class="aucard"><div class="auch"><h3>💶 Ø Verkaufspreis je Jahr</h3><span class="auhint">nur Räder mit eingetragenem Preis</span></div>`+auBars(ap.map(y=>{const a=avg(g(y)),pa=avg(g(y-1));return {l:"'"+String(y).slice(2),v:a,vl:auEk(a),c:'#FFD93B',cls:hl(y)?'cur':'',sub:auDl(pa?auPct(a,pa):null),t:`${y}\nØ ${auE(a)}\n${g(y).pn} Räder mit Preis`};}),{sm:1})+`</div>`;
  h+=`<p class="auhint aufoot">Quelle: Reiter <b>Kunden</b> (${auN(D.tot)} Einträge${D.noDat?', davon '+auN(D.noDat)+' ohne gültiges Datum – nicht mitgezählt':''}). Marke wie in der Kundenliste (Marke, sonst aus dem Modell erkannt). Leasing = Feld „Leasing“ gefüllt (TB/CP = Finanzierung).</p>`;
- host.innerHTML=h;
- document.querySelectorAll('#v-ausw [data-auspan]').forEach(b=>b.classList.toggle('on',b.dataset.auspan===AU.span));document.querySelectorAll('#v-ausw [data-aum]').forEach(b=>b.classList.toggle('on',b.dataset.aum===AU.m));}
-$('v-ausw').addEventListener('click',e=>{const s=e.target.closest('[data-auspan]'),m=e.target.closest('[data-aum]'),b=e.target.closest('[data-aub]');
- if(s){AU.span=s.dataset.auspan;}else if(m){AU.m=m.dataset.aum;}else if(b){AU.b=b.dataset.aub;}else if(e.target.closest('[data-auall]')){AU.all=!AU.all;}else return;auSave();rau();});
+ host.innerHTML=h;}
+/* Details unter den Kacheln */
+function auDetail(k,c){const {g,F,isCur,span,lo,hi,bl,colOf,eur,vt,vl,avg,lq,logo,tdS,best}=c,D=c.D,Fo=g(F),Po=g(F-1);const B=D.B;
+ const card=(t,sub,body)=>`<div class="aucard auwide audet"><div class="auch"><h3>${t}</h3><span class="auhint">${sub||''}</span><button type="button" class="audx" data-auk="${k}" title="Details schließen">✕</button></div>${body}</div>`;
+ const brTbl=(y,cmp,useE)=>{const o=g(y),p=g(cmp),T=useE?o.e:o.n,ks=Object.keys(o.b).sort((a,b)=>(useE?o.b[b].e-o.b[a].e:o.b[b].n-o.b[a].n));const mx=ks.length?(useE?o.b[ks[0]].e:o.b[ks[0]].n):1;
+  return auTbl(['#','Marke','Räder',useE?'Umsatz':'Anteil','',`zu ${cmp}`,'Ø Preis'],ks.map((x,i)=>{const b=o.b[x],pb=p.b[x]||{n:0,e:0,yn:0,ye:0},v=useE?b.e:b.n,pv=useE?(y===D.cy?pb.ye:pb.e):(y===D.cy?pb.yn:pb.n);
+   return [i+1,`<span class="aubn">${logo(B[x])}<em>${esc(B[x].n)}</em></span>`,auN(b.n),useE?auE(b.e):auF1(T?b.n/T*100:0)+' %',auHb(v,mx,colOf[x]),auDl(auPct(v,pv)),b.pn?auE(b.e/b.pn):'–'];}),'aumax');};
+ const moChart=(y,useE)=>{const o=g(y),p=g(y-1);return auBars(AUMN.map((n,m)=>{const v=useE?o.me[m]:o.mo[m],pv=useE?p.me[m]:p.mo[m];return {l:n,v,vl:v?(useE?auEk(v):auN(v)):'',tick:pv,c:useE?'#3DDC84':'#F5B83D',sub:auDl(auPct(v,pv)),t:`${n} ${y}: ${useE?auE(v):v+' Räder'}\n${n} ${y-1}: ${useE?auE(pv):pv+' Räder'}`};}),{sm:1});};
+ const models=(rows,max)=>{const m={};rows.forEach(r=>{if(!r.mo)return;const key=r.b+'|'+r.mo.toLowerCase().replace(/\s+/g,' ');const x=m[key]||(m[key]={b:r.b,mo:r.mo,n:0,e:0,pn:0});x.n++;if(r.p){x.e+=r.p;x.pn++;}});const l=Object.values(m).sort((a,b)=>b.n-a.n).slice(0,max||15),mx=l.length?l[0].n:1;
+  return auTbl(['#','Modell','Räder','','Ø Preis'],l.map((x,i)=>[i+1,`<span class="aubn">${logo(B[x.b])}<em>${esc((B[x.b]&&!B[x.b].lg?B[x.b].n+' ':'')+x.mo)}</em></span>`,auN(x.n),auHb(x.n,mx,'#22D3EE'),x.pn?auE(x.e/x.pn):'–']),'aumax');};
+ const yrTbl=ys=>auTbl(['Jahr','Räder','zum Vorjahr','Umsatz','Ø Preis','Leasing/Finanz.','Top-Marke'],ys.map(y=>{const o=g(y),tb=Object.keys(o.b).sort((a,b)=>o.b[b].n-o.b[a].n)[0];return [`<b>${y}</b>${y===D.cy?' <small>(bis heute)</small>':''}${y===best?' 🏆':''}`,auN(o.n),auDl(auPct(o.n,g(y-1).n)),o.e?auE(o.e):'–',avg(o)?auE(avg(o)):'–',lq(o)!=null?Math.round(lq(o))+' %':'–',tb?`<span class="aubn">${logo(B[tb])}<em>${esc(B[tb].n)}</em> <small>${o.b[tb].n}</small></span>`:'–'];}),'aumax');
+ const two=(a,b)=>`<div class="audg">${a}${b}</div>`,sec=(t,x)=>`<div class="ausec"><h4>${t}</h4>${x}</div>`;
+ if(k==='rad'||k==='zr'&&span.length===1){const y=k==='rad'?F:F-1;const o=g(y);
+  return card(`🚲 Räder ${y}${y===D.cy?' bis heute':''} – alle Details`,`${auN(o.n)} Räder · Vergleich mit ${y-1}${y===D.cy?' (gleicher Stichtag '+tdS+')':''}`,
+   sec('Je Monat (Strich = '+(y-1)+')',moChart(y,false))+two(sec('Marken '+y,brTbl(y,y-1,false)),sec('Meistverkaufte Modelle '+y,models(o.r))));}
+ if(k==='ums'){return card(`💶 Umsatz ${F}${isCur?' bis heute':''} – alle Details`,`${auE(Fo.e)} · Preis bei ${Fo.n?Math.round(Fo.pn/Fo.n*100):0} % der Räder eingetragen`,
+   sec('Umsatz je Monat (Strich = '+(F-1)+')',moChart(F,true))+sec('Umsatz je Marke '+F,brTbl(F,F-1,true)));}
+ if(k==='avg'){const rows=Fo.r.filter(r=>r.p),pr=rows.map(r=>r.p).sort((a,b)=>a-b),pp=Po.r.filter(r=>r.p).map(r=>r.p),med=pr.length?pr[Math.floor(pr.length/2)]:0;
+  const BK=[[0,1000,'bis 1.000 €'],[1000,2000,'1–2 T€'],[2000,3000,'2–3 T€'],[3000,4000,'3–4 T€'],[4000,5000,'4–5 T€'],[5000,6000,'5–6 T€'],[6000,8000,'6–8 T€'],[8000,1e9,'über 8.000 €']];
+  const cnt=(a,b,l)=>l.filter(p=>p>=a&&p<b).length;
+  const hist=auBars(BK.map(([a,b,l])=>{const v=cnt(a,b,pr),pv=cnt(a,b,pp);return {l,v,vl:v||'',tick:pv,c:'#FFD93B',sub:pr.length?`<span class="aush2">${Math.round(v/pr.length*100)} %</span>`:'',t:`${l}\n${F}: ${v} Räder\n${F-1}: ${pv} Räder`};}),{sm:1});
+  const ba=Object.keys(Fo.b).filter(x=>Fo.b[x].pn>=2).map(x=>({x,a:Fo.b[x].e/Fo.b[x].pn,n:Fo.b[x].pn})).sort((a,b)=>b.a-a.a),mxa=ba.length?ba[0].a:1;
+  const exp=rows.slice().sort((a,b)=>b.p-a.p).slice(0,10);
+  return card(`💶 Verkaufspreise ${F} – alle Details`,`Ø ${avg(Fo)?auE(avg(Fo)):'–'} · Median ${med?auE(med):'–'} · günstigstes ${pr.length?auE(pr[0]):'–'} · teuerstes ${pr.length?auE(pr[pr.length-1]):'–'} · ${pr.length} Räder mit Preis`,
+   sec('Preisklassen (Strich = '+(F-1)+')',hist)+two(sec('Ø Preis je Marke '+F+' (ab 2 Rädern)',auTbl(['Marke','Ø Preis','','Räder'],ba.map(b=>[`<span class="aubn">${logo(B[b.x])}<em>${esc(B[b.x].n)}</em></span>`,auE(b.a),auHb(b.a,mxa,'#FFD93B'),b.n]),'aumax')),
+   sec('Teuerste Verkäufe '+F,auTbl(['Datum','Marke · Modell','Preis'],exp.map(r=>[new Date(r.d).toLocaleDateString('de-DE',{day:'2-digit',month:'2-digit',year:'2-digit'}),`<span class="aubn">${logo(B[r.b])}<em>${esc((B[r.b]?B[r.b].n+' ':'')+(r.mo||''))}</em></span>`,auE(r.p)]),'aumax'))));}
+ if(k==='zr')return card(`📆 Zeitraum ${lo}–${hi} – Jahr für Jahr`,`${span.length} Jahre · 🏆 = bestes Jahr · Jahr anklicken in der Leiste oben = nur dieses Jahr`,yrTbl(span.slice().reverse()));
+ if(k==='best'){const rk=span.filter(y=>g(y).n).sort((a,b)=>c.val(g(b))-c.val(g(a)));return card(`🏆 Rangliste ${lo}–${hi}`,`sortiert nach ${eur?'Umsatz':'Stück'}`,auTbl(['Platz','Jahr','Räder','Umsatz','Ø Preis','Leasing/Finanz.','zum Vorjahr'],rk.map((y,i)=>{const o=g(y);return [i<3?['🥇','🥈','🥉'][i]:i+1,`<b>${y}</b>`,auN(o.n),o.e?auE(o.e):'–',avg(o)?auE(avg(o)):'–',lq(o)!=null?Math.round(lq(o))+' %':'–',auDl(auPct(o.n,g(y-1).n))];}),'aumax'));}
+ if(k==='leas'){const cntL=ys=>{const m={};let n=0;ys.forEach(y=>g(y).r.forEach(r=>{n++;if(r.lc)m[r.lc]=(m[r.lc]||0)+1;}));return {m,n};};const A=cntL([F]),Z=cntL(span),Pv=cntL([F-1]);
+  const ks=[...new Set([...Object.keys(A.m),...Object.keys(Z.m)])].sort((a,b)=>(A.m[b]||0)-(A.m[a]||0)||(Z.m[b]||0)-(Z.m[a]||0)),mx=Math.max(1,...ks.map(x=>A.m[x]||0));
+  const lgL=x=>x==='#'?'📅':kdLogoH(x)||`<span class="lchip">${esc(x)}</span>`;
+  return card(`💼 Leasing & Finanzierung ${F} – alle Details`,`${A.n?Math.round(Object.values(A.m).reduce((s,v)=>s+v,0)/A.n*100):0} % der Räder ${F} über Leasing/Finanzierung · ${A.n-Object.values(A.m).reduce((s,v)=>s+v,0)} Kauf/ohne Eintrag`,
+   auTbl(['Anbieter','',`${F}`,'Anteil '+F,'',`zu ${F-1}`,`${lo}–${hi}`],ks.map(x=>[`<span class="aubn aulgo">${lgL(x)}</span>`,`<em class="auln">${esc(auLn(x))}${KFIN[x]?' <small>Finanzierung</small>':''}</em>`,auN(A.m[x]||0),A.n?auF1((A.m[x]||0)/A.n*100)+' %':'–',auHb(A.m[x]||0,mx,KFIN[x]?'#B15CFF':'#22D3EE'),auDl(auPct(A.m[x]||0,Pv.m[x]||0)),auN(Z.m[x]||0)]),'aumax'));}
+ if(k==='top'){const X=bl[0];if(!X)return '';const rows=[];span.forEach(y=>g(y).r.forEach(r=>{if(r.b===X.k)rows.push(r);}));
+  return card(`${logo(X)} ${esc(X.n)} – Top-Marke ${lo}–${hi}`,`${auN(X.cn)} Räder · ${X.ce?auE(X.ce):'–'} Umsatz`,
+   two(sec('Je Jahr',auTbl(['Jahr','Räder','Anteil','zum Vorjahr','Ø Preis','Leasing/Finanz.'],span.slice().reverse().filter(y=>g(y).b[X.k]).map(y=>{const b=g(y).b[X.k],pb=g(y-1).b[X.k]||{n:0};return [`<b>${y}</b>`,auN(b.n),auF1(g(y).n?b.n/g(y).n*100:0)+' %',auDl(auPct(b.n,pb.n)),b.pn?auE(b.e/b.pn):'–',b.n?Math.round(b.leas/b.n*100)+' %':'–'];}),'aumax')),sec('Meistverkaufte Modelle',models(rows,20))));}
+ return '';}
+$('v-ausw').addEventListener('click',e=>{const t=e.target;let x;
+ if(x=t.closest('[data-aurng]')){const r=x.dataset.aurng,D=auData(),Ymax=Math.max(D.cy,D.ys[D.ys.length-1]);if(r==='all'){AU.f=null;AU.t=null;}else{AU.t=Ymax;AU.f=Math.max(D.ys[0],Ymax-(+r)+1);}}
+ else if(x=t.closest('[data-auy]')){const y=+x.dataset.auy;if(e.shiftKey&&AU.a!=null){AU.f=Math.min(+AU.a,y);AU.t=Math.max(+AU.a,y);}else{AU.f=y;AU.t=y;AU.a=y;}}
+ else if(x=t.closest('[data-aum]'))AU.m=x.dataset.aum;
+ else if(x=t.closest('[data-auk]'))AU.k=AU.k===x.dataset.auk?'':x.dataset.auk;
+ else if(x=t.closest('[data-aub]'))AU.b=x.dataset.aub;
+ else if(t.closest('[data-auall]'))AU.all=!AU.all;else return;auSave();rau();});
+$('v-ausw').addEventListener('change',e=>{if(e.target.id==='auF'||e.target.id==='auT'){AU.f=+$('auF').value;AU.t=+$('auT').value;if(AU.f>AU.t)[AU.f,AU.t]=[AU.t,AU.f];auSave();rau();}});
 {let tip=null;const hide=()=>{if(tip){tip.remove();tip=null;}};
  $('v-ausw').addEventListener('mouseover',e=>{const t=e.target.closest('[data-tip]');if(!t||!t.dataset.tip){hide();return;}if(!tip){tip=document.createElement('div');tip.className='autip';document.body.append(tip);}tip.textContent=t.dataset.tip;const r=t.getBoundingClientRect();tip.style.left=Math.max(8,Math.min(innerWidth-tip.offsetWidth-8,r.left+r.width/2-tip.offsetWidth/2))+'px';tip.style.top=(r.top-tip.offsetHeight-8<8?r.bottom+8:r.top-tip.offsetHeight-8)+'px';});
  $('v-ausw').addEventListener('mouseleave',hide);document.addEventListener('scroll',hide,true);}
-
 
 /* ================= START ================= */
 auth.onAuthStateChanged(u=>{if(u&&u.email&&u.email.endsWith(DOMAIN)){const id=u.email.slice(0,-DOMAIN.length);if(U(id).n){start({id,n:U(id).n,adm:ADMINS.includes(id)});return;}}ME=null;showLogin();});
