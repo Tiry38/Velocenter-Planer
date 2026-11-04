@@ -984,3 +984,5 @@ body[data-v=ausw]{--ac:#F5B83D}
 .austar:hover{color:#FFD93B;transform:scale(1.2)}
 .austar.on{color:#FFD93B;text-shadow:0 0 8px rgba(255,217,59,.7)}
 .aubr.own .aubn em{color:#fff}
+/* 1.10.31: farbige Navi-Symbole (Tiry) – Kachelfarbe bleibt, Symbol mehrfarbig; Schatten für Kontrast auf der aktiven Kachel */
+.navbtn:not([data-v=kunden]) .tile svg{filter:drop-shadow(0 1px 1.2px rgba(0,0,0,.55))}

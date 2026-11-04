@@ -1308,6 +1308,8 @@ body[data-v=ausw]{--ac:#F5B83D}
 .austar:hover{color:#FFD93B;transform:scale(1.2)}
 .austar.on{color:#FFD93B;text-shadow:0 0 8px rgba(255,217,59,.7)}
 .aubr.own .aubn em{color:#fff}
+/* 1.10.31: farbige Navi-Symbole (Tiry) – Kachelfarbe bleibt, Symbol mehrfarbig; Schatten für Kontrast auf der aktiven Kachel */
+.navbtn:not([data-v=kunden]) .tile svg{filter:drop-shadow(0 1px 1.2px rgba(0,0,0,.55))}
 
 [hidden]{display:none!important}
 #sTab td.b{font-weight:700}#sTab .pwm.ed{outline:none;padding:2px 6px;border-radius:6px;font-family:var(--mono)}#sTab td{vertical-align:top}
@@ -1317,18 +1319,18 @@ body[data-v=ausw]{--ac:#F5B83D}
 <div class="app">
 <nav aria-label="Bereiche">
   <div class="brand kwbrand" title="Aktuelle Kalenderwoche"><span class="kwn" id="nKwN">–</span><div class="kwt"><small>Kalenderwoche</small><b id="nKw">KW –</b><span id="nKwD"></span></div></div>
-  <button class="navbtn" data-v="planer" aria-current="true" style="--ac:#E2232D"><span class="tile"><svg viewBox="0 0 24 24"><rect class="f" x="3" y="5" width="18" height="5" rx="2"/><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M8 3v4M16 3v4M7.5 15l2.5 2.5 5-5"/></svg></span><span class="lbl">Planer<small>Tagesplanung</small></span></button>
-  <button class="navbtn" data-v="verkauf" style="--ac:#FBBF24"><span class="tile"><svg viewBox="0 0 24 24"><circle class="f" cx="6" cy="16.5" r="3.6"/><circle class="f" cx="18" cy="16.5" r="3.6"/><circle cx="6" cy="16.5" r="3.6"/><circle cx="18" cy="16.5" r="3.6"/><path d="M6 16.5 9.5 9h6.5L18 16.5M9.5 9 8.3 6H6.5M16 9l-4 7.5h-6M14 6h2.5"/><path d="M20.5 3.5l.6 1.4 1.4.6-1.4.6-.6 1.4-.6-1.4-1.4-.6 1.4-.6z"/></svg></span><span class="lbl">Verkauf<small>Räder · Leasing</small></span><span class="n" id="nOffen">–</span></button>
-  <button class="navbtn" data-v="bestell" style="--ac:#39F26B"><span class="tile"><svg viewBox="0 0 24 24"><path class="f" d="M3 8l9-5 9 5-9 5z"/><path d="M3 8l9-5 9 5v8l-9 5-9-5z"/><path d="M3 8l9 5 9-5M12 13v8M7.5 5.5l9 5"/></svg></span><span class="lbl">Bestellungen<small>Teile · Kunden</small></span><span class="n" id="nBest">–</span></button>
-  <button class="navbtn" data-v="rekla" style="--ac:#FB923C"><span class="tile"><svg viewBox="0 0 24 24"><path class="f" d="M4 7l8-4 8 4v10l-8 4-8-4z"/><path d="M4 7l8-4 8 4v10l-8 4-8-4z"/><path d="M15 10.5h-5l1.8-1.8M10 10.5l1.8 1.8M10 14.5h4"/></svg></span><span class="lbl">Reklamationen<small>Lieferanten · Ersatz</small></span><span class="n" id="nRekla">–</span></button>
+  <button class="navbtn" data-v="planer" aria-current="true" style="--ac:#E2232D"><span class="tile"><svg viewBox="0 0 24 24"><rect class="f" x="3" y="5" width="18" height="5" rx="2" style="fill:rgba(34,211,238,.55)"/><rect x="3" y="5" width="18" height="16" rx="3" style="stroke:#FFD93B"/><path d="M8 3v4M16 3v4" style="stroke:#22D3EE"/><path d="M7.5 15l2.5 2.5 5-5" style="stroke:#3DDC84;stroke-width:2.3"/></svg></span><span class="lbl">Planer<small>Tagesplanung</small></span></button>
+  <button class="navbtn" data-v="verkauf" style="--ac:#FBBF24"><span class="tile"><svg viewBox="0 0 24 24"><circle class="f" cx="6" cy="16.5" r="3.6" style="fill:rgba(34,211,238,.28)"/><circle class="f" cx="18" cy="16.5" r="3.6" style="fill:rgba(34,211,238,.28)"/><circle cx="6" cy="16.5" r="3.6" style="stroke:#22D3EE"/><circle cx="18" cy="16.5" r="3.6" style="stroke:#22D3EE"/><path d="M6 16.5 9.5 9h6.5L18 16.5M9.5 9 8.3 6H6.5M16 9l-4 7.5h-6M14 6h2.5" style="stroke:#FF4FD8"/><path style="stroke:#fff;fill:#fff" d="M20.5 3.5l.6 1.4 1.4.6-1.4.6-.6 1.4-.6-1.4-1.4-.6 1.4-.6z"/></svg></span><span class="lbl">Verkauf<small>Räder · Leasing</small></span><span class="n" id="nOffen">–</span></button>
+  <button class="navbtn" data-v="bestell" style="--ac:#39F26B"><span class="tile"><svg viewBox="0 0 24 24"><path class="f" d="M3 8l9-5 9 5-9 5z" style="fill:rgba(255,217,59,.6)"/><path d="M3 8l9-5 9 5v8l-9 5-9-5z" style="stroke:#FFB020"/><path d="M3 8l9 5 9-5M12 13v8" style="stroke:#FFB020"/><path d="M7.5 5.5l9 5" style="stroke:#fff"/></svg></span><span class="lbl">Bestellungen<small>Teile · Kunden</small></span><span class="n" id="nBest">–</span></button>
+  <button class="navbtn" data-v="rekla" style="--ac:#FB923C"><span class="tile"><svg viewBox="0 0 24 24"><path class="f" d="M4 7l8-4 8 4v10l-8 4-8-4z" style="fill:rgba(255,59,92,.35)"/><path d="M4 7l8-4 8 4v10l-8 4-8-4z" style="stroke:#FF3B5C"/><path d="M15 10.5h-5l1.8-1.8M10 10.5l1.8 1.8" style="stroke:#FFD93B;stroke-width:2.1"/><path d="M10 14.5h4" style="stroke:#fff"/></svg></span><span class="lbl">Reklamationen<small>Lieferanten · Ersatz</small></span><span class="n" id="nRekla">–</span></button>
   <button class="navbtn" data-v="kunden" style="--ac:#B15CFF"><span class="tile"><svg viewBox="0 0 24 24"><circle class="f" cx="9" cy="8" r="3.5"/><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.6-3.6 3.3-5.5 6.5-5.5s5.9 1.9 6.5 5.5"/><path d="M16 4.6a3.4 3.4 0 0 1 0 6.8M18 14.6c2 .7 3.2 2.5 3.5 5.4"/></svg></span><span class="lbl">Kunden<small>seit 1995</small></span><span class="n" id="nKunden">–</span></button>
   <button class="navbtn" data-v="ausw" style="--ac:#F5B83D" hidden><span class="tile"><svg viewBox="0 0 24 24"><path d="M3 21h18"/><rect x="5" y="12" width="3" height="7" style="fill:#3DDC84;stroke:#3DDC84"/><rect x="10.5" y="7" width="3" height="12" style="fill:#22D3EE;stroke:#22D3EE"/><rect x="16" y="3.5" width="3" height="15.5" style="fill:#FF3B5C;stroke:#FF3B5C"/></svg></span><span class="lbl">Auswertung<small>Marken &amp; Jahre</small></span></button>
   <div class="navsep"></div>
-  <button class="navbtn" data-v="leasing" style="--ac:#C084FC"><span class="tile"><svg viewBox="0 0 24 24"><path class="f" d="M6 3h9l4 4v14H6z"/><path d="M6 3h9l4 4v14H6zM15 3v4h4"/><path d="M9 12h7M9 15.5h7M9 9h3"/></svg></span><span class="lbl">Leasing-Infos<small>Leasing · Versicherung</small></span></button>
-  <button class="navbtn" data-v="lief" style="--ac:#22D3EE"><span class="tile"><svg viewBox="0 0 24 24"><rect class="f" x="2.5" y="6" width="11" height="9" rx="1.5"/><path d="M2.5 6h11v9h-11zM13.5 9.5h4l3.5 3.5v2h-7.5"/><circle cx="7" cy="17.5" r="2"/><circle cx="17" cy="17.5" r="2"/></svg></span><span class="lbl">Lieferanten<small>Kontakte · Logins</small></span></button>
-  <button class="navbtn" data-v="kasse" style="--ac:#34D399"><span class="tile"><svg viewBox="0 0 24 24"><circle class="f" cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="9"/><path d="M15.5 8.5a4 4 0 1 0 0 7M7.5 10.8h6M7.5 13.2h6"/></svg></span><span class="lbl">Trinkgeld EC<small>Kasse</small></span></button>
+  <button class="navbtn" data-v="leasing" style="--ac:#C084FC"><span class="tile"><svg viewBox="0 0 24 24"><path class="f" d="M6 3h9l4 4v14H6z" style="fill:rgba(34,211,238,.25)"/><path d="M6 3h9l4 4v14H6zM15 3v4h4" style="stroke:#22D3EE"/><path d="M9 12h7M9 15.5h7M9 9h3" style="stroke:#FFD93B"/></svg></span><span class="lbl">Leasing-Infos<small>Leasing · Versicherung</small></span></button>
+  <button class="navbtn" data-v="lief" style="--ac:#22D3EE"><span class="tile"><svg viewBox="0 0 24 24"><rect class="f" x="2.5" y="6" width="11" height="9" rx="1.5" style="fill:rgba(255,138,31,.55)"/><path d="M2.5 6h11v9h-11zM13.5 9.5h4l3.5 3.5v2h-7.5" style="stroke:#FF8A1F"/><circle cx="7" cy="17.5" r="2" style="stroke:#FFD93B"/><circle cx="17" cy="17.5" r="2" style="stroke:#FFD93B"/></svg></span><span class="lbl">Lieferanten<small>Kontakte · Logins</small></span></button>
+  <button class="navbtn" data-v="kasse" style="--ac:#34D399"><span class="tile"><svg viewBox="0 0 24 24"><circle class="f" cx="12" cy="12" r="9" style="fill:rgba(255,217,59,.4)"/><circle cx="12" cy="12" r="9" style="stroke:#FFD93B"/><path d="M15.5 8.5a4 4 0 1 0 0 7M7.5 10.8h6M7.5 13.2h6" style="stroke:#fff"/></svg></span><span class="lbl">Trinkgeld EC<small>Kasse</small></span></button>
   <button class="navbtn" data-v="tresor" style="--ac:#60A5FA"><span class="tile"><svg viewBox="0 0 24 24"><path class="f" d="M12 3l7.5 3v5.5c0 4.6-3.2 8.3-7.5 9.5-4.3-1.2-7.5-4.9-7.5-9.5V6z"/><path d="M12 3l7.5 3v5.5c0 4.6-3.2 8.3-7.5 9.5-4.3-1.2-7.5-4.9-7.5-9.5V6z"/><rect x="9" y="11" width="6" height="5" rx="1"/><path d="M10.3 11V9.6a1.7 1.7 0 0 1 3.4 0V11"/></svg></span><span class="lbl">Passwörter<small>PIN-geschützt</small></span></button>
-  <button class="navbtn" data-v="notes" style="--ac:#A78BFA" hidden><span class="tile"><svg viewBox="0 0 24 24"><rect class="f" x="4" y="10" width="16" height="11" rx="2.5"/><rect x="4" y="10" width="16" height="11" rx="2.5"/><path d="M8 10V7a4 4 0 0 1 8 0v3M12 14.5v2.5"/></svg></span><span class="lbl">Notizen<small>🔒 PIN-geschützt</small></span></button>
+  <button class="navbtn" data-v="notes" style="--ac:#A78BFA" hidden><span class="tile"><svg viewBox="0 0 24 24"><rect class="f" x="4" y="10" width="16" height="11" rx="2.5" style="fill:rgba(255,217,59,.45)"/><rect x="4" y="10" width="16" height="11" rx="2.5" style="stroke:#FFD93B"/><path d="M8 10V7a4 4 0 0 1 8 0v3" style="stroke:#22D3EE"/><path d="M12 14.5v2.5" style="stroke:#fff;stroke-width:2.3"/></svg></span><span class="lbl">Notizen<small>🔒 PIN-geschützt</small></span></button>
   <div class="me" id="meChip">
     <span class="av big" id="meAv"></span>
     <div class="mi"><b id="meName">–</b><small><i></i><span id="meRole">angemeldet</span></small></div>
@@ -1492,7 +1494,7 @@ body[data-v=ausw]{--ac:#F5B83D}
 <script>
 const FB_CONFIG={apiKey:"AIzaSyC_uZPvc5rJETwlS4JbfCoTkkE4ckjtp0M",authDomain:"velocenter-planer.firebaseapp.com",projectId:"velocenter-planer",storageBucket:"velocenter-planer.firebasestorage.app",messagingSenderId:"1018330488700",appId:"1:1018330488700:web:262a4d1660353e6fde8ef9"};
 /* ================= Velocenter Werkstatt-Cockpit – Oberfläche ================= */
-const CLIENT_VERSION='1.10.30';
+const CLIENT_VERSION='1.10.31';
 const USERS=[{id:'kevin',n:'Kevin',c:'#E2232D'},{id:'stefan',n:'Stefan',c:'#F59E0B'},{id:'martina',n:'Martina',c:'#EC4899'},{id:'sascha',n:'Sascha',c:'#22D3EE'},{id:'rene',n:'René',c:'#34D399'}];
 const U=id=>USERS.find(u=>u.id===id)||{n:'',c:'#64748B',id:''};
 const $=id=>document.getElementById(id);
@@ -3579,19 +3581,24 @@ const auLc=v=>{const s=String(v||'').trim();if(!s)return '';if(/\d/.test(s))retu
 const auLt=c=>!c?'':KFIN[c]?'fin':'leas';
 const auLn=k=>{if(k==='#')return 'Datum (altes Sheet, Anbieter unbekannt)';const x=(L||[]).find(l=>kdKey(l.k)===k||l.id===k);return x?x.n:KFIN[k]?KFIN[k].n:FN[k]||k;};
 const AUMN=['Jan','Feb','Mär','Apr','Mai','Jun','Jul','Aug','Sep','Okt','Nov','Dez'];
+/* 1.10.31: Datum für die Auswertung – Jahr aus dem Datum, sonst aus dem Jahres-Doc (r.y); Datum ohne Jahr fiel vorher ins laufende Jahr */
+function auDate(r,cy){const ry=/^\d{4}$/.test(String(r.y||''))?+r.y:null,m=String(r.dat||'').match(/(\d{1,2})\.(\d{1,2})\.?(\d{2,4})?/);
+ if(m){const dd=+m[1],mm=+m[2];let y=null;if(m[3]){y=+m[3];if(m[3].length===2)y=ry&&ry%100===y?ry:(y<=cy%100+1?2000+y:1900+y);else if(m[3].length===3)y=null;}if(y==null)y=ry;
+  if(y&&dd>=1&&dd<=31&&mm>=1&&mm<=12){const t=new Date(y,mm-1,dd);return {y,m:mm-1,day:dd,t:t.getTime()};}}
+ return ry?{y:ry,m:null,day:0,t:new Date(ry,6,1).getTime()}:null;}
 let auMemo=null;
 function auData(){const all=kdAll(),lg=BUSER.logos||{};if(auMemo&&auMemo.src===all&&auMemo.lg===lg&&auMemo.bl===(BUSER.list||[]).length)return auMemo;
  const bc=new Map(),Y={},B={};let noDat=0,noBr=0;const now=new Date(),cy=now.getFullYear(),tmd=(now.getMonth()+1)*100+now.getDate();
- for(const r of all){if(!r._d){noDat++;continue;}const d=new Date(r._d),y=d.getFullYear();if(y<1990||y>cy+1)continue;
+ let noYr=0;for(const r of all){const ad=auDate(r,cy);if(!ad){noDat++;continue;}const y=ad.y;if(y<1990||y>cy+1){noDat++;continue;}if(ad.m==null)noYr++;
   const ky=String(r.marke||'').trim()+'|'+String(r.modell||'').trim();let b=bc.get(ky);
   if(b===undefined){b=null;if(r.marke||r.modell){const x=brandOfB({marke:r.marke,modell:r.modell});if(x&&x.n)b={k:x.k,n:x.n,mo:bStrip(r.modell,x).trim()};}if(!b&&String(r.marke||'').trim())b={k:'M'+String(r.marke).trim().toLowerCase(),n:String(r.marke).trim(),mo:String(r.modell||'').trim()};bc.set(ky,b);}
-  const p=auP(r.preis),lc=auLc(r.leas),lt=auLt(lc),m=d.getMonth(),ytd=(m+1)*100+d.getDate()<=tmd;
-  const o=Y[y]||(Y[y]={n:0,e:0,pn:0,leas:0,fin:0,mo:Array(12).fill(0),me:Array(12).fill(0),ymo:Array(12).fill(0),yn:0,ye:0,yl:0,b:{},r:[]});o.n++;if(p){o.e+=p;o.pn++;o.me[m]+=p;}if(lt==='leas')o.leas++;else if(lt==='fin')o.fin++;o.mo[m]++;if(ytd){o.yn++;if(p)o.ye+=p;if(lt)o.yl++;}
-  o.r.push({m,d:r._d,p,lc,b:b?b.k:'',mo:b?b.mo:String(r.modell||'').trim()});
+  const p=auP(r.preis),lc=auLc(r.leas),lt=auLt(lc),m=ad.m,ytd=m!=null&&(m+1)*100+ad.day<=tmd;
+  const o=Y[y]||(Y[y]={n:0,e:0,pn:0,leas:0,fin:0,mo:Array(12).fill(0),me:Array(12).fill(0),ymo:Array(12).fill(0),yn:0,ye:0,yl:0,b:{},r:[]});o.n++;if(p){o.e+=p;o.pn++;if(m!=null)o.me[m]+=p;}if(lt==='leas')o.leas++;else if(lt==='fin')o.fin++;if(m!=null)o.mo[m]++;if(ytd){o.yn++;if(p)o.ye+=p;if(lt)o.yl++;}
+  o.r.push({m,d:ad.t,y,yt:ytd,p,lc,lt,b:b?b.k:'',mo:b?b.mo:String(r.modell||'').trim()});
   if(!b){noBr++;continue;}const ob=o.b[b.k]||(o.b[b.k]={n:0,e:0,yn:0,ye:0,pn:0,leas:0});ob.n++;if(p){ob.e+=p;ob.pn++;}if(ytd){ob.yn++;if(p)ob.ye+=p;}if(lt)ob.leas++;
   if(!B[b.k])B[b.k]={k:b.k,n:b.n,lg:lg[b.k]||''};}
  const ys=Object.keys(Y).map(Number).sort((a,b)=>a-b);
- return auMemo={src:all,lg,bl:(BUSER.list||[]).length,Y,B,ys,cy,noDat,noBr,tot:all.length};}
+ return auMemo={src:all,lg,bl:(BUSER.list||[]).length,Y,B,ys,cy,noDat,noBr,noYr,tot:all.length};}
 function auBars(cols,o){const mx=Math.max(1,...cols.map(c=>Math.max(c.v,c.tick||0)));
  return `<div class="aubars${o&&o.sm?' sm':''}" style="--nc:${cols.length}">`+cols.map(c=>`<div class="aubc${c.cls?' '+c.cls:''}" data-tip="${esc(c.t||'')}"><span class="aubv">${c.vl!=null?c.vl:''}</span><div class="aubt"><i style="height:${(c.v/mx*100).toFixed(2)}%${c.c?';--bc:'+c.c:''}"></i>${c.tick?`<s style="bottom:${(c.tick/mx*100).toFixed(2)}%"></s>`:''}</div><span class="aubl">${c.l}</span>${c.sub!=null?`<span class="aubs">${c.sub}</span>`:''}</div>`).join('')+'</div>';}
 const auTbl=(hd,rows,cls)=>`<div class="autbl${cls?' '+cls:''}"><table><thead><tr>${hd.map(h=>`<th>${h}</th>`).join('')}</tr></thead><tbody>${rows.length?rows.map(r=>`<tr>${r.map(c=>`<td>${c}</td>`).join('')}</tr>`).join(''):`<tr><td colspan="${hd.length}" class="auhint">Keine Daten</td></tr>`}</tbody></table></div>`;
@@ -3629,16 +3636,21 @@ function rau(){const host=$('auBody');if(!host||!ME||!ME.adm)return;const D=auDa
  const lq=o=>o.n?(o.leas+o.fin)/o.n*100:null,avg=o=>o.pn?o.e/o.pn:null;
  const logo=x=>x&&x.lg?`<img src="${x.lg}" alt="">`:'';
  const kpi=(k,t,v,s,ex)=>`<button type="button" class="aukpi${AU.k===k?' on':''}" data-auk="${k}"><small>${t}</small><b>${v}</b><span>${s||''}</span>${ex?`<em>${ex}</em>`:''}<u>${AU.k===k?'▲ Details zu':'▼ Details'}</u></button>`;
- const ZR=one?`${F-1} komplett`:`Zeitraum ${lo}–${hi}`;
+ /* 1.10.31: Kacheln beziehen sich auf die AUSWAHL (ein Jahr oder Zeitraum), Vergleich = gleich langer Zeitraum davor (laufendes Jahr nur bis heute) */
+ const agg=(ys,cut)=>{const o={n:0,e:0,pn:0,leas:0,fin:0,mo:Array(12).fill(0),me:Array(12).fill(0),b:{},r:[]};ys.forEach(y=>g(y).r.forEach(r=>{if(y===cut&&!r.yt)return;o.n++;if(r.p){o.e+=r.p;o.pn++;}if(r.lt==='leas')o.leas++;else if(r.lt==='fin')o.fin++;if(r.m!=null){o.mo[r.m]++;if(r.p)o.me[r.m]+=r.p;}
+  if(r.b){const x=o.b[r.b]||(o.b[r.b]={n:0,e:0,pn:0,leas:0});x.n++;if(r.p){x.e+=r.p;x.pn++;}if(r.lt)x.leas++;}o.r.push(r);}));return o;};
+ const NL=span.length,S=agg(span),pys=[];for(let y=lo-NL;y<lo;y++)pys.push(y);const pOk=lo-NL>=Ymin,P=pOk?agg(pys,isCur?lo-1:null):null;
+ const sLbl=one?String(F):lo+'–'+hi,cN=isCur?(one?' bis heute':` (${cy} bis heute)`):'',pLbl=!pOk?'':one?(isCur?`${F-1} bis ${tdS}`:String(F-1)):`${lo-NL}–${lo-1}${isCur?` (${lo-1} bis ${tdS})`:''}`;
+ const cmp=(a,b,f)=>P?auDl(a!=null&&b!=null?auPct(a,b):null)+` <i>vs. ${pLbl}: ${f(b)}</i>`:'<i>kein Vergleichszeitraum</i>';
  let h=`<div class="aukpis">`+
-  kpi('rad',`Räder ${F}${isCur?' bis heute':''}`,auN(Fo.n),auDl(auPct(Fo.n,cmpN))+` <i>vs. ${vsTxt}: ${auN(cmpN)}</i>`)+
-  kpi('ums',`Umsatz ${F}${isCur?' bis heute':''}`,Fo.e?auE(Fo.e):'–',auDl(auPct(Fo.e,cmpE))+` <i>vs. ${vsTxt}: ${cmpE?auE(cmpE):'–'}</i>`,Fo.n?`Preis bei ${Math.round(Fo.pn/Fo.n*100)} % eingetragen`:'')+
-  kpi('avg',`Ø Preis ${F}`,avg(Fo)?auE(avg(Fo)):'–',auDl(avg(Fo)&&avg(Po)?auPct(avg(Fo),avg(Po)):null)+` <i>${F-1}: ${avg(Po)?auE(avg(Po)):'–'}</i>`)+
-  (one?kpi('zr',ZR,auN(Po.n)+' Räder',auDl(auPct(Po.n,P2.n))+` <i>vs. ${F-2}: ${auN(P2.n)}</i>`):kpi('zr',ZR,auN(spanN)+' Räder',`${spanE?auE(spanE):'–'} <i>· Ø ${auN(spanN/span.length)} Räder/Jahr</i>`))+
-  kpi('best',`Bestes Jahr (${lo}–${hi})`,String(best),vt(val(g(best))))+
-  kpi('leas',`Leasing/Finanz. ${F}`,lq(Fo)!=null?Math.round(lq(Fo))+' %':'–',auDl(lq(Fo)!=null&&lq(Po)!=null?lq(Fo)-lq(Po):null,' Pkt.')+` <i>${F-1}: ${lq(Po)!=null?Math.round(lq(Po))+' %':'–'}</i>`)+
-  kpi('top',`Top-Marke (${lo}–${hi})`,bl[0]?`${logo(bl[0])}<span class="aukn">${esc(bl[0].n)}</span>`:'–',bl[0]?Math.round(bl[0].t/Math.max(1,spanTot)*100)+' % Anteil · '+vt(bl[0].t):'')+`</div>`;
- if(AU.k)h+=auDetail(AU.k,{D,g,F,isCur,span,lo,hi,bl,colOf,eur,vt,vl,val,avg,lq,logo,tdS,best,spanTot});
+  kpi('rad',`Räder ${sLbl}${cN}`,auN(S.n),cmp(S.n,P&&P.n,auN))+
+  kpi('ums',`Umsatz ${sLbl}${cN}`,S.e?auE(S.e):'–',cmp(S.e,P&&P.e,v=>v?auE(v):'–'),S.n?`Preis bei ${Math.round(S.pn/S.n*100)} % eingetragen`:'')+
+  kpi('avg',`Ø Preis ${sLbl}`,avg(S)?auE(avg(S)):'–',P?auDl(avg(S)&&avg(P)?auPct(avg(S),avg(P)):null)+` <i>${pLbl}: ${avg(P)?auE(avg(P)):'–'}</i>`:'<i>kein Vergleichszeitraum</i>')+
+  (one?kpi('zr',`${F-1} komplett`,auN(Po.n)+' Räder',auDl(auPct(Po.n,P2.n))+` <i>vs. ${F-2}: ${auN(P2.n)}</i>`):kpi('zr',`Ø pro Jahr ${sLbl}`,auN(S.n/NL)+' Räder',`${S.e?auE(S.e/NL):'–'} Umsatz/Jahr`,isCur?`inkl. ${cy} bis heute`:''))+
+  kpi('best',`Bestes Jahr (${sLbl})`,String(best),vt(val(g(best))))+
+  kpi('leas',`Leasing/Finanz. ${sLbl}`,lq(S)!=null?Math.round(lq(S))+' %':'–',P?auDl(lq(S)!=null&&lq(P)!=null?lq(S)-lq(P):null,' Pkt.')+` <i>${pLbl}: ${lq(P)!=null?Math.round(lq(P))+' %':'–'}</i>`:'<i>kein Vergleichszeitraum</i>')+
+  kpi('top',`Top-Marke (${sLbl})`,bl[0]?`${logo(bl[0])}<span class="aukn">${esc(bl[0].n)}</span>`:'–',bl[0]?Math.round(bl[0].t/Math.max(1,spanTot)*100)+' % Anteil · '+vt(bl[0].t):'')+`</div>`;
+ if(AU.k)h+=auDetail(AU.k,{D,g,agg,S,P,sLbl,pLbl,one,F,isCur,span,lo,hi,bl,colOf,eur,vt,vl,val,avg,lq,logo,tdS,best,spanTot});
  /* 1. je Jahr bzw. je Monat (ein Jahr) */
  if(one){const mx=AUMN.map((n,m)=>({l:n,v:eur?Fo.me[m]:Fo.mo[m]}));h+=`<div class="aucard auwide"><div class="auch"><h3>📈 ${F}: ${eur?'Umsatz':'Räder'} je Monat</h3><span class="auhint">Strich = ${F-1} im selben Monat</span></div>`+
   auBars(AUMN.map((n,m)=>{const v=eur?Fo.me[m]:Fo.mo[m],pv=eur?Po.me[m]:Po.mo[m];return {l:n,v,vl:v?vl(v):'',tick:pv,sub:auDl(auPct(v,pv)),c:'#F5B83D',t:`${n} ${F}: ${vt(v)}\n${n} ${F-1}: ${vt(pv)}`};}))+`</div>`;}
@@ -3671,42 +3683,43 @@ function rau(){const host=$('auBody');if(!host||!ME||!ME.adm)return;const D=auDa
   cs.slice().reverse().map(y=>{const o=g(y);if(!o.n)return '';const k=o.n-o.leas-o.fin,pc=v=>(v/o.n*100);return `<div class="aus1${hl(y)&&one?' on':''}"><span>${y}</span><div class="aus1b">${[['l',o.leas,'Leasing'],['f',o.fin,'Finanzierung'],['k',k,'Kauf/ohne Eintrag']].filter(x=>x[1]>0).map(([c,v,n])=>`<i class="au${c}" style="width:${pc(v).toFixed(2)}%" data-tip="${esc(n+' '+y+'\n'+v+' Räder · '+pc(v).toFixed(1).replace('.',',')+' %')}">${pc(v)>=9?Math.round(pc(v))+'%':''}</i>`).join('')}</div><b>${auN(o.n)}</b></div>`;}).join('')+`</div></div>`;
  /* 7. Ø Preis */
  const ap=cs.filter(y=>avg(g(y)));if(ap.length)h+=`<div class="aucard"><div class="auch"><h3>💶 Ø Verkaufspreis je Jahr</h3><span class="auhint">nur Räder mit eingetragenem Preis</span></div>`+auBars(ap.map(y=>{const a=avg(g(y)),pa=avg(g(y-1));return {l:"'"+String(y).slice(2),v:a,vl:auEk(a),c:'#FFD93B',cls:hl(y)?'cur':'',sub:auDl(pa?auPct(a,pa):null),t:`${y}\nØ ${auE(a)}\n${g(y).pn} Räder mit Preis`};}),{sm:1})+`</div>`;
- h+=`<p class="auhint aufoot">Quelle: Reiter <b>Kunden</b> (${auN(D.tot)} Einträge${D.noDat?', davon '+auN(D.noDat)+' ohne gültiges Datum – nicht mitgezählt':''}). Marke wie in der Kundenliste (Marke, sonst aus dem Modell erkannt). Leasing = Feld „Leasing“ gefüllt (TB/CP = Finanzierung).</p>`;
+ h+=`<p class="auhint aufoot">Quelle: Reiter <b>Kunden</b> (${auN(D.tot)} Einträge${D.noDat?', davon '+auN(D.noDat)+' ohne gültiges Datum/Jahr – nicht mitgezählt':''}${D.noYr?' · '+auN(D.noYr)+' nur mit Jahr (ohne Tag/Monat) – zählen in den Jahressummen, nicht in Monaten/„bis heute“':''}). Marke wie in der Kundenliste (Marke, sonst aus dem Modell erkannt). Leasing = Feld „Leasing“ gefüllt (TB/CP = Finanzierung).</p>`;
  host.innerHTML=h;}
 /* Details unter den Kacheln */
-function auDetail(k,c){const {g,F,isCur,span,lo,hi,bl,colOf,eur,vt,vl,avg,lq,logo,tdS,best}=c,D=c.D,Fo=g(F),Po=g(F-1);const B=D.B;
+function auDetail(k,c){const {g,agg,S,P,sLbl,pLbl,one,F,isCur,span,lo,hi,bl,colOf,eur,vt,vl,avg,lq,logo,tdS,best}=c,D=c.D;const B=D.B;let sLblX=sLbl;
  const card=(t,sub,body)=>`<div class="aucard auwide audet"><div class="auch"><h3>${t}</h3><span class="auhint">${sub||''}</span><button type="button" class="audx" data-auk="${k}" title="Details schließen">✕</button></div>${body}</div>`;
- const brTbl=(y,cmp,useE)=>{const o=g(y),p=g(cmp),T=useE?o.e:o.n,ks=Object.keys(o.b).sort((a,b)=>(useE?o.b[b].e-o.b[a].e:o.b[b].n-o.b[a].n));const mx=ks.length?(useE?o.b[ks[0]].e:o.b[ks[0]].n):1;
-  return auTbl(['#','Marke','Räder',useE?'Umsatz':'Anteil','',`zu ${cmp}`,'Ø Preis'],ks.map((x,i)=>{const b=o.b[x],pb=p.b[x]||{n:0,e:0,yn:0,ye:0},v=useE?b.e:b.n,pv=useE?(y===D.cy?pb.ye:pb.e):(y===D.cy?pb.yn:pb.n);
-   return [i+1,`<span class="aubn">${logo(B[x])}<em>${esc(B[x].n)}</em></span>`,auN(b.n),useE?auE(b.e):auF1(T?b.n/T*100:0)+' %',auHb(v,mx,colOf[x]),auDl(auPct(v,pv)),b.pn?auE(b.e/b.pn):'–'];}),'aumax');};
- const moChart=(y,useE)=>{const o=g(y),p=g(y-1);return auBars(AUMN.map((n,m)=>{const v=useE?o.me[m]:o.mo[m],pv=useE?p.me[m]:p.mo[m];return {l:n,v,vl:v?(useE?auEk(v):auN(v)):'',tick:pv,c:useE?'#3DDC84':'#F5B83D',sub:auDl(auPct(v,pv)),t:`${n} ${y}: ${useE?auE(v):v+' Räder'}\n${n} ${y-1}: ${useE?auE(pv):pv+' Räder'}`};}),{sm:1});};
+ const brTbl=(o,p,pl,useE)=>{const T=useE?o.e:o.n,ks=Object.keys(o.b).sort((a,b)=>(useE?o.b[b].e-o.b[a].e:o.b[b].n-o.b[a].n));const mx=ks.length?(useE?o.b[ks[0]].e:o.b[ks[0]].n):1;
+  return auTbl(['#','Marke','Räder',useE?'Umsatz':'Anteil','',p?`zu ${pl}`:'Vergleich','Ø Preis'],ks.map((x,i)=>{const b=o.b[x],pb=p&&p.b[x]||{n:0,e:0},v=useE?b.e:b.n,pv=useE?pb.e:pb.n;
+   return [i+1,`<span class="aubn">${logo(B[x])}<em>${esc(B[x].n)}</em></span>`,auN(b.n),useE?auE(b.e):auF1(T?b.n/T*100:0)+' %',auHb(v,mx,colOf[x]),p?auDl(auPct(v,pv)):'–',b.pn?auE(b.e/b.pn):'–'];}),'aumax');};
+ const moChart=(o,p,pl,useE)=>auBars(AUMN.map((n,m)=>{const v=useE?o.me[m]:o.mo[m],pv=p?(useE?p.me[m]:p.mo[m]):0;return {l:n,v,vl:v?(useE?auEk(v):auN(v)):'',tick:pv,c:useE?'#3DDC84':'#F5B83D',sub:p?auDl(auPct(v,pv)):'',t:`${n} ${sLblX}: ${useE?auE(v):v+' Räder'}${p?`\n${n} ${pl}: ${useE?auE(pv):pv+' Räder'}`:''}`};}),{sm:1});
  const models=(rows,max)=>{const m={};rows.forEach(r=>{if(!r.mo)return;const key=r.b+'|'+r.mo.toLowerCase().replace(/\s+/g,' ');const x=m[key]||(m[key]={b:r.b,mo:r.mo,n:0,e:0,pn:0});x.n++;if(r.p){x.e+=r.p;x.pn++;}});const l=Object.values(m).sort((a,b)=>b.n-a.n).slice(0,max||15),mx=l.length?l[0].n:1;
   return auTbl(['#','Modell','Räder','','Ø Preis'],l.map((x,i)=>[i+1,`<span class="aubn">${logo(B[x.b])}<em>${esc((B[x.b]&&!B[x.b].lg?B[x.b].n+' ':'')+x.mo)}</em></span>`,auN(x.n),auHb(x.n,mx,'#22D3EE'),x.pn?auE(x.e/x.pn):'–']),'aumax');};
+ const mNote=o=>{const k=o.n-o.mo.reduce((s,v)=>s+v,0);return k>0?` · ${auN(k)} ohne Tag/Monat (nur in den Summen)`:'';};
  const yrTbl=ys=>auTbl(['Jahr','Räder','zum Vorjahr','Umsatz','Ø Preis','Leasing/Finanz.','Top-Marke'],ys.map(y=>{const o=g(y),tb=Object.keys(o.b).sort((a,b)=>o.b[b].n-o.b[a].n)[0];return [`<b>${y}</b>${y===D.cy?' <small>(bis heute)</small>':''}${y===best?' 🏆':''}`,auN(o.n),auDl(auPct(o.n,g(y-1).n)),o.e?auE(o.e):'–',avg(o)?auE(avg(o)):'–',lq(o)!=null?Math.round(lq(o))+' %':'–',tb?`<span class="aubn">${logo(B[tb])}<em>${esc(B[tb].n)}</em> <small>${o.b[tb].n}</small></span>`:'–'];}),'aumax');
  const two=(a,b)=>`<div class="audg">${a}${b}</div>`,sec=(t,x)=>`<div class="ausec"><h4>${t}</h4>${x}</div>`;
- if(k==='rad'||k==='zr'&&span.length===1){const y=k==='rad'?F:F-1;const o=g(y);
-  return card(`🚲 Räder ${y}${y===D.cy?' bis heute':''} – alle Details`,`${auN(o.n)} Räder · Vergleich mit ${y-1}${y===D.cy?' (gleicher Stichtag '+tdS+')':''}`,
-   sec('Je Monat (Strich = '+(y-1)+')',moChart(y,false))+two(sec('Marken '+y,brTbl(y,y-1,false)),sec('Meistverkaufte Modelle '+y,models(o.r))));}
- if(k==='ums'){return card(`💶 Umsatz ${F}${isCur?' bis heute':''} – alle Details`,`${auE(Fo.e)} · Preis bei ${Fo.n?Math.round(Fo.pn/Fo.n*100):0} % der Räder eingetragen`,
-   sec('Umsatz je Monat (Strich = '+(F-1)+')',moChart(F,true))+sec('Umsatz je Marke '+F,brTbl(F,F-1,true)));}
- if(k==='avg'){const rows=Fo.r.filter(r=>r.p),pr=rows.map(r=>r.p).sort((a,b)=>a-b),pp=Po.r.filter(r=>r.p).map(r=>r.p),med=pr.length?pr[Math.floor(pr.length/2)]:0;
+ if(k==='rad'||k==='zr'&&one){let o=S,p=P,l=sLbl,pl=pLbl;if(k==='zr'){o=g(F-1);p=g(F-2).n?g(F-2):null;l=String(F-1);pl=String(F-2);}sLblX=l;
+  return card(`🚲 Räder ${l}${k==='rad'&&isCur?(one?' bis heute':` (${D.cy} bis heute)`):''} – alle Details`,`${auN(o.n)} Räder${p?' · Vergleich mit '+pl:''}${mNote(o)}`,
+   sec('Je Monat'+(one||k==='zr'?'':' (Summe aller Jahre)')+(p?' – Strich = '+pl:''),moChart(o,p,pl,false))+two(sec('Marken '+l,brTbl(o,p,pl,false)),sec('Meistverkaufte Modelle '+l,models(o.r))));}
+ if(k==='ums'){return card(`💶 Umsatz ${sLbl}${isCur?(one?' bis heute':` (${D.cy} bis heute)`):''} – alle Details`,`${auE(S.e)} · Preis bei ${S.n?Math.round(S.pn/S.n*100):0} % der Räder eingetragen${mNote(S)}`,
+   sec('Umsatz je Monat'+(one?'':' (Summe aller Jahre)')+(P?' – Strich = '+pLbl:''),moChart(S,P,pLbl,true))+sec('Umsatz je Marke '+sLbl,brTbl(S,P,pLbl,true)));}
+ if(k==='avg'){const rows=S.r.filter(r=>r.p),pr=rows.map(r=>r.p).sort((a,b)=>a-b),pp=P?P.r.filter(r=>r.p).map(r=>r.p):[],med=pr.length?(pr.length%2?pr[(pr.length-1)/2]:(pr[pr.length/2-1]+pr[pr.length/2])/2):0;
   const BK=[[0,1000,'bis 1.000 €'],[1000,2000,'1–2 T€'],[2000,3000,'2–3 T€'],[3000,4000,'3–4 T€'],[4000,5000,'4–5 T€'],[5000,6000,'5–6 T€'],[6000,8000,'6–8 T€'],[8000,1e9,'über 8.000 €']];
   const cnt=(a,b,l)=>l.filter(p=>p>=a&&p<b).length;
-  const hist=auBars(BK.map(([a,b,l])=>{const v=cnt(a,b,pr),pv=cnt(a,b,pp);return {l,v,vl:v||'',tick:pv,c:'#FFD93B',sub:pr.length?`<span class="aush2">${Math.round(v/pr.length*100)} %</span>`:'',t:`${l}\n${F}: ${v} Räder\n${F-1}: ${pv} Räder`};}),{sm:1});
-  const ba=Object.keys(Fo.b).filter(x=>Fo.b[x].pn>=2).map(x=>({x,a:Fo.b[x].e/Fo.b[x].pn,n:Fo.b[x].pn})).sort((a,b)=>b.a-a.a),mxa=ba.length?ba[0].a:1;
+  const hist=auBars(BK.map(([a,b,l])=>{const v=cnt(a,b,pr),pv=cnt(a,b,pp);return {l,v,vl:v||'',tick:P?pv:0,c:'#FFD93B',sub:pr.length?`<span class="aush2">${Math.round(v/pr.length*100)} %</span>`:'',t:`${l}\n${sLbl}: ${v} Räder${P?`\n${pLbl}: ${pv} Räder`:''}`};}),{sm:1});
+  const ba=Object.keys(S.b).filter(x=>S.b[x].pn>=2).map(x=>({x,a:S.b[x].e/S.b[x].pn,n:S.b[x].pn})).sort((a,b)=>b.a-a.a),mxa=ba.length?ba[0].a:1;
   const exp=rows.slice().sort((a,b)=>b.p-a.p).slice(0,10);
-  return card(`💶 Verkaufspreise ${F} – alle Details`,`Ø ${avg(Fo)?auE(avg(Fo)):'–'} · Median ${med?auE(med):'–'} · günstigstes ${pr.length?auE(pr[0]):'–'} · teuerstes ${pr.length?auE(pr[pr.length-1]):'–'} · ${pr.length} Räder mit Preis`,
-   sec('Preisklassen (Strich = '+(F-1)+')',hist)+two(sec('Ø Preis je Marke '+F+' (ab 2 Rädern)',auTbl(['Marke','Ø Preis','','Räder'],ba.map(b=>[`<span class="aubn">${logo(B[b.x])}<em>${esc(B[b.x].n)}</em></span>`,auE(b.a),auHb(b.a,mxa,'#FFD93B'),b.n]),'aumax')),
-   sec('Teuerste Verkäufe '+F,auTbl(['Datum','Marke · Modell','Preis'],exp.map(r=>[new Date(r.d).toLocaleDateString('de-DE',{day:'2-digit',month:'2-digit',year:'2-digit'}),`<span class="aubn">${logo(B[r.b])}<em>${esc((B[r.b]?B[r.b].n+' ':'')+(r.mo||''))}</em></span>`,auE(r.p)]),'aumax'))));}
- if(k==='zr')return card(`📆 Zeitraum ${lo}–${hi} – Jahr für Jahr`,`${span.length} Jahre · 🏆 = bestes Jahr · Jahr anklicken in der Leiste oben = nur dieses Jahr`,yrTbl(span.slice().reverse()));
- if(k==='best'){const rk=span.filter(y=>g(y).n).sort((a,b)=>c.val(g(b))-c.val(g(a)));return card(`🏆 Rangliste ${lo}–${hi}`,`sortiert nach ${eur?'Umsatz':'Stück'}`,auTbl(['Platz','Jahr','Räder','Umsatz','Ø Preis','Leasing/Finanz.','zum Vorjahr'],rk.map((y,i)=>{const o=g(y);return [i<3?['🥇','🥈','🥉'][i]:i+1,`<b>${y}</b>`,auN(o.n),o.e?auE(o.e):'–',avg(o)?auE(avg(o)):'–',lq(o)!=null?Math.round(lq(o))+' %':'–',auDl(auPct(o.n,g(y-1).n))];}),'aumax'));}
- if(k==='leas'){const cntL=ys=>{const m={};let n=0;ys.forEach(y=>g(y).r.forEach(r=>{n++;if(r.lc)m[r.lc]=(m[r.lc]||0)+1;}));return {m,n};};const A=cntL([F]),Z=cntL(span),Pv=cntL([F-1]);
-  const ks=[...new Set([...Object.keys(A.m),...Object.keys(Z.m)])].sort((a,b)=>(A.m[b]||0)-(A.m[a]||0)||(Z.m[b]||0)-(Z.m[a]||0)),mx=Math.max(1,...ks.map(x=>A.m[x]||0));
+  return card(`💶 Verkaufspreise ${sLbl} – alle Details`,`Ø ${avg(S)?auE(avg(S)):'–'} · Median ${med?auE(med):'–'} · günstigstes ${pr.length?auE(pr[0]):'–'} · teuerstes ${pr.length?auE(pr[pr.length-1]):'–'} · ${auN(pr.length)} Räder mit Preis`,
+   sec('Preisklassen'+(P?' (Strich = '+pLbl+')':''),hist)+two(sec('Ø Preis je Marke '+sLbl+' (ab 2 Rädern mit Preis)',auTbl(['Marke','Ø Preis','','Räder'],ba.map(b=>[`<span class="aubn">${logo(B[b.x])}<em>${esc(B[b.x].n)}</em></span>`,auE(b.a),auHb(b.a,mxa,'#FFD93B'),b.n]),'aumax')),
+   sec('Teuerste Verkäufe '+sLbl,auTbl(['Datum','Marke · Modell','Preis'],exp.map(r=>[r.m==null?String(r.y):new Date(r.d).toLocaleDateString('de-DE',{day:'2-digit',month:'2-digit',year:'2-digit'}),`<span class="aubn">${logo(B[r.b])}<em>${esc((B[r.b]?B[r.b].n+' ':'')+(r.mo||''))}</em></span>`,auE(r.p)]),'aumax'))));}
+ if(k==='zr')return card(`📆 Zeitraum ${sLbl} – Jahr für Jahr`,`${span.length} Jahre · 🏆 = bestes Jahr · Jahr anklicken in der Leiste oben = nur dieses Jahr`,yrTbl(span.slice().reverse()));
+ if(k==='best'){const rk=span.filter(y=>g(y).n).sort((a,b)=>c.val(g(b))-c.val(g(a)));return card(`🏆 Rangliste ${sLbl}`,`sortiert nach ${eur?'Umsatz':'Stück'}`,auTbl(['Platz','Jahr','Räder','Umsatz','Ø Preis','Leasing/Finanz.','zum Vorjahr'],rk.map((y,i)=>{const o=g(y);return [i<3?['🥇','🥈','🥉'][i]:i+1,`<b>${y}</b>`,auN(o.n),o.e?auE(o.e):'–',avg(o)?auE(avg(o)):'–',lq(o)!=null?Math.round(lq(o))+' %':'–',auDl(auPct(o.n,g(y-1).n))];}),'aumax'));}
+ if(k==='leas'){const cntL=o=>{const m={};o.r.forEach(r=>{if(r.lc)m[r.lc]=(m[r.lc]||0)+1;});return m;};const A=cntL(S),Pv=P?cntL(P):{},sumA=Object.values(A).reduce((s,v)=>s+v,0);
+  const ks=Object.keys(A).sort((a,b)=>A[b]-A[a]),mx=Math.max(1,...ks.map(x=>A[x]));
   const lgL=x=>x==='#'?'📅':kdLogoH(x)||`<span class="lchip">${esc(x)}</span>`;
-  return card(`💼 Leasing & Finanzierung ${F} – alle Details`,`${A.n?Math.round(Object.values(A.m).reduce((s,v)=>s+v,0)/A.n*100):0} % der Räder ${F} über Leasing/Finanzierung · ${A.n-Object.values(A.m).reduce((s,v)=>s+v,0)} Kauf/ohne Eintrag`,
-   auTbl(['Anbieter','',`${F}`,'Anteil '+F,'',`zu ${F-1}`,`${lo}–${hi}`],ks.map(x=>[`<span class="aubn aulgo">${lgL(x)}</span>`,`<em class="auln">${esc(auLn(x))}${KFIN[x]?' <small>Finanzierung</small>':''}</em>`,auN(A.m[x]||0),A.n?auF1((A.m[x]||0)/A.n*100)+' %':'–',auHb(A.m[x]||0,mx,KFIN[x]?'#B15CFF':'#22D3EE'),auDl(auPct(A.m[x]||0,Pv.m[x]||0)),auN(Z.m[x]||0)]),'aumax'));}
+  return card(`💼 Leasing & Finanzierung ${sLbl} – alle Details`,`${S.n?Math.round(sumA/S.n*100):0} % der Räder über Leasing/Finanzierung (${auN(sumA)} von ${auN(S.n)}) · ${auN(S.n-sumA)} Kauf/ohne Eintrag`,
+   auTbl(['Anbieter','','Räder','Anteil','',P?`zu ${pLbl}`:'Vergleich'],ks.map(x=>[`<span class="aubn aulgo">${lgL(x)}</span>`,`<em class="auln">${esc(auLn(x))}${KFIN[x]?' <small>Finanzierung</small>':''}</em>`,auN(A[x]),S.n?auF1(A[x]/S.n*100)+' %':'–',auHb(A[x],mx,KFIN[x]?'#B15CFF':'#22D3EE'),P?auDl(auPct(A[x],Pv[x]||0)):'–']),'aumax'));}
  if(k==='top'){const X=bl[0];if(!X)return '';const rows=[];span.forEach(y=>g(y).r.forEach(r=>{if(r.b===X.k)rows.push(r);}));
-  return card(`${logo(X)} ${esc(X.n)} – Top-Marke ${lo}–${hi}`,`${auN(X.cn)} Räder · ${X.ce?auE(X.ce):'–'} Umsatz`,
+  return card(`${logo(X)} ${esc(X.n)} – Top-Marke ${sLbl}`,`${auN(X.cn)} Räder · ${X.ce?auE(X.ce):'–'} Umsatz`,
    two(sec('Je Jahr',auTbl(['Jahr','Räder','Anteil','zum Vorjahr','Ø Preis','Leasing/Finanz.'],span.slice().reverse().filter(y=>g(y).b[X.k]).map(y=>{const b=g(y).b[X.k],pb=g(y-1).b[X.k]||{n:0};return [`<b>${y}</b>`,auN(b.n),auF1(g(y).n?b.n/g(y).n*100:0)+' %',auDl(auPct(b.n,pb.n)),b.pn?auE(b.e/b.pn):'–',b.n?Math.round(b.leas/b.n*100)+' %':'–'];}),'aumax')),sec('Meistverkaufte Modelle',models(rows,20))));}
  return '';}
 $('v-ausw').addEventListener('click',e=>{const t=e.target;let x;
