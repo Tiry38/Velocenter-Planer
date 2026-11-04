@@ -986,3 +986,23 @@ body[data-v=ausw]{--ac:#F5B83D}
 .aubr.own .aubn em{color:#fff}
 /* 1.10.31: farbige Navi-Symbole (Tiry) – Kachelfarbe bleibt, Symbol mehrfarbig; Schatten für Kontrast auf der aktiven Kachel */
 .navbtn:not([data-v=kunden]) .tile svg{filter:drop-shadow(0 1px 1.2px rgba(0,0,0,.55))}
+/* 1.10.36 ⚙ Einstellungen neu */
+#kdImp,#kdMailImp,#kdClr,#sExp{display:none!important}
+.dlg-box.wide.stwide{width:min(1120px,96vw);max-height:92vh}
+.sthd{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:14px}.sthd h3{margin:0;font:800 22px "Outfit",sans-serif;background:linear-gradient(90deg,#fff,#9FE8FF);-webkit-background-clip:text;background-clip:text;color:transparent}
+.sttabs{display:flex;gap:4px;padding:4px;border-radius:14px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);margin-left:auto}
+.sttabs button{border:0;cursor:pointer;padding:9px 16px;border-radius:10px;background:transparent;color:#94A3B8;font:700 13px "Outfit",sans-serif;transition:.2s}
+.sttabs button:hover{color:#fff}.sttabs button.on{color:#fff;background:linear-gradient(135deg,#E2232D,#A21CAF);box-shadow:0 4px 16px rgba(226,35,45,.4)}
+.stgrp{margin-bottom:18px}.stgrp h4{margin:0 0 10px;font:800 12px "Outfit",sans-serif;letter-spacing:.12em;text-transform:uppercase;color:#7DD3FC}
+.stgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:12px}
+.stc{--tc:#22D3EE;position:relative;display:flex;flex-direction:column;gap:9px;padding:15px 16px 14px;border-radius:16px;background:linear-gradient(160deg,color-mix(in srgb,var(--tc) 13%,transparent),rgba(255,255,255,.025) 55%);border:1px solid color-mix(in srgb,var(--tc) 35%,transparent);box-shadow:0 6px 22px rgba(0,0,0,.25);overflow:hidden}
+.stc::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--tc);box-shadow:0 0 12px var(--tc)}
+.stch{display:flex;align-items:center;gap:11px}.stch b{display:block;font:800 16px "Outfit",sans-serif;color:#fff}.stch em{font:800 10px "Outfit",sans-serif;font-style:normal;letter-spacing:.1em;color:var(--tc)}
+.stic{display:grid;place-items:center;width:40px;height:40px;flex:none;border-radius:12px;font-size:21px;background:color-mix(in srgb,var(--tc) 20%,#0A0D13);border:1px solid color-mix(in srgb,var(--tc) 50%,transparent)}
+.stcr{display:grid;grid-template-columns:96px 1fr;gap:8px;font-size:12.5px;line-height:1.45}.stcr span{font:700 11px "Outfit",sans-serif;color:var(--tc);text-transform:uppercase;letter-spacing:.04em;padding-top:2px}.stcr p{margin:0;color:#CBD5E1}.stcr b{color:#fff}
+.stp{margin:0;font-size:12.5px;color:#CBD5E1;line-height:1.45}
+.stst{font:600 12px "Outfit",sans-serif;color:#E2E8F0;padding:6px 10px;border-radius:9px;background:rgba(0,0,0,.28);border:1px solid rgba(255,255,255,.07)}
+.stcb{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:auto;padding-top:4px}.stcb .err{font-size:12px}
+.stno{font:600 12px "Outfit",sans-serif;color:#64748B}
+.stdel{background:linear-gradient(160deg,rgba(255,77,109,.14),rgba(255,255,255,.02) 55%)}
+@media(max-width:600px){.stcr{grid-template-columns:1fr;gap:2px}.sttabs{margin-left:0;width:100%}.sttabs button{flex:1;padding:9px 6px}}
