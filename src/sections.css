@@ -181,9 +181,12 @@ body.navmini .app{grid-template-columns:84px 1fr}
 .dlg-box.wide{width:min(760px,100%);max-height:88vh;overflow:auto}
 .dlg-box.wide.xwide{width:min(1180px,96vw);height:92vh;max-height:92vh;overflow:auto;display:flex;flex-direction:column}
 .dlg-box.xwide>h3{flex:none}.dlg-box.xwide #ktF{flex:1;min-height:0;display:flex;flex-direction:column;gap:10px}
-.dlg-box.xwide #ktF>*{flex:none}.dlg-box.xwide #ktF>label:has(#ktB){flex:1;min-height:120px;display:flex;flex-direction:column}
+.dlg-box.xwide #ktF>*{flex:none}.dlg-box.xwide #ktF>.ktbody{flex:1;min-height:260px;display:grid;grid-template-columns:1fr;gap:14px}
+.dlg-box.xwide #ktF>.ktbody.pvon{grid-template-columns:minmax(300px,1fr) minmax(0,660px)}
+.dlg-box.xwide .ktbl{display:flex;flex-direction:column;min-height:0}
 .dlg-box.xwide #ktB{flex:1;min-height:0;resize:none}
-.dlg-box.xwide #ktPv:not([hidden]){flex:1;min-height:160px;display:flex}.dlg-box.xwide #ktIf{height:auto;flex:1}
+.dlg-box.xwide #ktPv:not([hidden]){display:flex;min-height:0}.dlg-box.xwide #ktIf{height:auto;flex:1}
+@media (max-width:900px){.dlg-box.xwide #ktF>.ktbody.pvon{grid-template-columns:1fr;grid-template-rows:200px minmax(400px,1fr)}}
 .zubd h3{margin:0 0 12px;color:color-mix(in srgb,var(--ac) 45%,#fff)}
 .zcols{display:grid;grid-template-columns:1fr 1fr;gap:14px}
 .zcols h4{margin:0 0 8px;font:700 13px "Outfit",sans-serif}.zj h4{color:var(--ok)}.zn h4{color:#FCA5A5}
