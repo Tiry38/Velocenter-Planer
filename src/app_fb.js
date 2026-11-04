@@ -628,7 +628,7 @@ $('vkDone').addEventListener('click',e=>{vkShowDone=!vkShowDone;const t=e.curren
 /* ================= BESTELLUNGEN ================= */
 let bEdit=null,bShowDone=false;
 const BST=[['offen','Offen'],['bestellt','Bestellt'],['da','Da · Kunde informieren']];
-const BF=[['datum','Datum'],['artikel','Artikel'],['_gap',''],['kunde','Artikel-Info'],['lieferant','Lieferant'],['lieferzeit','Kommt voraussichtlich'],['telefon','Telefon']];/* 1.10.3: Reihenfolge nach Tiry, Notiz-Feld raus (alte Notizen bleiben gespeichert) */
+const BF=[['datum','Datum'],['artikel','Artikel'],['_gap',''],['kunde','Artikel-Info'],['lieferant','Lieferant'],['lieferzeit','Kommt voraussichtlich am'],['telefon','Telefon']];/* 1.10.3: Reihenfolge nach Tiry, Notiz-Feld raus (alte Notizen bleiben gespeichert) */
 let bF='';
 function rb(){const m=b=>true;
  const st=k=>B.filter(b=>(b.status||'offen')===k).length;
