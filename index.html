@@ -1087,6 +1087,11 @@ body.navmini #bmBar{left:100px}#bmBar span{overflow:hidden;text-overflow:ellipsi
 .ktf{display:grid;gap:10px}.ktf label{display:grid;gap:4px}
 .ktf textarea{width:100%;box-sizing:border-box;padding:10px;border-radius:10px;border:1px solid #2A3344;background:#0A0D13;color:#E2E8F0;font:500 13px/1.45 var(--body);resize:vertical}
 .ktk{display:flex;gap:8px}.ktan{display:flex;gap:6px;align-items:center}.ktan input{flex:1;min-width:0}.ktan .btn{padding:6px 10px;font-size:12px}
+/* 1.10.12: E-Mail-Versand einrichten */
+.mcg{margin:4px 0 12px;padding:10px 12px;border-radius:12px;background:rgba(56,189,248,.06);border:1px solid rgba(56,189,248,.3)}
+.mcg summary{cursor:pointer;font-weight:700;color:#7DD3FC}.mcg ol{margin:8px 0 0 18px;padding:0;display:grid;gap:6px;font-size:13px;line-height:1.45}
+.mcg code{font:600 12px var(--mono);padding:1px 5px;border-radius:5px;background:#0A0D13;color:#FDE68A}
+.ktf .g4{display:grid;grid-template-columns:1fr 1fr;gap:10px}@media(max-width:640px){.ktf .g4{grid-template-columns:1fr}}
 
 [hidden]{display:none!important}
 #sTab td.b{font-weight:700}#sTab .pwm.ed{outline:none;padding:2px 6px;border-radius:6px;font-family:var(--mono)}#sTab td{vertical-align:top}
@@ -1264,7 +1269,7 @@ body.navmini #bmBar{left:100px}#bmBar span{overflow:hidden;text-overflow:ellipsi
 <script>
 const FB_CONFIG={apiKey:"AIzaSyC_uZPvc5rJETwlS4JbfCoTkkE4ckjtp0M",authDomain:"velocenter-planer.firebaseapp.com",projectId:"velocenter-planer",storageBucket:"velocenter-planer.firebasestorage.app",messagingSenderId:"1018330488700",appId:"1:1018330488700:web:262a4d1660353e6fde8ef9"};
 /* ================= Velocenter Werkstatt-Cockpit – Oberfläche ================= */
-const CLIENT_VERSION='1.10.11';
+const CLIENT_VERSION='1.10.12';
 const USERS=[{id:'kevin',n:'Kevin',c:'#E2232D'},{id:'stefan',n:'Stefan',c:'#F59E0B'},{id:'martina',n:'Martina',c:'#EC4899'},{id:'sascha',n:'Sascha',c:'#22D3EE'},{id:'rene',n:'René',c:'#34D399'}];
 const U=id=>USERS.find(u=>u.id===id)||{n:'',c:'#64748B',id:''};
 const $=id=>document.getElementById(id);
@@ -1404,10 +1409,10 @@ function setDlg(){if(!ME)return;const u=U(ME.id),pin=NAVPIN,st=MYPREF.start||'la
   <label class="setl">Navi beim Start<select id="stNav"><option value="0"${pin?'':' selected'}>eingeklappt</option><option value="1"${pin?' selected':''}>ausgeklappt</option></select></label>
   <label class="setl">Startseite nach dem Anmelden<select id="stStart"><option value="last"${st==='last'?' selected':''}>zuletzt geöffneter Reiter</option>${tabs.map(([v,n])=>`<option value="${v}"${st===v?' selected':''}>${esc(n)}</option>`).join('')}</select></label></div>
  <div class="setsec"><h4>🏷 Markenlogos</h4><p class="hint">Logos für Marken hochladen, Erkennung anpassen.</p><button type="button" class="btn" id="stBr">Markenlogos verwalten</button></div>
- ${ME.adm?`<div class="setsec"><h4>🛡 Admin</h4><p class="hint">Konten sichern, Sicherung herunterladen, Passwort-Hilfe für Mitarbeiter. Spalten ändern: Stift „Bearbeiten“ unten in der Navi.</p><button type="button" class="btn" id="stAdm">Konten & Sicherung</button></div>`:''}</div>
+ ${ME.adm?`<div class="setsec"><h4>🛡 Admin</h4><p class="hint">Konten sichern, Sicherung herunterladen, Passwort-Hilfe für Mitarbeiter. Spalten ändern: Stift „Bearbeiten“ unten in der Navi.</p><button type="button" class="btn" id="stAdm">Konten & Sicherung</button></div><div class="setsec"><h4>📧 E-Mail-Versand</h4><p class="hint">Mails an Kunden direkt über info@velo-center.de verschicken.</p><button type="button" class="btn" id="stMail">Einrichten</button></div>`:''}</div>
  <div class="acts" style="justify-content:flex-end"><button type="button" class="btn red" data-close>Fertig</button></div>`);$('dlgBox').classList.add('wide');
  $('stPw').addEventListener('click',()=>{dlgClose();$('meSet').click();});$('stOut').addEventListener('click',()=>{dlgClose();$('switchUser').click();});
- $('stBr').addEventListener('click',()=>{dlgClose();brandDlg();});if($('stAdm'))$('stAdm').addEventListener('click',()=>{dlgClose();$('meSet').click();});
+ $('stBr').addEventListener('click',()=>{dlgClose();brandDlg();});if($('stAdm'))$('stAdm').addEventListener('click',()=>{dlgClose();$('meSet').click();});if($('stMail'))$('stMail').addEventListener('click',()=>{dlgClose();mailCfgDlg();});
  $('stNav').addEventListener('change',e=>{navMini(e.target.value!=='1');toast('Gespeichert');});
  $('stStart').addEventListener('change',e=>{MYPREF.start=e.target.value;db.doc('meta/prefs').set({[ME.id]:{start:e.target.value}},{merge:true}).then(()=>toast('Startseite gespeichert')).catch(fail);});}
 /* ⚙ Einstellungen → Markenlogos: Bild hochladen → automatisch freistellen, zuschneiden, schärfen, auf Einheitshöhe bringen */
@@ -2795,6 +2800,35 @@ async function importKunden(file){await loadXLSX();const wb=XLSX.read(await file
  for(const y in by)await db.doc('meta/kd_'+y).set({items:by[y]});
  await db.doc('meta/import').set({kunden:true,kundenAm:stamp(),kundenN:list.length,kundenVon:ME.id},{merge:true});return list.length;}
 
+/* 1.10.12: Direkt-Versand über info@velo-center.de. Browser können kein SMTP – der Versand läuft über EmailJS (dort liegen IONOS-Server + Passwort).
+   Im Planer stehen nur Service-ID, Template-ID, Public Key (keine Geheimnisse) in meta/mailcfg – nie im Repo. */
+let MCFG=null;
+async function mcfgGet(f){if(MCFG&&!f)return MCFG;try{const d=await db.doc('meta/mailcfg').get();MCFG=d.exists?(d.data()||{}):{};}catch(e){MCFG=MCFG||{};}return MCFG;}
+const mcfgOk=c=>!!(c&&c.svc&&c.tpl&&c.key);
+const mHtml=t=>esc(t).replace(/(https?:\/\/[^\s<]+)/g,'<a href="$1">$1</a>').replace(/\r?\n/g,'<br>');
+async function mailSend(to,subject,text){const c=await mcfgGet();if(!mcfgOk(c))throw new Error('E-Mail-Versand ist nicht eingerichtet (⚙ Einstellungen → 📧 E-Mail-Versand).');
+ const r=await fetch('https://api.emailjs.com/api/v1.0/email/send',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({service_id:c.svc,template_id:c.tpl,user_id:c.key,
+  template_params:{to_email:to,subject,message:text,message_html:mHtml(text),reply_to:c.reply||'info@velo-center.de',bcc:c.bcc||''}})});
+ if(!r.ok){let t='';try{t=await r.text();}catch(_){}throw new Error('Versand fehlgeschlagen ('+r.status+')'+(t?': '+t.slice(0,200):''));}return true;}
+async function mailCfgDlg(){if(!ME||!ME.adm)return;const c=await mcfgGet(true);
+ dlg(`<h3>📧 E-Mail-Versand · info@velo-center.de</h3>
+ <p class="hint">Browser dürfen nicht selbst mit einem Mailserver sprechen. Darum läuft der Versand über <b>EmailJS</b> (kostenlos bis 200 Mails/Monat): dort trägst du die <b>IONOS-Daten mit Passwort</b> ein, hier nur die drei Kennungen – <b>kein Passwort im Planer</b>.</p>
+ <details class="mcg"><summary>So richtest du es ein (einmalig, ca. 10 Min.)</summary><ol>
+  <li><b>emailjs.com</b> → kostenloses Konto anlegen.</li>
+  <li><b>Email Services → Add New Service → SMTP</b>: Server <code>smtp.ionos.de</code>, Port <code>465</code> (SSL) oder <code>587</code>, Benutzer <code>info@velo-center.de</code>, dein IONOS-Passwort, Absender <code>info@velo-center.de</code>. → <b>Service ID</b> kopieren.</li>
+  <li><b>Email Templates → Create New Template</b>: To Email <code>{{to_email}}</code> · Subject <code>{{subject}}</code> · Reply To <code>{{reply_to}}</code> · Bcc <code>{{bcc}}</code> · Inhalt (Code-Ansicht) <code>{{{message_html}}}</code> (drei Klammern) · From Name <code>Velocenter Hessert</code>. Speichern → <b>Template ID</b> kopieren.</li>
+  <li><b>Account → General → Public Key</b> kopieren.</li>
+  <li>Alle drei unten eintragen → <b>Testmail</b>.</li></ol>
+  <p class="hint">Hinweis Datenschutz: Kunden-Adresse und Text laufen über EmailJS (Drittanbieter). Ob ein AV-Vertrag nötig ist, bitte prüfen.</p></details>
+ <form id="mcF" class="ktf" autocomplete="off"><div class="g4">
+  <label>Service ID<input id="mcS" value="${esc(c.svc||'')}" placeholder="service_…" autocomplete="off"></label><label>Template ID<input id="mcT" value="${esc(c.tpl||'')}" placeholder="template_…" autocomplete="off"></label>
+  <label>Public Key<input id="mcK" value="${esc(c.key||'')}" autocomplete="off"></label><label>Antworten gehen an<input id="mcR" value="${esc(c.reply||'info@velo-center.de')}"></label>
+  <label>Kopie jeder Mail an (BCC, optional)<input id="mcB" value="${esc(c.bcc||'')}" placeholder="z. B. info@velo-center.de"></label><label>Testmail an<input id="mcX" value="info@velo-center.de"></label></div>
+  <div class="err" id="mcE"></div><div class="acts"><button class="btn" type="button" data-close>Abbrechen</button><button class="btn" type="button" id="mcTest">✉ Speichern + Testmail</button><button class="btn red" type="submit">Speichern</button></div></form>`);$('dlgBox').classList.add('wide');
+ const val=()=>({svc:$('mcS').value.trim(),tpl:$('mcT').value.trim(),key:$('mcK').value.trim(),reply:$('mcR').value.trim(),bcc:$('mcB').value.trim(),ts:stamp(),von:ME.id});
+ const put=async()=>{const n=val();await db.doc('meta/mailcfg').set(n);MCFG=n;return n;};
+ $('mcF').addEventListener('submit',async ev=>{ev.preventDefault();try{await put();dlgClose();toast('E-Mail-Versand gespeichert');}catch(err){$('mcE').textContent=err.message||String(err);}});
+ $('mcTest').addEventListener('click',async()=>{try{$('mcE').textContent='Sendet …';await put();await mailSend($('mcX').value.trim(),'Testmail aus dem Velocenter-Planer','Hallo,\n\ndas ist eine Testmail aus dem Planer ('+U(ME.id).n+', '+new Date().toLocaleString('de-DE')+').\nWenn sie ankommt, funktioniert der Direkt-Versand.\n\nMit freundlichen Grüßen\nIhr Team vom Velocenter Hessert');$('mcE').textContent='';toast('Testmail verschickt – Posteingang prüfen');$('mcE').innerHTML='<span style="color:#34D399">✓ Testmail verschickt</span>';}catch(err){$('mcE').textContent=err.message||String(err);}});}
 /* 1.10.11: Kunden – Spalte E-Mail (Feld mail, mehrere mit Komma), Maus drüber = Adressen, Klick = bearbeiten + Vorlage öffnen.
    Vorlagen (Einzelperson/Familie) in meta/mailtpl = {ein:{s,b}, fam:{s,b}, fuss} – Admins können sie dauerhaft ändern. Stammdaten wie KI-Zentrale (CLAUDE.md §11). */
 const MTPL0={
@@ -2863,21 +2897,25 @@ function kdMailOpen(cell){const o=kdRowOf(cell);if(!o)return;const {y,id,r}=o;if
   const nv=list.join(', ');kdPopClose();if(nv===String(r.mail||''))return;const old=r;kdPut(y,Object.assign({},r,{mail:nv,mailSrc:'',mailVon:ME.id})).then(rk);toast(nv?'E-Mail gespeichert':'E-Mail entfernt',()=>{kdPut(y,old).then(rk);});};
  inp.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();save(inp.value);}});
  el.addEventListener('click',e=>{if(e.target.closest('[data-kmok]'))save(inp.value);else if(e.target.closest('[data-kmclr]'))save('');else{const b=e.target.closest('[data-ktpl]');if(b){kdPopClose();kdTplOpen(y,id,b.dataset.ktpl);}}});}
-async function kdTplOpen(y,id,kind){const r=KD[y]&&KD[y][id];if(!r)return;const T=await mtplGet(),m=kdMails(r);let an=kind==='fam'?'fam':'neu';
+async function kdTplOpen(y,id,kind){const r=KD[y]&&KD[y][id];if(!r)return;const T=await mtplGet(),m=kdMails(r),MC=await mcfgGet(),dir=mcfgOk(MC);let an=kind==='fam'?'fam':'neu';
  dlg(`<h3>✉ E-Mail an ${esc(r.kunde||'Kunde')}</h3><form id="ktF" class="ktf" autocomplete="off">
   <div class="ktk"><button type="button" class="kyc${kind==='ein'?' on':''}" data-kk="ein">👤 Einzelperson</button><button type="button" class="kyc${kind==='fam'?' on':''}" data-kk="fam">👨‍👩‍👧 Familie</button></div>
   <label>An<input id="ktTo" value="${esc(m.join(', '))}"></label>
   <label>Anrede<span class="ktan"><input id="ktAn"><button type="button" class="btn" data-an="herr">Herr</button><button type="button" class="btn" data-an="frau">Frau</button><button type="button" class="btn" data-an="fam">Familie</button><button type="button" class="btn" data-an="neu">neutral</button></span></label>
   <label>Betreff<input id="ktS"></label><label>Text<textarea id="ktB" rows="16"></textarea></label>
-  <p class="hint">Öffnet die E-Mail in eurem Mailprogramm. Ist der Text zu lang für den Link, wird er automatisch kopiert → im Mailprogramm <b>Strg+V</b>. Danach steht beim Kunden „angeschrieben“.</p>
-  <div class="acts">${ME&&ME.adm?'<button type="button" class="btn" data-kted>✎ Vorlagen dauerhaft ändern</button>':''}<button class="btn" type="button" data-close>Abbrechen</button><button class="btn" type="button" data-ktcp>📋 Text kopieren</button><button class="btn red" type="submit">📧 E-Mail öffnen</button></div></form>`);
+  <p class="hint">${dir?'<b>📤 Direkt senden</b> verschickt sofort über <b>info@velo-center.de</b>. „Im Mailprogramm“ öffnet sie stattdessen in Outlook.':'Öffnet die E-Mail in eurem Mailprogramm (Text zu lang für den Link → automatisch kopiert, im Mailprogramm <b>Strg+V</b>). Direkt-Versand: ⚙ Einstellungen → 📧 E-Mail-Versand.'} Danach steht beim Kunden „angeschrieben“.</p><div class="err" id="ktE"></div>
+  <div class="acts">${ME&&ME.adm?'<button type="button" class="btn" data-kted>✎ Vorlagen dauerhaft ändern</button>':''}<button class="btn" type="button" data-close>Abbrechen</button><button class="btn" type="button" data-ktcp>📋 Text kopieren</button>${dir?'<button class="btn" type="button" data-ktmp>📧 Im Mailprogramm</button><button class="btn red" type="button" data-ktsend>📤 Direkt senden</button>':'<button class="btn red" type="submit">📧 E-Mail öffnen</button>'}</div></form>`);
  $('dlgBox').classList.add('wide');
  const fill=()=>{$('ktAn').value=kdAnrede(r,an);$('ktS').value=T[kind].s;$('ktB').value=(T[kind].b.replace(/\{anrede\}/g,$('ktAn').value)+'\n\n'+T.fuss).trim();};fill();
  $('ktAn').addEventListener('change',()=>{const v=$('ktAn').value;$('ktB').value=(T[kind].b.replace(/\{anrede\}/g,v)+'\n\n'+T.fuss).trim();});
  $('ktF').addEventListener('click',e=>{const k=e.target.closest('[data-kk]');if(k){kind=k.dataset.kk;if(kind==='fam')an='fam';else if(an==='fam')an='neu';$('ktF').querySelectorAll('[data-kk]').forEach(b=>b.classList.toggle('on',b===k));fill();return;}
   const a=e.target.closest('[data-an]');if(a){an=a.dataset.an;fill();return;}
   if(e.target.closest('[data-ktcp]')){kdCopy($('ktB').value).then(ok=>toast(ok?'Text kopiert':'Kopieren nicht möglich'));return;}
-  if(e.target.closest('[data-kted]')){dlgClose();kdTplEdit();}});
+  if(e.target.closest('[data-kted]')){dlgClose();kdTplEdit();return;}
+  if(e.target.closest('[data-ktmp]')){$('ktF').requestSubmit();return;}
+  const sb=e.target.closest('[data-ktsend]');if(sb){const to=$('ktTo').value.split(/[\s,;]+/).filter(Boolean),bad=to.filter(x=>!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(x));if(!to.length||bad.length){$('ktE').textContent='Empfänger prüfen'+(bad.length?': '+bad[0]:'');return;}
+   sb.disabled=true;sb.textContent='Sendet …';const subj=$('ktS').value;mailSend(to.join(','),subj,$('ktB').value).then(()=>{dlgClose();const cur=KD[y]&&KD[y][id];if(cur){const old=cur;kdPut(y,Object.assign({},cur,{ang:'mail',angVon:ME.id,angTs:stamp(),angSrc:'',angVia:'direkt',angBetr:subj})).then(rk);}toast('✓ E-Mail an '+to.join(', ')+' verschickt');})
+    .catch(err=>{sb.disabled=false;sb.textContent='📤 Direkt senden';$('ktE').textContent=err.message||String(err);});}});
  $('ktF').addEventListener('submit',async ev=>{ev.preventDefault();const to=$('ktTo').value.split(/[\s,;]+/).filter(Boolean).join(','),s=$('ktS').value,b=$('ktB').value.replace(/\r?\n/g,'\r\n');
   let u='mailto:'+encodeURI(to)+'?subject='+encodeURIComponent(s)+'&body='+encodeURIComponent(b),cp=false;
   if(u.length>1900){u='mailto:'+encodeURI(to)+'?subject='+encodeURIComponent(s);cp=await kdCopy($('ktB').value);}

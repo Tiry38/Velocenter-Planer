@@ -763,3 +763,8 @@ body.navmini #bmBar{left:100px}#bmBar span{overflow:hidden;text-overflow:ellipsi
 .ktf{display:grid;gap:10px}.ktf label{display:grid;gap:4px}
 .ktf textarea{width:100%;box-sizing:border-box;padding:10px;border-radius:10px;border:1px solid #2A3344;background:#0A0D13;color:#E2E8F0;font:500 13px/1.45 var(--body);resize:vertical}
 .ktk{display:flex;gap:8px}.ktan{display:flex;gap:6px;align-items:center}.ktan input{flex:1;min-width:0}.ktan .btn{padding:6px 10px;font-size:12px}
+/* 1.10.12: E-Mail-Versand einrichten */
+.mcg{margin:4px 0 12px;padding:10px 12px;border-radius:12px;background:rgba(56,189,248,.06);border:1px solid rgba(56,189,248,.3)}
+.mcg summary{cursor:pointer;font-weight:700;color:#7DD3FC}.mcg ol{margin:8px 0 0 18px;padding:0;display:grid;gap:6px;font-size:13px;line-height:1.45}
+.mcg code{font:600 12px var(--mono);padding:1px 5px;border-radius:5px;background:#0A0D13;color:#FDE68A}
+.ktf .g4{display:grid;grid-template-columns:1fr 1fr;gap:10px}@media(max-width:640px){.ktf .g4{grid-template-columns:1fr}}
