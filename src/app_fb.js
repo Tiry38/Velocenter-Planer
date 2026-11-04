@@ -1094,6 +1094,9 @@ async function mailCfgDlg(){if(!ME||!ME.adm)return;const c=await mcfgGet(true);
  $('mcTest').addEventListener('click',async()=>{try{$('mcE').textContent='Sendet …';await put();await mailSend($('mcX').value.trim(),'Testmail aus dem Velocenter-Planer','Hallo,\n\ndas ist eine Testmail aus dem Planer ('+U(ME.id).n+', '+new Date().toLocaleString('de-DE')+').\nWenn sie ankommt, funktioniert der Direkt-Versand.\n\nMit freundlichen Grüßen\nIhr Team vom Velocenter Hessert');$('mcE').textContent='';toast('Testmail verschickt – Posteingang prüfen');$('mcE').innerHTML='<span style="color:#34D399">✓ Testmail verschickt</span>';}catch(err){$('mcE').textContent=err.message||String(err);}});}
 /* 1.10.11: Kunden – Spalte E-Mail (Feld mail, mehrere mit Komma), Maus drüber = Adressen, Klick = bearbeiten + Vorlage öffnen.
    Vorlagen (Einzelperson/Familie) in meta/mailtpl = {ein:{s,b}, fam:{s,b}, fuss} – Admins können sie dauerhaft ändern. Stammdaten wie KI-Zentrale (CLAUDE.md §11). */
+/* 1.10.21: Bewertungs-Satz passt sich automatisch an Sie/Du und Einzelperson/Familie an (Text + Design, Tiry) */
+function kdRvTxt(du,fam){return du?(fam?'Euch hat der Kauf eurer E-Bikes bei uns Spaß gemacht und ihr seid glücklich mit euren neuen Rädern? Dann bewertet uns gerne bei Google! 🙂':'Dir hat der Kauf deines E-Bikes bei uns Spaß gemacht und du bist glücklich mit deinem neuen Rad? Dann bewerte uns gerne bei Google! 🙂')
+ :(fam?'Ihnen hat der Kauf Ihrer E-Bikes bei uns Freude bereitet und Sie sind glücklich mit Ihren neuen Rädern? Dann freuen wir uns sehr über Ihre Bewertung bei Google! 🙂':'Ihnen hat der Kauf Ihres E-Bikes bei uns Freude bereitet und Sie sind glücklich mit Ihrem neuen Rad? Dann freuen wir uns sehr über Ihre Bewertung bei Google! 🙂');}
 const MTPL0={v:2,
  sie:{ein:{s:'Wie gefällt Ihnen Ihr neues E-Bike?',b:`{anrede}
 
@@ -1105,7 +1108,7 @@ Wichtig – 50 % Rabatt auf Ihre erste Inspektion:
 Kommen Sie dafür bitte zwischen 500 km und 1.000 km zu uns, spätestens innerhalb von 12 Monaten nach dem Kauf.
 Bei 500 km erscheint beim Einschalten Ihres E-Bikes automatisch der Hinweis, dass der Service fällig ist. Dann einfach kurz anrufen oder schreiben – wir machen gerne einen Termin mit Ihnen aus.
 
-Sie sind zufrieden mit uns? Über eine Google-Bewertung freuen wir uns sehr:
+${kdRvTxt(0,0)}
 https://g.page/r/CYlWWOy1HBsvEBM/review
 
 Mit freundlichen Grüßen
@@ -1120,7 +1123,7 @@ Wichtig – 50 % Rabatt auf die erste Inspektion jedes E-Bikes:
 Kommen Sie dafür bitte zwischen 500 km und 1.000 km zu uns, spätestens innerhalb von 12 Monaten nach dem Kauf. Das gilt für jedes Rad einzeln – auch wenn die Räder unterschiedlich viel gefahren werden.
 Bei 500 km erscheint beim Einschalten des E-Bikes automatisch der Hinweis, dass der Service fällig ist. Dann einfach kurz anrufen oder schreiben – wir machen gerne einen Termin mit Ihnen aus, gerne auch für mehrere Räder gleichzeitig.
 
-Sie sind zufrieden mit uns? Über eine Google-Bewertung freuen wir uns sehr:
+${kdRvTxt(0,1)}
 https://g.page/r/CYlWWOy1HBsvEBM/review
 
 Mit freundlichen Grüßen
@@ -1135,7 +1138,7 @@ Wichtig – 50 % Rabatt auf deine erste Inspektion:
 Komm dafür bitte zwischen 500 km und 1.000 km zu uns, spätestens innerhalb von 12 Monaten nach dem Kauf.
 Bei 500 km erscheint beim Einschalten deines E-Bikes automatisch der Hinweis, dass der Service fällig ist. Dann einfach kurz anrufen oder schreiben – wir machen gerne einen Termin mit dir aus.
 
-Du bist zufrieden mit uns? Über eine Google-Bewertung freuen wir uns sehr:
+${kdRvTxt(1,0)}
 https://g.page/r/CYlWWOy1HBsvEBM/review
 
 Viele Grüße
@@ -1150,7 +1153,7 @@ Wichtig – 50 % Rabatt auf die erste Inspektion jedes E-Bikes:
 Kommt dafür bitte zwischen 500 km und 1.000 km zu uns, spätestens innerhalb von 12 Monaten nach dem Kauf. Das gilt für jedes Rad einzeln – auch wenn die Räder unterschiedlich viel gefahren werden.
 Bei 500 km erscheint beim Einschalten des E-Bikes automatisch der Hinweis, dass der Service fällig ist. Dann einfach kurz anrufen oder schreiben – wir machen gerne einen Termin mit euch aus, gerne auch für mehrere Räder gleichzeitig.
 
-Ihr seid zufrieden mit uns? Über eine Google-Bewertung freuen wir uns sehr:
+${kdRvTxt(1,1)}
 https://g.page/r/CYlWWOy1HBsvEBM/review
 
 Viele Grüße
@@ -1203,7 +1206,7 @@ function kdMailHtml(text,o){o=o||{};const du=!!o.du,fam=!!o.fam;
   if(/^wichtig/i.test(L[0])&&/%/.test(L[0])){flush();const h=L[0].replace(/^wichtig\s*[–—:-]?\s*/i,'').replace(/:$/,''),mm=h.match(/^(.*?\d+\s*%\s*Rabatt)\s*(.*)$/i);
    out.push(card(`${kick(du?(fam?'Euer Vorteil':'Dein Vorteil'):'Ihr Vorteil als Kunde')}<div style="font-size:26px;font-weight:800;color:#FF1E2D;margin:2px 0 4px">${esc(mm?mm[1]:h)}</div>${mm&&mm[2]?`<div style="font-size:15px;font-weight:600;margin:0 0 10px">${esc(mm[2])}</div>`:''}${L.slice(1).map(t=>`<div style="font-size:13.5px;line-height:1.6;color:#D5D8E2;margin:0 0 8px">${lk(t)}</div>`).join('')}<div style="margin:10px 0 0"><a href="${esc(waU)}" style="display:inline-block;padding:11px 20px;border-radius:999px;background:#25D366;color:#0B1F12;font-size:14.5px;font-weight:800;text-decoration:none;${F}">💬&nbsp; Termin per WhatsApp anfragen</a></div>`));continue;}
   const rv=x.match(/https?:\/\/(g\.page|search\.google|www\.google|maps\.app)[^\s]*/);
-  if(rv){/* 1.10.18: Bewertungstext nur im reinen Text, im Design nur der Knopf */cur+=`<div style="margin:4px 0 18px"><a href="${esc(rv[0])}" style="display:inline-block;padding:14px 28px;border-radius:999px;${G};color:#FFFFFF;font-size:16px;font-weight:800;text-decoration:none;${F}">★ Jetzt bei Google bewerten</a></div>`;continue;}
+  if(rv){/* 1.10.21: Satz über dem Knopf automatisch nach Sie/Du + Familie */cur+=`<p style="margin:4px 0 14px;font-size:15.5px;line-height:1.6;font-weight:600;color:#FFFFFF">${esc(kdRvTxt(du,fam))}</p>`+`<div style="margin:4px 0 18px"><a href="${esc(rv[0])}" style="display:inline-block;padding:14px 28px;border-radius:999px;${G};color:#FFFFFF;font-size:16px;font-weight:800;text-decoration:none;${F}">★ Jetzt bei Google bewerten</a></div>`;continue;}
   if(/^(mit freundlichen|viele|liebe|beste|herzliche) grüße/i.test(L[0])){cur+=`<div style="font-size:15px;line-height:1.6;color:#D5D8E2">${esc(L[0])}${L.slice(1).map(t=>`<br><b style="color:#FFFFFF">${esc(t)}</b>`).join('')}</div>`;continue;}
   cur+=p(x);}
  flush();
