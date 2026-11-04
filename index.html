@@ -1278,7 +1278,7 @@ body.navmini #bmBar{left:100px}#bmBar span{overflow:hidden;text-overflow:ellipsi
 <script>
 const FB_CONFIG={apiKey:"AIzaSyC_uZPvc5rJETwlS4JbfCoTkkE4ckjtp0M",authDomain:"velocenter-planer.firebaseapp.com",projectId:"velocenter-planer",storageBucket:"velocenter-planer.firebasestorage.app",messagingSenderId:"1018330488700",appId:"1:1018330488700:web:262a4d1660353e6fde8ef9"};
 /* ================= Velocenter Werkstatt-Cockpit – Oberfläche ================= */
-const CLIENT_VERSION='1.10.14';
+const CLIENT_VERSION='1.10.15';
 const USERS=[{id:'kevin',n:'Kevin',c:'#E2232D'},{id:'stefan',n:'Stefan',c:'#F59E0B'},{id:'martina',n:'Martina',c:'#EC4899'},{id:'sascha',n:'Sascha',c:'#22D3EE'},{id:'rene',n:'René',c:'#34D399'}];
 const U=id=>USERS.find(u=>u.id===id)||{n:'',c:'#64748B',id:''};
 const $=id=>document.getElementById(id);
@@ -2951,6 +2951,9 @@ function kdMailHtml(text,o){o=o||{};const du=!!o.du,fam=!!o.fam;
  const kick=t=>`<div style="font-size:11px;letter-spacing:2.5px;text-transform:uppercase;font-weight:700;color:#9AA1B8;margin:0 0 6px">${esc(t)}</div>`;
  const line=`<div style="height:2px;width:56px;margin:0 0 16px;border-radius:2px;${G}"></div>`;
  const p=t=>`<p style="margin:0 0 12px;font-size:15px;line-height:1.65;color:#D5D8E2">${lk(t).replace(/\n/g,'<br>')}</p>`;
+ /* 1.10.15: WhatsApp-Symbol → Chat mit dem Laden (01635343133), Anfrage 1. Inspektion schon vorgeschrieben */
+ const waT=`Hallo liebes Velocenter-Team,\n\nich möchte gerne einen Termin für die 1. Inspektion ${fam?'unserer neuen E-Bikes':'meines neuen E-Bikes'}${o.modell&&!fam?' ('+o.modell+')':''} vereinbaren.${o.name?'\n\nName: '+o.name:''}\n\nWann ${du?'habt ihr':'hätten Sie'} einen Termin frei?\n\nVielen Dank!`;
+ const waU='https://wa.me/491635343133?text='+encodeURIComponent(waT);
  const body=String(text||'').split(/\n[–—-]{6,}\s*\n/)[0].replace(/\r/g,'').trim();
  const par=body.split(/\n\s*\n/).map(x=>x.trim()).filter(Boolean);
  let anr='';if(par[0]&&!par[0].includes('\n')&&/,$/.test(par[0]))anr=par.shift();
@@ -2958,7 +2961,7 @@ function kdMailHtml(text,o){o=o||{};const du=!!o.du,fam=!!o.fam;
  const flush=()=>{if(cur)out.push(card(cur));cur='';};
  for(const x of par){const L=x.split('\n');
   if(/^wichtig/i.test(L[0])&&/%/.test(L[0])){flush();const h=L[0].replace(/^wichtig\s*[–—:-]?\s*/i,'').replace(/:$/,''),mm=h.match(/^(.*?\d+\s*%\s*Rabatt)\s*(.*)$/i);
-   out.push(card(`${kick(du?(fam?'Euer Vorteil':'Dein Vorteil'):'Ihr Vorteil als Kunde')}<div style="font-size:26px;font-weight:800;color:#FF1E2D;margin:2px 0 4px">${esc(mm?mm[1]:h)}</div>${mm&&mm[2]?`<div style="font-size:15px;font-weight:600;margin:0 0 10px">${esc(mm[2])}</div>`:''}${L.slice(1).map(t=>`<div style="font-size:13.5px;line-height:1.6;color:#D5D8E2;margin:0 0 8px">${lk(t)}</div>`).join('')}`));continue;}
+   out.push(card(`${kick(du?(fam?'Euer Vorteil':'Dein Vorteil'):'Ihr Vorteil als Kunde')}<div style="font-size:26px;font-weight:800;color:#FF1E2D;margin:2px 0 4px">${esc(mm?mm[1]:h)}</div>${mm&&mm[2]?`<div style="font-size:15px;font-weight:600;margin:0 0 10px">${esc(mm[2])}</div>`:''}${L.slice(1).map(t=>`<div style="font-size:13.5px;line-height:1.6;color:#D5D8E2;margin:0 0 8px">${lk(t)}</div>`).join('')}<div style="margin:10px 0 0"><a href="${esc(waU)}" style="display:inline-block;padding:11px 20px;border-radius:999px;background:#25D366;color:#0B1F12;font-size:14.5px;font-weight:800;text-decoration:none;${F}">💬&nbsp; Termin per WhatsApp anfragen</a></div>`));continue;}
   const rv=x.match(/https?:\/\/(g\.page|search\.google|www\.google|maps\.app)[^\s]*/);
   if(rv){const t=x.replace(rv[0],'').trim();cur+=(t?p(t):'')+`<div style="margin:4px 0 18px"><a href="${esc(rv[0])}" style="display:inline-block;padding:14px 28px;border-radius:999px;${G};color:#FFFFFF;font-size:16px;font-weight:800;text-decoration:none;${F}">★ Jetzt bei Google bewerten</a></div>`;continue;}
   if(/^(mit freundlichen|viele|liebe|beste|herzliche) grüße/i.test(L[0])){cur+=`<div style="font-size:15px;line-height:1.6;color:#D5D8E2">${esc(L[0])}${L.slice(1).map(t=>`<br><b style="color:#FFFFFF">${esc(t)}</b>`).join('')}</div>`;continue;}
@@ -2968,7 +2971,7 @@ function kdMailHtml(text,o){o=o||{};const du=!!o.du,fam=!!o.fam;
  const reach=du?(fam?'So erreicht ihr uns':'So erreichst du uns'):'So erreichen Sie uns';
  const soc=`<div style="margin-top:14px;padding-top:12px;border-top:1px solid #2E323D;font-size:13.5px;${F}"><a href="https://www.velo-center.de" style="color:#8FB0FF;text-decoration:none;font-weight:700">🌐 www.velo-center.de</a></div>`;
  const sl=(u,img,n)=>`<td align="center" style="padding:0 14px"><a href="${u}" style="text-decoration:none;color:#EEF0F7;${F}"><img src="${MAIL_IMG}mail-${img}.png" alt="${n}" width="40" height="40" style="display:block;width:40px;height:40px;border:0;margin:0 auto 6px"><span style="font-size:12.5px;font-weight:700;color:#EEF0F7">${n}</span></a></td>`;
- const socRow=`<tr><td align="center" style="padding:4px 22px 16px;${F}"><div style="font-size:11px;letter-spacing:2.5px;text-transform:uppercase;font-weight:700;color:#9AA1B8;margin:0 0 12px">${du?(fam?'Folgt uns':'Folge uns'):'Folgen Sie uns'}</div><table role="presentation" cellpadding="0" cellspacing="0" align="center"><tr>${sl('https://www.instagram.com/velocenterhessert','ig','Instagram')}${sl('https://www.facebook.com/velocenterhessert','fb','Facebook')}</tr></table><div style="font-size:12px;color:#9AA1B8;margin-top:8px">@velocenterhessert</div></td></tr>`;
+ const socRow=`<tr><td align="center" style="padding:4px 22px 16px;${F}"><div style="font-size:11px;letter-spacing:2.5px;text-transform:uppercase;font-weight:700;color:#9AA1B8;margin:0 0 12px">${du?(fam?'Folgt &amp; schreibt uns':'Folge &amp; schreib uns'):'Folgen &amp; schreiben Sie uns'}</div><table role="presentation" cellpadding="0" cellspacing="0" align="center"><tr>${sl('https://www.instagram.com/velocenterhessert','ig','Instagram')}${sl('https://www.facebook.com/velocenterhessert','fb','Facebook')}${sl(waU,'wa','WhatsApp')}</tr></table><div style="font-size:12px;color:#9AA1B8;margin-top:8px">@velocenterhessert</div></td></tr>`;
  return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#0E0F14;background-image:radial-gradient(circle at 10% 0%,rgba(227,52,59,.35),rgba(227,52,59,0) 40%),radial-gradient(circle at 95% 100%,rgba(59,130,246,.30),rgba(59,130,246,0) 45%)"><tr><td align="center" style="padding:28px 10px">
 <table role="presentation" width="640" cellpadding="0" cellspacing="0" style="width:100%;max-width:640px;border-radius:24px;overflow:hidden;background:#14161B;border:1px solid #262A34">
 <tr><td style="padding:26px 26px 20px;background:#14161B;background-image:radial-gradient(circle at 90% 20%,rgba(139,92,246,.35),rgba(139,92,246,0) 45%),radial-gradient(circle at 15% 90%,rgba(227,52,59,.30),rgba(227,52,59,0) 45%);${F};color:#EEF0F7">
@@ -3010,7 +3013,7 @@ async function kdTplOpen(y,id,kind){const r=KD[y]&&KD[y][id];if(!r)return;const 
   <p class="hint">${dir?'<b>📤 Direkt senden</b> verschickt sofort im <b>Velocenter-Design</b> (wie die KI-Zentrale). „Im Mailprogramm“ öffnet nur den Text in Outlook.':'Öffnet die E-Mail in eurem Mailprogramm (nur Text; zu lang für den Link → automatisch kopiert, im Mailprogramm <b>Strg+V</b>). Direkt-Versand im Design: ⚙ Einstellungen → 📧 E-Mail-Versand.'} Danach steht beim Kunden „angeschrieben“.</p><div class="err" id="ktE"></div>
   <div class="acts">${ME&&ME.adm?'<button type="button" class="btn" data-kted>✎ Vorlagen dauerhaft ändern</button>':''}<button class="btn" type="button" data-close>Abbrechen</button><button class="btn" type="button" data-ktpv>👁 Vorschau</button><button class="btn" type="button" data-ktcp>📋 Text kopieren</button>${dir?'<button class="btn" type="button" data-ktmp>📧 Im Mailprogramm</button><button class="btn red" type="button" data-ktsend>📤 Direkt senden</button>':'<button class="btn red" type="submit">📧 E-Mail öffnen</button>'}</div></form>`);
  $('dlgBox').classList.add('wide');
- const html=()=>kdMailHtml($('ktB').value,{du,fam:kind==='fam'});
+ const html=()=>{const nm=kdNameSplit(r.kunde);return kdMailHtml($('ktB').value,{du,fam:kind==='fam',name:(nm.vn+' '+nm.nn).trim(),modell:String(r.modell||'').trim()});};
  const pv=()=>{if($('ktPv').hidden)return;$('ktIf').srcdoc='<!doctype html><meta charset="utf-8"><body style="margin:0;background:#0E0F14">'+html();};
  const body=()=>(T[du?'du':'sie'][kind].b.replace(/\{anrede\}/g,$('ktAn').value)+'\n\n'+T.fuss).trim();
  const fill=()=>{$('ktF').querySelectorAll('[data-kdu]').forEach(b=>b.classList.toggle('on',(b.dataset.kdu==='1')===du));
