@@ -1095,8 +1095,8 @@ async function mailCfgDlg(){if(!ME||!ME.adm)return;const c=await mcfgGet(true);
 /* 1.10.11: Kunden – Spalte E-Mail (Feld mail, mehrere mit Komma), Maus drüber = Adressen, Klick = bearbeiten + Vorlage öffnen.
    Vorlagen (Einzelperson/Familie) in meta/mailtpl = {ein:{s,b}, fam:{s,b}, fuss} – Admins können sie dauerhaft ändern. Stammdaten wie KI-Zentrale (CLAUDE.md §11). */
 /* 1.10.21: Bewertungs-Satz passt sich automatisch an Sie/Du und Einzelperson/Familie an (Text + Design, Tiry) */
-function kdRvTxt(du,fam){return du?(fam?'Euch hat der Kauf eurer E-Bikes bei uns Spaß gemacht und ihr seid glücklich mit euren neuen Rädern? Dann bewertet uns gerne bei Google! 🙂':'Dir hat der Kauf deines E-Bikes bei uns Spaß gemacht und du bist glücklich mit deinem neuen Rad? Dann bewerte uns gerne bei Google! 🙂')
- :(fam?'Ihnen hat der Kauf Ihrer E-Bikes bei uns Freude bereitet und Sie sind glücklich mit Ihren neuen Rädern? Dann freuen wir uns sehr über Ihre Bewertung bei Google! 🙂':'Ihnen hat der Kauf Ihres E-Bikes bei uns Freude bereitet und Sie sind glücklich mit Ihrem neuen Rad? Dann freuen wir uns sehr über Ihre Bewertung bei Google! 🙂');}
+function kdRvTxt(du,fam){return du?(fam?'Euch hat der Kauf eurer E-Bikes bei uns Spaß gemacht und ihr seid glücklich mit euren neuen Rädern? Dann bewertet uns gerne bei Google! 😊':'Dir hat der Kauf deines E-Bikes bei uns Spaß gemacht und du bist glücklich mit deinem neuen Rad? Dann bewerte uns gerne bei Google! 😊')
+ :(fam?'Ihnen hat der Kauf Ihrer E-Bikes bei uns Freude bereitet und Sie sind glücklich mit Ihren neuen Rädern? Dann freuen wir uns sehr über Ihre Bewertung bei Google! 😊':'Ihnen hat der Kauf Ihres E-Bikes bei uns Freude bereitet und Sie sind glücklich mit Ihrem neuen Rad? Dann freuen wir uns sehr über Ihre Bewertung bei Google! 😊');}
 const MTPL0={v:2,
  sie:{ein:{s:'Wie gefällt Ihnen Ihr neues E-Bike?',b:`{anrede}
 
@@ -1179,7 +1179,7 @@ async function mtplGet(){if(MTPL)return MTPL;let d={};try{const x=await db.doc('
  if(d.v!==2)d={};const m=(a,b)=>Object.assign({},a,b||{});
  MTPL={sie:{ein:m(MTPL0.sie.ein,d.sie&&d.sie.ein),fam:m(MTPL0.sie.fam,d.sie&&d.sie.fam)},du:{ein:m(MTPL0.du.ein,d.du&&d.du.ein),fam:m(MTPL0.du.fam,d.du&&d.du.fam)},fuss:d.fuss!=null?d.fuss:MTPL0.fuss};
  /* 1.10.22: alter Bewertungs-Satz in gespeicherten Vorlagen → neuer automatischer Satz */
- [['sie','ein',0,0],['sie','fam',0,1],['du','ein',1,0],['du','fam',1,1]].forEach(([k,f,du,fa])=>{const t=MTPL[k][f];if(t&&t.b)t.b=t.b.replace(/^(Sie sind|Du bist|Ihr seid) zufrieden mit uns\? Über eine Google-Bewertung freuen wir uns sehr:$/m,kdRvTxt(du,fa));});return MTPL;}
+ [['sie','ein',0,0],['sie','fam',0,1],['du','ein',1,0],['du','fam',1,1]].forEach(([k,f,du,fa])=>{const t=MTPL[k][f];if(t&&t.b)t.b=t.b.replace(/^(Sie sind|Du bist|Ihr seid) zufrieden mit uns\? Über eine Google-Bewertung freuen wir uns sehr:$/m,kdRvTxt(du,fa)).replace(/(bei Google!) 🙂$/m,'$1 😊');});return MTPL;}
 // Name aus „Müller, Hans“ bzw. „Hans Müller“
 /* 1.10.18: Kunden-Liste schreibt „Nachname Vorname“ (z. B. „Thirolf Kevin“) → Standard: 1. Wort = Nachname. Pro Kunde umdrehbar (Feld nameOrd='vn' = „Vorname Nachname“). */
 function kdNameSplit(k,ord){k=String(k||'').replace(/\s+/g,' ').trim();if(!k)return{vn:'',nn:''};if(k.includes(',')){const [a,b]=k.split(',');return{nn:a.trim(),vn:(b||'').trim()};}const w=k.split(' ');if(w.length<2)return{nn:k,vn:''};if(ord==='vn'){const nn=w.pop();return{nn,vn:w.join(' ')};}return{nn:w[0],vn:w.slice(1).join(' ')};}
@@ -1253,8 +1253,8 @@ async function kdTplOpen(y,id,kind){let r=KD[y]&&KD[y][id];if(!r)return;const T=
   <div class="ktk"><span class="ktsw"><button type="button" class="kyc" data-kdu="0">🤝 Sie</button><button type="button" class="kyc" data-kdu="1">👋 Du</button></span><span class="ktsep"></span><button type="button" class="kyc${kind==='ein'?' on':''}" data-kk="ein">👤 Einzelperson</button><button type="button" class="kyc${kind==='fam'?' on':''}" data-kk="fam">👨‍👩‍👧 Familie</button></div>
   <label>An<input id="ktTo" value="${esc(m.join(', '))}"></label>
   <label>Anrede<span class="ktan"><input id="ktAn"><button type="button" class="btn" data-an="herr" data-sie>Herr</button><button type="button" class="btn" data-an="frau" data-sie>Frau</button><button type="button" class="btn" data-an="vn" data-du>Vorname</button><button type="button" class="btn" data-an="fam">Familie</button><button type="button" class="btn" data-an="neu">neutral</button><button type="button" class="btn" data-ksw title="Vor- und Nachname vertauschen (wird beim Kunden gemerkt)">⇄ Name</button></span></label>
-  <label>Betreff<input id="ktS"></label><label>Text<textarea id="ktB" rows="16"></textarea></label>
-  <div class="ktpv" id="ktPv" hidden><iframe id="ktIf" title="Vorschau"></iframe></div>
+  <label>Betreff<input id="ktS"></label><div class="ktbody" id="ktBody"><label class="ktbl">Text<textarea id="ktB" rows="16"></textarea></label>
+  <div class="ktpv" id="ktPv" hidden><iframe id="ktIf" title="Vorschau"></iframe></div></div>
   <p class="hint">${dir?'<b>📤 Direkt senden</b> verschickt sofort im <b>Velocenter-Design</b> (wie die KI-Zentrale). „Im Mailprogramm“ öffnet nur den Text in Outlook.':'Öffnet die E-Mail in eurem Mailprogramm (nur Text; zu lang für den Link → automatisch kopiert, im Mailprogramm <b>Strg+V</b>). Direkt-Versand im Design: ⚙ Einstellungen → 📧 E-Mail-Versand.'} Danach steht beim Kunden „angeschrieben“.</p><div class="err" id="ktE"></div>
   <div class="acts">${ME&&ME.adm?'<button type="button" class="btn" data-kted>✎ Vorlagen dauerhaft ändern</button>':''}<button class="btn" type="button" data-close>Abbrechen</button><button class="btn" type="button" data-ktpv>👁 Vorschau</button><button class="btn" type="button" data-ktcp>📋 Text kopieren</button>${dir?'<button class="btn" type="button" data-ktmp>📧 Im Mailprogramm</button><button class="btn red" type="button" data-ktsend>📤 Direkt senden</button>':'<button class="btn red" type="submit">📧 E-Mail öffnen</button>'}</div></form>`);
  $('dlgBox').classList.add('wide','xwide');
@@ -1271,7 +1271,7 @@ async function kdTplOpen(y,id,kind){let r=KD[y]&&KD[y][id];if(!r)return;const T=
   const d=e.target.closest('[data-kdu]');if(d){du=d.dataset.kdu==='1';if(an!=='fam')an=du?'vn':'neu';try{localStorage.setItem('vc_mdu',du?'1':'0');}catch(_){}fill();return;}
   const a=e.target.closest('[data-an]');if(a){an=a.dataset.an;fill();return;}
   if(e.target.closest('[data-ksw]')){const cur=KD[y]&&KD[y][id];if(!cur)return;const n=Object.assign({},cur,{nameOrd:cur.nameOrd==='vn'?'':'vn'});r=n;fill();kdPut(y,n).then(rk);const sp=kdNameSplit(n.kunde,n.nameOrd);toast('Vorname: '+(sp.vn||'–')+' · Nachname: '+(sp.nn||'–'));return;}
-  if(e.target.closest('[data-ktpv]')){$('ktPv').hidden=!$('ktPv').hidden;pv();return;}
+  if(e.target.closest('[data-ktpv]')){const o=$('ktPv').hidden;$('ktPv').hidden=!o;$('ktBody').classList.toggle('pvon',o);e.target.closest('[data-ktpv]').textContent=o?'👁 Vorschau aus':'👁 Vorschau';pv();return;}
   if(e.target.closest('[data-ktcp]')){kdCopy($('ktB').value).then(ok=>toast(ok?'Text kopiert':'Kopieren nicht möglich'));return;}
   if(e.target.closest('[data-kted]')){dlgClose();kdTplEdit();return;}
   if(e.target.closest('[data-ktmp]')){$('ktF').requestSubmit();return;}
