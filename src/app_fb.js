@@ -127,7 +127,8 @@ async function kontenSichern(start){const sec=((firebase.apps||[]).find(a=>a.nam
  for(const u of USERS){if(u.id===ME.id)continue;try{await sec.createUserWithEmailAndPassword(u.id+DOMAIN,fpw(start));neu.push(u);await db.doc('meta/users').set({[u.id]:'start'},{merge:true});USERSET[u.id]='start';}catch(e){if(e.code==='auth/email-already-in-use')da.push(u);else throw e;}finally{try{await sec.signOut();}catch(_){}}}
  return {neu,da};}
 function dlgClose(){if(DLGLOCK)return;$('dlg').hidden=true;$('dlgBox').innerHTML='';$('dlgBox').classList.remove('wide','xwide');}
-$('dlg').addEventListener('click',e=>{if(e.target.id==='dlg'||e.target.closest('[data-close]'))dlgClose();});
+/* 1.10.24: Klick neben das Fenster schließt NICHT mehr (Tiry) – nur Abbrechen/✕ oder ESC */$('dlg').addEventListener('click',e=>{if(e.target.closest('[data-close]'))dlgClose();});
+document.addEventListener('keydown',e=>{if(e.key!=='Escape'||$('dlg').hidden||e.defaultPrevented)return;if(typeof kdPop!=='undefined'&&kdPop)return;const t=e.target;if(t&&t.closest&&t.closest('#dlg')&&t.matches('input[type=date],select'))return;dlgClose();});
 $('meCfg').addEventListener('click',()=>setDlg());
 /* 1.9.1: eigene Einstellungen je Nutzer (Profil-Menü → ⚙ Einstellungen, auch eingeklappt) */
 function setDlg(){if(!ME)return;const u=U(ME.id),pin=NAVPIN,st=MYPREF.start||'last';
