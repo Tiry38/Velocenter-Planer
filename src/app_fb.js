@@ -821,7 +821,7 @@ const kdAll=()=>{if(kdDirty){kdList=[];for(const y in KD)for(const id in KD[y]){
 /* Spalten wie in Excel: Reihenfolge per Ziehen am Kopf, Breite am rechten Rand des Kopfs (Doppelklick = Standard).
    Je Profil in meta/prefs[ID].kdlay = {o:[Spalten], w:{Spalte:px}} (+ localStorage). Zeilen: Griff ⋮⋮ links, nur innerhalb eines Jahres (Feld o). */
 /* 1.10.11: Spalten schmaler (Datum TT.MM., Jahr steht im Jahres-Trenner) + neue Spalte E-Mail zwischen Telefon und Angeschrieben */
-const KDC=[{k:'dat',n:'Datum',w:66,c:'kd'},{k:'nr',n:'Beleg',w:86,c:'kn'},{k:'marke',n:'Marke',w:110,c:'km'},{k:'modell',n:'Modell',fit:1,c:'kmo'}/* 1.10.10: so breit wie der längste Eintrag */,{k:'preis',n:'Preis',w:82,c:'kp'},{k:'leas',n:'Leas.',w:70,c:'kl2'},{k:'kunde',n:'Kunde',w:200,c:'kk'},{k:'vers',n:'Vers.',w:62,c:'kv'},{k:'rahmen',n:'Rahmen-Nr.',w:130,c:'krn'},{k:'tel',n:'Telefon',w:118,c:'kt'},{k:'mail',n:'E-Mail',w:78,c:'kmail'},{k:'ang',n:'Angeschr.',w:86,c:'kang'}];/* 1.10.5: Spalte K raus (Daten bleiben), neue Spalte Angeschrieben */
+const KDC=[{k:'dat',n:'Datum',w:80,c:'kd'},{k:'nr',n:'Beleg',w:86,c:'kn'},{k:'marke',n:'Marke',w:110,c:'km'},{k:'modell',n:'Modell',fit:1,c:'kmo'}/* 1.10.10: so breit wie der längste Eintrag */,{k:'preis',n:'Preis',w:82,c:'kp'},{k:'leas',n:'Leas.',w:70,c:'kl2'},{k:'kunde',n:'Kunde',w:200,c:'kk'},{k:'vers',n:'Vers.',w:62,c:'kv'},{k:'rahmen',n:'Rahmen-Nr.',w:130,c:'krn'},{k:'tel',n:'Telefon',w:118,c:'kt'},{k:'mail',n:'E-Mail',w:78,c:'kmail'},{k:'ang',n:'Angeschr.',w:86,c:'kang'}];/* 1.10.5: Spalte K raus (Daten bleiben), neue Spalte Angeschrieben */
 const KDRB=['#FF3B5C','#FF6B2C','#FF9F1C','#FFD93B','#A3E635','#3DDC84','#22D3EE','#38BDF8','#4F7BFF','#8B5CF6','#D946EF'];
 const kdDef=()=>({o:KDC.map(c=>c.k),w:{}});
 let kdLay=kdDef(),kdDrag=null;
@@ -903,7 +903,7 @@ if(c.k==='tel'){const v=String(r.tel||''),wa=kdWaNums(v),no=r.waNo||[],has=wa.fi
 if(c.k==='marke'){const b=brandOfB({marke:r.marke,modell:r.modell}),lg=b&&(BUSER.logos||{})[b.k];
   return `<div class="c kc km${lg?' haslg':''}" data-kid="${id}" data-ky="${ky}" data-kc="marke" title="${esc(r.marke||'')}">${lg?`<img src="${lg}" alt="" class="kml" draggable="false">`:''}<span class="kmt" contenteditable="true" spellcheck="false" data-kid="${id}" data-ky="${ky}" data-kf="marke">${esc(r.marke||'')}</span>${String(r.marke||'').trim()?`<label class="kmup" title="${lg?'Logo ersetzen':'Markenlogo hochladen'} (oder Bild hierher ziehen)">${lg?'⟳':'⬆'}<input type="file" accept="image/*" hidden data-kmup="${esc(r.marke)}"></label>`:''}</div>`;}
  if(c.k==='dat'||c.k==='leas'||c.k==='vers'){const v=String(r[c.k]||''),t=c.k==='dat'?'Klick = Datum wählen':(kdLab(c.k,v)+' · Klick = auswählen');
-  const lg=c.k!=='dat'&&kdLogoH(v),sv=kdDs(v,c.k!=='dat');return `<div class="c kc ${c.c} kpk${lg?' kplg':''}" role="button" tabindex="0" data-kpick="${c.k}" data-kid="${id}" data-ky="${ky}" data-kc="${c.k}" title="${esc((sv!==v?v+' · ':'')+t)}">${lg||esc(sv)}</div>`;}
+  const lg=c.k!=='dat'&&kdLogoH(v),sv=kdDs(v,true);return `<div class="c kc ${c.c} kpk${lg?' kplg':''}" role="button" tabindex="0" data-kpick="${c.k}" data-kid="${id}" data-ky="${ky}" data-kc="${c.k}" title="${esc((sv!==v?v+' · ':'')+t)}">${lg||esc(sv)}</div>`;}
  const v=kdVal(c.k,r);return `<div class="c kc ${c.c}" contenteditable="true" spellcheck="false" data-kid="${id}" data-ky="${ky}" data-kf="${c.k}" data-kc="${c.k}">${esc(v==null?'':v)}</div>`;}
 // Papierkorb (1.5.8): gelöschte Zeilen 30 Tage in meta/kd_trash = {items:{id:{…Zeile,_y,_del,_von}}}
 let KDT={};const KDT_DAYS=30;
