@@ -962,3 +962,25 @@ body[data-v=ausw]{--ac:#F5B83D}
 .auln{font-style:normal;color:#f1f5f9}.auln small{color:#B15CFF;margin-left:4px}
 .aus1.on>span{color:#FFD93B;font-weight:800}.aus1.on .aus1b{box-shadow:0 0 0 2px #FFD93B,0 0 14px rgba(245,184,61,.5)}
 .auspk i.sel{outline:2px solid #FFD93B;opacity:1}
+/* Marken-Filter (1.10.30) */
+.aubf{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.aubf .auseg button{padding:5px 11px;font-size:12.5px}.aubf .auseg small{opacity:.7;margin-left:3px}
+.aubpk{font:600 12.5px Outfit,sans-serif;color:#e2e8f0;background:rgba(34,211,238,.1);border:1px solid rgba(34,211,238,.4);border-radius:10px;padding:6px 12px;cursor:pointer}
+.aubpk:hover,.aubpk.on{background:rgba(34,211,238,.25);color:#fff}
+.aubsel{flex-basis:100%;margin:6px 0 4px;padding:10px;border-radius:12px;background:rgba(8,11,20,.9);border:1px solid rgba(34,211,238,.35)}
+.aubsel input[type=search]{width:100%;box-sizing:border-box;font:500 14px Outfit,sans-serif;color:#fff;background:#121828;border:1px solid rgba(148,163,184,.3);border-radius:9px;padding:7px 10px;margin-bottom:8px}
+.aubsl{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:4px 10px;max-height:260px;overflow:auto}
+.aubsl label{display:flex;align-items:center;gap:7px;padding:4px 6px;border-radius:7px;cursor:pointer;font:500 13px Outfit,sans-serif;color:#e2e8f0}
+.aubsl label:hover{background:rgba(34,211,238,.1)}
+.aubsl label[hidden]{display:none}
+.aubsl input{accent-color:#22D3EE;width:15px;height:15px}
+.aubsl img{height:16px;max-width:54px;object-fit:contain}
+.aubsl span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.aubsl small{color:#7c8aa0;font-size:11px}
+.aubsb{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.aubgh{font:700 11.5px Outfit,sans-serif;text-transform:uppercase;letter-spacing:.06em;color:#FFD93B;padding:10px 10px 4px}
+.aubgh.o2{color:#8b98ad;border-top:1px solid rgba(148,163,184,.15);margin-top:6px}
+.austar{flex:none;width:22px;height:22px;padding:0;border:0;background:none;font-size:15px;line-height:22px;color:#475569;cursor:pointer;transition:.15s}
+.austar:hover{color:#FFD93B;transform:scale(1.2)}
+.austar.on{color:#FFD93B;text-shadow:0 0 8px rgba(255,217,59,.7)}
+.aubr.own .aubn em{color:#fff}
