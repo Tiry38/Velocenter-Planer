@@ -501,7 +501,7 @@ const LAYT={
 const layCfg=v=>LAYALL[v]||{};
 function layApply(){for(const hd of document.querySelectorAll('#grid .hd[data-pk]:not([data-bmh])')){hd.dataset.bmh='1';const h=document.createElement('span');h.className='bmres';h.title='Ziehen = Breite ändern · Doppelklick = Standard';hd.append(h);}
  for(const v in LAYT){const A=LAYT[v],t=A.tbl();if(!t||!t.tHead)continue;const hdr=t.tHead.rows[t.tHead.rows.length-1];if(!hdr)continue;
- if(!hdr.dataset.lay){const ths=[...hdr.cells],keys=ths.map((th,i)=>ckNorm(th.textContent)||'c'+i),cfg=layCfg(v);
+ if(!hdr.dataset.lay){const ths=[...hdr.cells],keys=ths.map((th,i)=>th.dataset.key||ckNorm(th.textContent)||'c'+i)/* 1.10.19: data-key = fester Schlüssel, wenn der Kopftext umbenannt wird */,cfg=layCfg(v);
   let plan=keys.map((k,i)=>({t:'o',i,k}));(cfg.add||[]).forEach(a=>{const at=plan.findIndex(p=>p.k===a.after);const it={t:'a',k:'x_'+a.k,ak:a.k,lbl:a.lbl};if(at<0)plan.splice(Math.max(1,plan.length-1),0,it);else plan.splice(at+1,0,it);});
   if(cfg.ord&&cfg.ord.length){const pos=k=>{const i=cfg.ord.indexOf(k);return i<0?1e3:i;};const base=plan.map((p,i)=>[p,i]);base.sort((a,b)=>(pos(a[0].k)-pos(b[0].k))||(a[1]-b[1]));plan=base.map(x=>x[0]);}
   const hid=new Set(cfg.hid||[]);t._plan={plan,n:ths.length,hid,v,wid:cfg.wid||{}};
@@ -765,7 +765,7 @@ function rr(){if(!$('rkTab'))return;const q=($('rkSearch').value||'').trim().toL
   .sort((a,b)=>rank[rkSt(a)]-rank[rkSt(b)]||(rkSt(a)==='erl'?vkDate(b.erlAm)-vkDate(a.erlAm):vkDate(a.dat)-vkDate(b.dat)));
  $('rkDone').setAttribute('aria-pressed',rkShowDone);
  $('rkForm').innerHTML=rkEdit?rkFormH(rkEdit==='new'?{id:'new',st:'offen'}:RKD[rkEdit]||{id:'new',st:'offen'}):'';
- $('rkTab').innerHTML='<thead><tr><th></th><th>Eingereicht am</th><th>Lieferant / Marke</th><th>Artikel</th><th>Grund</th><th>Kunde</th><th>Lösung</th><th>Status</th><th></th></tr></thead><tbody>'+
+ $('rkTab').innerHTML='<thead><tr><th></th><th>Eingereicht am</th><th>Lieferant / Marke</th><th>Artikel</th><th>Grund</th><th data-key="kunde">Kunde / Fahrzeug</th><th>Lösung</th><th>Status</th><th></th></tr></thead><tbody>'+
   (list.length?list.map(rkRow).join(''):`<tr><td colspan="9" class="empty">${q?'Nichts gefunden – gesucht wird in allen Reklamationen inkl. erledigter.':'Keine offenen Reklamationen 👍'}</td></tr>`)+'</tbody>';}
 function rkRow(r){const st=rkSt(r),[stn,stc]=RKST[st],l=rkLief(r),lg=l?sLogo(l):'',d=rkDays(r);
  const age=st!=='erl'&&d!=null?`<small class="rkage${d>30?' hot':d>14?' warm':''}">${d<=0?'heute':'seit '+d+' '+(d===1?'Tag':'Tagen')}</small>`:(st==='erl'&&r.erlAm?`<small>erledigt ${esc(dshort(r.erlAm))}</small>`:'');
@@ -788,7 +788,7 @@ function rkFormH(r){const nw=r.id==='new',iso2=v=>toIsoDe(v)||'';const opt=(arr,
   <label>Lieferant / Marke<input name="lief" list="rkLiefL" value="${esc(l?l.name:(r.lief||''))}" placeholder="z. B. i:SY, ABUS …"></label>
   <label class="w2">Artikel / Teil<input name="artikel" value="${esc(r.artikel||'')}" placeholder="z. B. Bosch PowerTube 750"></label>
   <label>Menge<input name="menge" value="${esc(r.menge||'')}" placeholder="1"></label>
-  <label>Kunde (falls Kundenrad)<input name="kunde" value="${esc(r.kunde||'')}"></label>
+  <label>Kunde / Fahrzeug (falls Kundenrad)<input name="kunde" value="${esc(r.kunde||'')}"></label>
   <label>Art<select name="art">${opt(RKART,r.art)}</select></label>
   <label>Lösung erwartet<select name="loes">${opt(RKLOES,r.loes)}</select></label>
   <label class="w4">Fehler / Grund<textarea name="grund" rows="2">${esc(r.grund||'')}</textarea></label>
