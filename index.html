@@ -1330,6 +1330,18 @@ body[data-v=ausw]{--ac:#F5B83D}
 .stno{font:600 12px "Outfit",sans-serif;color:#64748B}
 .stdel{background:linear-gradient(160deg,rgba(255,77,109,.14),rgba(255,255,255,.02) 55%)}
 @media(max-width:600px){.stcr{grid-template-columns:1fr;gap:2px}.sttabs{margin-left:0;width:100%}.sttabs button{flex:1;padding:9px 6px}}
+/* 1.10.37: Nutzer-Einstellungen – Profilfarbe, Darstellung */
+.stsw{display:flex;flex-wrap:wrap;gap:7px}
+.stsw button,.stswc{width:28px;height:28px;border-radius:50%;cursor:pointer;border:2px solid rgba(255,255,255,.12);background:var(--sw);box-shadow:0 0 10px color-mix(in srgb,var(--sw) 45%,transparent);transition:transform .15s}
+.stsw button:hover,.stswc:hover{transform:scale(1.15)}.stsw button.on{border-color:#fff;box-shadow:0 0 0 2px var(--sw),0 0 14px var(--sw)}
+.stswc{position:relative;display:grid;place-items:center;background:conic-gradient(#E2232D,#FACC15,#39F26B,#22D3EE,#6366F1,#EC4899,#E2232D);color:#fff;font:800 14px "Outfit",sans-serif;text-shadow:0 1px 3px #000;overflow:hidden}
+.stswc input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;border:0;padding:0}
+.stchk{display:flex;align-items:flex-start;gap:9px;font-size:12.5px;color:#CBD5E1;cursor:pointer;line-height:1.4}.stchk input{width:17px;height:17px;margin:1px 0 0;accent-color:#A78BFA;flex:none}.stchk b{color:#fff}
+body.bgdez{background-image:radial-gradient(900px 560px at 0% 0%,rgba(70,100,220,.16),transparent 68%),radial-gradient(1000px 560px at 100% 0%,rgba(215,35,55,.14),transparent 68%),radial-gradient(900px 620px at 100% 100%,rgba(150,85,235,.12),transparent 68%),radial-gradient(900px 620px at 0% 100%,rgba(30,170,190,.08),transparent 68%)!important}
+body.bgruh{background-image:none!important;background-color:#07090D!important}
+body.noanim *,body.noanim *::before,body.noanim *::after{animation:none!important;transition:none!important}
+body.uidense td,body.uidense th{padding-top:3px!important;padding-bottom:3px!important}
+body.uidense .vtab td,body.uidense #kdTab td{line-height:1.25}
 
 [hidden]{display:none!important}
 #sTab td.b{font-weight:700}#sTab .pwm.ed{outline:none;padding:2px 6px;border-radius:6px;font-family:var(--mono)}#sTab td{vertical-align:top}
@@ -1514,13 +1526,16 @@ body[data-v=ausw]{--ac:#F5B83D}
 <script>
 const FB_CONFIG={apiKey:"AIzaSyC_uZPvc5rJETwlS4JbfCoTkkE4ckjtp0M",authDomain:"velocenter-planer.firebaseapp.com",projectId:"velocenter-planer",storageBucket:"velocenter-planer.firebasestorage.app",messagingSenderId:"1018330488700",appId:"1:1018330488700:web:262a4d1660353e6fde8ef9"};
 /* ================= Velocenter Werkstatt-Cockpit – Oberfläche ================= */
-const CLIENT_VERSION='1.10.36';
+const CLIENT_VERSION='1.10.37';
 const USERS=[{id:'kevin',n:'Kevin',c:'#E2232D'},{id:'stefan',n:'Stefan',c:'#F59E0B'},{id:'martina',n:'Martina',c:'#EC4899'},{id:'sascha',n:'Sascha',c:'#22D3EE'},{id:'rene',n:'René',c:'#34D399'}];
 const U=id=>USERS.find(u=>u.id===id)||{n:'',c:'#64748B',id:''};
+/* 1.10.37: Profilfarbe je Nutzer (meta/prefs[ID].col, für alle sichtbar) – Cache für den Login-Bildschirm */
+const UCOL0=Object.fromEntries(USERS.map(u=>[u.id,u.c]));try{const cc=JSON.parse(localStorage.getItem('vc_ucol')||'{}');for(const u of USERS)if(/^#[0-9a-f]{6}$/i.test(cc[u.id]||''))u.c=cc[u.id];}catch(_){}
 const $=id=>document.getElementById(id);
 const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const sav=id=>{const u=U(id);return id&&u.n?`<span class="sav" style="--uc:${u.c}">${esc(u.n[0])}</span>`:''};
 const av=(id,t,k,oid,ts)=>{const u=U(id);return id&&u.n?`<span class="av${k?' ave':''}" style="--uc:${u.c}" title="${esc((t?t+' ':'')+u.n)}${ts&&fmtTs(ts)?' · zuletzt gespeichert '+fmtTs(ts):''}${k?' · Admin: Klick = Person ändern':''}"${k?` data-avk="${k}" data-avi="${esc(oid)}"`:''}>${esc(u.n[0])}</span>`:''};
+let UIZ=1;
 const nid=p=>p+Date.now().toString(36)+Math.random().toString(36).slice(2,8);
 const ls={get(k,d){try{const v=localStorage.getItem(k);return v==null?d:JSON.parse(v);}catch(_){return d;}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(_){}}};
 const ss={get(k){try{return sessionStorage.getItem(k);}catch(_){return null;}},set(k,v){try{sessionStorage.setItem(k,v);}catch(_){}},del(k){try{sessionStorage.removeItem(k);}catch(_){}}};
@@ -1557,7 +1572,7 @@ function easter(y){const a=y%19,b=Math.floor(y/100),c=y%100,d=Math.floor(b/4),e=
 const HOL={};[2026,2027,2028].forEach(y=>{const e=easter(y),add=(d,n)=>{HOL[iso(d)]=n;},off=n=>{const d=new Date(e);d.setDate(d.getDate()+n);return d;};
  add(new Date(y,0,1,12),'Neujahr');add(off(-2),'Karfreitag');add(off(1),'Ostermontag');add(new Date(y,4,1,12),'1. Mai');add(off(39),'Himmelfahrt');add(off(50),'Pfingstmontag');add(off(60),'Fronleichnam');add(new Date(y,9,3,12),'Dt. Einheit');add(new Date(y,10,1,12),'Allerheiligen');add(new Date(y,11,24,12),'Heiligabend');add(new Date(y,11,25,12),'1. Weihnachtstag');add(new Date(y,11,26,12),'2. Weihnachtstag');add(new Date(y,11,31,12),'Silvester');});
 /* 1.8.1: Listen füllen die ganze Höhe bis zum unteren Rand */
-function fitH(){for(const el of document.querySelectorAll('.vtab,.board,.rktab,.nboard,.kdboard,#v-lief .tbl,#v-kasse .tbl')){if(!el.offsetParent)continue;const t=el.getBoundingClientRect().top;el.style.maxHeight=Math.max(240,innerHeight-t-12)+'px';}if(typeof ltBarPos==='function')ltBarPos();}
+function fitH(){for(const el of document.querySelectorAll('.vtab,.board,.rktab,.nboard,.kdboard,#v-lief .tbl,#v-kasse .tbl')){if(!el.offsetParent)continue;const t=el.getBoundingClientRect().top;el.style.maxHeight=Math.max(240,(innerHeight-t-12)/UIZ)+'px';}if(typeof ltBarPos==='function')ltBarPos();}
 /* 1.8.6: Scroll-Position aller Listen bleibt beim Neuaufbau erhalten (vorher sprang die Liste nach jeder Änderung nach oben) */
 const SCRSEL='.vtab,.board,.rktab,.nboard,.kdboard,.tbl,.bcols,.cols';const SCR={};
 const scrKey=el=>((el.closest('.view')||{}).id||'')+'|'+[...el.classList].filter(c=>!/^(on|wfx)$/.test(c)).sort().join('.');
@@ -1581,7 +1596,7 @@ let NAVPIN=false;
 function navMini(on,keep){NAVPIN=!on;document.body.classList.remove('navpeek');document.body.classList.toggle('navmini',on);const t=$('navTog');t.setAttribute('aria-label',on?'Navigation ausklappen':'Navigation einklappen');t.title=on?'Navigation ausklappen':'Navigation einklappen';t.dataset.l=on?'Ausklappen':'Einklappen';
  if(keep||!ME)return;ls.set('vc_navpin_'+ME.id,!on);db.doc('meta/prefs').set({[ME.id]:{navpin:!on}},{merge:true}).catch(()=>{});}
 /* 1.8.5: kein Hover-Aufklappen mehr – nur manuell über den Pfeil (Tiry) */
-async function navForUser(){if(!ME)return;navMini(!ls.get('vc_navpin_'+ME.id,false),true);try{const d=await db.doc('meta/prefs').get();const x=d.exists&&d.data()[ME.id];MYPREF=x||{};if(x&&typeof x.navpin==='boolean'){navMini(!x.navpin,true);ls.set('vc_navpin_'+ME.id,x.navpin);}kdLayLoad(x&&x.kdlay);if(x&&x.start&&x.start!=='last'&&!START_DONE){START_DONE=true;show(x.start);}}catch(_){kdLayLoad(null);}}
+async function navForUser(){if(!ME)return;navMini(!ls.get('vc_navpin_'+ME.id,false),true);try{const d=await db.doc('meta/prefs').get();const x=d.exists&&d.data()[ME.id];MYPREF=x||{};if(ucolApply(d.exists?d.data():{}))renderAll();uiApply(MYPREF.ui);if(x&&typeof x.navpin==='boolean'){navMini(!x.navpin,true);ls.set('vc_navpin_'+ME.id,x.navpin);}kdLayLoad(x&&x.kdlay);if(x&&x.start&&x.start!=='last'&&!START_DONE){START_DONE=true;show(x.start);}}catch(_){kdLayLoad(null);}}
 let MYPREF={},START_DONE=false;
 $('navTog').addEventListener('click',()=>navMini(NAVPIN));
 /* 1.8.2: Klick aufs Profil-Symbol = Menü mit Abmelden / Passwort */
@@ -1593,7 +1608,7 @@ function toast(t,undo){const el=$('toast');el.textContent=t;el.classList.toggle(
 
 /* ---------- Anmeldung ---------- */
 let pwU=null;
-async function showLogin(){ME=null;try{KD={};KDT={};kdDirty=true;}catch(_){}document.body.classList.remove('navmini');stopLive();$('whoOv').hidden=false;pwBack();
+async function showLogin(){ME=null;try{uiApply(null);}catch(_){}try{KD={};KDT={};kdDirty=true;}catch(_){}document.body.classList.remove('navmini');stopLive();$('whoOv').hidden=false;pwBack();
  try{const d=await db.doc('meta/users').get({source:'server'});USERSET=d.exists?d.data():{};}catch(e){try{const d=await db.doc('meta/users').get();USERSET=d.exists?d.data():{};}catch(_){USERSET={};}}
  $('whoGrid').innerHTML=USERS.map(u=>`<button class="wt" type="button" data-u="${u.id}" style="--uc:${u.c}"><span class="ring">${esc(u.n[0])}</span><b>${esc(u.n)}</b></button>`).join('');}
 function pwOpen(id){pwU=U(id);const f=$('pwForm'),first=!USERSET[id];f.style.setProperty('--uc',pwU.c);$('pwRing').textContent=pwU.n[0];$('pwName').textContent=pwU.n;
@@ -1648,7 +1663,15 @@ $('meCfg').addEventListener('click',()=>setDlg());
 /* 1.9.1: eigene Einstellungen je Nutzer (Profil-Menü → ⚙ Einstellungen, auch eingeklappt) */
 /* 1.10.36: ⚙ Einstellungen neu – Reiter Nutzer/Admin, jeder Import/Export als eigene Karte mit Beschreibung */
 let IMPX={};
-function setDlg(tab){if(!ME)return;const u=U(ME.id),pin=NAVPIN,st=MYPREF.start||'last',adm=!!ME.adm;
+const UCOLS=['#E2232D','#FF4D6D','#EC4899','#D946EF','#A78BFA','#6366F1','#3B82F6','#22D3EE','#14B8A6','#34D399','#39F26B','#A3E635','#FACC15','#F59E0B','#FB923C','#94A3B8'];
+function ucolApply(all){let ch=false;for(const u of USERS){const v=all&&all[u.id]&&all[u.id].col,c=/^#[0-9a-f]{6}$/i.test(v||'')?v:UCOL0[u.id];if(u.c!==c){u.c=c;ch=true;}}
+ ls.set('vc_ucol',Object.fromEntries(USERS.map(u=>[u.id,u.c])));if(ME){$('meAv').style.setProperty('--uc',U(ME.id).c);}return ch;}
+/* Darstellung je Nutzer (meta/prefs[ID].ui = {fs,bg,anim,dense}), auf allen Geräten */
+function uiApply(ui){ui=ui||{};const fs=[85,90,100,110,120,135].includes(+ui.fs)?+ui.fs:100;UIZ=fs/100;document.documentElement.style.zoom=fs===100?'':String(UIZ);
+ const b=document.body.classList;b.toggle('bgdez',ui.bg==='d');b.toggle('bgruh',ui.bg==='r');b.toggle('noanim',ui.anim===false);b.toggle('uidense',!!ui.dense);
+ if(typeof fitH==='function')requestAnimationFrame(fitH);}
+function uiSave(k,v,msg){MYPREF.ui=Object.assign({},MYPREF.ui||{},{[k]:v});uiApply(MYPREF.ui);db.doc('meta/prefs').set({[ME.id]:{ui:{[k]:v}}},{merge:true}).then(()=>toast(msg||'Gespeichert')).catch(fail);}
+function setDlg(tab){if(!ME)return;const u=U(ME.id),pin=NAVPIN,st=MYPREF.start||'last',adm=!!ME.adm,ui=MYPREF.ui||{};
  tab=adm?(tab||ls.get('vc_settab','u')):'u';if(tab!=='a')tab='u';
  const tabs=[...document.querySelectorAll('.navbtn[data-v]')].filter(b=>!b.hidden).map(b=>[b.dataset.v,(b.querySelector('.lbl b')||b.querySelector('.lbl')||b).childNodes[0].textContent.trim()]);
  const nK=adm?kdAll().length:0,dd=t=>t?esc(String(t).slice(0,10).split('-').reverse().join('.')):'';
@@ -1659,12 +1682,20 @@ function setDlg(tab){if(!ME)return;const u=U(ME.id),pin=NAVPIN,st=MYPREF.start||
   <div class="stc" style="--tc:#22D3EE"><div class="stch"><span class="stic">🖥</span><div><b>Ansicht</b><em>GILT FÜR DICH – AUF ALLEN GERÄTEN</em></div></div>
    <label class="setl">Navi beim Start<select id="stNav"><option value="0"${pin?'':' selected'}>eingeklappt</option><option value="1"${pin?' selected':''}>ausgeklappt</option></select></label>
    <label class="setl">Startseite nach dem Anmelden<select id="stStart"><option value="last"${st==='last'?' selected':''}>zuletzt geöffneter Reiter</option>${tabs.map(([v,n])=>`<option value="${v}"${st===v?' selected':''}>${esc(n)}</option>`).join('')}</select></label></div>
-  <div class="stc" style="--tc:#FB923C"><div class="stch"><span class="stic">🏷</span><div><b>Markenlogos</b><em>GILT FÜR ALLE</em></div></div><p class="stp">Logos für Marken hochladen (werden automatisch freigestellt, zugeschnitten und geschärft), eigene Marken mit Modellwörtern anlegen, doppelte Marken zusammenführen.</p><div class="stcb"><button type="button" class="btn" id="stBr">Markenlogos verwalten</button></div></div>
- </div></div>
- <div class="stgrp"><h4>⇅ Exporte</h4><div class="stgrid">
-  ${card('📋','Lieferanten-Namen kopieren','exp',[['Wofür','Liste aller Lieferanten-Namen, z. B. um Kontaktdaten recherchieren zu lassen.'],['Du brauchst','nichts – kommt direkt aus dem Reiter Lieferanten.'],['Was passiert','Alle Namen A–Z (nur Namen, <b>keine</b> Kunden-Nr., keine Logins) landen in der Zwischenablage → mit Strg+V einfügen. Geht das nicht, kommt eine Textdatei in den Download-Ordner.']],'<button type="button" class="btn" data-sx="sExp">📋 Namen kopieren</button>',(typeof S!=='undefined'?S.length:0)+' Lieferanten')}
+  <div class="stc" style="--tc:${u.c}"><div class="stch"><span class="stic">🎨</span><div><b>Profilfarbe</b><em>SIEHT JEDER – ÜBERALL</em></div></div><p class="stp">Farbe deines Kürzel-Kreises „${esc(u.n[0])}“ – an jedem Eintrag, jeder Bestellung, jedem Status-Knopf und unten in der Navi.</p>
+   <div class="stsw">${UCOLS.map(c=>`<button type="button" data-col="${c}" class="${c.toLowerCase()===u.c.toLowerCase()?'on':''}" style="--sw:${c}" title="${c}"></button>`).join('')}<label class="stswc" title="Eigene Farbe">＋<input type="color" id="stColX" value="${u.c}"></label></div>
+   <div class="stcb"><span class="av" style="--uc:${u.c}">${esc(u.n[0])}</span><span class="stno">Vorschau</span>${u.c.toLowerCase()!==UCOL0[ME.id].toLowerCase()?'<button type="button" class="btn" id="stCol0">↺ Standardfarbe</button>':''}</div></div>
+  <div class="stc" style="--tc:#A78BFA"><div class="stch"><span class="stic">✨</span><div><b>Darstellung</b><em>GILT FÜR DICH – AUF ALLEN GERÄTEN</em></div></div>
+   <label class="setl">Schriftgröße / Zoom<select id="stFs">${[[85,'Sehr klein (85 %)'],[90,'Klein (90 %)'],[100,'Normal (100 %)'],[110,'Groß (110 %)'],[120,'Größer (120 %)'],[135,'Sehr groß (135 %)']].map(([v,n])=>`<option value="${v}"${(+(ui.fs||100))===v?' selected':''}>${n}</option>`).join('')}</select></label>
+   <label class="setl">Hintergrund<select id="stBg"><option value="k"${!ui.bg||ui.bg==='k'?' selected':''}>Kräftige Farbverläufe (Standard)</option><option value="d"${ui.bg==='d'?' selected':''}>Dezent</option><option value="r"${ui.bg==='r'?' selected':''}>Ruhig – fast schwarz</option></select></label>
+   <label class="stchk"><input type="checkbox" id="stDense"${ui.dense?' checked':''}> <span><b>Kompakte Listen</b> – mehr Zeilen auf den Bildschirm</span></label>
+   <label class="stchk"><input type="checkbox" id="stAnim"${ui.anim===false?'':' checked'}> <span><b>Animationen & Leuchten</b> – aus = ruhiger und schneller auf schwachen PCs</span></label></div>
  </div></div>`;
- const A1=adm?`<div class="stgrp"><h4>📥 Importe</h4><div class="stgrid">
+ const A1=adm?`<div class="stgrp"><h4>🏷 Marken & Lieferanten</h4><div class="stgrid">
+  <div class="stc" style="--tc:#FB923C"><div class="stch"><span class="stic">🏷</span><div><b>Markenlogos</b><em>GILT FÜR ALLE</em></div></div><p class="stp">Logos für Marken hochladen (werden automatisch freigestellt, zugeschnitten und geschärft), eigene Marken mit Modellwörtern anlegen, doppelte Marken zusammenführen.</p><div class="stcb"><button type="button" class="btn" id="stBr">Markenlogos verwalten</button></div></div>
+  ${card('📋','Lieferanten-Namen kopieren','exp',[['Wofür','Liste aller Lieferanten-Namen, z. B. um Kontaktdaten recherchieren zu lassen.'],['Du brauchst','nichts – kommt direkt aus dem Reiter Lieferanten.'],['Was passiert','Alle Namen A–Z (nur Namen, <b>keine</b> Kunden-Nr., keine Logins) landen in der Zwischenablage → mit Strg+V einfügen. Geht das nicht, kommt eine Textdatei in den Download-Ordner.']],'<button type="button" class="btn" data-sx="sExp">📋 Namen kopieren</button>',(typeof S!=='undefined'?S.length:0)+' Lieferanten')}
+ </div></div>
+ <div class="stgrp"><h4>📥 Importe</h4><div class="stgrid">
   ${card('📊','Kunden aus dem Sheet übernehmen','imp',[['Wofür','Holt die Verkaufshistorie (seit 1995) aus dem Google-Sheet in den Reiter <b>Kunden</b> – Grundlage für Kundenliste, E-Mails und 📊 Auswertung.'],['Du brauchst','Die Excel-Datei (.xlsx) des Google-Sheets „Abhol-Werkstattplaner“ mit dem Reiter <b>„Kunden“</b>.'],['So geht’s','Sheet in Chrome öffnen → <b>Datei → Herunterladen → Microsoft Excel (.xlsx)</b> → hier die Datei wählen.'],['Was passiert','Nur der Reiter „Kunden“ wird gelesen, das Sheet bleibt unverändert. <b>Achtung:</b> je Jahr wird der komplette Bestand in der App ersetzt – was in der App nachgetragen wurde (E-Mail, Angeschrieben, Änderungen) geht in diesen Jahren verloren. Vorher 💾 Sicherung machen.']],'<button type="button" class="btn red" data-sx="kdImp">📥 Datei wählen & übernehmen</button>',KDIMP?`✓ übernommen${IMPX.kundenAm?' am '+dd(IMPX.kundenAm):''}${IMPX.kundenN?' · '+Number(IMPX.kundenN).toLocaleString('de-DE')+' Zeilen':''} · jetzt ${nK.toLocaleString('de-DE')} Kunden in der App`:'noch nicht übernommen')}
   ${card('📧','E-Mails aus Veloport zuordnen','imp',[['Wofür','Ergänzt bei den Kunden fehlende <b>E-Mail-Adressen</b> – für Inspektions-/Bewertungs-Mails direkt aus der Kundenliste.'],['Du brauchst','<b>1. Kunden-Export</b> aus Veloport (.csv, Pflicht)<br><b>2. Fahrzeuge-Export</b> aus Veloport (.csv, optional – macht die Zuordnung über die Rahmen-Nr. möglich und damit am genauesten)'],['So geht’s','Dieselben Veloport-Exporte wie für die KI-Zentrale (Ordner „Veloport-Export“). Veloport hat keine Schnittstelle – die Dateien werden in Veloport von Hand exportiert.'],['Was passiert','Zuordnung zuerst über <b>Rahmen-Nr.</b>, dann <b>Telefon/Mobil</b>, dann <b>Vor- + Nachname</b>. Nur eindeutige Treffer, nur Kunden <b>ohne</b> E-Mail – Eingetragenes bleibt. Danach Übersicht, wie viele zugeordnet wurden.']],nK?'<button type="button" class="btn red" data-sx="kdMailImp">📧 Dateien wählen & zuordnen</button>':'<span class="stno">Erst Kunden übernehmen</span>',nK?nK.toLocaleString('de-DE')+' Kunden · davon mit E-Mail: '+kdAll().filter(r=>String(r.mail||'').trim()).length.toLocaleString('de-DE'):'')}
   ${card('🔐','Passwortliste & Lieferanten-Logins','imp',[['Wofür','Holt die Passwortliste (Reiter „PW“) und die Lieferanten-Logins (Reiter „Lieferanten“) aus dem Google-Sheet in den verschlüsselten Tresor.'],['Du brauchst','Die Tresor-PIN und die Excel-Datei (.xlsx) des Google-Sheets „Abhol-Werkstattplaner“.'],['So geht’s','Sheet → <b>Datei → Herunterladen → Microsoft Excel (.xlsx)</b> → hier wählen → PIN eingeben.'],['Was passiert','Alles wird mit der PIN verschlüsselt gespeichert (nur Admins). Planer, Verkauf, Trinkgeld und Lieferanten sind schon übernommen und werden <b>nicht</b> doppelt angelegt.']],'<button type="button" class="btn red" data-sx="imp">🔐 Mit PIN übernehmen</button>',IMPX.tresor===true?'✓ bereits übernommen':'noch nicht übernommen')}
@@ -1687,6 +1718,14 @@ function setDlg(tab){if(!ME)return;const u=U(ME.id),pin=NAVPIN,st=MYPREF.start||
  if($('stPw'))$('stPw').addEventListener('click',go(()=>$('meSet').click()));if($('stOut'))$('stOut').addEventListener('click',go(()=>$('switchUser').click()));
  if($('stBr'))$('stBr').addEventListener('click',go(brandDlg));if($('stAdm'))$('stAdm').addEventListener('click',go(()=>$('meSet').click()));if($('stMail'))$('stMail').addEventListener('click',go(mailCfgDlg));
  const bk=$('stBk');if(bk)bk.addEventListener('click',async()=>{bk.disabled=true;$('stBkE').textContent='Sammle Daten …';try{const n=await backupDl();$('stBkE').textContent='✓ '+n+' Einträge – liegt im Download-Ordner';}catch(err){$('stBkE').textContent=err.message||String(err);}finally{bk.disabled=false;}});
+ const colSet=c=>{c=c?c.toUpperCase():null;MYPREF.col=c;const all={};for(const x of USERS)all[x.id]={col:x.id===ME.id?c:(x.c!==UCOL0[x.id]?x.c:null)};ucolApply(all);renderAll();
+  db.doc('meta/prefs').set({[ME.id]:{col:c||''}},{merge:true}).then(()=>toast('Profilfarbe gespeichert')).catch(fail);setDlg('u');};
+ box.querySelectorAll('[data-col]').forEach(b=>b.addEventListener('click',()=>colSet(b.dataset.col)));
+ if($('stColX'))$('stColX').addEventListener('change',e=>colSet(e.target.value));if($('stCol0'))$('stCol0').addEventListener('click',()=>colSet(null));
+ if($('stFs'))$('stFs').addEventListener('change',e=>uiSave('fs',+e.target.value,'Schriftgröße gespeichert'));
+ if($('stBg'))$('stBg').addEventListener('change',e=>uiSave('bg',e.target.value,'Hintergrund gespeichert'));
+ if($('stDense'))$('stDense').addEventListener('change',e=>uiSave('dense',e.target.checked));
+ if($('stAnim'))$('stAnim').addEventListener('change',e=>uiSave('anim',e.target.checked));
  if($('stNav'))$('stNav').addEventListener('change',e=>{navMini(e.target.value!=='1');toast('Gespeichert');});
  if($('stStart'))$('stStart').addEventListener('change',e=>{MYPREF.start=e.target.value;db.doc('meta/prefs').set({[ME.id]:{start:e.target.value}},{merge:true}).then(()=>toast('Startseite gespeichert')).catch(fail);});}
 /* ⚙ Einstellungen → Markenlogos: Bild hochladen → automatisch freistellen, zuschneiden, schärfen, auf Einheitshöhe bringen */
