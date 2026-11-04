@@ -1108,6 +1108,10 @@ body.navmini #bmBar{left:100px}#bmBar span{overflow:hidden;text-overflow:ellipsi
 .bfg>.bf-datum{grid-column:span 2}.bfg>.bf-artikel,.bfg>.bf-kunde{grid-column:span 5}
 .bfg input.bfd{cursor:pointer;color-scheme:dark}.bfg .bfold{display:block;margin-top:4px;font-size:11px;color:#FACC15;text-transform:none;letter-spacing:0}
 @media (max-width:900px){.bfg>label,.bfg>.bf-datum,.bfg>.bf-artikel,.bfg>.bf-kunde{grid-column:span 6}}
+/* 1.10.18: eingeklappte Navi – Zahl als kleines Schild oben rechts auf der Kachel (nicht bei Kunden) */
+body.navmini .navbtn .n{opacity:1;position:absolute;left:31px;top:-3px;margin:0;padding:0 5px;min-width:9px;text-align:center;font-size:10px;line-height:15px;border-radius:99px;z-index:3;background:color-mix(in srgb,var(--ac) 55%,#0b0e15);border-color:color-mix(in srgb,var(--ac) 80%,#fff 0%);box-shadow:0 0 0 2px #0b0e15;pointer-events:none}
+body.navmini .navbtn[data-v=kunden] .n{opacity:0}
+body.navmini .navbtn .n.z{opacity:0}
 
 [hidden]{display:none!important}
 #sTab td.b{font-weight:700}#sTab .pwm.ed{outline:none;padding:2px 6px;border-radius:6px;font-family:var(--mono)}#sTab td{vertical-align:top}
@@ -1285,7 +1289,7 @@ body.navmini #bmBar{left:100px}#bmBar span{overflow:hidden;text-overflow:ellipsi
 <script>
 const FB_CONFIG={apiKey:"AIzaSyC_uZPvc5rJETwlS4JbfCoTkkE4ckjtp0M",authDomain:"velocenter-planer.firebaseapp.com",projectId:"velocenter-planer",storageBucket:"velocenter-planer.firebasestorage.app",messagingSenderId:"1018330488700",appId:"1:1018330488700:web:262a4d1660353e6fde8ef9"};
 /* ================= Velocenter Werkstatt-Cockpit – Oberfläche ================= */
-const CLIENT_VERSION='1.10.17';
+const CLIENT_VERSION='1.10.18';
 const USERS=[{id:'kevin',n:'Kevin',c:'#E2232D'},{id:'stefan',n:'Stefan',c:'#F59E0B'},{id:'martina',n:'Martina',c:'#EC4899'},{id:'sascha',n:'Sascha',c:'#22D3EE'},{id:'rene',n:'René',c:'#34D399'}];
 const U=id=>USERS.find(u=>u.id===id)||{n:'',c:'#64748B',id:''};
 const $=id=>document.getElementById(id);
@@ -1531,7 +1535,7 @@ let unsubs=[],rTimer=null,dirty=false;
 const editing=()=>!!document.querySelector('#grid .edit, .edf, #dlg:not([hidden])')||(document.activeElement&&document.activeElement.isContentEditable);
 /* 1.10.0: nur den sichtbaren Reiter neu zeichnen, die anderen beim Öffnen (vorher bei jeder Änderung alle 8 → Planer ruckelte) */
 var VIEWR={planer:()=>render(),verkauf:()=>rv(),bestell:()=>rb(),rekla:()=>rr(),kunden:()=>rk(),leasing:()=>rl(),lief:()=>rs(),kasse:()=>rtg()};var STALE=new Set();
-function navCounts(){try{$('nOffen').textContent=V.filter(b=>b.a!=='1').length;$('nBest').textContent=B.filter(b=>(b.status||'offen')!=='fertig').length;$('nRekla').textContent=rkAll().filter(r=>rkSt(r)!=='erl').length;let n=0;for(const y in KD)n+=Object.keys(KD[y]||{}).length;$('nKunden').textContent=n?n.toLocaleString('de-DE'):'–';}catch(_){}}
+function navCounts(){try{$('nOffen').textContent=V.filter(b=>b.a!=='1').length;$('nBest').textContent=B.filter(b=>(b.status||'offen')!=='fertig').length;$('nRekla').textContent=rkAll().filter(r=>rkSt(r)!=='erl').length;let n=0;for(const y in KD)n+=Object.keys(KD[y]||{}).length;$('nKunden').textContent=n?n.toLocaleString('de-DE'):'–';document.querySelectorAll('.navbtn .n').forEach(e=>e.classList.toggle('z',/^[0–]?$/.test(e.textContent.trim())));}catch(_){}}
 function renderAll(){renderInfo();const cur=document.body.dataset.v||'planer';for(const v in VIEWR){if(v===cur){STALE.delete(v);VIEWR[v]();}else STALE.add(v);}navCounts();}
 function scheduleRender(){clearTimeout(rTimer);rTimer=setTimeout(()=>{if(editing()){dirty=true;return;}dirty=false;renderAll();},60);}
 document.addEventListener('focusout',()=>setTimeout(()=>{if(dirty&&!editing()){dirty=false;renderAll();}},120));
@@ -2954,8 +2958,9 @@ async function mtplGet(){if(MTPL)return MTPL;let d={};try{const x=await db.doc('
  if(d.v!==2)d={};const m=(a,b)=>Object.assign({},a,b||{});
  MTPL={sie:{ein:m(MTPL0.sie.ein,d.sie&&d.sie.ein),fam:m(MTPL0.sie.fam,d.sie&&d.sie.fam)},du:{ein:m(MTPL0.du.ein,d.du&&d.du.ein),fam:m(MTPL0.du.fam,d.du&&d.du.fam)},fuss:d.fuss!=null?d.fuss:MTPL0.fuss};return MTPL;}
 // Name aus „Müller, Hans“ bzw. „Hans Müller“
-function kdNameSplit(k){k=String(k||'').replace(/\s+/g,' ').trim();if(!k)return{vn:'',nn:''};if(k.includes(',')){const [a,b]=k.split(',');return{nn:a.trim(),vn:(b||'').trim()};}const w=k.split(' ');return{nn:w.pop(),vn:w.join(' ')};}
-function kdAnrede(r,a,du){const {vn,nn}=kdNameSplit(r.kunde);if(a==='fam')return 'Hallo Familie '+nn+',';
+/* 1.10.18: Kunden-Liste schreibt „Nachname Vorname“ (z. B. „Thirolf Kevin“) → Standard: 1. Wort = Nachname. Pro Kunde umdrehbar (Feld nameOrd='vn' = „Vorname Nachname“). */
+function kdNameSplit(k,ord){k=String(k||'').replace(/\s+/g,' ').trim();if(!k)return{vn:'',nn:''};if(k.includes(',')){const [a,b]=k.split(',');return{nn:a.trim(),vn:(b||'').trim()};}const w=k.split(' ');if(w.length<2)return{nn:k,vn:''};if(ord==='vn'){const nn=w.pop();return{nn,vn:w.join(' ')};}return{nn:w[0],vn:w.slice(1).join(' ')};}
+function kdAnrede(r,a,du){const {vn,nn}=kdNameSplit(r.kunde,r.nameOrd);if(a==='fam')return 'Hallo Familie '+nn+',';
  if(du){if(a==='neu')return 'Hallo,';return 'Hallo'+(vn?' '+vn.split(' ')[0]:'')+',';}
  if(a==='herr')return 'Hallo Herr '+nn+',';if(a==='frau')return 'Hallo Frau '+nn+',';return 'Guten Tag'+((vn+' '+nn).trim()?' '+(vn+' '+nn).trim():'')+',';}
 /* 1.10.13: E-Mail im Design der KI-Zentrale (vcMail): dunkel, Logo, Farbverlauf, Karten, Rabatt-Box, Bewertungs-Knopf, Kontaktkarte.
@@ -2980,7 +2985,7 @@ function kdMailHtml(text,o){o=o||{};const du=!!o.du,fam=!!o.fam;
   if(/^wichtig/i.test(L[0])&&/%/.test(L[0])){flush();const h=L[0].replace(/^wichtig\s*[–—:-]?\s*/i,'').replace(/:$/,''),mm=h.match(/^(.*?\d+\s*%\s*Rabatt)\s*(.*)$/i);
    out.push(card(`${kick(du?(fam?'Euer Vorteil':'Dein Vorteil'):'Ihr Vorteil als Kunde')}<div style="font-size:26px;font-weight:800;color:#FF1E2D;margin:2px 0 4px">${esc(mm?mm[1]:h)}</div>${mm&&mm[2]?`<div style="font-size:15px;font-weight:600;margin:0 0 10px">${esc(mm[2])}</div>`:''}${L.slice(1).map(t=>`<div style="font-size:13.5px;line-height:1.6;color:#D5D8E2;margin:0 0 8px">${lk(t)}</div>`).join('')}<div style="margin:10px 0 0"><a href="${esc(waU)}" style="display:inline-block;padding:11px 20px;border-radius:999px;background:#25D366;color:#0B1F12;font-size:14.5px;font-weight:800;text-decoration:none;${F}">💬&nbsp; Termin per WhatsApp anfragen</a></div>`));continue;}
   const rv=x.match(/https?:\/\/(g\.page|search\.google|www\.google|maps\.app)[^\s]*/);
-  if(rv){const t=x.replace(rv[0],'').trim();cur+=(t?p(t):'')+`<div style="margin:4px 0 18px"><a href="${esc(rv[0])}" style="display:inline-block;padding:14px 28px;border-radius:999px;${G};color:#FFFFFF;font-size:16px;font-weight:800;text-decoration:none;${F}">★ Jetzt bei Google bewerten</a></div>`;continue;}
+  if(rv){/* 1.10.18: Bewertungstext nur im reinen Text, im Design nur der Knopf */cur+=`<div style="margin:4px 0 18px"><a href="${esc(rv[0])}" style="display:inline-block;padding:14px 28px;border-radius:999px;${G};color:#FFFFFF;font-size:16px;font-weight:800;text-decoration:none;${F}">★ Jetzt bei Google bewerten</a></div>`;continue;}
   if(/^(mit freundlichen|viele|liebe|beste|herzliche) grüße/i.test(L[0])){cur+=`<div style="font-size:15px;line-height:1.6;color:#D5D8E2">${esc(L[0])}${L.slice(1).map(t=>`<br><b style="color:#FFFFFF">${esc(t)}</b>`).join('')}</div>`;continue;}
   cur+=p(x);}
  flush();
@@ -3020,17 +3025,17 @@ function kdMailOpen(cell){const o=kdRowOf(cell);if(!o)return;const {y,id,r}=o;if
   const nv=list.join(', ');kdPopClose();if(nv===String(r.mail||''))return;const old=r;kdPut(y,Object.assign({},r,{mail:nv,mailSrc:'',mailVon:ME.id})).then(rk);toast(nv?'E-Mail gespeichert':'E-Mail entfernt',()=>{kdPut(y,old).then(rk);});};
  inp.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();save(inp.value);}});
  el.addEventListener('click',e=>{if(e.target.closest('[data-kmok]'))save(inp.value);else if(e.target.closest('[data-kmclr]'))save('');else{const b=e.target.closest('[data-ktpl]');if(b){kdPopClose();kdTplOpen(y,id,b.dataset.ktpl);}}});}
-async function kdTplOpen(y,id,kind){const r=KD[y]&&KD[y][id];if(!r)return;const T=await mtplGet(),m=kdMails(r),MC=await mcfgGet(),dir=mcfgOk(MC);let an=kind==='fam'?'fam':'neu',du=false;try{du=localStorage.getItem('vc_mdu')==='1';}catch(_){}if(du&&an==='neu')an='vn';
+async function kdTplOpen(y,id,kind){let r=KD[y]&&KD[y][id];if(!r)return;const T=await mtplGet(),m=kdMails(r),MC=await mcfgGet(),dir=mcfgOk(MC);let an=kind==='fam'?'fam':'neu',du=false;try{du=localStorage.getItem('vc_mdu')==='1';}catch(_){}if(du&&an==='neu')an='vn';
  dlg(`<h3>✉ E-Mail an ${esc(r.kunde||'Kunde')}</h3><form id="ktF" class="ktf" autocomplete="off">
   <div class="ktk"><span class="ktsw"><button type="button" class="kyc" data-kdu="0">🤝 Sie</button><button type="button" class="kyc" data-kdu="1">👋 Du</button></span><span class="ktsep"></span><button type="button" class="kyc${kind==='ein'?' on':''}" data-kk="ein">👤 Einzelperson</button><button type="button" class="kyc${kind==='fam'?' on':''}" data-kk="fam">👨‍👩‍👧 Familie</button></div>
   <label>An<input id="ktTo" value="${esc(m.join(', '))}"></label>
-  <label>Anrede<span class="ktan"><input id="ktAn"><button type="button" class="btn" data-an="herr" data-sie>Herr</button><button type="button" class="btn" data-an="frau" data-sie>Frau</button><button type="button" class="btn" data-an="vn" data-du>Vorname</button><button type="button" class="btn" data-an="fam">Familie</button><button type="button" class="btn" data-an="neu">neutral</button></span></label>
+  <label>Anrede<span class="ktan"><input id="ktAn"><button type="button" class="btn" data-an="herr" data-sie>Herr</button><button type="button" class="btn" data-an="frau" data-sie>Frau</button><button type="button" class="btn" data-an="vn" data-du>Vorname</button><button type="button" class="btn" data-an="fam">Familie</button><button type="button" class="btn" data-an="neu">neutral</button><button type="button" class="btn" data-ksw title="Vor- und Nachname vertauschen (wird beim Kunden gemerkt)">⇄ Name</button></span></label>
   <label>Betreff<input id="ktS"></label><label>Text<textarea id="ktB" rows="16"></textarea></label>
   <div class="ktpv" id="ktPv" hidden><iframe id="ktIf" title="Vorschau"></iframe></div>
   <p class="hint">${dir?'<b>📤 Direkt senden</b> verschickt sofort im <b>Velocenter-Design</b> (wie die KI-Zentrale). „Im Mailprogramm“ öffnet nur den Text in Outlook.':'Öffnet die E-Mail in eurem Mailprogramm (nur Text; zu lang für den Link → automatisch kopiert, im Mailprogramm <b>Strg+V</b>). Direkt-Versand im Design: ⚙ Einstellungen → 📧 E-Mail-Versand.'} Danach steht beim Kunden „angeschrieben“.</p><div class="err" id="ktE"></div>
   <div class="acts">${ME&&ME.adm?'<button type="button" class="btn" data-kted>✎ Vorlagen dauerhaft ändern</button>':''}<button class="btn" type="button" data-close>Abbrechen</button><button class="btn" type="button" data-ktpv>👁 Vorschau</button><button class="btn" type="button" data-ktcp>📋 Text kopieren</button>${dir?'<button class="btn" type="button" data-ktmp>📧 Im Mailprogramm</button><button class="btn red" type="button" data-ktsend>📤 Direkt senden</button>':'<button class="btn red" type="submit">📧 E-Mail öffnen</button>'}</div></form>`);
  $('dlgBox').classList.add('wide');
- const html=()=>{const nm=kdNameSplit(r.kunde);return kdMailHtml($('ktB').value,{du,fam:kind==='fam',name:(nm.vn+' '+nm.nn).trim(),modell:String(r.modell||'').trim()});};
+ const html=()=>{const nm=kdNameSplit(r.kunde,(KD[y]&&KD[y][id]||r).nameOrd);return kdMailHtml($('ktB').value,{du,fam:kind==='fam',name:(nm.vn+' '+nm.nn).trim(),modell:String(r.modell||'').trim()});};
  const pv=()=>{if($('ktPv').hidden)return;$('ktIf').srcdoc='<!doctype html><meta charset="utf-8"><body style="margin:0;background:#0E0F14">'+html();};
  const body=()=>(T[du?'du':'sie'][kind].b.replace(/\{anrede\}/g,$('ktAn').value)+'\n\n'+T.fuss).trim();
  const fill=()=>{$('ktF').querySelectorAll('[data-kdu]').forEach(b=>b.classList.toggle('on',(b.dataset.kdu==='1')===du));
@@ -3042,6 +3047,7 @@ async function kdTplOpen(y,id,kind){const r=KD[y]&&KD[y][id];if(!r)return;const 
  $('ktF').addEventListener('click',e=>{const k=e.target.closest('[data-kk]');if(k){kind=k.dataset.kk;if(kind==='fam')an='fam';else if(an==='fam')an=du?'vn':'neu';$('ktF').querySelectorAll('[data-kk]').forEach(b=>b.classList.toggle('on',b===k));fill();return;}
   const d=e.target.closest('[data-kdu]');if(d){du=d.dataset.kdu==='1';if(an!=='fam')an=du?'vn':'neu';try{localStorage.setItem('vc_mdu',du?'1':'0');}catch(_){}fill();return;}
   const a=e.target.closest('[data-an]');if(a){an=a.dataset.an;fill();return;}
+  if(e.target.closest('[data-ksw]')){const cur=KD[y]&&KD[y][id];if(!cur)return;const n=Object.assign({},cur,{nameOrd:cur.nameOrd==='vn'?'':'vn'});r=n;fill();kdPut(y,n).then(rk);const sp=kdNameSplit(n.kunde,n.nameOrd);toast('Vorname: '+(sp.vn||'–')+' · Nachname: '+(sp.nn||'–'));return;}
   if(e.target.closest('[data-ktpv]')){$('ktPv').hidden=!$('ktPv').hidden;pv();return;}
   if(e.target.closest('[data-ktcp]')){kdCopy($('ktB').value).then(ok=>toast(ok?'Text kopiert':'Kopieren nicht möglich'));return;}
   if(e.target.closest('[data-kted]')){dlgClose();kdTplEdit();return;}
