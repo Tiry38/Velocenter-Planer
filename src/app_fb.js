@@ -628,7 +628,7 @@ $('vkDone').addEventListener('click',e=>{vkShowDone=!vkShowDone;const t=e.curren
 /* ================= BESTELLUNGEN ================= */
 let bEdit=null,bShowDone=false;
 const BST=[['offen','Offen'],['bestellt','Bestellt'],['da','Da · Kunde informieren']];
-const BF=[['datum','Datum'],['kunde','Kunde / Modell'],['telefon','Telefon'],['artikel','Artikel'],['lieferant','Lieferant'],['lieferzeit','Lieferzeit'],['notiz','Notiz']];
+const BF=[['datum','Datum'],['artikel','Artikel'],['_gap',''],['kunde','Artikel-Info'],['lieferant','Lieferant'],['lieferzeit','Kommt voraussichtlich'],['telefon','Telefon']];/* 1.10.3: Reihenfolge nach Tiry, Notiz-Feld raus (alte Notizen bleiben gespeichert) */
 let bF='';
 function rb(){const m=b=>true;
  const st=k=>B.filter(b=>(b.status||'offen')===k).length;
@@ -642,7 +642,7 @@ function rb(){const m=b=>true;
 /* 1.9.3: Lieferant der Bestellung als Logo oben rechts (sonst Name) */
 function bLf(b){const n=String(b.lieferant||'').trim().toLowerCase();return n?S.find(o=>String(o.name||'').trim().toLowerCase()===n):null;}
 function bLfBadge(b){if(!String(b.lieferant||'').trim())return '';const o=bLf(b),lg=o?sLogo(o):'';return lg?`<img class="olg" src="${lg}" alt="" title="Lieferant: ${esc(b.lieferant)}">`:`<span class="olgt" title="Lieferant">${esc(b.lieferant)}</span>`;}
-function bForm(b){return `<form class="edf card" data-bf="${esc(b.id)}" autocomplete="off"><b>${b.id==='new'?'Neue Bestellung':'Bestellung bearbeiten'}</b><div class="g2">${BF.map(([k,n])=>`<label>${n}<input name="${k}" value="${esc(b[k]||'')}"${k==='artikel'?' required':''}${k==='lieferant'?' list="bLfList" placeholder="Lieferant wählen oder tippen"':''}></label>`).join('')}<datalist id="bLfList">${[...new Set(S.map(o=>String(o.name||'').trim()).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'de')).map(n=>`<option value="${esc(n)}">`).join('')}</datalist><label>Bezahlt<select name="bezahlt"><option value="">– (nichts eingetragen)</option><option value="ja"${b.bezahlt==='ja'?' selected':''}>ja, bezahlt</option><option value="nein"${b.bezahlt==='nein'?' selected':''}>nein, nicht bezahlt</option></select></label></div>
+function bForm(b){return `<form class="edf card" data-bf="${esc(b.id)}" autocomplete="off"><b>${b.id==='new'?'Neue Bestellung':'Bestellung bearbeiten'}</b><div class="g2">${BF.map(([k,n])=>k==='_gap'?'<div class="bfgap"></div>':`<label>${n}<input name="${k}" value="${esc(b[k]||'')}"${k==='artikel'?' required':''}${k==='lieferant'?' list="bLfList" placeholder="Lieferant wählen oder tippen"':''}></label>`).join('')}<datalist id="bLfList">${[...new Set(S.map(o=>String(o.name||'').trim()).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'de')).map(n=>`<option value="${esc(n)}">`).join('')}</datalist><label>Bezahlt<select name="bezahlt"><option value="">– (nichts eingetragen)</option><option value="ja"${b.bezahlt==='ja'?' selected':''}>ja, bezahlt</option><option value="nein"${b.bezahlt==='nein'?' selected':''}>nein, nicht bezahlt</option></select></label></div>
  <div class="acts"><button class="btn red" type="submit">Speichern</button><button class="btn" type="button" data-bcancel>Abbrechen</button>${b.id!=='new'?`<button class="btn del" type="button" data-bdel="${esc(b.id)}">Löschen</button>`:''}</div></form>`;}
 async function putB(b){const i=B.findIndex(x=>x.id===b.id);if(i<0)B.unshift(b);else B[i]=b;rb();try{await save('B',b);}catch(_){}}
 $('v-bestell').addEventListener('click',e=>{const mv=e.target.closest('[data-bmv]');if(mv){const b=B.find(x=>x.id===mv.dataset.bmv);putB(Object.assign({},b,{status:mv.dataset.to}));toast({offen:'Offen',bestellt:'Bestellt',da:'Ist da – Kunde informieren',fertig:'Erledigt ✓'}[mv.dataset.to]);return;}
@@ -650,7 +650,7 @@ $('v-bestell').addEventListener('click',e=>{const mv=e.target.closest('[data-bmv
  const ed=e.target.closest('[data-bedit]');if(ed){bEdit=ed.dataset.bedit;rb();$('bForm').scrollIntoView({block:'start'});return;}
  if(e.target.closest('[data-bcancel]')){bEdit=null;rb();return;}
  const dl=e.target.closest('[data-bdel]');if(dl){if(!dl.dataset.sure){dl.dataset.sure=1;dl.textContent='Wirklich löschen?';return;}const id=dl.dataset.bdel,b=B.find(x=>x.id===id);B=B.filter(x=>x.id!==id);bEdit=null;rb();del('B',id);toast('Gelöscht',()=>{B.unshift(b);rb();save('B',b).catch(()=>{});});}});
-$('v-bestell').addEventListener('submit',e=>{if(!e.target.dataset.bf)return;e.preventDefault();const f=e.target,id=f.dataset.bf,d=new FormData(f);const b=id==='new'?{id:nid('b'),status:'offen',von:ME.id}:Object.assign({},B.find(x=>x.id===id));BF.forEach(([k])=>b[k]=String(d.get(k)||'').trim());b.bezahlt=d.get('bezahlt')||'';bEdit=null;putB(b);toast('Gespeichert');});
+$('v-bestell').addEventListener('submit',e=>{if(!e.target.dataset.bf)return;e.preventDefault();const f=e.target,id=f.dataset.bf,d=new FormData(f);const b=id==='new'?{id:nid('b'),status:'offen',von:ME.id}:Object.assign({},B.find(x=>x.id===id));BF.forEach(([k])=>{if(k!=='_gap')b[k]=String(d.get(k)||'').trim();});b.bezahlt=d.get('bezahlt')||'';bEdit=null;putB(b);toast('Gespeichert');});
 $('bAdd').addEventListener('click',()=>{bEdit='new';rb();const f=document.querySelector('[data-bf=new] input[name=kunde]');if(f)f.focus();});
 $('bDone').addEventListener('click',e=>{bShowDone=!bShowDone;e.currentTarget.setAttribute('aria-pressed',bShowDone);rb();});
 
