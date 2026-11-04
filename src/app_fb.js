@@ -1172,7 +1172,7 @@ function kdAnrede(r,a,du){const {vn,nn}=kdNameSplit(r.kunde);if(a==='fam')return
  if(a==='herr')return 'Hallo Herr '+nn+',';if(a==='frau')return 'Hallo Frau '+nn+',';return 'Guten Tag'+((vn+' '+nn).trim()?' '+(vn+' '+nn).trim():'')+',';}
 /* 1.10.13: E-Mail im Design der KI-Zentrale (vcMail): dunkel, Logo, Farbverlauf, Karten, Rabatt-Box, Bewertungs-Knopf, Kontaktkarte.
    Logo liegt öffentlich auf GitHub Pages (mail-logo.png, PNG – Outlook kann kein WebP). Text aus dem Textfeld, Fußzeile wird als Kontaktkarte gestaltet. */
-const MAIL_LOGO='https://tiry38.github.io/Velocenter-Planer/mail-logo.png';
+const MAIL_IMG='https://tiry38.github.io/Velocenter-Planer/',MAIL_LOGO=MAIL_IMG+'mail-logo.png';
 function kdMailHtml(text,o){o=o||{};const du=!!o.du,fam=!!o.fam;
  const F="font-family:Poppins,'Segoe UI',Arial,sans-serif",G='background:#8B5CF6;background-image:linear-gradient(90deg,#E3343B,#8B5CF6 55%,#3B82F6)';
  const lk=t=>esc(t).replace(/(https?:\/\/[^\s<]+)/g,u=>`<a href="${u}" style="color:#8FB0FF;text-decoration:none">${u.replace(/^https?:\/\/(www\.)?/,'')}</a>`).replace(/([A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,})(?![^<]*<\/a>)/g,'<a href="mailto:$1" style="color:#8FB0FF;text-decoration:none">$1</a>');
@@ -1195,7 +1195,9 @@ function kdMailHtml(text,o){o=o||{};const du=!!o.du,fam=!!o.fam;
  flush();
  const t1=fam?'Viel Freude mit':'Viel Freude mit',t2=du?(fam?'euren neuen E-Bikes!':'deinem neuen E-Bike!'):(fam?'Ihren neuen E-Bikes!':'Ihrem neuen E-Bike!');
  const reach=du?(fam?'So erreicht ihr uns':'So erreichst du uns'):'So erreichen Sie uns';
- const soc=`<div style="margin-top:14px;padding-top:12px;border-top:1px solid #2E323D;font-size:13.5px;${F}"><a href="https://www.velo-center.de" style="color:#8FB0FF;text-decoration:none;font-weight:700">🌐 velo-center.de</a> &nbsp;·&nbsp; <a href="https://www.instagram.com/velocenterhessert" style="color:#8FB0FF;text-decoration:none;font-weight:700">📷 Instagram</a> &nbsp;·&nbsp; <a href="https://www.facebook.com/velocenterhessert" style="color:#8FB0FF;text-decoration:none;font-weight:700">👍 Facebook</a></div>`;
+ const soc=`<div style="margin-top:14px;padding-top:12px;border-top:1px solid #2E323D;font-size:13.5px;${F}"><a href="https://www.velo-center.de" style="color:#8FB0FF;text-decoration:none;font-weight:700">🌐 www.velo-center.de</a></div>`;
+ const sl=(u,img,n)=>`<td align="center" style="padding:0 14px"><a href="${u}" style="text-decoration:none;color:#EEF0F7;${F}"><img src="${MAIL_IMG}mail-${img}.png" alt="${n}" width="40" height="40" style="display:block;width:40px;height:40px;border:0;margin:0 auto 6px"><span style="font-size:12.5px;font-weight:700;color:#EEF0F7">${n}</span></a></td>`;
+ const socRow=`<tr><td align="center" style="padding:4px 22px 16px;${F}"><div style="font-size:11px;letter-spacing:2.5px;text-transform:uppercase;font-weight:700;color:#9AA1B8;margin:0 0 12px">${du?(fam?'Folgt uns':'Folge uns'):'Folgen Sie uns'}</div><table role="presentation" cellpadding="0" cellspacing="0" align="center"><tr>${sl('https://www.instagram.com/velocenterhessert','ig','Instagram')}${sl('https://www.facebook.com/velocenterhessert','fb','Facebook')}</tr></table><div style="font-size:12px;color:#9AA1B8;margin-top:8px">@velocenterhessert</div></td></tr>`;
  return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#0E0F14;background-image:radial-gradient(circle at 10% 0%,rgba(227,52,59,.35),rgba(227,52,59,0) 40%),radial-gradient(circle at 95% 100%,rgba(59,130,246,.30),rgba(59,130,246,0) 45%)"><tr><td align="center" style="padding:28px 10px">
 <table role="presentation" width="640" cellpadding="0" cellspacing="0" style="width:100%;max-width:640px;border-radius:24px;overflow:hidden;background:#14161B;border:1px solid #262A34">
 <tr><td style="padding:26px 26px 20px;background:#14161B;background-image:radial-gradient(circle at 90% 20%,rgba(139,92,246,.35),rgba(139,92,246,0) 45%),radial-gradient(circle at 15% 90%,rgba(227,52,59,.30),rgba(227,52,59,0) 45%);${F};color:#EEF0F7">
@@ -1207,6 +1209,7 @@ function kdMailHtml(text,o){o=o||{};const du=!!o.du,fam=!!o.fam;
 <tr><td style="height:18px;line-height:18px;font-size:0">&nbsp;</td></tr>
 ${out.join('\n')}
 ${card(`${kick(reach)}${line}<table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td valign="top" style="width:50%;padding:0 12px 0 0;font-size:13.5px;line-height:1.75;color:#D5D8E2;${F}"><b style="color:#FFFFFF">Velocenter Hessert</b><br>Hartmannstraße 25<br>76744 Wörth am Rhein<br>Telefon: <a href="tel:+49727178033" style="color:#FFFFFF;text-decoration:none;font-weight:700">0727178033</a><br>WhatsApp: <a href="https://wa.me/491635343133" style="color:#FFFFFF;text-decoration:none;font-weight:700">01635343133</a><br><a href="mailto:info@velo-center.de" style="color:#8FB0FF;text-decoration:none">info@velo-center.de</a></td><td valign="top" style="width:50%;font-size:13.5px;line-height:1.75;color:#D5D8E2;${F}"><b style="color:#FFFFFF">Öffnungszeiten</b><br>Mo, Di, Do, Fr: 9–12 &amp; 14:30–18 Uhr<br>Sa: 9–12 Uhr<br>Mi und So: geschlossen</td></tr></table>${soc}`)}
+${socRow}
 <tr><td align="center" style="padding:6px 26px 26px;${F};font-size:11.5px;line-height:1.6;color:#6E7590">Velocenter Stefan Hessert · Hartmannstraße 25 · 76744 Wörth am Rhein · <a href="https://www.velo-center.de" style="color:#9AA1B8">www.velo-center.de</a></td></tr>
 </table></td></tr></table>`;}
 // Maus über das E-Mail-Symbol = Adressen zeigen
