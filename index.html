@@ -1586,7 +1586,7 @@ nav{backdrop-filter:none!important}
 <script>
 const FB_CONFIG={apiKey:"AIzaSyC_uZPvc5rJETwlS4JbfCoTkkE4ckjtp0M",authDomain:"velocenter-planer.firebaseapp.com",projectId:"velocenter-planer",storageBucket:"velocenter-planer.firebasestorage.app",messagingSenderId:"1018330488700",appId:"1:1018330488700:web:262a4d1660353e6fde8ef9"};
 /* ================= Velocenter Werkstatt-Cockpit – Oberfläche ================= */
-const CLIENT_VERSION='1.10.58';
+const CLIENT_VERSION='1.10.59';
 const USERS=[{id:'kevin',n:'Kevin',c:'#E2232D'},{id:'stefan',n:'Stefan',c:'#F59E0B'},{id:'martina',n:'Martina',c:'#EC4899'},{id:'sascha',n:'Sascha',c:'#22D3EE'},{id:'rene',n:'René',c:'#34D399'}];
 const U=id=>USERS.find(u=>u.id===id)||{n:'',c:'#64748B',id:''};
 /* 1.10.37: Profilfarbe je Nutzer (meta/prefs[ID].col, für alle sichtbar) – Cache für den Login-Bildschirm */
@@ -3615,7 +3615,8 @@ function mauScan(){const now=new Date(),t0=new Date(now.getFullYear(),now.getMon
  /* gleiche Adresse mehrfach fällig (z. B. 2 Räder) → eine Mail; verschiedene Nachnamen → prüfen */
  const by={};out.due.forEach(x=>{const k=x.m[0].toLowerCase();(by[k]=by[k]||[]).push(x);});const due=[];
  for(const k in by){const g=by[k];if(g.length===1){due.push(g[0]);continue;}const nns=new Set(g.map(x=>String(x.nn).toLowerCase()));
-  if(nns.size>1){g.forEach(x=>out.chk.push(Object.assign(x,{a:null,why:'gleiche E-Mail wie '+g.filter(o=>o!==x).map(o=>o.r.kunde).join(', ')})));continue;}
+  if(nns.size>1){const hd=g.find(x=>x.why==='von Hand');if(hd){due.push(Object.assign({},hd,{dup:g.filter(x=>x!==hd)}));continue;}
+   g.forEach(x=>out.chk.push(Object.assign(x,{a:null,why:'gleiche E-Mail wie '+g.filter(o=>o!==x).map(o=>o.r.kunde).join(', ')+' – wähle bei einem, die Mail geht dann nur an ihn/sie'})));continue;}
   const vns=new Set(g.map(x=>mauW(x.vn)));const h=Object.assign({},g[0],{dup:g.slice(1)});if(vns.size>1&&g[0].a!=='fam')h.a='fam';due.push(h);}
  const srt=(a,b)=>a.f-b.f||a.d-b.d;out.due=due.sort(srt);out.chk.sort(srt);out.soon.sort(srt);return out;}
 const mauMon=()=>{const ym=TODAY().slice(0,7);return Object.values(MAU.sent||{}).filter(s=>s&&String(s.t||'').slice(0,7)===ym).length;};
@@ -3644,7 +3645,7 @@ let mauT=null;function mauStart(){clearInterval(mauT);mauT=null;if(!ME||!ME.adm)
 function mauBadge(){const b=$('kdAuto');if(!b)return;b.hidden=!(ME&&ME.adm);if(b.hidden)return;let s;try{s=mauScan();}catch(e){return;}
  const on=MAU.ok&&MAU.on!==false;b.querySelector('b').textContent=s.chk.length?'⚠ '+s.chk.length:(on?'an':'aus');b.classList.toggle('warn',!!s.chk.length);b.classList.toggle('off',!on);
  b.title=on?'Automatische Kunden-Mail läuft · '+s.due.length+' fällig · '+s.chk.length+' Anrede prüfen':'Automatische Kunden-Mail ist aus / noch nicht freigegeben';}
-async function mauDlg(){if(!ME||!ME.adm)return;const c=await mcfgGet(),cfg=mcfgOk(c),s=mauScan(),on=MAU.ok&&MAU.on!==false,mon=mauMon();
+async function mauDlg(keep){if(!ME||!ME.adm)return;const sc0=keep&&$('dlgBox').querySelector('.mau')?[$('dlgBox').scrollTop,...[...$('dlgBox').querySelectorAll('.maul')].map(l=>l.scrollTop)]:null;const c=await mcfgGet(),cfg=mcfgOk(c),s=mauScan(),on=MAU.ok&&MAU.on!==false,mon=mauMon();
  const fd=d=>d.toLocaleDateString('de-DE',{day:'2-digit',month:'2-digit',year:'2-digit'});
  const row=(x,btns)=>`<div class="maur"><span class="maud">${fd(x.d)}<i>→ ${fd(x.f)}</i></span><span class="maun"><b>${esc(x.r.kunde||'')}</b><em>${esc(x.m.join(', '))}${x.dup&&x.dup.length?' · +'+x.dup.length+' weiteres Rad':''}</em></span>${btns}</div>`;
  const anr=x=>`<span class="maua${x.a==='fam'?' fam':''}">${esc(mauLine(x))}</span>`;
@@ -3662,11 +3663,14 @@ async function mauDlg(){if(!ME||!ME.adm)return;const c=await mcfgGet(),cfg=mcfgO
  <h4>✓ Zuletzt automatisch verschickt</h4>${sent.length?`<div class="maul">${sent.map(([,v])=>`<div class="maur"><span class="maud">${new Date(v.t).toLocaleDateString('de-DE',{day:'2-digit',month:'2-digit'})}<i>${new Date(v.t).toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'})}</i></span><span class="maun"><b>${esc(v.k||'')}</b><em>${esc(v.to||'')}</em></span><span class="maua">${esc(v.an||'')}</span></div>`).join('')}</div>`:'<p class="maue">Noch nichts.</p>'}
  <p class="hint">Ohne E-Mail-Adresse oder mit ✕/✉ bei „Angeschrieben“ wird niemand angeschrieben. Gleiche Adresse bei mehreren Rädern = nur eine Mail. Text = Standard-Vorlage „Sie“ (✎ Vorlagen im Mail-Fenster).</p>
  <div class="acts"><button type="button" class="btn red" data-close>Schließen</button></div></div>`);$('dlgBox').classList.add('wide','xwide');
+ if(sc0){$('dlgBox').scrollTop=sc0[0];[...$('dlgBox').querySelectorAll('.maul')].forEach((l,i)=>{if(sc0[i+1]!=null)l.scrollTop=sc0[i+1];});}
  const box=$('dlgBox').querySelector('.mau');box.addEventListener('click',async e=>{const b=e.target.closest('button');if(!b)return;
   if(b.dataset.ma){const y=b.dataset.y,id=b.dataset.id,cur=KD[y]&&KD[y][id];if(!cur)return;const v=b.dataset.ma;
-   const n=v==='sw'?Object.assign({},cur,{nameOrd:cur.nameOrd==='vn'?'':'vn'}):Object.assign({},cur,{anr:v});b.disabled=true;await kdPut(y,n);
-   toast(v==='no'?(cur.kunde||'Kunde')+': nie automatisch anschreiben':v==='sw'?'Name getauscht':'Anrede gespeichert',()=>{kdPut(y,cur).then(()=>{rk();mauDlg();});});rk();mauDlg();return;}
-  if(b.hasAttribute('data-mt')){await db.doc('meta/mailauto').set({on:!on,onVon:ME.id,onTs:stamp()},{merge:true});MAU.on=!on;toast(on?'Automatik aus':'Automatik an');mauDlg();if(!on)mauRun(true);return;}
+   const n=v==='sw'?Object.assign({},cur,{nameOrd:cur.nameOrd==='vn'?'':'vn'}):Object.assign({},cur,{anr:v});box.querySelectorAll('button[data-id="'+CSS.escape(id)+'"]').forEach(x=>x.disabled=true);
+   const p=kdPut(y,n);const ax=v==='no'?'':mauLine(mauAnr(n));
+   toast(v==='no'?(cur.kunde||'Kunde')+': nie automatisch anschreiben':v==='sw'?'Name getauscht'+(n.anr?' → '+ax:''):'✓ '+(cur.kunde||'')+': „'+ax+'“ – steht jetzt unter Fällig',()=>{kdPut(y,cur).then(()=>{kdDirty=true;mauDlg(true);});});
+   kdDirty=true;mauDlg(true);await p;return;}
+  if(b.hasAttribute('data-mt')){await db.doc('meta/mailauto').set({on:!on,onVon:ME.id,onTs:stamp()},{merge:true});MAU.on=!on;toast(on?'Automatik aus':'Automatik an');mauDlg(true);if(!on)mauRun(true);return;}
   if(b.hasAttribute('data-mok')){if(!confirm('Automatische Kunden-Mail freigeben?\n\n'+(s.due.length?s.due.length+' Kunden werden JETZT angeschrieben, ':'')+'danach läuft es täglich automatisch.'))return;
    await db.doc('meta/mailauto').set({ok:true,on:true,okVon:ME.id,okTs:stamp(),ab:MAU_AB},{merge:true});MAU.ok=true;MAU.on=true;b.disabled=true;b.textContent='Sendet …';mauRun(true);return;}
   if(b.hasAttribute('data-mgo')){b.disabled=true;b.textContent='Sendet …';mauRun(true);return;}});}
