@@ -1072,3 +1072,6 @@ body.bigcur,body.bigcur *{cursor:url("data:image/svg+xml,%3Csvg xmlns='http://ww
 .maua{font-size:12.5px;font-weight:700;color:#93C5FD;padding:2px 8px;border-radius:6px;background:rgba(59,130,246,.14)}.maua.fam{color:#C4B5FD;background:rgba(139,92,246,.16)}
 .mauw{font-size:12px;font-weight:700;color:#FDE68A}.maub{display:flex;gap:4px;flex-wrap:wrap}.maub .btn,.maur .mano{padding:4px 9px;font-size:12px}
 .mano{border-color:rgba(255,59,92,.45)!important;color:#FDA4AF!important}.maue{color:#9AA1B8;font-size:13px;margin:2px 0}
+/* 1.10.58 Tempo: Hintergrund-Verläufe als eigene feste Ebene (wird einmal gemalt, nicht bei jedem Scrollen/Neuaufbau) */
+body::before{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;background-color:inherit;background-image:inherit;background-attachment:scroll;will-change:transform;transform:translateZ(0)}
+nav{backdrop-filter:none!important}

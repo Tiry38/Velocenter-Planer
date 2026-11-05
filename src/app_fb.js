@@ -36,6 +36,8 @@ function sessionLost(){}
 /* ---------- Datum ---------- */
 const WD=['Sonntag','Montag','Dienstag','Mittwoch','Donnerstag','Freitag','Samstag'];
 const WDS=['SO','MO','DI','MI','DO','FR','SA'];
+/* 1.10.58 Tempo: Formatierer einmal anlegen (toLocaleString mit Optionen baut sonst je Zeile einen neuen) */
+const NF2=new Intl.NumberFormat('de-DE',{maximumFractionDigits:2}),MONL=['Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember'];
 const iso=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
 const fromIso=s=>new Date(s+'T12:00:00');
 const TODAY=()=>iso(new Date());
@@ -45,7 +47,8 @@ function easter(y){const a=y%19,b=Math.floor(y/100),c=y%100,d=Math.floor(b/4),e=
 const HOL={};[2026,2027,2028].forEach(y=>{const e=easter(y),add=(d,n)=>{HOL[iso(d)]=n;},off=n=>{const d=new Date(e);d.setDate(d.getDate()+n);return d;};
  add(new Date(y,0,1,12),'Neujahr');add(off(-2),'Karfreitag');add(off(1),'Ostermontag');add(new Date(y,4,1,12),'1. Mai');add(off(39),'Himmelfahrt');add(off(50),'Pfingstmontag');add(off(60),'Fronleichnam');add(new Date(y,9,3,12),'Dt. Einheit');add(new Date(y,10,1,12),'Allerheiligen');add(new Date(y,11,24,12),'Heiligabend');add(new Date(y,11,25,12),'1. Weihnachtstag');add(new Date(y,11,26,12),'2. Weihnachtstag');add(new Date(y,11,31,12),'Silvester');});
 /* 1.8.1: Listen füllen die ganze Höhe bis zum unteren Rand */
-function fitH(){for(const el of document.querySelectorAll('.vtab,.board,.rktab,.nboard,.kdboard,#v-lief .tbl,#v-kasse .tbl')){if(!el.offsetParent)continue;const t=el.getBoundingClientRect().top;el.style.maxHeight=Math.max(240,(innerHeight-t-12)/UIZ)+'px';}if(typeof ltBarPos==='function')ltBarPos();}
+/* 1.10.58 Tempo: nur im sichtbaren Reiter suchen, Höhe nur bei Änderung schreiben, LT-Balken nur im Verkauf */
+function fitH(){const vw=document.querySelector('.view.on');if(!vw)return;for(const el of vw.querySelectorAll('.vtab,.board,.rktab,.nboard,.kdboard,#v-lief .tbl,#v-kasse .tbl')){if(!el.offsetParent)continue;const t=el.getBoundingClientRect().top,h=Math.max(240,(innerHeight-t-12)/UIZ)+'px';if(el.style.maxHeight!==h)el.style.maxHeight=h;}if(vw.id==='v-verkauf'&&typeof ltBarPos==='function')ltBarPos();}
 /* 1.8.6: Scroll-Position aller Listen bleibt beim Neuaufbau erhalten (vorher sprang die Liste nach jeder Änderung nach oben) */
 const SCRSEL='.vtab,.board,.rktab,.nboard,.kdboard,.tbl,.bcols,.cols';const SCR={};
 const scrKey=el=>((el.closest('.view')||{}).id||'')+'|'+[...el.classList].filter(c=>!/^(on|wfx)$/.test(c)).sort().join('.');
@@ -591,12 +594,12 @@ function ltBar(b){if(b.a==='1')return null;const s=String(b.lt||'').trim();
  const a=vkDate(b.dat);if(!a)return null;const p=now>=z?1:Math.max(0.02,Math.min(1,(now-a)/Math.max(864e5,z-a)));
  return {p:+p.toFixed(3),c:'#34D399',t:'Liefertermin KW '+L.k+': '+Math.round(p*100)+' % der Wartezeit vorbei'};}
 function ltBarPos(){requestAnimationFrame(()=>{const t=document.querySelector('#cards .vtab table');if(!t)return;const r=t.querySelector('tr.vr');if(!r)return;const a=r.querySelector('td.who2'),n=r.querySelector('td.vnote');if(!a||!n)return;
- const f=r.cells[0].getBoundingClientRect().left,al=a.getBoundingClientRect().left,w=n.getBoundingClientRect().right-f;if(w>0){t.style.setProperty('--lbw',Math.round(w)+'px');t.style.setProperty('--lbx',Math.round(al-f)+'px');}});}
+ const f=r.cells[0].getBoundingClientRect().left,al=a.getBoundingClientRect().left,w=n.getBoundingClientRect().right-f;if(w>0){const W=Math.round(w)+'px',X=Math.round(al-f)+'px';if(t.style.getPropertyValue('--lbw')!==W)t.style.setProperty('--lbw',W);if(t.style.getPropertyValue('--lbx')!==X)t.style.setProperty('--lbx',X);}});}
 addEventListener('resize',()=>ltBarPos());
 function vkLt(s){s=String(s||'').trim();if(/^sofort/i.test(s))return -1;if(/lager|^l$/i.test(s))return 0;const p=ltParse(s);if(!p)return 999;return p.k+(p.y-new Date().getFullYear())*53;}
 const ltNorm=s=>{const p=ltParse(s);return p?'KW '+p.k+'/'+String(p.y%100).padStart(2,'0'):String(s||'');};
 /* 1.6.8: „Anfang Dezember“ über der KW (Donnerstag der KW bestimmt den Monat, wie ISO) */
-const ltMon=s=>{const p=ltParse(s);if(!p)return '';const d=kwMon(p.k,p.y);d.setDate(d.getDate()+3);const t=d.getDate();return `<span class="ltm">${t<=10?'Anfang':t<=20?'Mitte':'Ende'} ${d.toLocaleDateString('de-DE',{month:'long'})}</span>`;};
+const ltMon=s=>{const p=ltParse(s);if(!p)return '';const d=kwMon(p.k,p.y);d.setDate(d.getDate()+3);const t=d.getDate();return `<span class="ltm">${t<=10?'Anfang':t<=20?'Mitte':'Ende'} ${MONL[d.getMonth()]}</span>`;};
 const ltShow=s=>{const p=ltParse(s);return p?'KW '+p.k+'<small class="lty">'+String(p.y%100).padStart(2,'0')+'</small>':esc(s||'');};
 const vkRank=b=>b.a==='1'?5:b.b==='1'?4:b.m==='1'?3:b.an==='1'?2:1;
 // Sortieren: Klick auf Spaltenkopf (1. Klick aufsteigend, 2. Klick absteigend) oder Auswahl oben links; leere Felder immer unten
@@ -1061,7 +1064,7 @@ const kdFv=(k,r)=>{const v=kdVal(k,r);if(!(k==='leas'||k==='vers')||v==='')retur
 const kdLab=(k,v)=>v===KDNC?'📅 Datum / ohne Kürzel (altes Sheet)':v===''?'(leer)':k==='leas'&&FN[v]?v+' · '+FN[v]:k==='leas'&&(L||[]).find(l=>kdKey(l.k)===kdKey(v))?v+' · '+(L||[]).find(l=>kdKey(l.k)===kdKey(v)).n:k==='leas'&&KFIN[kdKey(v)]?v+' · '+KFIN[kdKey(v)].n:k==='vers'&&kdVN()[v]?v+' · '+kdVN()[v]:v;
 let kdF={},kdYr=String(ls.get('vc_kdyr','')||'');  // Filter je Spalte: {Spalte: Set(Werte)} wie der Excel-Autofilter
 const kdYear=r=>{const d=r._d?new Date(r._d):null;return d?d.getFullYear():'ohne Datum';};
-const kdPreis=v=>{v=String(v==null?'':v).trim();if(/^\d+([.,]\d+)?$/.test(v)){const n=parseFloat(v.replace(',','.'));return n.toLocaleString('de-DE',{maximumFractionDigits:2})+' €';}return v;};
+const kdPreis=v=>{v=String(v==null?'':v).trim();if(/^\d+([.,]\d+)?$/.test(v)){const n=parseFloat(v.replace(',','.'));return NF2.format(n)+' €';}return v;};
 function rk(){const g=$('kdGrid');if(!g)return;kdAngMig();const all=kdAll();{const cy=new Date().getFullYear();$('nKunden').textContent=all.length?all.length.toLocaleString('de-DE'):'–';$('nKunden').title=all.length.toLocaleString('de-DE')+' Verkäufe gesamt seit 1995 · davon '+all.filter(r=>r._d&&new Date(r._d).getFullYear()===cy).length+' in '+cy;}
  if(document.querySelector('#kdGrid [contenteditable]:focus'))return;
  const q=($('kdSearch').value||'').trim().toLowerCase();const now=new Date().getFullYear();
