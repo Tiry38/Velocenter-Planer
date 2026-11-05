@@ -1057,3 +1057,18 @@ body.rowhl #v-planer .row:hover{background-color:rgba(255,255,255,.035)}
 body.nonum .navbtn .n{display:none!important}
 body.bigcur,body.bigcur *{cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32'%3E%3Cpath d='M3 2l0 24 7-7 5 11 4-2-5-11 10 0z' fill='white' stroke='black' stroke-width='1.6' stroke-linejoin='round'/%3E%3C/svg%3E") 3 2,auto!important}
 @media(max-width:700px){.sthide{grid-template-columns:1fr}}
+
+/* 1.10.57: Automatische Kunden-Mail */
+.kdauto{border-color:rgba(59,130,246,.55)!important;color:#BFDBFE!important}.kdauto b{margin-left:4px;padding:1px 7px;border-radius:99px;background:rgba(52,211,153,.18);color:#6EE7B7;font-size:11px}
+.kdauto.off b{background:rgba(148,163,184,.18);color:#CBD5E1}.kdauto.warn{border-color:rgba(251,191,36,.7)!important}.kdauto.warn b{background:rgba(251,191,36,.22);color:#FDE68A}
+.mau h4{margin:16px 0 6px;font-size:14px;display:flex;gap:8px;align-items:baseline}.mau h4 small{color:#9AA1B8;font-weight:600}
+.maust{display:flex;flex-direction:column;gap:6px;padding:12px 14px;border-radius:12px;border:1px solid rgba(148,163,184,.25);background:rgba(148,163,184,.08)}
+.maust.on{border-color:rgba(52,211,153,.45);background:rgba(52,211,153,.08)}.maust.on>b{color:#6EE7B7}.maust.off>b{color:#FDE68A}.maust span{font-size:13px;line-height:1.5;color:#CBD5E1}
+.mauacts{display:flex;gap:8px;flex-wrap:wrap;margin-top:4px}
+.maul{display:flex;flex-direction:column;gap:4px;max-height:280px;overflow:auto;padding-right:4px}
+.maur{display:flex;align-items:center;gap:10px;padding:6px 10px;border-radius:8px;background:rgba(255,255,255,.04);flex-wrap:wrap}
+.maud{display:flex;flex-direction:column;min-width:74px;font-size:12.5px;font-weight:700}.maud i{font-style:normal;color:#9AA1B8;font-size:11px;font-weight:600}
+.maun{flex:1;min-width:180px;display:flex;flex-direction:column}.maun em{font-style:normal;color:#9AA1B8;font-size:12px}
+.maua{font-size:12.5px;font-weight:700;color:#93C5FD;padding:2px 8px;border-radius:6px;background:rgba(59,130,246,.14)}.maua.fam{color:#C4B5FD;background:rgba(139,92,246,.16)}
+.mauw{font-size:12px;font-weight:700;color:#FDE68A}.maub{display:flex;gap:4px;flex-wrap:wrap}.maub .btn,.maur .mano{padding:4px 9px;font-size:12px}
+.mano{border-color:rgba(255,59,92,.45)!important;color:#FDA4AF!important}.maue{color:#9AA1B8;font-size:13px;margin:2px 0}
