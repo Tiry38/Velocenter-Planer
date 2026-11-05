@@ -7,7 +7,7 @@ const UCOL0=Object.fromEntries(USERS.map(u=>[u.id,u.c]));try{const cc=JSON.parse
 const $=id=>document.getElementById(id);
 const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const sav=id=>{const u=U(id);return id&&u.n?`<span class="sav" style="--uc:${u.c}">${esc(u.n[0])}</span>`:''};
-const av=(id,t,k,oid,ts)=>{const u=U(id);return id&&u.n?`<span class="av${k?' ave':''}" style="--uc:${u.c}" title="${esc((t?t+' ':'')+u.n)}${ts&&fmtTs(ts)?' · zuletzt gespeichert '+fmtTs(ts):''}${k?' · Admin: Klick = Person ändern':''}"${k?` data-avk="${k}" data-avi="${esc(oid)}"`:''}>${esc(u.n[0])}</span>`:''};
+const av=(id,t,k,oid,ts)=>{const u=U(id);return id&&u.n?`<span class="av${k?' ave':''}" data-u="${esc(id)}" style="--uc:${u.c}" title="${esc((t?t+' ':'')+u.n)}${ts&&fmtTs(ts)?' · zuletzt gespeichert '+fmtTs(ts):''}${k?' · Admin: Klick = Person ändern':''}"${k?` data-avk="${k}" data-avi="${esc(oid)}"`:''}>${esc(u.n[0])}</span>`:''};
 let UIZ=1;
 const nid=p=>p+Date.now().toString(36)+Math.random().toString(36).slice(2,8);
 const ls={get(k,d){try{const v=localStorage.getItem(k);return v==null?d:JSON.parse(v);}catch(_){return d;}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(_){}}};
@@ -69,7 +69,7 @@ let NAVPIN=false;
 function navMini(on,keep){NAVPIN=!on;document.body.classList.remove('navpeek');document.body.classList.toggle('navmini',on);const t=$('navTog');t.setAttribute('aria-label',on?'Navigation ausklappen':'Navigation einklappen');t.title=on?'Navigation ausklappen':'Navigation einklappen';t.dataset.l=on?'Ausklappen':'Einklappen';
  if(keep||!ME)return;ls.set('vc_navpin_'+ME.id,!on);db.doc('meta/prefs').set({[ME.id]:{navpin:!on}},{merge:true}).catch(()=>{});}
 /* 1.8.5: kein Hover-Aufklappen mehr – nur manuell über den Pfeil (Tiry) */
-async function navForUser(){if(!ME)return;navMini(!ls.get('vc_navpin_'+ME.id,false),true);try{const d=await db.doc('meta/prefs').get();const x=d.exists&&d.data()[ME.id];MYPREF=x||{};if(ucolApply(d.exists?d.data():{}))renderAll();uiApply(MYPREF.ui);if(x&&typeof x.navpin==='boolean'){navMini(!x.navpin,true);ls.set('vc_navpin_'+ME.id,x.navpin);}kdLayLoad(x&&x.kdlay);if(x&&x.start&&x.start!=='last'&&!START_DONE){START_DONE=true;show(x.start);}}catch(_){kdLayLoad(null);}}
+async function navForUser(){if(!ME)return;navMini(!ls.get('vc_navpin_'+ME.id,false),true);try{const d=await db.doc('meta/prefs').get();const x=d.exists&&d.data()[ME.id];MYPREF=x||{};if(ucolApply(d.exists?d.data():{}))renderAll();uiApply(MYPREF.ui);try{const vs=(MYPREF.ui||{}).vks;if(vs&&VKSL.some(o=>o[0]===vs)){vkSort=vs;ls.set('vc_vksort',vs);}}catch(_){}if(x&&typeof x.navpin==='boolean'){navMini(!x.navpin,true);ls.set('vc_navpin_'+ME.id,x.navpin);}kdLayLoad(x&&x.kdlay);if(x&&x.start&&x.start!=='last'&&!START_DONE){START_DONE=true;show(x.start);}}catch(_){kdLayLoad(null);}}
 let MYPREF={},START_DONE=false;
 $('navTog').addEventListener('click',()=>navMini(NAVPIN));
 /* 1.8.2: Klick aufs Profil-Symbol = Menü mit Abmelden / Passwort */
@@ -77,7 +77,8 @@ $('meChip').addEventListener('click',e=>{if(e.target.closest('#meCfg'))return;if
  const rc=$('meChip').getBoundingClientRect(),nr=document.querySelector('nav').getBoundingClientRect().right;el.style.left=Math.min(innerWidth-el.offsetWidth-8,nr+8)+'px';el.style.top=Math.max(8,rc.bottom-el.offsetHeight)+'px';
  el.addEventListener('click',ev=>{const b=ev.target.closest('[data-mp]');if(!b)return;kdPopClose();if(b.dataset.mp==='out')$('switchUser').click();else if(b.dataset.mp==='set')setDlg();else $('meSet').click();});});
 
-function toast(t,undo){const el=$('toast');el.textContent=t;el.classList.toggle('act',!!undo);if(undo){const b=document.createElement('button');b.type='button';b.className='undo';b.textContent='Rückgängig';b.onclick=()=>{undo();el.classList.remove('on','act');};el.append(b);}el.classList.add('on');clearTimeout(el._t);el._t=setTimeout(()=>el.classList.remove('on','act'),undo?6000:2200);}
+function toast(t,undo){const el=$('toast');el.textContent=t;el.classList.toggle('act',!!undo);if(undo){const b=document.createElement('button');b.type='button';b.className='undo';b.textContent='Rückgängig';b.onclick=()=>{undo();el.classList.remove('on','act');};el.append(b);}el.classList.add('on');clearTimeout(el._t);el._t=setTimeout(()=>el.classList.remove('on','act'),undo?uiUndoMs():({k:1500,n:2200,l:4500}[(MYPREF.ui||{}).tl]||2200));}
+function uiUndoMs(){const u=+((MYPREF.ui||{}).undo);return ([6,10,15,20].includes(u)?u:6)*1000;}
 
 /* ---------- Anmeldung ---------- */
 let pwU=null;
@@ -142,6 +143,11 @@ function ucolApply(all){let ch=false;for(const u of USERS){const v=all&&all[u.id
 /* Darstellung je Nutzer (meta/prefs[ID].ui = {fs,bg,anim,dense}), auf allen Geräten */
 function uiApply(ui){ui=ui||{};const fs=[85,90,100,110,120,135].includes(+ui.fs)?+ui.fs:100;UIZ=fs/100;document.documentElement.style.zoom=fs===100?'':String(UIZ);
  const b=document.body.classList;b.toggle('bgdez',ui.bg==='d');b.toggle('bgruh',ui.bg==='r');b.toggle('noanim',ui.anim===false);b.toggle('uidense',!!ui.dense);
+ b.toggle('hicon',!!ui.hc);b.toggle('fsys',ui.font==='s');b.toggle('rowhl',!!ui.rowhl);b.toggle('nonum',!!ui.nonum);b.toggle('bigcur',!!ui.cur);
+ let cs=$('uiCss');if(!cs){cs=document.createElement('style');cs.id='uiCss';document.head.append(cs);}
+ const hid=(Array.isArray(ui.hide)?ui.hide:[]).filter(v=>/^[a-z]+$/.test(v)&&v!=='planer');
+ cs.textContent=hid.map(v=>`.navbtn[data-v=${v}]{display:none!important}`).join('')+(ui.mine&&ME?`#v-planer .e:has(.av[data-u="${ME.id}"]){box-shadow:inset 0 0 0 1.5px ${U(ME.id).c},0 0 12px color-mix(in srgb,${U(ME.id).c} 40%,transparent)!important}`:'');
+ try{const wk=[4,6,10,16,26].includes(+ui.wk)?+ui.wk:10,pa=!!ui.past;if(wk!==weeks||pa!==showPast){weeks=wk;showPast=pa;const pb=$('past');if(pb)pb.setAttribute('aria-pressed',pa);if(ME)render();}}catch(_){}
  if(typeof fitH==='function')requestAnimationFrame(fitH);}
 function uiSave(k,v,msg){MYPREF.ui=Object.assign({},MYPREF.ui||{},{[k]:v});uiApply(MYPREF.ui);db.doc('meta/prefs').set({[ME.id]:{ui:{[k]:v}}},{merge:true}).then(()=>toast(msg||'Gespeichert')).catch(fail);}
 /* 1.10.42: 👥 Nutzerverwaltung (Admin) – Konto-Status, zuletzt aktiv (meta/prefs[ID].seen/dev), Profilfarbe für andere, Abmelden erzwingen (meta/prefs[ID].kick > vc_lin des Geräts) */
@@ -169,19 +175,80 @@ function setDlg(tab){if(!ME)return;const u=U(ME.id),pin=NAVPIN,st=MYPREF.start||
  const nK=adm?kdAll().length:0,dd=t=>t?esc(String(t).slice(0,10).split('-').reverse().join('.')):'';
  const TAG={imp:['IMPORT','#22D3EE'],exp:['EXPORT','#39F26B'],set:['EINRICHTEN','#F5B83D'],sec:['SICHERHEIT','#A78BFA'],del:['GEFAHR','#FF4D6D']};
  const card=(ic,t,tg,rows,btn,stt,cls)=>`<div class="stc ${cls||''}" style="--tc:${TAG[tg][1]}"><div class="stch"><span class="stic">${ic}</span><div><b>${t}</b><em>${TAG[tg][0]}</em></div></div>${rows.map(([l,h])=>`<div class="stcr"><span>${l}</span><p>${h}</p></div>`).join('')}${stt?`<div class="stst">${stt}</div>`:''}<div class="stcb">${btn}</div></div>`;
- const U1=`<div class="stgrp"><h4>👤 Konto & Ansicht</h4><div class="stgrid">
-  <div class="stc" style="--tc:${u.c}"><div class="stch"><span class="av big" style="--uc:${u.c}">${esc(u.n[0])}</span><div><b>${esc(u.n)}</b><em>${adm?'ADMIN – DARF ALLES':'TEAM'}</em></div></div><p class="stp">Angemeldet auf diesem Gerät. Die Anmeldung bleibt gespeichert, bis du dich abmeldest.</p><div class="stcb"><button type="button" class="btn" id="stPw">🔑 Passwort ändern</button><button type="button" class="btn" id="stOut">⇄ Abmelden</button></div></div>
-  <div class="stc" style="--tc:#22D3EE"><div class="stch"><span class="stic">🖥</span><div><b>Ansicht</b><em>GILT FÜR DICH – AUF ALLEN GERÄTEN</em></div></div>
-   <label class="setl">Navi beim Start<select id="stNav"><option value="0"${pin?'':' selected'}>eingeklappt</option><option value="1"${pin?' selected':''}>ausgeklappt</option></select></label>
-   <label class="setl">Startseite nach dem Anmelden<select id="stStart"><option value="last"${st==='last'?' selected':''}>zuletzt geöffneter Reiter</option>${tabs.map(([v,n])=>`<option value="${v}"${st===v?' selected':''}>${esc(n)}</option>`).join('')}</select></label></div>
+ const sel=(id,l,o,c)=>`<label class="setl">${l}<select id="${id}">${o.map(([v,n])=>`<option value="${v}"${String(c)===String(v)?' selected':''}>${n}</option>`).join('')}</select></label>`;
+ const chk=(id,b,t,on)=>`<label class="stchk"><input type="checkbox" id="${id}"${on?' checked':''}> <span><b>${b}</b>${t?' – '+t:''}</span></label>`;
+ const hc=(ic,t,tg,c,body)=>`<div class="stc" style="--tc:${c}"><div class="stch"><span class="stic">${ic}</span><div><b>${t}</b><em>${tg}</em></div></div>${body}</div>`;
+ const ALLDEV='GILT FÜR DICH – AUF ALLEN GERÄTEN',hid=Array.isArray(ui.hide)?ui.hide:[];
+ const mine=x=>x&&x===ME.id,nP=P.filter(e=>mine(e.von)).length,nPt=P.filter(e=>mine(e.von)&&e.datum===TODAY()).length,
+  nV=V.reduce((n,v)=>n+['an','m','b','a'].filter(k=>v[k]==='1'&&mine(v[k+'Von'])).length,0),nVb=V.filter(v=>mine(v.verk)&&v.a!=='1').length,
+  nB=B.filter(x=>mine(x.von)).length,nBo=B.filter(x=>mine(x.von)&&x.status!=='erledigt').length,nT=T.filter(x=>mine(x.von)).length;
+ const lin=+ls.get('vc_lin',0),linS=lin?new Date(lin).toLocaleString('de-DE',{day:'2-digit',month:'2-digit',year:'2-digit',hour:'2-digit',minute:'2-digit'}):'–';
+ const ntfP=window.Notification?Notification.permission:'none';
+ const U1=`<div class="stjump">${[['stg1','👤 Konto'],['stg2','✨ Aussehen'],['stg3','🧭 Navi & Start'],['stg4','📅 Planer & Verkauf'],['stg5','🔔 Meldungen'],['stg6','🖥 Gerät & Hilfe']].map(([i,n])=>`<button type="button" data-jump="${i}">${n}</button>`).join('')}</div>
+ <div class="stgrp" id="stg1"><h4>👤 Konto & Profil</h4><div class="stgrid">
+  <div class="stc" style="--tc:${u.c}"><div class="stch"><span class="av big" style="--uc:${u.c}">${esc(u.n[0])}</span><div><b>${esc(u.n)}</b><em>${adm?'ADMIN – DARF ALLES':'TEAM'}</em></div></div><p class="stp">Angemeldet auf diesem Gerät seit <b>${linS}</b>. Die Anmeldung bleibt gespeichert, bis du dich abmeldest.</p><div class="stcb"><button type="button" class="btn" id="stPw">🔑 Passwort ändern</button><button type="button" class="btn" id="stOut">⇄ Abmelden</button><button type="button" class="btn" id="stKick" title="Meldet dich auf allen anderen PCs/Handys ab – dieses Gerät bleibt angemeldet">📵 Andere Geräte abmelden</button></div></div>
   <div class="stc" style="--tc:${u.c}"><div class="stch"><span class="stic">🎨</span><div><b>Profilfarbe</b><em>SIEHT JEDER – ÜBERALL</em></div></div><p class="stp">Farbe deines Kürzel-Kreises „${esc(u.n[0])}“ – an jedem Eintrag, jeder Bestellung, jedem Status-Knopf und unten in der Navi.</p>
    <div class="stsw">${UCOLS.map(c=>`<button type="button" data-col="${c}" class="${c.toLowerCase()===u.c.toLowerCase()?'on':''}" style="--sw:${c}" title="${c}"></button>`).join('')}<label class="stswc" title="Eigene Farbe">＋<input type="color" id="stColX" value="${u.c}"></label></div>
    <div class="stcb"><span class="av" style="--uc:${u.c}">${esc(u.n[0])}</span><span class="stno">Vorschau</span>${u.c.toLowerCase()!==UCOL0[ME.id].toLowerCase()?'<button type="button" class="btn" id="stCol0">↺ Standardfarbe</button>':''}</div></div>
-  <div class="stc" style="--tc:#A78BFA"><div class="stch"><span class="stic">✨</span><div><b>Darstellung</b><em>GILT FÜR DICH – AUF ALLEN GERÄTEN</em></div></div>
-   <label class="setl">Schriftgröße / Zoom<select id="stFs">${[[85,'Sehr klein (85 %)'],[90,'Klein (90 %)'],[100,'Normal (100 %)'],[110,'Groß (110 %)'],[120,'Größer (120 %)'],[135,'Sehr groß (135 %)']].map(([v,n])=>`<option value="${v}"${(+(ui.fs||100))===v?' selected':''}>${n}</option>`).join('')}</select></label>
-   <label class="setl">Hintergrund<select id="stBg"><option value="k"${!ui.bg||ui.bg==='k'?' selected':''}>Kräftige Farbverläufe (Standard)</option><option value="d"${ui.bg==='d'?' selected':''}>Dezent</option><option value="r"${ui.bg==='r'?' selected':''}>Ruhig – fast schwarz</option></select></label>
-   <label class="stchk"><input type="checkbox" id="stDense"${ui.dense?' checked':''}> <span><b>Kompakte Listen</b> – mehr Zeilen auf den Bildschirm</span></label>
-   <label class="stchk"><input type="checkbox" id="stAnim"${ui.anim===false?'':' checked'}> <span><b>Animationen & Leuchten</b> – aus = ruhiger und schneller auf schwachen PCs</span></label></div>
+  ${hc('📊','Deine Bilanz','NUR ANZEIGE – AKTUELLER STAND','#39F26B',`<div class="stkpi">
+   <div><b>${nP}</b><span>Planer-Einträge von dir<br><i>davon heute ${nPt}</i></span></div>
+   <div><b>${nV}</b><span>Rad-Status gesetzt<br><i>📦 🔧 O.K. ✓</i></span></div>
+   <div><b>${nVb}</b><span>Räder in deiner Beratung<br><i>noch nicht abgeholt</i></span></div>
+   <div><b>${nB}</b><span>Bestellungen angelegt<br><i>davon offen ${nBo}</i></span></div>
+   <div><b>${nT}</b><span>Trinkgeld-Einträge<br><i>von dir erfasst</i></span></div></div><p class="hint">Planer: geladen sind die letzten 5 Wochen und alles danach.</p>`)}
+ </div></div>
+ <div class="stgrp" id="stg2"><h4>✨ Aussehen</h4><div class="stgrid">
+  ${hc('🔠','Schrift & Größe',ALLDEV,'#A78BFA',
+   sel('stFs','Schriftgröße / Zoom',[[85,'Sehr klein (85 %)'],[90,'Klein (90 %)'],[100,'Normal (100 %)'],[110,'Groß (110 %)'],[120,'Größer (120 %)'],[135,'Sehr groß (135 %)']],+(ui.fs||100))+
+   sel('stFont','Schriftart',[['o','Outfit – rund (Standard)'],['s','Windows-Schrift (Segoe UI) – schlicht']],ui.font||'o')+
+   chk('stHc','Hoher Kontrast','hellere Texte und deutlichere Linien',ui.hc)+
+   chk('stCur','Großer Mauszeiger','leichter zu finden auf großen Bildschirmen',ui.cur))}
+  ${hc('🌌','Hintergrund & Effekte',ALLDEV,'#22D3EE',
+   sel('stBg','Hintergrund',[['k','Kräftige Farbverläufe (Standard)'],['d','Dezent'],['r','Ruhig – fast schwarz']],ui.bg||'k')+
+   chk('stAnim','Animationen & Leuchten','aus = ruhiger und schneller auf schwachen PCs',ui.anim!==false))}
+  ${hc('📋','Listen & Tabellen',ALLDEV,'#FBBF24',
+   chk('stDense','Kompakte Listen','mehr Zeilen auf den Bildschirm',ui.dense)+
+   chk('stRowhl','Zeile unter der Maus hervorheben','hilft beim Lesen breiter Tabellen (Verkauf, Kunden, Lieferanten)',ui.rowhl))}
+ </div></div>
+ <div class="stgrp" id="stg3"><h4>🧭 Navi & Start</h4><div class="stgrid">
+  ${hc('🖥','Start',ALLDEV,'#22D3EE',
+   sel('stNav','Navi beim Start',[['0','eingeklappt'],['1','ausgeklappt']],pin?'1':'0')+
+   sel('stStart','Startseite nach dem Anmelden',[['last','zuletzt geöffneter Reiter'],...tabs],st)+
+   chk('stNum','Zahlen-Schilder in der Navi','z. B. offene Räder, Bestellungen',!ui.nonum))}
+  ${hc('👁','Reiter ausblenden','NUR FÜR DICH – ANDERE SEHEN ALLES','#FB923C',`<p class="stp">Was du nie brauchst, verschwindet aus deiner Navi. Daten bleiben unberührt, jederzeit wieder einblendbar.</p><div class="sthide">${tabs.filter(([v])=>v!=='planer').map(([v,n])=>`<label class="stchk"><input type="checkbox" data-hide="${v}"${hid.includes(v)?'':' checked'}> <span>${esc(n)}</span></label>`).join('')}</div>`)}
+ </div></div>
+ <div class="stgrp" id="stg4"><h4>📅 Planer & Verkauf</h4><div class="stgrid">
+  ${hc('📅','Planer',ALLDEV,'#FF4D6D',
+   sel('stWk','Wochen im Voraus anzeigen',[[4,'4 Wochen'],[6,'6 Wochen'],[10,'10 Wochen (Standard)'],[16,'16 Wochen'],[26,'26 Wochen (halbes Jahr)']],[4,6,10,16,26].includes(+ui.wk)?+ui.wk:10)+
+   chk('stPast','Vergangene 4 Wochen immer mitzeigen','sonst startet der Planer bei heute',ui.past)+
+   chk('stMine','Meine Einträge hervorheben',`Rahmen in deiner Farbe um alles mit „${esc(u.n[0])}“`,ui.mine))}
+  ${hc('🚲','Verkauf',ALLDEV,'#FBBF24',
+   sel('stVks','Sortierung beim Anmelden',[['','wie zuletzt auf diesem Gerät'],...VKSL],ui.vks||'')+'<p class="hint">Im Tabellenkopf kannst du jederzeit anders sortieren.</p>')}
+ </div></div>
+ <div class="stgrp" id="stg5"><h4>🔔 Meldungen & Rückgängig</h4><div class="stgrid">
+  ${hc('⏱','Meldungen unten rechts',ALLDEV,'#39F26B',
+   sel('stUndo','Zeit für „Rückgängig“ nach dem Löschen',[[6,'6 Sekunden (Standard)'],[10,'10 Sekunden'],[15,'15 Sekunden'],[20,'20 Sekunden']],[6,10,15,20].includes(+ui.undo)?+ui.undo:6)+
+   sel('stTl','Andere Meldungen („Gespeichert“ …)',[['k','kurz (1,5 s)'],['n','normal (2,2 s)'],['l','lang (4,5 s)']],ui.tl||'n'))}
+  ${hc('🔔','Neue Einträge von Kollegen',ALLDEV,'#E879F9',
+   chk('stSnd','Ton','kurzes „Pling“, wenn jemand anderes etwas im Planer oder bei den Bestellungen einträgt',ui.snd)+
+   chk('stNtf','Windows-Meldung','unten rechts am Bildschirm, wenn der Planer gerade nicht im Vordergrund ist',ui.ntf)+
+   chk('stNtfV','auch neue verkaufte Räder melden','',ui.ntfV)+
+   `<div class="stcb">${ui.ntf&&ntfP!=='granted'?`<span class="err">${ntfP==='denied'?'Im Browser blockiert – Schloss-Symbol links neben der Adresse → Benachrichtigungen → Zulassen':'Noch nicht erlaubt'}</span>`:''}<button type="button" class="btn" id="stTest">▶ Testen</button></div>`)}
+ </div></div>
+ <div class="stgrp" id="stg6"><h4>🖥 Dieses Gerät & Hilfe</h4><div class="stgrid">
+  ${hc('💻','Dieses Gerät','NUR DIESES GERÄT','#60A5FA',`<div class="stinfo"><span>Gerät</span><b>${esc(devName())}</b><span>Version</span><b>${esc(CLIENT_VERSION)}</b><span>Verbindung</span><b>${navigator.onLine?'🟢 online':'🔴 offline'}</b><span>Angemeldet seit</span><b>${linS}</b></div>
+   <p class="hint">Updates kommen automatisch (alle 30 s geprüft). Hängt etwas, hilft „Neu laden“, bei hartnäckigen Fehlern „Zwischenspeicher leeren“ – Daten gehen dabei nicht verloren.</p>
+   <div class="stcb"><button type="button" class="btn" id="stUpd">⟳ Auf Update prüfen</button><button type="button" class="btn" id="stRel">↻ Neu laden</button><button type="button" class="btn" id="stCache">🧹 Zwischenspeicher leeren</button></div>`)}
+  ${hc('⌨','Bedienung & Tastenkürzel','KURZ ERKLÄRT','#94A3B8',`<div class="stkeys">
+   <span><kbd>Klick</kbd> ins leere Feld</span><i>Eintrag anlegen</i>
+   <span><kbd>Enter</kbd></span><i>Eingabe speichern</i>
+   <span><kbd>Esc</kbd></span><i>Fenster / Eingabe schließen</i>
+   <span><kbd>↑</kbd> <kbd>↓</kbd> + <kbd>Enter</kbd></span><i>in Auswahl-Listen (LT, Termin-Vorschläge) wählen</i>
+   <span>Eintrag <kbd>ziehen</kbd></span><i>im Planer auf einen anderen Tag verschieben</i>
+   <span>rotes <kbd>×</kbd></span><i>löschen – danach „Rückgängig“</i>
+   <span>Spaltenkopf <kbd>Klick</kbd></span><i>Verkauf/Lieferanten sortieren (nochmal = umdrehen)</i>
+   <span><kbd>Strg</kbd> + <kbd>+</kbd>/<kbd>−</kbd></span><i>Browser-Zoom (besser: Schriftgröße oben)</i></div>`)}
+  ${hc('↺','Zurücksetzen',ALLDEV,'#FF4D6D',`<p class="stp">Setzt Aussehen, Navi-Reiter, Planer-, Verkauf- und Meldungs-Einstellungen auf Standard. Passwort, Profilfarbe und Startseite bleiben.</p><div class="stcb"><button type="button" class="btn" id="stReset">↺ Alles auf Standard</button></div>`)}
  </div></div>`;
  const A1=adm?`<div class="stgrp"><h4>👥 Nutzerverwaltung</h4><div class="stgrid umgrid">${umCards()}</div><p class="hint umnote">Neue Person anlegen oder Rolle (Admin ⇄ Team) ändern geht nur über eine Programmänderung + die Firebase-Regeln – einfach Claude Bescheid sagen.</p></div>
  <div class="stgrp"><h4>🏷 Marken & Lieferanten</h4><div class="stgrid">
@@ -219,6 +286,22 @@ function setDlg(tab){if(!ME)return;const u=U(ME.id),pin=NAVPIN,st=MYPREF.start||
  if($('stFs'))$('stFs').addEventListener('change',e=>uiSave('fs',+e.target.value,'Schriftgröße gespeichert'));
  if($('stBg'))$('stBg').addEventListener('change',e=>uiSave('bg',e.target.value,'Hintergrund gespeichert'));
  if($('stDense'))$('stDense').addEventListener('change',e=>uiSave('dense',e.target.checked));
+ const ub=(id,k,f,m)=>{const el=$(id);if(el)el.addEventListener('change',e=>uiSave(k,f(e.target),m));};
+ ub('stFont','font',t=>t.value,'Schriftart gespeichert');ub('stHc','hc',t=>t.checked);ub('stCur','cur',t=>t.checked);ub('stRowhl','rowhl',t=>t.checked);ub('stNum','nonum',t=>!t.checked);
+ ub('stWk','wk',t=>+t.value,'Planer-Wochen gespeichert');ub('stPast','past',t=>t.checked);ub('stMine','mine',t=>t.checked);
+ ub('stUndo','undo',t=>+t.value,'Rückgängig-Zeit gespeichert');ub('stTl','tl',t=>t.value,'Meldungsdauer gespeichert');ub('stSnd','snd',t=>t.checked);ub('stNtfV','ntfV',t=>t.checked);
+ if($('stVks'))$('stVks').addEventListener('change',e=>{const v=e.target.value;if(v)vkSetSort(v);uiSave('vks',v,'Sortierung gespeichert');});
+ if($('stNtf'))$('stNtf').addEventListener('change',async e=>{const on=e.target.checked;if(on&&window.Notification&&Notification.permission==='default'){try{await Notification.requestPermission();}catch(_){}}uiSave('ntf',on);setTimeout(()=>{if($('stNtf'))setDlg('u');},300);});
+ if($('stTest'))$('stTest').addEventListener('click',()=>{const ui2=MYPREF.ui||{};if(ui2.snd||!ui2.ntf)uiBeep();if(ui2.ntf&&window.Notification&&Notification.permission==='granted'){try{new Notification('Planer: Test',{body:'So sieht eine Meldung aus.',tag:'vc-test',silent:!!ui2.snd});}catch(_){}}toast(ui2.snd||ui2.ntf?'Test ausgelöst':'Ton/Meldung sind aus – Test-Ton gespielt');});
+ box.querySelectorAll('[data-hide]').forEach(c=>c.addEventListener('change',()=>{const h=[...box.querySelectorAll('[data-hide]')].filter(x=>!x.checked).map(x=>x.dataset.hide);uiSave('hide',h,'Navi angepasst');}));
+ box.querySelectorAll('[data-jump]').forEach(j=>j.addEventListener('click',()=>{const g=$(j.dataset.jump);if(g)g.scrollIntoView({behavior:'smooth',block:'start'});}));
+ if($('stKick'))$('stKick').addEventListener('click',e=>{const k=e.currentTarget;if(!k.dataset.sure){k.dataset.sure=1;k.textContent='Wirklich? Nochmal klicken';return;}const t=Date.now();ls.set('vc_lin',t+1);db.doc('meta/prefs').set({[ME.id]:{kick:t}},{merge:true}).then(()=>toast('Alle anderen Geräte werden abgemeldet')).catch(fail);k.textContent='✓ erledigt';k.disabled=true;});
+ if($('stUpd'))$('stUpd').addEventListener('click',async e=>{const k=e.currentTarget;k.disabled=true;try{const v=(await (await fetch('version.txt?'+Date.now(),{cache:'no-store'})).text()).trim();if(v&&v!==CLIENT_VERSION){toast('Update '+v+' gefunden – lädt neu …');setTimeout(()=>location.replace(location.pathname+'?v='+encodeURIComponent(v)),600);}else toast('Aktuell: Version '+CLIENT_VERSION);}catch(_){toast('Keine Verbindung – später nochmal');}k.disabled=false;});
+ if($('stRel'))$('stRel').addEventListener('click',()=>location.reload());
+ if($('stCache'))$('stCache').addEventListener('click',async()=>{try{if(navigator.serviceWorker){for(const r of await navigator.serviceWorker.getRegistrations())await r.unregister();}if(window.caches){for(const k of await caches.keys())await caches.delete(k);}}catch(_){}toast('Zwischenspeicher geleert – lädt neu …');setTimeout(()=>location.replace(location.pathname+'?v='+Date.now()),500);});
+ if($('stReset'))$('stReset').addEventListener('click',e=>{const k=e.currentTarget;if(!k.dataset.sure){k.dataset.sure=1;k.textContent='Wirklich? Nochmal klicken';return;}
+  const d={fs:100,bg:'k',dense:false,anim:true,hc:false,font:'o',cur:false,rowhl:false,nonum:false,hide:[],wk:10,past:false,mine:false,vks:'',undo:6,tl:'n',snd:false,ntf:false,ntfV:false};
+  MYPREF.ui=d;uiApply(d);navMini(true);db.doc('meta/prefs').set({[ME.id]:{ui:d}},{merge:true}).then(()=>{toast('Auf Standard zurückgesetzt');setDlg('u');}).catch(fail);});
  if($('stAnim'))$('stAnim').addEventListener('change',e=>uiSave('anim',e.target.checked));
  if($('stNav'))$('stNav').addEventListener('change',e=>{navMini(e.target.value!=='1');toast('Gespeichert');});
  if($('stStart'))$('stStart').addEventListener('change',e=>{MYPREF.start=e.target.value;db.doc('meta/prefs').set({[ME.id]:{start:e.target.value}},{merge:true}).then(()=>toast('Startseite gespeichert')).catch(fail);});}
@@ -329,8 +412,14 @@ document.addEventListener('focusout',()=>setTimeout(()=>{if(dirty&&!editing()){d
 function ping(fromOther){const l=$('live');if(l&&fromOther){l.classList.remove('ping');void l.offsetWidth;l.classList.add('ping');}}
 function listen(k,setter,q){let first=true;const ref=q||db.collection(COL[k]);unsubs.push(ref.onSnapshot({includeMetadataChanges:false},snap=>{
   setter(snap.docs.map(d=>Object.assign({id:d.id},d.data())));
-  if(!first){const other=snap.docChanges().some(c=>(c.doc.data()||{}).tsVon&&(c.doc.data()||{}).tsVon!==ME.id&&!snap.metadata.hasPendingWrites);if(other){ping(true);}}
+  if(!first){const other=snap.docChanges().some(c=>(c.doc.data()||{}).tsVon&&(c.doc.data()||{}).tsVon!==ME.id&&!snap.metadata.hasPendingWrites);if(other){ping(true);uiNotify(k,snap);}}
   first=false;$('live')&&$('live').classList.toggle('off',snap.metadata.fromCache&&!navigator.onLine);scheduleRender();},e=>{fail(e);}));}
+let NOTE_T=0;
+function uiBeep(){try{const A=window.AudioContext||window.webkitAudioContext;if(!A)return;const a=uiBeep.c||(uiBeep.c=new A());[[880,0],[1320,.13]].forEach(([f,t])=>{const o=a.createOscillator(),g=a.createGain();o.type='sine';o.frequency.value=f;g.gain.setValueAtTime(.0001,a.currentTime+t);g.gain.exponentialRampToValueAtTime(.18,a.currentTime+t+.02);g.gain.exponentialRampToValueAtTime(.0001,a.currentTime+t+.22);o.connect(g).connect(a.destination);o.start(a.currentTime+t);o.stop(a.currentTime+t+.25);});}catch(_){}}
+function uiNotify(k,snap){const ui=MYPREF.ui||{};if(!(ui.snd||ui.ntf)||!ME)return;const map={P:'Planer',B:'Bestellungen',V:'Verkauf'};if(!map[k]||(k==='V'&&!ui.ntfV))return;
+ const add=snap.docChanges().filter(c=>c.type==='added').map(c=>c.doc.data()||{}).filter(d=>d.tsVon&&d.tsVon!==ME.id);if(!add.length)return;
+ const t=Date.now();if(t-NOTE_T<4000)return;NOTE_T=t;if(ui.snd)uiBeep();
+ if(ui.ntf&&document.hidden&&window.Notification&&Notification.permission==='granted'){const d=add[0],who=U(d.tsVon).n||'Jemand',txt=String(d.text||d.artikel||d.kunde||d.modell||'').slice(0,120);try{new Notification(`${map[k]}: neu von ${who}`,{body:(txt||'Neuer Eintrag')+(add.length>1?` (+${add.length-1} weitere)`:''),tag:'vc-'+k,silent:!!ui.snd});}catch(_){}}}
 function stopLive(){unsubs.forEach(u=>{try{u();}catch(_){}});unsubs=[];}
 function startLive(){stopLive();const from=iso(new Date(Date.now()-35*864e5));
  listen('P',x=>P=x,db.collection('planer').where('datum','>=',from));
