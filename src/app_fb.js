@@ -263,6 +263,7 @@ function setDlg(tab){if(!ME)return;const u=U(ME.id),pin=NAVPIN,st=MYPREF.start||
  </div></div>
  <div class="stgrp"><h4>📤 Exporte & Sicherheit</h4><div class="stgrid">
   ${card('💾','Sicherung herunterladen','exp',[['Wofür','Komplette Sicherung aller Daten – der kostenlose Firebase-Tarif macht selbst <b>keine</b> Backups. Am besten 1× pro Woche.'],['Was drin ist','Planer, Verkauf, Bestellungen, Reklamationen, Kunden, Leasing, Lieferanten, Trinkgeld, Einstellungen. Tresor/Notizen <b>nicht</b>.'],['Was passiert','Eine .json-Datei landet im Download-Ordner. <b>Enthält Kundendaten – nur auf dem Büro-PC speichern, nie verschicken.</b>']],'<button type="button" class="btn red" id="stBk">💾 Jetzt sichern</button><span class="err" id="stBkE"></span>',BK_LAST?'Letzte Sicherung: '+esc(BK_LAST):'auf diesem Gerät noch keine Sicherung')}
+  ${card('🤖','Automatische Kunden-Mail','set',[['Wofür','Jeder Kunde (Kauf ab 08.05.2026) bekommt <b>genau 2 Monate nach dem Kauf</b> automatisch die Inspektions-/Bewertungs-Mail, Anrede „Hallo Herr/Frau Nachname,“.'],['Was passiert','Läuft, solange der Planer bei einem Admin offen ist. Unklare Namen landen in „⚠ Anrede prüfen“ und gehen erst nach deiner Wahl raus. Nie doppelt.']],'<button type="button" class="btn red" data-sx="kdAuto">🤖 Öffnen</button>',MAU.ok?(MAU.on===false?'ausgeschaltet':'läuft'):'noch nicht freigegeben')}
   ${card('📨','E-Mail-Versand','set',[['Wofür','Mails an Kunden direkt aus der App verschicken (über EmailJS).'],['Du brauchst','Service-ID, Template-ID und Public Key aus dem EmailJS-Konto. Passwörter werden <b>nur bei EmailJS</b> eingetragen, nie hier.']],'<button type="button" class="btn" id="stMail">Einrichten</button>','')}
   ${card('🛡','Konten & Passwort-Hilfe','sec',[['Wofür','Fehlende Konten mit Startpasswort anlegen; Anleitung, wenn ein Mitarbeiter sein Passwort vergessen hat.'],['Spalten ändern','Stift „Bearbeiten“ unten in der Navi.']],'<button type="button" class="btn" id="stAdm">Konten öffnen</button>','')}
   ${card('🗑','Alle Kunden löschen','del',[['Wofür','Nur für einen kompletten Neu-Import aus dem Sheet.'],['Was passiert','Löscht <b>alle</b> Kunden für alle Nutzer (zur Bestätigung LÖSCHEN eintippen). Geht <b>nicht</b> in den Papierkorb. Das Sheet bleibt unverändert.']],nK?'<button type="button" class="btn kdclr" data-sx="kdClr">🗑 Alle löschen …</button>':'<span class="stno">keine Kunden vorhanden</span>','','stdel')}
@@ -428,6 +429,7 @@ function startLive(){stopLive();const from=iso(new Date(Date.now()-35*864e5));
  listen('I',x=>{I={};x.forEach(o=>I[o.id]=o.wert);});
  if(ME&&ME.adm)unsubs.push(db.doc('tresor/pw').onSnapshot(d=>{if(KEY&&NOTES&&d.exists&&d.data().ct&&d.data().tsVon!==ME.id&&!document.querySelector('#nGrid [contenteditable]:focus'))open_(KEY,d.data()).then(x=>{if(!Array.isArray(x)){NOTES=x.notes||[];PWGRID=x.grid||PWGRID;rn();}}).catch(()=>{});},()=>{}));
  if(ME&&ME.adm)for(let y=1995;y<=new Date().getFullYear()+1;y++)unsubs.push(db.doc('meta/kd_'+y).onSnapshot(d=>{KD[y]=(d.exists&&d.data().items)||{};kdDirty=true;scheduleRender();},()=>{}));
+ if(ME&&ME.adm){unsubs.push(db.doc('meta/mailauto').onSnapshot(d=>{MAU=d.exists?(d.data()||{}):{};mauBadge();},()=>{}));mauStart();}
  if(ME&&ME.adm)unsubs.push(db.doc('meta/kd_trash').onSnapshot(d=>{const it=(d.exists&&d.data().items)||{},o={};for(const k in it)if(it[k])o[k]=it[k];KDT=o;kdDirty=true;scheduleRender();kdBinPrune();},()=>{}));
  unsubs.push(db.doc('meta/kd_x').onSnapshot(d=>{KD.x=(d.exists&&d.data().items)||{};kdDirty=true;scheduleRender();},()=>{}));
  unsubs.push(db.doc('meta/prefs').onSnapshot(d=>{PREFALL=d.exists?d.data():{};const mp=ME&&PREFALL[ME.id];if(mp&&mp.kick&&+mp.kick>+ls.get('vc_lin',0)){ls.set('vc_lin',Date.now());toast('Ein Admin hat dich auf allen Geräten abgemeldet');$('switchUser').click();return;}if(ucolApply(PREFALL))renderAll();if(document.querySelector('#dlgBox .umgrid'))umRefresh();},()=>{}));
@@ -1074,7 +1076,7 @@ function rk(){const g=$('kdGrid');if(!g)return;kdAngMig();const all=kdAll();{con
  $('kdMore').hidden=!!(kdYr||q||fk.length)||!more;$('kdMore').textContent='Ältere Jahre anzeigen (bis '+(now-kdYears-1)+')';
  $('kdForm').innerHTML=kdEdit?kdFormH():'';
  if($('kdClr'))$('kdClr').hidden=!(ME&&ME.adm)||!all.length;if($('kdMailImp'))$('kdMailImp').hidden=!(ME&&ME.adm)||!all.length;
- {const nb=Object.keys(KDT).length;$('kdBin').hidden=!nb;$('kdBinN').textContent=nb;}
+ {const nb=Object.keys(KDT).length;$('kdBin').hidden=!nb;$('kdBinN').textContent=nb;}mauBadge();
  const cols=kdCols();kdTpl();
  let h=`<div class="hd kdh kgh" style="--hc:${KDRB[0]}"></div>`+cols.map((c,i)=>`<div class="hd kdh${c.k==='kunde'?' kl':''}${kdF[c.k]?' kfon':''}" draggable="true" data-kc="${c.k}" title="Klick = filtern · Ziehen = Spalte verschieben · rechter Rand = Breite" style="--hc:${KDRB[i%KDRB.length]}">${c.n||'·'}<i class="kfi">${kdF[c.k]?'▼':'▾'}</i><span class="kres" data-kres="${c.k}" title="Ziehen = Breite ändern · Doppelklick = Standard"></span></div>`).join('')+`<div class="hd kdh" style="--hc:${KDRB[KDRB.length-1]}"></div>`;let yr=null;const cnt={};list.forEach(r=>{const y=kdYear(r);cnt[y]=(cnt[y]||0)+1;});
  if(!all.length){kdPopClose();g.innerHTML=h+`<div class="kdempty">${ME&&ME.adm?'Noch keine Kunden – oben „📥 Kunden aus Sheet übernehmen“ und die .xlsx des Sheets wählen.':'Noch keine Kunden übernommen.'}</div>`;return;}
@@ -1460,7 +1462,7 @@ function kdMailOpen(cell){const o=kdRowOf(cell);if(!o)return;const {y,id,r}=o;if
   const nv=list.join(', ');kdPopClose();if(nv===String(r.mail||''))return;const old=r;kdPut(y,Object.assign({},r,{mail:nv,mailSrc:'',mailVon:ME.id})).then(rk);toast(nv?'E-Mail gespeichert':'E-Mail entfernt',()=>{kdPut(y,old).then(rk);});};
  inp.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();save(inp.value);}});
  el.addEventListener('click',e=>{if(e.target.closest('[data-kmok]'))save(inp.value);else if(e.target.closest('[data-kmclr]'))save('');else{const b=e.target.closest('[data-ktpl]');if(b){kdPopClose();kdTplOpen(y,id,b.dataset.ktpl);}}});}
-async function kdTplOpen(y,id,kind){let r=KD[y]&&KD[y][id];if(!r)return;const T=await mtplGet(),m=kdMails(r),MC=await mcfgGet(),dir=mcfgOk(MC);let an=kind==='fam'?'fam':'neu',du=false;try{du=localStorage.getItem('vc_mdu')==='1';}catch(_){}if(du&&an==='neu')an='vn';
+async function kdTplOpen(y,id,kind){let r=KD[y]&&KD[y][id];if(!r)return;const T=await mtplGet(),m=kdMails(r),MC=await mcfgGet(),dir=mcfgOk(MC);let an=kind==='fam'?'fam':'neu',du=false;try{du=localStorage.getItem('vc_mdu')==='1';}catch(_){}if(an==='neu'){const g=mauAnr(r).a;if(g==='herr'||g==='frau')an=g;}if(du&&an==='neu')an='vn';
  dlg(`<h3>✉ E-Mail an ${esc(r.kunde||'Kunde')}</h3><form id="ktF" class="ktf" autocomplete="off">
   <div class="ktk"><span class="ktsw"><button type="button" class="kyc" data-kdu="0">🤝 Sie</button><button type="button" class="kyc" data-kdu="1">👋 Du</button></span><span class="ktsep"></span><button type="button" class="kyc${kind==='ein'?' on':''}" data-kk="ein">👤 Einzelperson</button><button type="button" class="kyc${kind==='fam'?' on':''}" data-kk="fam">👨‍👩‍👧 Familie</button></div>
   <label>An<input id="ktTo" value="${esc(m.join(', '))}"></label>
@@ -1497,6 +1499,95 @@ async function kdTplOpen(y,id,kind){let r=KD[y]&&KD[y][id];if(!r)return;const T=
   const cur=KD[y]&&KD[y][id];if(cur&&cur.ang!=='mail'){const old=cur;kdPut(y,Object.assign({},cur,{ang:'mail',angVon:ME.id,angTs:stamp(),angSrc:''})).then(rk);toast((cp?'Text kopiert – im Mailprogramm Strg+V · ':'')+'als angeschrieben markiert',()=>{kdPut(y,old).then(rk);});}
   else toast(cp?'Text kopiert – im Mailprogramm mit Strg+V einfügen':'Mailprogramm geöffnet');});}
 async function kdCopy(t){try{await navigator.clipboard.writeText(t);return true;}catch(_){try{const x=document.createElement('textarea');x.value=t;document.body.append(x);x.select();const ok=document.execCommand('copy');x.remove();return ok;}catch(e){return false;}}}
+/* 1.10.57: 🤖 Automatische Kunden-Mail (Tiry 05.11.2026): jeder Kunde bekommt genau 2 Monate nach dem Kaufdatum die Mail im Velocenter-Design,
+   immer Sie-Form „Hallo Herr/Frau <Nachname>,“ (Familie: „Hallo Familie <Nachname>,“). Nur Käufe ab MAU_AB – bis 07.05.2026 hat Tiry alle von Hand angeschrieben.
+   Läuft im offenen Planer bei Admins (Spark = kein Server), alle 30 Min.; fällige Tage werden beim nächsten Öffnen nachgeholt.
+   Nie doppelt: Sperre + Versandliste je Kunde in meta/mailauto (Transaktion), dazu ang='mail' (angVia:'auto') beim Kunden; gleiche Adresse = nur eine Mail.
+   Anrede aus dem Vornamen (MAU_M/MAU_W); unklar (Kim, Andrea, Firma, Name fehlt/vertauscht) → nicht senden, Liste „⚠ Anrede prüfen“ (Feld anr = herr|frau|fam|no).
+   Start erst nach Freigabe im Fenster (meta/mailauto.ok), danach automatisch; Schalter an/aus (on). Höchstens MAU_MAX Mails je Monat (EmailJS gratis = 200). */
+const MAU_AB='2026-05-08',MAU_MAX=190,MAU_LOCK=15*6e4;
+const MAU_M=new Set(('achim adam adrian ahmet albert albrecht alexander alexej alfons alfred ali alois andré andre andreas andrej andrzej anton antonio armin arne arno arnold arthur artur axel bastian benedikt benjamin benno bernd bernhard berthold björn bodo boris bruno burkhard carl carlo carsten christian christoph christopher claus clemens constantin daniel david denis dennis detlef dieter dietmar dietrich dimitri dirk dmitri dominik edgar eduard edmund egon ekkehard elias emil emre enrico erhard erich erik ernst erwin eugen ewald fabian falk felix ferdinand finn florian francesco frank franz frederik friedbert friedhelm friedrich fritz georg gerald gerd gerhard gernot gerold gert gottfried gregor guido günter günther gunter gustav hagen hannes hans harald hartmut hasan heiko heinrich heinz helge helmut helmuth henning henrik herbert hermann holger horst hubert hugo hüseyin ibrahim igor ingo ingolf jakob jan jannik jens joachim jochen johann johannes jonas jonathan jörg jörn josef joseph julian julius jürgen justin kai karl karsten kevin klaus konrad konstantin krzysztof kurt lars leo leon leonhard leopold lorenz lothar ludwig lukas lutz malte manfred manuel marc marcel marco marcus mario marius markus martin marvin mathias matthias max maximilian mehmet michael mike mirko moritz murat mustafa niklas nikolai nikolaus nils noah norbert olaf oleg oliver oskar otto pascal patrick paul pawel peter philipp piotr rainer ralf ralph reiner reinhard reinhold rené richard robert roland rolf roman rüdiger rudolf rudi salvatore samuel sebastian sergej siegfried simon stefan steffen stephan sven theo theodor thilo thomas thorsten tilo tim timo tobias tomasz torsten udo ulf ulrich uwe valentin viktor vincent vladimir volker waldemar walter werner wilfried wilhelm willi willy wladimir wolf wolfgang yannick').split(' '));
+const MAU_W=new Set(('agnes alexandra alina amelie angela angelika anita anja anke anna annabell anne annegret annelie anneliese annemarie annette antje antonia astrid ayse barbara beate bettina bianca birgit brigitte britta carina carmen carola caroline charlotte christa christel christiane christina christine claudia cornelia dagmar daniela diana doris dorothea edeltraud edith elena elfriede elif elisabeth elke ella ellen elsa emilia emine emma erika erna eva evelyn fatma franziska frauke friederike gabi gerda gertrud gisela greta gudrun hanna hannah hannelore hedwig heide heidi heike helena helene helga henriette hildegard ilona ilse ina ines inge ingeborg ingrid irene iris irina irmgard isabel isabell isabella jacqueline jana janina jasmin jennifer jessica johanna josefine judith julia juliane jutta karin karolina katharina kathrin katja katrin kerstin klara kristina lara laura lea lena leonie lieselotte lilli lina linda lisa lotte lucia luise luzia magdalena maike manuela mareike margarete margit margot margret maria marianne marie marina marion marita marlene marlies martha martina melanie mia michaela miriam monika nadine nadja natalia natalie nicole nina nora olga patricia paula petra pia ramona rebecca regina renate rita rosemarie ruth sabine sabrina sandra sara sarah silke silvia simone sofia sonja sophie stefanie stephanie susanne svenja sylvia tamara tanja tatjana theresa therese tina ulla ulrike ursula uta ute valentina vanessa vera verena veronika viktoria waltraud wiebke yvonne'.split(' ')));
+let MAU={},MAU_RUN=false,MAU_ERR='';
+function mauKauf(r){const m=String(r&&r.dat||'').match(/(\d{1,2})\.(\d{1,2})\.?(\d{2,4})?/);if(!m)return null;let y=m[3]?+m[3]:(/^\d{4}$/.test(String(r.y||''))?+r.y:0);if(!y)return null;if(y<100)y+=2000;
+ const d=new Date(y,+m[2]-1,+m[1]);return d.getMonth()===+m[2]-1?d:null;}
+function mauFaellig(d){const y=d.getFullYear(),mo=d.getMonth()+2,last=new Date(y,mo+1,0).getDate();return new Date(y,mo,Math.min(d.getDate(),last));}
+const mauW=s=>String(s||'').toLowerCase().split(/[\s-]+/)[0].replace(/[^a-zäöüßéèáàíóúçñ]/g,'');
+/* Name → {a: herr|frau|fam|null, nn, vn, why} */
+function mauAnr(r){let k=String(r&&r.kunde||'').replace(/\s+/g,' ').trim();if(!k)return{a:null,why:'kein Name'};
+ if(/\b(gmbh|ag|kg|ohg|gbr|ug|e\.\s?v\.?|mbh|firma|praxis|verein|stadt|gemeinde|kreis|schule|klinik|hotel|service|team)\b/i.test(k))return{a:null,why:'Firma?'};
+ let fam=/^(familie|fam\.?)\s/i.test(k)||/\s(u\.|und|&|\+)\s/i.test(k);k=k.replace(/^(familie|fam\.?)\s+/i,'');
+ const tit=[];k=k.replace(/^((dr|prof)\.?\s+)+/i,x=>{tit.push(x.trim());return '';}).trim();
+ const sp=kdNameSplit(k.split(/\s(u\.|und|&|\+)\s/i)[0],r.nameOrd),nn=(tit.length?tit.join(' ')+' ':'')+sp.nn,vn=sp.vn;
+ if(r.anr==='herr'||r.anr==='frau'||r.anr==='fam')return{a:r.anr,nn,vn,why:'von Hand'};if(r.anr==='no')return{a:'no',nn,vn,why:'nicht anschreiben'};
+ if(fam)return{a:'fam',nn,vn,why:'Familie'};
+ const f=mauW(vn);if(MAU_M.has(f))return{a:'herr',nn,vn,why:''};if(MAU_W.has(f))return{a:'frau',nn,vn,why:''};
+ const g=mauW(sp.nn);if(MAU_M.has(g)||MAU_W.has(g))return{a:null,nn,vn,why:'Vor-/Nachname vertauscht?'};
+ return{a:null,nn,vn,why:vn?'Vorname „'+vn.split(/[\s-]/)[0]+'“ unklar':'Vorname fehlt'};}
+const mauLine=x=>x.a==='fam'?'Hallo Familie '+x.nn+',':x.a==='frau'?'Hallo Frau '+x.nn+',':'Hallo Herr '+x.nn+',';
+/* Alle Kunden ab MAU_AB ohne „Angeschrieben“, mit E-Mail → {due:[fällig + Anrede klar], chk:[fällig, Anrede unklar], soon:[nächste 14 Tage]} */
+function mauScan(){const now=new Date(),t0=new Date(now.getFullYear(),now.getMonth(),now.getDate()),soonT=new Date(t0.getTime()+14*864e5),sent=MAU.sent||{},out={due:[],chk:[],soon:[]};
+ for(const y in KD){if(y==='x'||+y<+MAU_AB.slice(0,4)-1)continue;for(const id in KD[y]){const r=KD[y][id];if(!r||!r.id||r.ang||sent[id])continue;const d=mauKauf(r);if(!d||iso(d)<MAU_AB)continue;
+  const m=kdMails(r);if(!m.length)continue;const f=mauFaellig(d),x=Object.assign(mauAnr(r),{y,id,r,d,f,m});if(x.a==='no')continue;
+  if(f>t0){if(f<=soonT)out.soon.push(x);continue;}(x.a?out.due:out.chk).push(x);}}
+ /* gleiche Adresse mehrfach fällig (z. B. 2 Räder) → eine Mail; verschiedene Nachnamen → prüfen */
+ const by={};out.due.forEach(x=>{const k=x.m[0].toLowerCase();(by[k]=by[k]||[]).push(x);});const due=[];
+ for(const k in by){const g=by[k];if(g.length===1){due.push(g[0]);continue;}const nns=new Set(g.map(x=>String(x.nn).toLowerCase()));
+  if(nns.size>1){g.forEach(x=>out.chk.push(Object.assign(x,{a:null,why:'gleiche E-Mail wie '+g.filter(o=>o!==x).map(o=>o.r.kunde).join(', ')})));continue;}
+  const vns=new Set(g.map(x=>mauW(x.vn)));const h=Object.assign({},g[0],{dup:g.slice(1)});if(vns.size>1&&g[0].a!=='fam')h.a='fam';due.push(h);}
+ const srt=(a,b)=>a.f-b.f||a.d-b.d;out.due=due.sort(srt);out.chk.sort(srt);out.soon.sort(srt);return out;}
+const mauMon=()=>{const ym=TODAY().slice(0,7);return Object.values(MAU.sent||{}).filter(s=>s&&String(s.t||'').slice(0,7)===ym).length;};
+async function mauSendOne(x){const ref=db.doc('meta/mailauto'),ids=[x.id].concat((x.dup||[]).map(o=>o.id));
+ const st=await db.runTransaction(async tr=>{const d=await tr.get(ref),v=d.exists?d.data():{};if(v.on===false||!v.ok)return 'aus';const s=v.sent||{},l=v.lock||{};
+  if(ids.some(i=>s[i]))return 'done';if(ids.some(i=>l[i]&&Date.now()-(+l[i].t||0)<MAU_LOCK))return 'busy';
+  const ym=TODAY().slice(0,7);if(Object.values(s).filter(o=>o&&String(o.t||'').slice(0,7)===ym).length>=MAU_MAX)return 'limit';
+  const L={};ids.forEach(i=>L[i]={t:Date.now(),von:ME.id});tr.set(ref,{lock:L},{merge:true});return 'ok';});
+ if(st!=='ok')return st;
+ const T=await mtplGet(),kind=x.a==='fam'?'fam':'ein',tp=T.sie[kind],subj=tp.s,line=mauLine(x),text=(tp.b.replace(/\{anrede\}/g,line)+'\n\n'+T.fuss).trim();
+ const html=kdMailHtml(text,{du:false,fam:kind==='fam',name:(x.vn+' '+x.nn).trim(),modell:String(x.r.modell||'').trim()});
+ try{await mailSend(x.m.join(','),subj,text,html);}catch(e){const L={};ids.forEach(i=>L[i]=null);await ref.set({lock:L,err:{t:stamp(),msg:String(e&&e.message||e).slice(0,300)}},{merge:true}).catch(()=>{});throw e;}
+ const S={},L={},ts=stamp();[x].concat(x.dup||[]).forEach(o=>{S[o.id]={t:ts,y:o.y,to:x.m.join(', '),k:o.r.kunde||'',an:line,dat:o.r.dat||'',von:ME.id};L[o.id]=null;});
+ await ref.set({sent:S,lock:L,err:null},{merge:true}).catch(fail);
+ for(const o of [x].concat(x.dup||[])){const cur=KD[o.y]&&KD[o.y][o.id];if(cur)await kdPut(o.y,Object.assign({},cur,{ang:'mail',angVon:ME.id,angTs:ts,angSrc:'',angVia:'auto',angBetr:subj}));}
+ return 'ok';}
+/* Ein Durchlauf: alle fälligen nacheinander (1,5 s Pause). force = Knopf „Jetzt senden“ im Fenster. */
+async function mauRun(force){if(MAU_RUN||!ME||!ME.adm)return 0;if(!MAU.ok||MAU.on===false)return 0;const c=await mcfgGet();if(!mcfgOk(c))return 0;
+ for(let y=+MAU_AB.slice(0,4);y<=new Date().getFullYear();y++)if(!KD[y])return 0;/* Kunden-Jahre noch nicht geladen */
+ MAU_RUN=true;let n=0;try{const L=mauScan().due;for(const x of L){if(mauMon()>=MAU_MAX){MAU_ERR='Monatsgrenze '+MAU_MAX+' erreicht';break;}
+   let st;try{st=await mauSendOne(x);}catch(e){MAU_ERR=String(e&&e.message||e);toast('⚠ Auto-Mail gestoppt: '+MAU_ERR);break;}
+   if(st==='ok'){n++;await new Promise(r=>setTimeout(r,1500));}else if(st==='aus'||st==='limit'){if(st==='limit')MAU_ERR='Monatsgrenze '+MAU_MAX+' erreicht';break;}}
+  if(n){MAU_ERR='';toast('🤖 '+n+' Kunden-Mail'+(n>1?'s':'')+' automatisch verschickt');rk();}}finally{MAU_RUN=false;}if(document.querySelector('#dlgBox .mau'))mauDlg();return n;}
+$('kdAuto').addEventListener('click',()=>mauDlg());
+let mauT=null;function mauStart(){clearInterval(mauT);mauT=null;if(!ME||!ME.adm)return;setTimeout(()=>mauRun(),25000);mauT=setInterval(()=>mauRun(),30*6e4);}
+function mauBadge(){const b=$('kdAuto');if(!b)return;b.hidden=!(ME&&ME.adm);if(b.hidden)return;let s;try{s=mauScan();}catch(e){return;}
+ const on=MAU.ok&&MAU.on!==false;b.querySelector('b').textContent=s.chk.length?'⚠ '+s.chk.length:(on?'an':'aus');b.classList.toggle('warn',!!s.chk.length);b.classList.toggle('off',!on);
+ b.title=on?'Automatische Kunden-Mail läuft · '+s.due.length+' fällig · '+s.chk.length+' Anrede prüfen':'Automatische Kunden-Mail ist aus / noch nicht freigegeben';}
+async function mauDlg(){if(!ME||!ME.adm)return;const c=await mcfgGet(),cfg=mcfgOk(c),s=mauScan(),on=MAU.ok&&MAU.on!==false,mon=mauMon();
+ const fd=d=>d.toLocaleDateString('de-DE',{day:'2-digit',month:'2-digit',year:'2-digit'});
+ const row=(x,btns)=>`<div class="maur"><span class="maud">${fd(x.d)}<i>→ ${fd(x.f)}</i></span><span class="maun"><b>${esc(x.r.kunde||'')}</b><em>${esc(x.m.join(', '))}${x.dup&&x.dup.length?' · +'+x.dup.length+' weiteres Rad':''}</em></span>${btns}</div>`;
+ const anr=x=>`<span class="maua${x.a==='fam'?' fam':''}">${esc(mauLine(x))}</span>`;
+ const chkB=x=>`<span class="mauw">${esc(x.why||'')}</span><span class="maub"><button type="button" class="btn" data-ma="herr" data-y="${esc(x.y)}" data-id="${esc(x.id)}">Herr ${esc(x.nn||'')}</button><button type="button" class="btn" data-ma="frau" data-y="${esc(x.y)}" data-id="${esc(x.id)}">Frau ${esc(x.nn||'')}</button><button type="button" class="btn" data-ma="fam" data-y="${esc(x.y)}" data-id="${esc(x.id)}">Familie</button><button type="button" class="btn" data-ma="sw" data-y="${esc(x.y)}" data-id="${esc(x.id)}" title="Vor- und Nachname tauschen">⇄</button><button type="button" class="btn mano" data-ma="no" data-y="${esc(x.y)}" data-id="${esc(x.id)}" title="Diesen Kunden nie automatisch anschreiben">✕ nicht</button></span>`;
+ const sent=Object.entries(MAU.sent||{}).filter(([,v])=>v).sort((a,b)=>String(b[1].t).localeCompare(String(a[1].t))).slice(0,25);
+ const MX=12;
+ dlg(`<div class="mau"><h3>🤖 Automatische Kunden-Mail</h3>
+ <div class="maust ${on?'on':'off'}"><b>${on?'● Läuft automatisch':MAU.ok?'○ Ausgeschaltet':'○ Noch nicht freigegeben'}</b><span>Jeder Kunde mit Kaufdatum ab <b>08.05.2026</b> bekommt <b>genau 2 Monate nach dem Kauf</b> die Mail im Velocenter-Design – Sie-Form, „Hallo Herr/Frau Nachname,“. Danach steht ✉ bei „Angeschrieben“. Verschickt wird, solange der Planer bei einem Admin offen ist (alle 30 Min. Prüfung, verpasste Tage werden nachgeholt).</span>
+ <span>Diesen Monat automatisch: <b>${mon} / ${MAU_MAX}</b>${!cfg?' · <b style="color:#FDA4AF">E-Mail-Versand nicht eingerichtet</b>':''}${MAU_ERR||(MAU.err&&MAU.err.msg)?' · <b style="color:#FDA4AF">Letzter Fehler: '+esc(MAU_ERR||MAU.err.msg)+'</b>':''}</span>
+ <div class="mauacts">${MAU.ok?`<button type="button" class="btn" data-mt>${on?'⏸ Automatik ausschalten':'▶ Automatik einschalten'}</button>`:''}${MAU.ok&&on&&s.due.length?`<button type="button" class="btn red" data-mgo>📤 Jetzt senden (${s.due.length})</button>`:''}${!MAU.ok?`<button type="button" class="btn red" data-mok ${cfg&&s.due.length+s.soon.length+s.chk.length?'':'disabled'}>✅ Freigeben${s.due.length?' & '+s.due.length+' jetzt senden':''}</button>`:''}</div></div>
+ ${!MAU.ok&&s.due.length?`<p class="hint"><b>Erster Lauf:</b> Unten stehen alle, die jetzt nachgeholt werden (Kauf 08.05. bis ${fd(new Date(new Date().getFullYear(),new Date().getMonth()-2,new Date().getDate()))}). Bitte Liste + Anrede prüfen, dann freigeben. Ab da läuft es täglich von selbst.</p>`:''}
+ <h4>⚠ Anrede prüfen <small>${s.chk.length} · gehen erst raus, wenn du Herr/Frau/Familie wählst</small></h4>${s.chk.length?`<div class="maul">${s.chk.map(x=>row(x,chkB(x))).join('')}</div>`:'<p class="maue">Alles klar – keine unklaren Namen.</p>'}
+ <h4>📤 Fällig ${MAU.ok?'– geht beim nächsten Durchlauf raus':'– wird mit der Freigabe verschickt'} <small>${s.due.length}</small></h4>${s.due.length?`<div class="maul">${s.due.map(x=>row(x,anr(x)+`<button type="button" class="btn mano" data-ma="no" data-y="${esc(x.y)}" data-id="${esc(x.id)}" title="Diesen Kunden nie automatisch anschreiben">✕</button>`)).join('')}</div>`:'<p class="maue">Niemand fällig.</p>'}
+ <h4>⏳ Demnächst (14 Tage) <small>${s.soon.length}</small></h4>${s.soon.length?`<div class="maul">${s.soon.slice(0,MX*3).map(x=>row(x,x.a?anr(x):'<span class="mauw">'+esc(x.why)+'</span>')).join('')}</div>`:'<p class="maue">–</p>'}
+ <h4>✓ Zuletzt automatisch verschickt</h4>${sent.length?`<div class="maul">${sent.map(([,v])=>`<div class="maur"><span class="maud">${new Date(v.t).toLocaleDateString('de-DE',{day:'2-digit',month:'2-digit'})}<i>${new Date(v.t).toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'})}</i></span><span class="maun"><b>${esc(v.k||'')}</b><em>${esc(v.to||'')}</em></span><span class="maua">${esc(v.an||'')}</span></div>`).join('')}</div>`:'<p class="maue">Noch nichts.</p>'}
+ <p class="hint">Ohne E-Mail-Adresse oder mit ✕/✉ bei „Angeschrieben“ wird niemand angeschrieben. Gleiche Adresse bei mehreren Rädern = nur eine Mail. Text = Standard-Vorlage „Sie“ (✎ Vorlagen im Mail-Fenster).</p>
+ <div class="acts"><button type="button" class="btn red" data-close>Schließen</button></div></div>`);$('dlgBox').classList.add('wide','xwide');
+ const box=$('dlgBox').querySelector('.mau');box.addEventListener('click',async e=>{const b=e.target.closest('button');if(!b)return;
+  if(b.dataset.ma){const y=b.dataset.y,id=b.dataset.id,cur=KD[y]&&KD[y][id];if(!cur)return;const v=b.dataset.ma;
+   const n=v==='sw'?Object.assign({},cur,{nameOrd:cur.nameOrd==='vn'?'':'vn'}):Object.assign({},cur,{anr:v});b.disabled=true;await kdPut(y,n);
+   toast(v==='no'?(cur.kunde||'Kunde')+': nie automatisch anschreiben':v==='sw'?'Name getauscht':'Anrede gespeichert',()=>{kdPut(y,cur).then(()=>{rk();mauDlg();});});rk();mauDlg();return;}
+  if(b.hasAttribute('data-mt')){await db.doc('meta/mailauto').set({on:!on,onVon:ME.id,onTs:stamp()},{merge:true});MAU.on=!on;toast(on?'Automatik aus':'Automatik an');mauDlg();if(!on)mauRun(true);return;}
+  if(b.hasAttribute('data-mok')){if(!confirm('Automatische Kunden-Mail freigeben?\n\n'+(s.due.length?s.due.length+' Kunden werden JETZT angeschrieben, ':'')+'danach läuft es täglich automatisch.'))return;
+   await db.doc('meta/mailauto').set({ok:true,on:true,okVon:ME.id,okTs:stamp(),ab:MAU_AB},{merge:true});MAU.ok=true;MAU.on=true;b.disabled=true;b.textContent='Sendet …';mauRun(true);return;}
+  if(b.hasAttribute('data-mgo')){b.disabled=true;b.textContent='Sendet …';mauRun(true);return;}});}
 async function kdTplEdit(){if(!ME||!ME.adm)return;const T=await mtplGet();
  const f=(k,d,ic,n)=>`<label>${ic} ${n} – Betreff<input id="kteS_${k}_${d}" value="${esc(T[k][d].s)}"></label><label>${ic} ${n} – Text<textarea id="kteB_${k}_${d}" rows="8">${esc(T[k][d].b)}</textarea></label>`;
  dlg(`<h3>✎ E-Mail-Vorlagen</h3><p class="hint"><b>{anrede}</b> wird automatisch ersetzt (z. B. „Hallo Frau Müller,“ bzw. „Hallo Hans,“). Grüße stehen im Text direkt unter dem Bewertungslink. Absatz mit „Wichtig … % Rabatt“ wird im Design zur roten Rabatt-Box, der Google-Link zum Knopf. Gilt für alle.</p><form id="kteF" class="ktf" autocomplete="off">
