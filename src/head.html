@@ -257,9 +257,11 @@ td{padding:10px 12px;border-top:1px solid var(--line);white-space:nowrap;font-va
 .c[data-col="anf"]{flex-direction:column;align-items:center;justify-content:flex-start;gap:7px;padding:12px 0 24px}
 .hd.hdot{justify-content:center;padding-left:0;padding-right:0}.hd.hdot i{width:10px;height:10px;box-shadow:0 0 8px var(--cc)}
 .c[data-col="anf"] .plus{right:50%;transform:translateX(50%);bottom:3px;width:18px;height:18px;font-size:13px}
-.dot{all:unset;cursor:pointer;position:relative;width:16px;height:16px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#E9D5FF,var(--violet) 55%,#6B21A8);box-shadow:0 0 0 3px rgba(192,132,252,.18),0 0 14px rgba(192,132,252,.7);animation:dp 2.4s ease-in-out infinite}
-@keyframes dp{50%{box-shadow:0 0 0 6px rgba(192,132,252,.08),0 0 18px rgba(192,132,252,.9)}}
-.dot.done{animation:none;opacity:.35}.dot.hit{outline:2px solid var(--warn);outline-offset:3px}
+.dot{all:unset;cursor:pointer;position:relative;width:16px;height:16px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#E9D5FF,var(--violet) 55%,#6B21A8);box-shadow:0 0 0 3px rgba(192,132,252,.18),0 0 14px rgba(192,132,252,.7)}
+/* 1.10.58: Leuchten pulsiert nur noch über opacity/transform einer eigenen Ebene (Grafikkarte) – vorher box-shadow-Animation = Dauer-Neuzeichnen, ~14 % CPU im Leerlauf */
+.dot::after{content:'';position:absolute;inset:-5px;border-radius:50%;box-shadow:0 0 0 3px rgba(192,132,252,.12),0 0 14px rgba(192,132,252,.75);opacity:0;pointer-events:none;will-change:opacity;animation:dp 2.4s ease-in-out infinite}
+@keyframes dp{50%{opacity:1}}
+.dot.done{opacity:.35}.dot.done::after{animation:none;display:none}.dot.hit{outline:2px solid var(--warn);outline-offset:3px}
 .dot:focus-visible{outline:2px solid var(--cyan);outline-offset:3px}
 .dot .tip{position:absolute;left:50%;bottom:calc(100% + 10px);transform:translateX(-50%) translateY(4px);width:230px;padding:10px 12px;border-radius:12px;background:#1a1030;border:1px solid var(--violet);box-shadow:0 12px 30px -8px rgba(0,0,0,.8),0 0 20px -6px var(--violet);font:500 13px/1.4 var(--body);color:#fff;text-align:left;opacity:0;pointer-events:none;transition:.15s;z-index:20;white-space:normal}
 .dot .tip b{display:block;font:700 10px var(--mono);letter-spacing:.1em;text-transform:uppercase;color:#E9D5FF;margin-bottom:4px}

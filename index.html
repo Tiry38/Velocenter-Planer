@@ -259,9 +259,11 @@ td{padding:10px 12px;border-top:1px solid var(--line);white-space:nowrap;font-va
 .c[data-col="anf"]{flex-direction:column;align-items:center;justify-content:flex-start;gap:7px;padding:12px 0 24px}
 .hd.hdot{justify-content:center;padding-left:0;padding-right:0}.hd.hdot i{width:10px;height:10px;box-shadow:0 0 8px var(--cc)}
 .c[data-col="anf"] .plus{right:50%;transform:translateX(50%);bottom:3px;width:18px;height:18px;font-size:13px}
-.dot{all:unset;cursor:pointer;position:relative;width:16px;height:16px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#E9D5FF,var(--violet) 55%,#6B21A8);box-shadow:0 0 0 3px rgba(192,132,252,.18),0 0 14px rgba(192,132,252,.7);animation:dp 2.4s ease-in-out infinite}
-@keyframes dp{50%{box-shadow:0 0 0 6px rgba(192,132,252,.08),0 0 18px rgba(192,132,252,.9)}}
-.dot.done{animation:none;opacity:.35}.dot.hit{outline:2px solid var(--warn);outline-offset:3px}
+.dot{all:unset;cursor:pointer;position:relative;width:16px;height:16px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#E9D5FF,var(--violet) 55%,#6B21A8);box-shadow:0 0 0 3px rgba(192,132,252,.18),0 0 14px rgba(192,132,252,.7)}
+/* 1.10.58: Leuchten pulsiert nur noch über opacity/transform einer eigenen Ebene (Grafikkarte) – vorher box-shadow-Animation = Dauer-Neuzeichnen, ~14 % CPU im Leerlauf */
+.dot::after{content:'';position:absolute;inset:-5px;border-radius:50%;box-shadow:0 0 0 3px rgba(192,132,252,.12),0 0 14px rgba(192,132,252,.75);opacity:0;pointer-events:none;will-change:opacity;animation:dp 2.4s ease-in-out infinite}
+@keyframes dp{50%{opacity:1}}
+.dot.done{opacity:.35}.dot.done::after{animation:none;display:none}.dot.hit{outline:2px solid var(--warn);outline-offset:3px}
 .dot:focus-visible{outline:2px solid var(--cyan);outline-offset:3px}
 .dot .tip{position:absolute;left:50%;bottom:calc(100% + 10px);transform:translateX(-50%) translateY(4px);width:230px;padding:10px 12px;border-radius:12px;background:#1a1030;border:1px solid var(--violet);box-shadow:0 12px 30px -8px rgba(0,0,0,.8),0 0 20px -6px var(--violet);font:500 13px/1.4 var(--body);color:#fff;text-align:left;opacity:0;pointer-events:none;transition:.15s;z-index:20;white-space:normal}
 .dot .tip b{display:block;font:700 10px var(--mono);letter-spacing:.1em;text-transform:uppercase;color:#E9D5FF;margin-bottom:4px}
@@ -1396,6 +1398,9 @@ body.bigcur,body.bigcur *{cursor:url("data:image/svg+xml,%3Csvg xmlns='http://ww
 .maua{font-size:12.5px;font-weight:700;color:#93C5FD;padding:2px 8px;border-radius:6px;background:rgba(59,130,246,.14)}.maua.fam{color:#C4B5FD;background:rgba(139,92,246,.16)}
 .mauw{font-size:12px;font-weight:700;color:#FDE68A}.maub{display:flex;gap:4px;flex-wrap:wrap}.maub .btn,.maur .mano{padding:4px 9px;font-size:12px}
 .mano{border-color:rgba(255,59,92,.45)!important;color:#FDA4AF!important}.maue{color:#9AA1B8;font-size:13px;margin:2px 0}
+/* 1.10.58 Tempo: Hintergrund-Verläufe als eigene feste Ebene (wird einmal gemalt, nicht bei jedem Scrollen/Neuaufbau) */
+body::before{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;background-color:inherit;background-image:inherit;background-attachment:scroll;will-change:transform;transform:translateZ(0)}
+nav{backdrop-filter:none!important}
 
 [hidden]{display:none!important}
 #sTab td.b{font-weight:700}#sTab .pwm.ed{outline:none;padding:2px 6px;border-radius:6px;font-family:var(--mono)}#sTab td{vertical-align:top}
@@ -1581,7 +1586,7 @@ body.bigcur,body.bigcur *{cursor:url("data:image/svg+xml,%3Csvg xmlns='http://ww
 <script>
 const FB_CONFIG={apiKey:"AIzaSyC_uZPvc5rJETwlS4JbfCoTkkE4ckjtp0M",authDomain:"velocenter-planer.firebaseapp.com",projectId:"velocenter-planer",storageBucket:"velocenter-planer.firebasestorage.app",messagingSenderId:"1018330488700",appId:"1:1018330488700:web:262a4d1660353e6fde8ef9"};
 /* ================= Velocenter Werkstatt-Cockpit – Oberfläche ================= */
-const CLIENT_VERSION='1.10.57';
+const CLIENT_VERSION='1.10.58';
 const USERS=[{id:'kevin',n:'Kevin',c:'#E2232D'},{id:'stefan',n:'Stefan',c:'#F59E0B'},{id:'martina',n:'Martina',c:'#EC4899'},{id:'sascha',n:'Sascha',c:'#22D3EE'},{id:'rene',n:'René',c:'#34D399'}];
 const U=id=>USERS.find(u=>u.id===id)||{n:'',c:'#64748B',id:''};
 /* 1.10.37: Profilfarbe je Nutzer (meta/prefs[ID].col, für alle sichtbar) – Cache für den Login-Bildschirm */
@@ -1618,6 +1623,8 @@ function sessionLost(){}
 /* ---------- Datum ---------- */
 const WD=['Sonntag','Montag','Dienstag','Mittwoch','Donnerstag','Freitag','Samstag'];
 const WDS=['SO','MO','DI','MI','DO','FR','SA'];
+/* 1.10.58 Tempo: Formatierer einmal anlegen (toLocaleString mit Optionen baut sonst je Zeile einen neuen) */
+const NF2=new Intl.NumberFormat('de-DE',{maximumFractionDigits:2}),MONL=['Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember'];
 const iso=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
 const fromIso=s=>new Date(s+'T12:00:00');
 const TODAY=()=>iso(new Date());
@@ -1627,7 +1634,8 @@ function easter(y){const a=y%19,b=Math.floor(y/100),c=y%100,d=Math.floor(b/4),e=
 const HOL={};[2026,2027,2028].forEach(y=>{const e=easter(y),add=(d,n)=>{HOL[iso(d)]=n;},off=n=>{const d=new Date(e);d.setDate(d.getDate()+n);return d;};
  add(new Date(y,0,1,12),'Neujahr');add(off(-2),'Karfreitag');add(off(1),'Ostermontag');add(new Date(y,4,1,12),'1. Mai');add(off(39),'Himmelfahrt');add(off(50),'Pfingstmontag');add(off(60),'Fronleichnam');add(new Date(y,9,3,12),'Dt. Einheit');add(new Date(y,10,1,12),'Allerheiligen');add(new Date(y,11,24,12),'Heiligabend');add(new Date(y,11,25,12),'1. Weihnachtstag');add(new Date(y,11,26,12),'2. Weihnachtstag');add(new Date(y,11,31,12),'Silvester');});
 /* 1.8.1: Listen füllen die ganze Höhe bis zum unteren Rand */
-function fitH(){for(const el of document.querySelectorAll('.vtab,.board,.rktab,.nboard,.kdboard,#v-lief .tbl,#v-kasse .tbl')){if(!el.offsetParent)continue;const t=el.getBoundingClientRect().top;el.style.maxHeight=Math.max(240,(innerHeight-t-12)/UIZ)+'px';}if(typeof ltBarPos==='function')ltBarPos();}
+/* 1.10.58 Tempo: nur im sichtbaren Reiter suchen, Höhe nur bei Änderung schreiben, LT-Balken nur im Verkauf */
+function fitH(){const vw=document.querySelector('.view.on');if(!vw)return;for(const el of vw.querySelectorAll('.vtab,.board,.rktab,.nboard,.kdboard,#v-lief .tbl,#v-kasse .tbl')){if(!el.offsetParent)continue;const t=el.getBoundingClientRect().top,h=Math.max(240,(innerHeight-t-12)/UIZ)+'px';if(el.style.maxHeight!==h)el.style.maxHeight=h;}if(vw.id==='v-verkauf'&&typeof ltBarPos==='function')ltBarPos();}
 /* 1.8.6: Scroll-Position aller Listen bleibt beim Neuaufbau erhalten (vorher sprang die Liste nach jeder Änderung nach oben) */
 const SCRSEL='.vtab,.board,.rktab,.nboard,.kdboard,.tbl,.bcols,.cols';const SCR={};
 const scrKey=el=>((el.closest('.view')||{}).id||'')+'|'+[...el.classList].filter(c=>!/^(on|wfx)$/.test(c)).sort().join('.');
@@ -2173,12 +2181,12 @@ function ltBar(b){if(b.a==='1')return null;const s=String(b.lt||'').trim();
  const a=vkDate(b.dat);if(!a)return null;const p=now>=z?1:Math.max(0.02,Math.min(1,(now-a)/Math.max(864e5,z-a)));
  return {p:+p.toFixed(3),c:'#34D399',t:'Liefertermin KW '+L.k+': '+Math.round(p*100)+' % der Wartezeit vorbei'};}
 function ltBarPos(){requestAnimationFrame(()=>{const t=document.querySelector('#cards .vtab table');if(!t)return;const r=t.querySelector('tr.vr');if(!r)return;const a=r.querySelector('td.who2'),n=r.querySelector('td.vnote');if(!a||!n)return;
- const f=r.cells[0].getBoundingClientRect().left,al=a.getBoundingClientRect().left,w=n.getBoundingClientRect().right-f;if(w>0){t.style.setProperty('--lbw',Math.round(w)+'px');t.style.setProperty('--lbx',Math.round(al-f)+'px');}});}
+ const f=r.cells[0].getBoundingClientRect().left,al=a.getBoundingClientRect().left,w=n.getBoundingClientRect().right-f;if(w>0){const W=Math.round(w)+'px',X=Math.round(al-f)+'px';if(t.style.getPropertyValue('--lbw')!==W)t.style.setProperty('--lbw',W);if(t.style.getPropertyValue('--lbx')!==X)t.style.setProperty('--lbx',X);}});}
 addEventListener('resize',()=>ltBarPos());
 function vkLt(s){s=String(s||'').trim();if(/^sofort/i.test(s))return -1;if(/lager|^l$/i.test(s))return 0;const p=ltParse(s);if(!p)return 999;return p.k+(p.y-new Date().getFullYear())*53;}
 const ltNorm=s=>{const p=ltParse(s);return p?'KW '+p.k+'/'+String(p.y%100).padStart(2,'0'):String(s||'');};
 /* 1.6.8: „Anfang Dezember“ über der KW (Donnerstag der KW bestimmt den Monat, wie ISO) */
-const ltMon=s=>{const p=ltParse(s);if(!p)return '';const d=kwMon(p.k,p.y);d.setDate(d.getDate()+3);const t=d.getDate();return `<span class="ltm">${t<=10?'Anfang':t<=20?'Mitte':'Ende'} ${d.toLocaleDateString('de-DE',{month:'long'})}</span>`;};
+const ltMon=s=>{const p=ltParse(s);if(!p)return '';const d=kwMon(p.k,p.y);d.setDate(d.getDate()+3);const t=d.getDate();return `<span class="ltm">${t<=10?'Anfang':t<=20?'Mitte':'Ende'} ${MONL[d.getMonth()]}</span>`;};
 const ltShow=s=>{const p=ltParse(s);return p?'KW '+p.k+'<small class="lty">'+String(p.y%100).padStart(2,'0')+'</small>':esc(s||'');};
 const vkRank=b=>b.a==='1'?5:b.b==='1'?4:b.m==='1'?3:b.an==='1'?2:1;
 // Sortieren: Klick auf Spaltenkopf (1. Klick aufsteigend, 2. Klick absteigend) oder Auswahl oben links; leere Felder immer unten
@@ -3135,7 +3143,7 @@ const kdFv=(k,r)=>{const v=kdVal(k,r);if(!(k==='leas'||k==='vers')||v==='')retur
 const kdLab=(k,v)=>v===KDNC?'📅 Datum / ohne Kürzel (altes Sheet)':v===''?'(leer)':k==='leas'&&FN[v]?v+' · '+FN[v]:k==='leas'&&(L||[]).find(l=>kdKey(l.k)===kdKey(v))?v+' · '+(L||[]).find(l=>kdKey(l.k)===kdKey(v)).n:k==='leas'&&KFIN[kdKey(v)]?v+' · '+KFIN[kdKey(v)].n:k==='vers'&&kdVN()[v]?v+' · '+kdVN()[v]:v;
 let kdF={},kdYr=String(ls.get('vc_kdyr','')||'');  // Filter je Spalte: {Spalte: Set(Werte)} wie der Excel-Autofilter
 const kdYear=r=>{const d=r._d?new Date(r._d):null;return d?d.getFullYear():'ohne Datum';};
-const kdPreis=v=>{v=String(v==null?'':v).trim();if(/^\d+([.,]\d+)?$/.test(v)){const n=parseFloat(v.replace(',','.'));return n.toLocaleString('de-DE',{maximumFractionDigits:2})+' €';}return v;};
+const kdPreis=v=>{v=String(v==null?'':v).trim();if(/^\d+([.,]\d+)?$/.test(v)){const n=parseFloat(v.replace(',','.'));return NF2.format(n)+' €';}return v;};
 function rk(){const g=$('kdGrid');if(!g)return;kdAngMig();const all=kdAll();{const cy=new Date().getFullYear();$('nKunden').textContent=all.length?all.length.toLocaleString('de-DE'):'–';$('nKunden').title=all.length.toLocaleString('de-DE')+' Verkäufe gesamt seit 1995 · davon '+all.filter(r=>r._d&&new Date(r._d).getFullYear()===cy).length+' in '+cy;}
  if(document.querySelector('#kdGrid [contenteditable]:focus'))return;
  const q=($('kdSearch').value||'').trim().toLowerCase();const now=new Date().getFullYear();
