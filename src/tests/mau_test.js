@@ -23,6 +23,7 @@ console.log(SENT.map(x=>x.to_email+' | '+x.subject+' | '+x.message.split('\n')[0
 ok('5 Mails verschickt',SENT.length===5);
 ok('Anreden korrekt',['Hallo Herr Müller,','Hallo Frau Schmidt,','Hallo Familie Becker,','Hallo Familie Roth,','Hallo Frau Dr. Wolf,'].every(t=>SENT.some(x=>x.message.startsWith(t))));
 ok('Design-HTML dabei',SENT.every(x=>/mail-logo\.png/.test(x.message_html)));
+ok('Abmelde-Hinweis in HTML + Text',SENT.every(x=>/keine E-Mails mehr von uns/.test(x.message_html)&&/Keine%20weiteren%20E-Mails/.test(x.message_html)&&/keine E-Mails mehr von uns/.test(x.message)));
 ok('Kunden markiert (A,B,F,I,J,L), nicht C/D/K',await p.evaluate(()=>['A','B','F','I','J','L'].every(i=>KD[2026][i].ang==='mail'&&KD[2026][i].angVia==='auto')&&!['C','D','K'].some(i=>KD[2026][i].ang)));
 const n2=await p.evaluate(()=>mauRun(true));ok('zweiter Lauf: nichts doppelt',n2===0&&SENT.length===5);
 // Anrede prüfen: C → Frau
