@@ -28,6 +28,14 @@ const n2=await p.evaluate(()=>mauRun(true));ok('zweiter Lauf: nichts doppelt',n2
 // Anrede prüfen: C → Frau
 await p.evaluate(()=>mauDlg());await w(400);await p.click('[data-ma=frau][data-id=C]');await w(600);await p.evaluate(()=>mauRun(true));await w(3000);
 ok('C nach Wahl „Frau“ verschickt',SENT.length===6&&SENT[5].message.startsWith('Hallo Frau Weber,'));
+// gleiche Adresse, verschiedene Namen (M Kaiser Simone + N Walber Markus): Wahl bei einem → eine Mail an ihn/sie
+await p.evaluate(async()=>{await db.doc('meta/kd_2026').update({'items.M':{id:'M',y:'2026',kunde:'Kaiser Simone',dat:'22.05.2026',mail:'sk@x.de',modell:'X'},'items.N':{id:'N',y:'2026',kunde:'Walber Markus',dat:'23.05.2026',mail:'sk@x.de',modell:'Y'}});});await w(600);
+await p.evaluate(()=>{mauDlg();});await w(500);
+ok('M+N stehen unter prüfen',await p.evaluate(()=>mauScan().chk.filter(x=>/gleiche E-Mail/.test(x.why)).length===2));
+await p.evaluate(()=>{$('dlgBox').querySelectorAll('.maul')[0].scrollTop=0;});await p.click('[data-ma=frau][data-id=M]');await w(700);
+ok('nach Klick „Frau Kaiser“: fällig, eine Mail, Fenster offen',await p.evaluate(()=>{const s=mauScan(),d=s.due.find(x=>x.id==='M');return !!d&&d.dup.length===1&&d.dup[0].id==='N'&&!s.chk.some(x=>x.id==='M'||x.id==='N')&&!!$('dlgBox').querySelector('.mau')&&/Hallo Frau Kaiser/.test($('dlgBox').textContent);}));
+await p.evaluate(()=>mauRun(true));await w(3000);
+ok('M+N: genau eine Mail „Hallo Frau Kaiser,“, beide markiert',SENT.filter(x=>x.to_email==='sk@x.de').length===1&&SENT.some(x=>x.message.startsWith('Hallo Frau Kaiser,'))&&await p.evaluate(()=>KD[2026].M.ang==='mail'&&KD[2026].N.ang==='mail'));
 await p.evaluate(()=>mauDlg());await w(400);await p.screenshot({path:'mau2.png'});
 ok('keine JS-Fehler',!er.length);
 console.log(R.join('\n'),er);await b.close();})();
