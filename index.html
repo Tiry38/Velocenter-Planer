@@ -500,7 +500,6 @@ body.navmini .app{grid-template-columns:84px 1fr}
 .bchip{display:inline-block;font:800 10.5px/1 Outfit,var(--display),sans-serif;letter-spacing:.04em;color:#E8ECF3;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.16);border-radius:5px;padding:2px 5px 2px;margin-right:6px;vertical-align:1px}
 .blg{height:13px;width:auto;max-width:64px;object-fit:contain;margin-right:6px;vertical-align:-2px}
 .who2 .wp,.bike .wp{border-radius:10px;padding:6px 10px;margin:-6px -10px;transition:background .35s,box-shadow .35s}
-.who2 .tabq{display:inline-block;margin-left:6px;font-size:12px;cursor:help;vertical-align:1px}
 .bike .wp{margin:-6px 0 -6px -10px}
 .bike .h{flex-wrap:wrap}.bike .h>.wp,.bike .h>div:first-child{flex:1 1 150px;min-width:150px}.bike .h>.lsel{flex:none}
 /* Leasing-Gruppe (Antrag · O.K. · L.-Ende): Kopf + Trennlinien */
@@ -1558,7 +1557,7 @@ nav{backdrop-filter:none!important}
 <script>
 const FB_CONFIG={apiKey:"AIzaSyC_uZPvc5rJETwlS4JbfCoTkkE4ckjtp0M",authDomain:"velocenter-planer.firebaseapp.com",projectId:"velocenter-planer",storageBucket:"velocenter-planer.firebasestorage.app",messagingSenderId:"1018330488700",appId:"1:1018330488700:web:262a4d1660353e6fde8ef9"};
 /* ================= Velocenter Werkstatt-Cockpit – Oberfläche ================= */
-const CLIENT_VERSION='1.10.64';
+const CLIENT_VERSION='1.10.65';
 const USERS=[{id:'kevin',n:'Kevin',c:'#E2232D'},{id:'stefan',n:'Stefan',c:'#F59E0B'},{id:'martina',n:'Martina',c:'#EC4899'},{id:'sascha',n:'Sascha',c:'#22D3EE'},{id:'rene',n:'René',c:'#34D399'}];
 const U=id=>USERS.find(u=>u.id===id)||{n:'',c:'#64748B',id:''};
 /* 1.10.37: Profilfarbe je Nutzer (meta/prefs[ID].col, für alle sichtbar) – Cache für den Login-Bildschirm */
@@ -2214,7 +2213,7 @@ function vkRow(b){const st=b.a==='1'?'a':b.b==='1'?'b':b.m==='1'?'m':b.an==='1'?
  const lb=ltBar(b);
  return `<tr class="vr st-${st}${lb?' lbr':''}"${lb?` style="--lp:${lb.p};--lc:${lb.c}" title="${esc(lb.t)}"`:''}>
  <td class="sdot" title="${{o:'offen',l:'angeliefert',m:'montiert',b:'O.K. – abholbereit',a:'abgeholt'}[st]}"><i></i></td>
- <td class="who2${vkSty(b)?' wfx':''}" style="${vkSty(b)}">${lb?'<i class="ltbar"></i>':''}<div class="wp">${b.b==='1'&&b.a!=='1'?'<img class="oklg" src="'+imgU(OKLOGO)+'" alt="" title="Fertig & abholbereit – Velocenter-Aufkleber ist drauf">':''}<b class="ef" contenteditable="true" spellcheck="false" data-vid="${esc(b.id)}" data-f="name" title="Klick = Kunde bearbeiten">${esc(b.name||'')}</b>${b.quelle==='tablet'?`<span class="tabq" title="${esc(['Vom Annahmezettel (Tablet)',b.tel&&'Tel. '+b.tel,b.mail,b.adresse,b.fid&&'FID '+b.fid,b.liefDat&&'Lieferung '+b.liefDat,b.abhol&&'Abholung '+b.abhol].filter(Boolean).join(' · '))}">📝</span>`:''}<small>${bModelE(b)}</small></div></td>
+ <td class="who2${vkSty(b)?' wfx':''}" style="${vkSty(b)}">${lb?'<i class="ltbar"></i>':''}<div class="wp">${b.b==='1'&&b.a!=='1'?'<img class="oklg" src="'+imgU(OKLOGO)+'" alt="" title="Fertig & abholbereit – Velocenter-Aufkleber ist drauf">':''}<b class="ef" contenteditable="true" spellcheck="false" data-vid="${esc(b.id)}" data-f="name" title="Klick = Kunde bearbeiten">${esc(b.name||'')}</b><small>${bModelE(b)}</small></div></td>
  <td class="pcell pf" data-vid="${esc(b.id)}" data-pf="form" title="Klick = Form wählen" tabindex="0">${esc(b.form||'')}</td><td class="pcell pg" data-vid="${esc(b.id)}" data-pf="gr" title="Klick = Größe wählen" tabindex="0">${esc(b.gr||'')}</td>
  ${dcD('dat',b.dat)}<td class="kcell${ltHot(b.lt)&&b.a!=='1'?' hot':''}" data-vid="${esc(b.id)}" title="Klick = Kalenderwoche wählen" tabindex="0">${ltMon(b.lt)}${ltShow(b.lt)}</td>${ce('notiz',[b.notiz,b.montieren?'Montieren: '+b.montieren:''].filter(Boolean).join(' · '),'vnote'+(b.notiz&&U(b.notizVon).n?'" data-von="'+esc(U(b.notizVon).n[0])+'" style="--uc:'+U(b.notizVon).c+'" title="Notiz von '+esc(U(b.notizVon).n)+(b.notizTs?' · '+fmtTs(b.notizTs):''):''))}
 <td><div class="lcell">${leasLogo(b.firma)}<select class="lsel mini2${b.firma?'':' off'}" data-vi="${esc(b.id)}" aria-label="Leasing-Anbieter"><option value="">–</option>${Object.entries(FN).map(([k,n])=>`<option value="${esc(k)}"${b.firma===k?' selected':''}>${esc(k)} · ${esc(n)}</option>`).join('')}${b.firma&&!FN[b.firma]?`<option selected>${esc(b.firma)}</option>`:''}</select>${b.firma?lvB(b,'firma'):''}</div></td>
