@@ -34,8 +34,6 @@ main{--ac:#E2232D}
 #sTab tbody tr:nth-child(even),#tgTab tbody tr:nth-child(even){background:rgba(255,255,255,.018)}
 #sTab tbody tr:hover,#tgTab tbody tr:hover{background:color-mix(in srgb,var(--ac) 7%,transparent)}
 #sTab td.b{color:color-mix(in srgb,var(--ac) 45%,#fff)}
-.lockb{all:unset;cursor:pointer;padding:3px 8px;border-radius:8px;background:var(--panel2);border:1px solid var(--line);font-size:13px}
-.lockb:hover{border-color:var(--ac);box-shadow:0 0 12px -2px var(--ac)}.lockb:focus-visible{outline:2px solid var(--cyan)}
 .tbl{border-color:color-mix(in srgb,var(--ac) 18%,var(--line))}
 .tgbars{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:14px 16px;margin-bottom:12px}
 .tgbars h4{margin:0 0 10px;font:600 10.5px var(--mono);letter-spacing:.14em;text-transform:uppercase;color:#C7CEDA}
@@ -64,7 +62,6 @@ td.r{text-align:right}.amt{color:color-mix(in srgb,var(--ac) 50%,#fff);font-fami
 .vr:hover{background:color-mix(in srgb,var(--stc) 7%,transparent)}
 .sdot i{display:block;width:10px;height:10px;border-radius:50%;background:var(--stc);box-shadow:0 0 10px var(--stc)}
 .who2{white-space:normal!important;min-width:170px}.who2 b{display:block;font-size:14px;color:#fff}.who2 small{display:block;color:#C7CEDA;font-size:12px}
-.who2 small.nt{color:#A7B0C0;max-width:240px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .lcell{display:flex;align-items:center;gap:6px;min-width:150px}
 .llg{height:26px;max-width:96px;object-fit:contain;filter:drop-shadow(0 1px 4px rgba(0,0,0,.6))}
 .lchip{font:700 11px var(--mono);padding:2px 7px;border-radius:99px;background:var(--warn-soft);color:var(--warn)}
@@ -75,11 +72,9 @@ td.r{text-align:right}.amt{color:color-mix(in srgb,var(--ac) 50%,#fff);font-fami
 .vtab td.ce{font-family:var(--mono);font-size:12.5px;min-width:56px}
 .vtab td.ce:empty::before{content:"–";color:var(--muted)}
 .vtab td.hot{color:#FDBA74;font-weight:700}.vtab td.hot::after{content:" ⚡"}
-.vtab td.okv{color:var(--ok);font-weight:700}.vtab td.miss:empty::before{content:"fehlt";color:#FCA5A5;font-weight:700}
+.vtab td.miss:empty::before{content:"fehlt";color:#FCA5A5;font-weight:700}
 .vtab td.na{color:#4b5563;text-align:center}
 .stb{white-space:nowrap}.stb .st{flex:none;display:inline-block;min-width:28px;padding:4px 7px;margin-right:3px;font-size:11.5px}.vtab td{padding:8px 8px}
-.clogo .llg{height:30px;max-width:120px}
-.bike .h .clogo{margin-left:auto;display:flex;align-items:center}
 
 
 /* ===== Planer: Zeit-Spalte + Klick ins Feld ===== */
@@ -202,7 +197,7 @@ body.navmini .app{grid-template-columns:84px 1fr}
 .who2 .wp,.bike .wp{border-radius:10px;padding:6px 10px;margin:-6px -10px;transition:background .35s,box-shadow .35s}
 .who2 .tabq{display:inline-block;margin-left:6px;font-size:12px;cursor:help;vertical-align:1px}
 .bike .wp{margin:-6px 0 -6px -10px}
-.bike .h{flex-wrap:wrap}.bike .h>.wp,.bike .h>div:first-child{flex:1 1 150px;min-width:150px}.bike .h .clogo{flex:none}.bike .h>.lsel{flex:none}
+.bike .h{flex-wrap:wrap}.bike .h>.wp,.bike .h>div:first-child{flex:1 1 150px;min-width:150px}.bike .h>.lsel{flex:none}
 /* Leasing-Gruppe (Antrag · O.K. · L.-Ende): Kopf + Trennlinien */
 .vtab thead tr.h1 th{height:24px;padding:6px 8px 0;border-bottom:0}
 .vtab thead tr.h2 th{top:30px}
@@ -388,16 +383,13 @@ body{background-color:#090B10;background-image:
 .rka{min-width:180px;white-space:normal!important}.rkg{max-width:240px;white-space:normal!important}
 .rkchip{display:inline-block;font:600 11px/1 Outfit,var(--body),sans-serif;padding:3px 8px;border-radius:99px;background:rgba(251,146,60,.14);border:1px solid rgba(251,146,60,.45);color:#FED7AA}
 .rkchip.l{background:rgba(52,211,153,.12);border-color:rgba(52,211,153,.4);color:#A7F3D0}
-.rks small{font-size:11px}
 .rkst{white-space:nowrap}.rkst .st{flex:none;display:inline-block;padding:4px 9px;margin-right:4px;font-size:11.5px}
-.st[aria-pressed="true"].rk1{background:rgba(96,165,250,.16);border-color:#60A5FA;color:#BFDBFE}
 .st[aria-pressed="true"].rk2{background:rgba(52,211,153,.16);border-color:#34D399;color:#A7F3D0;box-shadow:0 0 10px rgba(52,211,153,.3)}
 .rktab td.empty{text-align:center;color:var(--muted);padding:30px}
 .rkf .g4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
 .rkf .w2{grid-column:span 2}.rkf .w4{grid-column:1/-1}
 .rkf textarea{font:500 13px var(--body);resize:vertical}
 @media (max-width:900px){.rkf .g4{grid-template-columns:1fr 1fr}.rkf .w2{grid-column:1/-1}}
-.rktab .rkm{font:600 12px var(--mono);color:#E2E8F0}
 /* Planer Tag-Spalte: Wochentag groß, Spalte endet direkt dahinter, „Heute“ unter dem Datum */
 #v-planer .date{flex-wrap:wrap;align-content:center;column-gap:7px!important;row-gap:3px!important;padding:6px 8px 6px 10px!important}
 #v-planer .date span{font-size:22px!important;font-weight:600!important;line-height:1}
@@ -445,7 +437,6 @@ body.nresizing,body.nresizing *{cursor:col-resize!important;user-select:none!imp
 .kdgrid .kmo{color:#F1F5F9}.kdgrid .kp{font:700 12.5px var(--mono);color:#FDE68A;text-align:right}
 .kdgrid .kl2{font:700 12px var(--mono);color:#C4B5FD;text-align:center}.kdgrid .kk{font-weight:700;color:#F9A8D4}
 .kdgrid .kv{font:700 12px var(--mono);color:#67E8F9;text-align:center}.kdgrid .krn,.kdgrid .kt{font:600 12px var(--mono);color:#CBD5E1}
-.kdgrid .kx{font:700 12px var(--mono);color:#94A3B8;text-align:center}
 .kdgrid .kc:empty::before{content:"–";color:#475569}
 .kdgrid .kdel{align-items:center;cursor:default;opacity:0;transition:opacity .15s}.kdgrid .row.kr:hover .kdel,.kdgrid .kdel:focus-within{opacity:1}
 .kdgrid .row.kr:hover .kc:not(.kk){background:rgba(244,114,182,.05)}
@@ -692,24 +683,19 @@ body.isadm .vtab td.ce.vnote[data-von]:hover::after{transform:translateY(-50%) s
 body.bm .view.on thead th[data-ck]:not([data-bmno]),body.bm #grid .hd[data-pk]{cursor:pointer;outline:1px dashed rgba(250,204,21,.6);outline-offset:-3px}
 body.bm .view.on thead th[data-ck]:hover,body.bm #grid .hd[data-pk]:hover{background:rgba(250,204,21,.12)!important}
 th.xcol{color:#FDE68A!important}td.xce{min-width:110px;color:#FEF3C7}
-.bmm{display:grid;gap:7px}.bmm .btn{justify-content:center;font-size:12.5px}.bmrow{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.bmm{display:grid;gap:7px}.bmm .btn{justify-content:center;font-size:12.5px}.bmlr{display:grid;grid-template-columns:1fr 1fr;gap:6px}
 .bmr{display:grid;gap:4px;font:600 11px "Outfit",sans-serif;color:#94A3B8}
 .bmh{display:grid;gap:5px;padding-top:6px;border-top:1px solid #2A3344}.bmh small{color:#94A3B8}
 .bmreset{color:#FCA5A5!important;margin-top:4px}
 .kdpop:has(.bmm){width:270px}
 /* 1.9.0: Navi-Werkzeuge nur noch Ein-/Ausklappen (+ Bearbeiten für Admins); Breiten-Ziehgriff im BM */
 .metools{grid-template-columns:none!important;grid-auto-flow:column;grid-auto-columns:1fr}
-.cfgacc{display:flex;gap:8px;flex-wrap:wrap}
 .bmres{display:none}
 body.bm .bmres{display:block;position:absolute;top:0;right:-3px;width:8px;height:100%;cursor:col-resize;z-index:3}
 body.bm .bmres::after{content:"";position:absolute;top:20%;bottom:20%;left:3px;width:2px;border-radius:2px;background:rgba(250,204,21,.55)}
 body.bm .bmres:hover::after,body.bmdrag .bmres::after{background:#FACC15;box-shadow:0 0 6px #FACC15}
 body.bmdrag{cursor:col-resize!important;user-select:none}
 /* 1.9.1: Nutzer-Einstellungen */
-.setg{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px}
-.setsec{display:grid;gap:9px;align-content:start;padding:14px;border-radius:14px;background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.08)}
-.setsec h4{margin:0;font:700 14px "Outfit",sans-serif;color:#fff}
-.setrow{display:flex;align-items:center;gap:12px}.setrow b{display:block;font:700 16px "Outfit",sans-serif}.setrow small{color:#94A3B8}
 .setl{display:grid;gap:5px;font:600 12px "Outfit",sans-serif;color:#94A3B8}
 .setl select{padding:8px 10px;border-radius:10px;background:#0A0D13;border:1px solid #2A3344;color:#fff;font:500 13px var(--body)}
 #meChip .mi,#meChip .av{cursor:pointer}
@@ -876,7 +862,7 @@ body[data-v=ausw]{--ac:#F5B83D}
 .aus1b{display:flex;height:20px;border-radius:6px;overflow:hidden;background:rgba(71,85,105,.25)}
 .aus1b i{display:flex;align-items:center;justify-content:center;font:700 10.5px Outfit,sans-serif;font-style:normal;color:#0b0e15;overflow:hidden;white-space:nowrap;border-right:1px solid rgba(11,14,21,.5)}
 .aus1b i:hover{filter:brightness(1.25)}
-.aus1b i.aul{background:#22D3EE}.aus1b i.auf{background:#B15CFF}.aus1b i.auk{background:#475569;color:#e2e8f0}
+.aus1b i.auf{background:#B15CFF}.aus1b i.auk{background:#475569;color:#e2e8f0}
 /* Saison */
 .aumo{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:6px;height:220px}
 .aumc{display:flex;flex-direction:column;align-items:center;min-width:0}
@@ -1018,7 +1004,7 @@ body.bgdez{background-image:radial-gradient(900px 560px at 0% 0%,rgba(70,100,220
 body.bgruh{background-image:none!important;background-color:#07090D!important}
 body.noanim *,body.noanim *::before,body.noanim *::after{animation:none!important;transition:none!important}
 body.uidense td,body.uidense th{padding-top:3px!important;padding-bottom:3px!important}
-body.uidense .vtab td,body.uidense #kdTab td{line-height:1.25}
+body.uidense .vtab td{line-height:1.25}
 
 /* 1.10.41: LT-Auswahl eigene Liste */
 .ltpop{display:block;overscroll-behavior:contain;scroll-behavior:auto}
@@ -1076,3 +1062,9 @@ body.bigcur,body.bigcur *{cursor:url("data:image/svg+xml,%3Csvg xmlns='http://ww
 /* 1.10.58 Tempo: Hintergrund-Verläufe als eigene feste Ebene (wird einmal gemalt, nicht bei jedem Scrollen/Neuaufbau) */
 body::before{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;background-color:inherit;background-image:inherit;background-attachment:scroll;will-change:transform;transform:translateZ(0)}
 nav{backdrop-filter:none!important}
+/* Audit 06.11.2026: Handy – Navi als waagrechte, wischbare Leiste (eingeklappt-Breite 84 px und overflow-x:hidden galten sonst auch am Handy → nur KW-Kachel sichtbar) */
+@media (max-width:720px){
+ nav,body.navmini nav,body.navpeek nav{width:auto!important;overflow-x:auto!important;overflow-y:hidden!important;-webkit-overflow-scrolling:touch}
+ body.navmini .navbtn .lbl,body.navmini .navbtn .n,body.navmini .me .mi,body.navmini .kwbrand .kwt{opacity:1!important}
+ nav>*{flex:none}
+}

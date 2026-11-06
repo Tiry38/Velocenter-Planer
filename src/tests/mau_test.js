@@ -3,7 +3,7 @@ const {chromium}=require('playwright');
 const SENT=[];await c.route(/api\.emailjs\.com/,async r=>{SENT.push(JSON.parse(r.request().postData()).template_params);await r.fulfill({status:200,body:'OK',headers:{'Access-Control-Allow-Origin':'*'}});});
 const p=await c.newPage();const er=[];p.on('pageerror',e=>er.push(e.message));p.on('dialog',d=>d.accept());
 const R=[];const ok=(n,x)=>R.push((x?'OK  ':'FAIL')+' '+n);const w=t=>p.waitForTimeout(t||250);
-await p.goto('file://'+process.cwd()+'/test_fb.html');await w(400);await p.click('.wt[data-u=kevin]');await p.fill('#pw1','1');await p.fill('#pw2','1');await p.click('#pwGo');await w(900);
+/* Testdaten sind auf den 05.11.2026 gerechnet → Uhr fest (sonst wird D mit jedem Tag fällig) */await p.clock.install({time:new Date('2026-11-05T10:00:00')});await p.goto('file://'+process.cwd()+'/test_fb.html');await w(400);await p.click('.wt[data-u=kevin]');await p.fill('#pw1','1');await p.fill('#pw2','1');await p.click('#pwGo');await w(900);
 await p.evaluate(async()=>{const it={};const a=(id,kunde,dat,mail,x)=>it[id]=Object.assign({id,y:'2026',kunde,dat,mail,modell:'KTM Macina'},x||{});
  a('A','Müller Hans','10.05.2026','a@x.de');a('B','Schmidt Petra','05.09.2026','b@x.de');a('C','Weber Kim','01.07.2026','c@x.de');a('D','Meier Klaus','06.09.2026','d@x.de');
  a('E','Alt Otto','07.05.2026','e@x.de');a('F','Familie Becker','20.06.2026','f@x.de');a('G','Kurz Anna','15.06.2026','g@x.de',{ang:'mail'});a('H','Lang Peter','10.06.2026','');

@@ -10,8 +10,8 @@ service cloud.firestore {
 
     // Nur die Info, wer schon ein Passwort hat (für den Login-Bildschirm)
     match /meta/users { allow read: if true; allow write: if team(); }
-    // Kundendaten (meta/kd_<Jahr>, meta/kd_trash) nur Admins (1.9.6), alles andere in meta: ganzes Team
-    match /meta/{doc} { allow read, write: if team() && (!doc.matches('kd_.*') || admin()); allow read: if tablet() && (doc == 'brands' || doc.matches('blg_.*')); }
+    // Kundendaten (meta/kd_<Jahr>, meta/kd_trash) nur Admins (1.9.6); Kunden-Mail (mailauto = Versandliste mit Namen/Adressen, mailcfg, mailtpl) nur Admins (Audit 06.11.2026); alles andere in meta: ganzes Team
+    match /meta/{doc} { allow read, write: if team() && (!doc.matches('kd_.*|mailauto|mailcfg|mailtpl') || admin()); allow read: if tablet() && (doc == 'brands' || doc.matches('blg_.*')); }
 
     match /planer/{id}      { allow read, write: if team(); }
     match /verkauf/{id}     { allow read, write: if team(); allow create: if tablet() && id.matches('vt[a-z0-9]{8,30}') && request.resource.data.quelle == 'tablet'; allow get: if tablet() && id.matches('vt[a-z0-9]{8,30}') && resource.data.quelle == 'tablet'; }
