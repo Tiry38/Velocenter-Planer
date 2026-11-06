@@ -195,7 +195,6 @@ body.navmini .app{grid-template-columns:84px 1fr}
 .bchip{display:inline-block;font:800 10.5px/1 Outfit,var(--display),sans-serif;letter-spacing:.04em;color:#E8ECF3;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.16);border-radius:5px;padding:2px 5px 2px;margin-right:6px;vertical-align:1px}
 .blg{height:13px;width:auto;max-width:64px;object-fit:contain;margin-right:6px;vertical-align:-2px}
 .who2 .wp,.bike .wp{border-radius:10px;padding:6px 10px;margin:-6px -10px;transition:background .35s,box-shadow .35s}
-.who2 .tabq{display:inline-block;margin-left:6px;font-size:12px;cursor:help;vertical-align:1px}
 .bike .wp{margin:-6px 0 -6px -10px}
 .bike .h{flex-wrap:wrap}.bike .h>.wp,.bike .h>div:first-child{flex:1 1 150px;min-width:150px}.bike .h>.lsel{flex:none}
 /* Leasing-Gruppe (Antrag · O.K. · L.-Ende): Kopf + Trennlinien */
