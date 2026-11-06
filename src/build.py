@@ -23,10 +23,12 @@ open(OUT+'/index.html','w').write(page(FB))
 open('tests/test_fb.html','w').write(page('<script src="xlsx.full.min.js"></script><script src="fbmock.js"></script><script>window.__t=[];</script>').replace('</body></html>','<script>(function(){const o=toast;toast=function(t,u){__t.push(t);return o(t,u);};})();</script></body></html>'))
 open(OUT+'/version.txt','w').write(VERSION+'\n')
 json.dump({"name":"Velocenter Werkstatt-Cockpit","short_name":"Cockpit","start_url":"./","scope":"./","display":"fullscreen","display_override":["fullscreen","standalone"],"background_color":"#07090D","theme_color":"#07090D","lang":"de",
- "icons":[{"src":"icon-192.png","sizes":"192x192","type":"image/png"},{"src":"icon-512.png","sizes":"512x512","type":"image/png","purpose":"any maskable"}]},open(OUT+'/manifest.webmanifest','w'),ensure_ascii=False,indent=1)
+ "icons":[{"src":"icon-192.png","sizes":"192x192","type":"image/png"},{"src":"icon-512.png","sizes":"512x512","type":"image/png","purpose":"any"},{"src":"icon-maskable-192.png","sizes":"192x192","type":"image/png","purpose":"maskable"},{"src":"icon-maskable-512.png","sizes":"512x512","type":"image/png","purpose":"maskable"}]},open(OUT+'/manifest.webmanifest','w'),ensure_ascii=False,indent=1)
 open(OUT+'/sw.js','w').write("// Nur Netz – immer die neueste Version, keine alte Kopie aus dem Cache\nself.addEventListener('install',e=>self.skipWaiting());\nself.addEventListener('activate',e=>e.waitUntil(self.clients.claim()));\nself.addEventListener('fetch',e=>{});\n")
 lg=Image.open('assets/logo.png').convert('RGBA');lg=lg.crop(lg.getbbox())
 for n in (192,512):
     c=Image.new('RGBA',(n,n),(7,9,13,255));w=int(n*.82);t=lg.copy();t.thumbnail((w,w),Image.LANCZOS);c.alpha_composite(t,((n-t.width)//2,(n-t.height)//2));c.convert('RGB').save(OUT+f'/icon-{n}.png',optimize=True)
+    # 1.10.63: eigenes Android-Symbol (maskable) – Logo kleiner, damit es im runden/abgeschnittenen Rahmen (sichere Zone 80 %) ganz sichtbar bleibt
+    c=Image.new('RGBA',(n,n),(7,9,13,255));w=int(n*.6);t=lg.copy();t.thumbnail((w,w),Image.LANCZOS);c.alpha_composite(t,((n-t.width)//2,(n-t.height)//2));c.convert('RGB').save(OUT+f'/icon-maskable-{n}.png',optimize=True)
 open(OUT+'/.nojekyll','w').write('')
 print('ok',VERSION,os.path.getsize(OUT+'/index.html'))
