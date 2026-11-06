@@ -1558,7 +1558,7 @@ nav{backdrop-filter:none!important}
 <script>
 const FB_CONFIG={apiKey:"AIzaSyC_uZPvc5rJETwlS4JbfCoTkkE4ckjtp0M",authDomain:"velocenter-planer.firebaseapp.com",projectId:"velocenter-planer",storageBucket:"velocenter-planer.firebasestorage.app",messagingSenderId:"1018330488700",appId:"1:1018330488700:web:262a4d1660353e6fde8ef9"};
 /* ================= Velocenter Werkstatt-Cockpit – Oberfläche ================= */
-const CLIENT_VERSION='1.10.63';
+const CLIENT_VERSION='1.10.64';
 const USERS=[{id:'kevin',n:'Kevin',c:'#E2232D'},{id:'stefan',n:'Stefan',c:'#F59E0B'},{id:'martina',n:'Martina',c:'#EC4899'},{id:'sascha',n:'Sascha',c:'#22D3EE'},{id:'rene',n:'René',c:'#34D399'}];
 const U=id=>USERS.find(u=>u.id===id)||{n:'',c:'#64748B',id:''};
 /* 1.10.37: Profilfarbe je Nutzer (meta/prefs[ID].col, für alle sichtbar) – Cache für den Login-Bildschirm */
@@ -2131,7 +2131,7 @@ function stats(el,list,active){$(el).innerHTML=list.map(x=>`<button class="stat$
 /* ================= VERKAUF ================= */
 let FN={BL:'Bikeleasing',CB:'Company Bike',KM:'Kazenmaier',BB:'Businessbike',JR:'JobRad',DD:'Deutsche Dienstrad',LB:'Lease a Bike',RD:'RIDE',ER:'Eurorad'};
 let vkEdit=null,vkShowDone=false,vkSort=ls.get('vc_vksort','dat:-1');vkSort={neu:'dat:-1',lt:'lt:1',status:'status:1'}[vkSort]||vkSort;if(!/^[a-z]+:-?1$/.test(vkSort))vkSort='dat:-1';
-const VF0=[['name','Kunde'],['marke','Marke'],['modell','Modell'],['dat','Vom Kunden bestellt am'],['firma','Leasing-Anbieter']],VF1=[['form','Form'],['gr','Größe'],['lt','Liefertermin'],['antrag','Antrag gestellt am'],['ok','Leasing genehmigt'],['lende','Leasingende'],['notiz','Notiz'],['tel','Telefon'],['mail','E-Mail'],['adresse','Adresse'],['fid','FID (Veloport)'],['liefDat','Lieferdatum'],['abhol','Abholtermin']];/* 1.10.61: Felder vom Annahmezettel (Tablet) */
+const VF0=[['name','Kunde'],['marke','Marke'],['modell','Modell'],['dat','Vom Kunden bestellt am'],['firma','Leasing-Anbieter']],VF1=[['form','Form'],['gr','Größe'],['lt','Liefertermin'],['antrag','Antrag gestellt am'],['ok','Leasing genehmigt'],['lende','Leasingende'],['notiz','Notiz'],['tel','Telefon'],['mail','E-Mail'],['adresse','Adresse'],['fid','FID (Veloport)'],['preis','Preis'],['uvp','UVP'],['angebot','Angebotspreis'],['liefDat','Lieferdatum'],['abhol','Abholtermin']];/* 1.10.61: Felder vom Annahmezettel (Tablet) */
 /* 1.10.9: Kürzel in Leasing-Infos umbenannt (z. B. LB → LaB) → offene Räder im Verkauf einmalig mitziehen (nur Admin) */
 function leasRename(){if(!ME||!ME.adm||!L.length||!V.length)return;const mp={};L.forEach(l=>{if(l.id&&l.k&&l.id!==l.k)mp[l.id]=l.k;});if(!Object.keys(mp).length)return;
  V.forEach(b=>{if(b.firma&&mp[b.firma]&&!FN[b.firma])putV(Object.assign({},b,{firma:mp[b.firma]}));});}
