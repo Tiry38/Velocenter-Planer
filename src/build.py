@@ -8,11 +8,10 @@ extra=open('sections.css').read()+'''
 [hidden]{display:none!important}
 #sTab td.b{font-weight:700}#sTab .pwm.ed{outline:none;padding:2px 6px;border-radius:6px;font-family:var(--mono)}#sTab td{vertical-align:top}
 #sTab td.ce,#ltab td.ce{cursor:text;border-bottom:1px dashed #2A3446;outline:none}#sTab td.ce:focus,#sTab .pwm.ed:focus,#ltab td.ce:focus{box-shadow:inset 0 0 0 2px var(--cyan);background:var(--panel2)}#ltab td.tg{cursor:pointer;user-select:none}#sTab td.ce:hover,#ltab td.tg:hover,#ltab td.ce:hover{background:rgba(255,255,255,.04)}#ltab td.tg:focus-visible{outline:2px solid var(--cyan)}
-@media (max-width:720px){#meFull,#navTog{display:none!important}.metools{grid-template-columns:repeat(2,38px);margin-top:0;flex:none}.me{margin-top:0;flex:none}}
+@media (max-width:720px){#navTog{display:none!important}.metools{grid-template-columns:repeat(2,38px);margin-top:0;flex:none}.me{margin-top:0;flex:none}}
 '''
 body=open('body_fb.html').read()
 logo=open('logo_small.b64').read().strip()
-body=body.replace('<img src="data:image/webp;base64,__LOGO__" alt="Velocenter Hessert"><span class="tag">','<img id="navLogo" src="data:image/webp;base64,'+logo+'" alt="Velocenter Hessert"><span class="tag">')
 body=body.replace('<img src="data:image/webp;base64,__LOGO__" alt="Velocenter Hessert"><h2 id="whoT">','<img id="whoLogo" src="data:image/webp;base64,'+logo+'" alt="Velocenter Hessert"><h2 id="whoT">')
 js=open('app_fb.js').read().replace('__LSDEF__',open('ls_seed.js').read()).replace('__LSREC__',open('ls_rec.js').read()).replace('__LOGOS__',open('logos_small.js').read()).replace('__SKON__',open('skon.js').read()).replace('__OKLOGO__',open('oklogo.b64').read().strip()).replace('__VERSION__',VERSION)
 meta='<!doctype html>\n<html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><meta name="theme-color" content="#07090D"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icon-192.png"><link rel="apple-touch-icon" href="icon-192.png">\n'
