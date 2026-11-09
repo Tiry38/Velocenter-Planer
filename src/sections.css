@@ -1067,3 +1067,6 @@ nav{backdrop-filter:none!important}
  body.navmini .navbtn .lbl,body.navmini .navbtn .n,body.navmini .me .mi,body.navmini .kwbrand .kwt{opacity:1!important}
  nav>*{flex:none}
 }
+/* 1.10.66 (Tiry): roter Rauch im Hintergrund wie in der Kunden-Mail – feste Ebene, einmal gemalt, keine Animation */
+body::after{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;background:url(app-smoke.webp) center/cover no-repeat;opacity:.55;transform:translateZ(0)}
+body.bgruh::after{display:none}

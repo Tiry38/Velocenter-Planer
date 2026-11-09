@@ -1372,6 +1372,9 @@ nav{backdrop-filter:none!important}
  body.navmini .navbtn .lbl,body.navmini .navbtn .n,body.navmini .me .mi,body.navmini .kwbrand .kwt{opacity:1!important}
  nav>*{flex:none}
 }
+/* 1.10.66 (Tiry): roter Rauch im Hintergrund wie in der Kunden-Mail – feste Ebene, einmal gemalt, keine Animation */
+body::after{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;background:url(app-smoke.webp) center/cover no-repeat;opacity:.55;transform:translateZ(0)}
+body.bgruh::after{display:none}
 
 [hidden]{display:none!important}
 #sTab td.b{font-weight:700}#sTab .pwm.ed{outline:none;padding:2px 6px;border-radius:6px;font-family:var(--mono)}#sTab td{vertical-align:top}
@@ -1557,7 +1560,7 @@ nav{backdrop-filter:none!important}
 <script>
 const FB_CONFIG={apiKey:"AIzaSyC_uZPvc5rJETwlS4JbfCoTkkE4ckjtp0M",authDomain:"velocenter-planer.firebaseapp.com",projectId:"velocenter-planer",storageBucket:"velocenter-planer.firebasestorage.app",messagingSenderId:"1018330488700",appId:"1:1018330488700:web:262a4d1660353e6fde8ef9"};
 /* ================= Velocenter Werkstatt-Cockpit – Oberfläche ================= */
-const CLIENT_VERSION='1.10.65';
+const CLIENT_VERSION='1.10.66';
 const USERS=[{id:'kevin',n:'Kevin',c:'#E2232D'},{id:'stefan',n:'Stefan',c:'#F59E0B'},{id:'martina',n:'Martina',c:'#EC4899'},{id:'sascha',n:'Sascha',c:'#22D3EE'},{id:'rene',n:'René',c:'#34D399'}];
 const U=id=>USERS.find(u=>u.id===id)||{n:'',c:'#64748B',id:''};
 /* 1.10.37: Profilfarbe je Nutzer (meta/prefs[ID].col, für alle sichtbar) – Cache für den Login-Bildschirm */
