@@ -59,7 +59,13 @@ const SCRSEL='.vtab,.board,.rktab,.nboard,.kdboard,.tbl,.bcols,.cols';const SCR=
 const scrKey=el=>((el.closest('.view')||{}).id||'')+'|'+[...el.classList].filter(c=>!/^(on|wfx)$/.test(c)).sort().join('.');
 document.addEventListener('scroll',e=>{const el=e.target;if(!(el instanceof Element)||!el.matches(SCRSEL))return;SCR[scrKey(el)]={t:el.scrollTop,l:el.scrollLeft};el.dataset.scr='1';},true);
 function scrRestore(){const vw=document.querySelector('.view.on');if(!vw)return;for(const el of vw.querySelectorAll(SCRSEL)){if(el.dataset.scr)continue;el.dataset.scr='1';const v=SCR[scrKey(el)];if(v&&el.offsetParent){el.scrollTop=v.t;el.scrollLeft=v.l;}}}
-addEventListener('resize',()=>requestAnimationFrame(fitH));{let q=0;new MutationObserver(()=>{layApply();scrRestore();if(q)return;q=requestAnimationFrame(()=>{q=0;fitH();scrRestore();});}).observe(document.body,{childList:true,subtree:true});}
+/* 1.10.68 (Tiry): Navi passt sich der Fensterhöhe an (Browser-Zoom Strg+Mausrad / kleine Bildschirme) – wird als Ganzes verkleinert statt zu überlappen; unter 50 % scrollt sie */
+let NZ=1;function navFit(){const n=document.querySelector('nav');if(!n)return;if(innerWidth<=720){if(NZ!==1){NZ=1;n.style.zoom='';n.style.height='';document.body.style.removeProperty('--nz');}return;}
+ const z0=n.style.zoom,h0=n.style.height;n.style.zoom='';n.style.height='auto';n.style.minHeight='0';const need=n.scrollHeight*UIZ;n.style.minHeight='';
+ let z=Math.min(1,innerHeight/need);z=z>.985?1:Math.max(.5,Math.floor(z*100)/100);NZ=z;
+ if(z===1){n.style.zoom='';n.style.height='';document.body.style.removeProperty('--nz');}else{n.style.zoom=String(z);n.style.height=(innerHeight/(UIZ*z))+'px';document.body.style.setProperty('--nz',String(z));}
+ if(z0===n.style.zoom&&h0===n.style.height)return;}
+addEventListener('resize',()=>requestAnimationFrame(()=>{navFit();fitH();}));addEventListener('load',()=>setTimeout(navFit,300));setInterval(()=>{if(!document.hidden)navFit();},5000);{let q=0;new MutationObserver(()=>{layApply();scrRestore();if(q)return;q=requestAnimationFrame(()=>{q=0;fitH();scrRestore();});}).observe(document.body,{childList:true,subtree:true});}
 function tick(){const d=new Date();$('clock').innerHTML=String(d.getHours()).padStart(2,'0')+'<i>:</i>'+String(d.getMinutes()).padStart(2,'0');$('dWd').textContent=WD[d.getDay()];$('dKw').textContent='KW '+kw(d);$('nKw').innerHTML='KW '+kw(d);$('nKwN').textContent=kw(d);$('nKwD').textContent=d.toLocaleDateString('de-DE',{weekday:'short',day:'numeric',month:'short'});$('dDate').innerHTML=d.getDate()+'. <span class="mL">'+d.toLocaleDateString('de-DE',{month:'long'})+'</span><span class="mS">'+d.toLocaleDateString('de-DE',{month:'short'})+'</span> '+d.getFullYear();}
 tick();setInterval(tick,15000);
 
@@ -74,7 +80,7 @@ document.querySelectorAll('.navbtn').forEach(b=>b.addEventListener('click',()=>s
 document.querySelectorAll('.navbtn').forEach(b=>{b.title=b.querySelector('.lbl').childNodes[0].textContent.trim();});
 /* 1.8.2: Navi standardmäßig eingeklappt, klappt beim Drüberfahren auf; » = feststellen (navpin), « = lösen */
 let NAVPIN=false;
-function navMini(on,keep){NAVPIN=!on;document.body.classList.remove('navpeek');document.body.classList.toggle('navmini',on);const t=$('navTog');t.setAttribute('aria-label',on?'Navigation ausklappen':'Navigation einklappen');t.title=on?'Navigation ausklappen':'Navigation einklappen';t.dataset.l=on?'Ausklappen':'Einklappen';
+function navMini(on,keep){NAVPIN=!on;document.body.classList.remove('navpeek');document.body.classList.toggle('navmini',on);const t=$('navTog');t.setAttribute('aria-label',on?'Navigation ausklappen':'Navigation einklappen');t.title=on?'Navigation ausklappen':'Navigation einklappen';t.dataset.l=on?'Ausklappen':'Einklappen';navFit();setTimeout(navFit,600);
  if(keep||!ME)return;ls.set('vc_navpin_'+ME.id,!on);db.doc('meta/prefs').set({[ME.id]:{navpin:!on}},{merge:true}).catch(()=>{});}
 /* 1.8.5: kein Hover-Aufklappen mehr – nur manuell über den Pfeil (Tiry) */
 async function navForUser(){if(!ME)return;navMini(!ls.get('vc_navpin_'+ME.id,false),true);try{const d=await db.doc('meta/prefs').get();const x=d.exists&&d.data()[ME.id];MYPREF=x||{};if(ucolApply(d.exists?d.data():{}))renderAll();uiApply(MYPREF.ui);try{const vs=(MYPREF.ui||{}).vks;if(vs&&VKSL.some(o=>o[0]===vs)){vkSort=vs;ls.set('vc_vksort',vs);}}catch(_){}if(x&&typeof x.navpin==='boolean'){navMini(!x.navpin,true);ls.set('vc_navpin_'+ME.id,x.navpin);}kdLayLoad(x&&x.kdlay);if(x&&x.start&&x.start!=='last'&&!START_DONE){START_DONE=true;show(x.start);}}catch(_){kdLayLoad(null);}}
@@ -161,7 +167,7 @@ const UCOLS=['#E2232D','#FF4D6D','#EC4899','#D946EF','#A78BFA','#6366F1','#3B82F
 function ucolApply(all){let ch=false;for(const u of USERS){const v=all&&all[u.id]&&all[u.id].col,c=/^#[0-9a-f]{6}$/i.test(v||'')?v:UCOL0[u.id];if(u.c!==c){u.c=c;ch=true;}}
  ls.set('vc_ucol',Object.fromEntries(USERS.map(u=>[u.id,u.c])));if(ME){$('meAv').style.setProperty('--uc',U(ME.id).c);}return ch;}
 /* Darstellung je Nutzer (meta/prefs[ID].ui = {fs,bg,anim,dense}), auf allen Geräten */
-function uiApply(ui){ui=ui||{};const fs=[85,90,100,110,120,135].includes(+ui.fs)?+ui.fs:100;UIZ=fs/100;document.documentElement.style.zoom=fs===100?'':String(UIZ);
+function uiApply(ui){ui=ui||{};const fs=[85,90,100,110,120,135].includes(+ui.fs)?+ui.fs:100;UIZ=fs/100;document.documentElement.style.zoom=fs===100?'':String(UIZ);setTimeout(navFit,50);
  const b=document.body.classList;b.toggle('bgdez',ui.bg==='d');b.toggle('bgruh',ui.bg==='r');b.toggle('noanim',ui.anim===false);b.toggle('uidense',!!ui.dense);
  b.toggle('hicon',!!ui.hc);b.toggle('fsys',ui.font==='s');b.toggle('rowhl',!!ui.rowhl);b.toggle('nonum',!!ui.nonum);b.toggle('bigcur',!!ui.cur);
  let cs=$('uiCss');if(!cs){cs=document.createElement('style');cs.id='uiCss';document.head.append(cs);}
