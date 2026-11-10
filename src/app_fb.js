@@ -1556,11 +1556,12 @@ function mauFaellig(d){const y=d.getFullYear(),mo=d.getMonth()+2,last=new Date(y
 const mauW=s=>String(s||'').toLowerCase().split(/[\s-]+/)[0].replace(/[^a-zäöüßéèáàíóúçñ]/g,'');
 /* Name → {a: herr|frau|fam|null, nn, vn, why} */
 function mauAnr(r){let k=String(r&&r.kunde||'').replace(/\s+/g,' ').trim();if(!k)return{a:null,why:'kein Name'};
- if(/\b(gmbh|ag|kg|ohg|gbr|ug|e\.\s?v\.?|mbh|firma|praxis|verein|stadt|gemeinde|kreis|schule|klinik|hotel|service|team)\b/i.test(k))return{a:null,why:'Firma?'};
+ const firm=/\b(gmbh|ag|kg|ohg|gbr|ug|e\.\s?v\.?|mbh|firma|praxis|verein|stadt|gemeinde|kreis|schule|klinik|hotel|service|team)\b/i.test(k);
  let fam=/^(familie|fam\.?)\s/i.test(k)||/\s(u\.|und|&|\+)\s/i.test(k);k=k.replace(/^(familie|fam\.?)\s+/i,'');
  const tit=[];k=k.replace(/^((dr|prof)\.?\s+)+/i,x=>{tit.push(x.trim());return '';}).trim();
  const sp=kdNameSplit(k.split(/\s(u\.|und|&|\+)\s/i)[0],r.nameOrd),nn=(tit.length?tit.join(' ')+' ':'')+sp.nn,vn=sp.vn;
  if(r.anr==='herr'||r.anr==='frau'||r.anr==='fam')return{a:r.anr,nn,vn,why:'von Hand'};if(r.anr==='no')return{a:'no',nn,vn,why:'nicht anschreiben'};
+ /* 1.10.69: Firma erst NACH der Hand-Wahl prüfen (vorher blieb „Burg Haus GmbH“ trotz Klick auf Herr ewig unter „Anrede prüfen“) */if(firm)return{a:null,nn,vn,why:'Firma?'};
  if(fam)return{a:'fam',nn,vn,why:'Familie'};
  const f=mauW(vn);if(MAU_M.has(f))return{a:'herr',nn,vn,why:''};if(MAU_W.has(f))return{a:'frau',nn,vn,why:''};
  const g=mauW(sp.nn);if(MAU_M.has(g)||MAU_W.has(g))return{a:null,nn,vn,why:'Vor-/Nachname vertauscht?'};
@@ -1580,7 +1581,7 @@ function mauScan(){const now=new Date(),t0=new Date(now.getFullYear(),now.getMon
   if(nns.size>1){const hd=g.find(x=>x.why==='von Hand');if(hd){due.push(Object.assign({},hd,{dup:g.filter(x=>x!==hd)}));continue;}
    g.forEach(x=>out.chk.push(Object.assign(x,{a:null,why:'gleiche E-Mail wie '+g.filter(o=>o!==x).map(o=>o.r.kunde).join(', ')+' – wähle bei einem, die Mail geht dann nur an ihn/sie'})));continue;}
   const vns=new Set(g.map(x=>mauW(x.vn)));const h=Object.assign({},g[0],{dup:g.slice(1)});if(vns.size>1&&g[0].a!=='fam')h.a='fam';due.push(h);}
- const srt=(a,b)=>a.f-b.f||a.d-b.d;out.due=due.sort(srt);out.chk.sort(srt);out.soon.sort(srt);out.unk.sort(srt);return out;}
+ const srt=(a,b)=>a.f-b.f||a.d-b.d||String(a.r.kunde||'').localeCompare(String(b.r.kunde||''),'de')||String(a.id).localeCompare(String(b.id));out.due=due.sort(srt);out.chk.sort(srt);out.soon.sort(srt);out.unk.sort(srt);return out;}
 const mauMon=()=>{const ym=TODAY().slice(0,7);return Object.values(MAU.sent||{}).filter(s=>s&&String(s.t||'').slice(0,7)===ym).length;};
 async function mauSendOne(x){const ref=db.doc('meta/mailauto'),ids=[x.id].concat((x.dup||[]).map(o=>o.id));
  const st=await db.runTransaction(async tr=>{const d=await tr.get(ref),v=d.exists?d.data():{};if(v.on===false||!v.ok)return 'aus';const s=v.sent||{},l=v.lock||{};
