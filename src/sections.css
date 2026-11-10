@@ -1070,3 +1070,9 @@ nav{backdrop-filter:none!important}
 /* 1.10.66 (Tiry): roter Rauch im Hintergrund wie in der Kunden-Mail – feste Ebene, einmal gemalt, keine Animation */
 body::after{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;background:url(app-smoke.webp) center/cover no-repeat;opacity:.55;transform:translateZ(0)}
 body.bgruh::after{display:none}
+/* 1.10.68 (Tiry): Navi-Spalte wächst/schrumpft mit der Navi-Verkleinerung (navFit, --nz) */
+@media (min-width:721px){
+ .app{grid-template-columns:calc(220px * var(--nz,1)) 1fr!important}
+ body.navmini .app,body.navpeek .app{grid-template-columns:calc(84px * var(--nz,1)) 1fr!important}
+ nav{overflow-y:auto!important;overflow-x:hidden!important;scrollbar-width:none}nav::-webkit-scrollbar{display:none}
+}
