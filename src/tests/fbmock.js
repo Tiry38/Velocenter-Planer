@@ -1,5 +1,7 @@
 /* Test-Nachbau von Firebase Auth + Firestore (compat) – Zustand in localStorage, Live-Abgleich zwischen Tabs per BroadcastChannel */
 (function(){
+/* 1.10.67: Sicherungs-Erinnerung in den Tests unterdrücken (eigener Test löscht vc_bksn) */
+try{if(!window.__bkTest){const d=new Date();localStorage.setItem('vc_bksn',JSON.stringify(d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')));}}catch(_){}
 const K='__fbm';const bc=new BroadcastChannel('__fbm');
 const ld=()=>{try{return JSON.parse(localStorage.getItem(K))||{users:{},docs:{}};}catch(_){return{users:{},docs:{}};}};
 let ST=ld();const sv=()=>{localStorage.setItem(K,JSON.stringify(ST));bc.postMessage(1);fire();};
