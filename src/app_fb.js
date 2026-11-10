@@ -61,7 +61,7 @@ document.addEventListener('scroll',e=>{const el=e.target;if(!(el instanceof Elem
 function scrRestore(){const vw=document.querySelector('.view.on');if(!vw)return;for(const el of vw.querySelectorAll(SCRSEL)){if(el.dataset.scr)continue;el.dataset.scr='1';const v=SCR[scrKey(el)];if(v&&el.offsetParent){el.scrollTop=v.t;el.scrollLeft=v.l;}}}
 /* 1.10.68 (Tiry): Navi passt sich der Fensterhöhe an (Browser-Zoom Strg+Mausrad / kleine Bildschirme) – wird als Ganzes verkleinert statt zu überlappen; unter 50 % scrollt sie */
 let NZ=1;function navFit(){const n=document.querySelector('nav');if(!n)return;if(innerWidth<=720){if(NZ!==1){NZ=1;n.style.zoom='';n.style.height='';document.body.style.removeProperty('--nz');}return;}
- const z0=n.style.zoom,h0=n.style.height;n.style.zoom='';n.style.height='auto';n.style.minHeight='0';const need=n.scrollHeight*UIZ;n.style.minHeight='';
+ const z0=n.style.zoom,h0=n.style.height;/* 1.10.70: mit Höhe 0 messen – „auto“ streckte die Navi im Grid auf die Seitenlänge (Leasing-Infos → Navi winzig) */n.style.zoom='';n.style.height='0px';n.style.minHeight='0';const need=n.scrollHeight*UIZ;n.style.minHeight='';
  let z=Math.min(1,innerHeight/need);z=z>.985?1:Math.max(.5,Math.floor(z*100)/100);NZ=z;
  if(z===1){n.style.zoom='';n.style.height='';document.body.style.removeProperty('--nz');}else{n.style.zoom=String(z);n.style.height=(innerHeight/(UIZ*z))+'px';document.body.style.setProperty('--nz',String(z));}
  if(z0===n.style.zoom&&h0===n.style.height)return;}
