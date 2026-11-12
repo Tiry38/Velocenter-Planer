@@ -6,7 +6,8 @@ const hd=await p.evaluate(()=>COLS.map(c=>c.n));hd.unshift('');const _x=await p.
 const t=await p.evaluate(()=>TODAY());const cell=`#grid .c[data-col=bst][data-iso="${t}"]`;ok('Zelle da',!!await p.$(cell));
 await p.click(cell);await p.waitForTimeout(200);ok('Auswahl offen',!!await p.$('.lfpick'));await p.fill('.lfq','har');await p.keyboard.press('Enter');await p.waitForTimeout(500);
 let e=await p.evaluate(()=>P.filter(x=>x.spalte==='bst'));ok('Eintrag Hartje',e.length===1&&e[0].text==='Hartje'&&e[0].lid==='s2');
+ok('Hartje zeigt „bis 15 Uhr!“',(await p.$eval(cell+' .bstl',x=>x.innerText)).includes('bis 15 Uhr!'));await p.screenshot({path:'bst_hartje.png',clip:{x:0,y:0,width:900,height:400}});
 await p.click(cell+' .bstl');await p.waitForTimeout(200);await p.click('.lfpick .lfi:has-text("Zeg")');await p.waitForTimeout(500);
-e=await p.evaluate(()=>P.filter(x=>x.spalte==='bst'));ok('geändert auf Zeg',e.length===1&&e[0].text==='Zeg');
+e=await p.evaluate(()=>P.filter(x=>x.spalte==='bst'));ok('geändert auf Zeg',e.length===1&&e[0].text==='Zeg');ok('Zeg ohne Frist',!(await p.$eval(cell+' .bstl',x=>x.innerText)).includes('15 Uhr'));
 await p.screenshot({path:'bst.png',clip:{x:0,y:0,width:900,height:400}});
 ok('keine JS-Fehler',!er.length);if(er.length)console.log(er);await b.close();process.exit(F?1:0);})();
