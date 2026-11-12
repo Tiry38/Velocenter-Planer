@@ -1133,3 +1133,7 @@ body.bgruh::after{display:none}
 .vogf{margin:0;padding:14px 16px;border-bottom:1px solid rgba(57,242,107,.18);background:linear-gradient(90deg,rgba(34,211,238,.10),rgba(57,242,107,.06) 60%,transparent);cursor:default}
 .vogf>b{color:#EFFFF3;font:800 15px Outfit,sans-serif}
 .vogf .vogdel{margin-left:auto;color:#FF9A9D;border-color:rgba(229,72,77,.5)}.vogf .vogdel.sure{background:#E5484D;color:#fff;border-color:#E5484D}
+/* 1.10.74 (Tiry): Termin mit verknüpftem Rad/Bestellung = nur die Kachel, ohne gelbe Kante + Verlauf */
+#grid .e:has(>.tlk),#grid .e:has(.tx.tlk){background:transparent!important;box-shadow:none!important;padding:3px 4px!important}
+#grid .e:has(.tx.tlk)::before{display:none}
+#grid .e:has(.tx.tlk) .tlk .wp{margin:0}
