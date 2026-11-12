@@ -936,6 +936,13 @@ function voPasteForm(){return `<form class="edf card vof" data-vopaste autocompl
  <label class="w12">Positionen<textarea name="rows" rows="9" placeholder="Macina Cross P9.772 ; 23105231 ; 51 cm grün ; 2 ; 15.03.2027&#10;Macina Tour CX 610 ; 23105412 ; 56 cm ; 1"></textarea></label></div>${voLfDl()}
  <div class="acts"><button class="btn vogo" type="submit">Übernehmen</button><button class="btn" type="button" data-vocancel>Abbrechen</button><small id="voPrev"></small></div></form>`;}
 function voParse(txt){return String(txt||'').split(/\r?\n/).map(l=>l.trim()).filter(Boolean).map(l=>{const c=(l.includes('\t')?l.split('\t'):l.split(';')).map(x=>x.trim());return {artikel:c[0]||'',artnr:c[1]||'',var:c[2]||'',menge:voN(c[3])||1,kommt:c[4]||''};}).filter(r=>r.artikel&&!/^artikel$/i.test(r.artikel));}
+/* 1.10.72: Lieferzeit-Balken je Karte wie ltBar im Verkauf: (heute − bestellt) / (kommt − bestellt), grün; überfällig rot, komplett da voll grün */
+function voTBar(g){let p,c='#34D399',t;const td=new Date();td.setHours(0,0,0,0);const now=td.getTime();
+ if(g.done){p=1;t='Alles geliefert ✓';}
+ else{if(g.next==null||g.best==null)return '';const dd=Math.round((g.next-now)/864e5);
+  if(dd<0){p=1;c='#F87171';t=`Überfällig seit ${-dd} Tag${dd===-1?'':'en'}`;}
+  else{p=Math.max(0.02,Math.min(1,(now-g.best)/Math.max(864e5,g.next-g.best)));t=dd===0?'Kommt heute':`Noch ${dd} Tag${dd===1?'':'e'} · ${Math.round(p*100)} % der Wartezeit vorbei`;if(dd<=14)c='#FACC15';}}
+ return `<div class="votb" style="--lp:${p.toFixed(3)};--lc:${c}" title="Lieferzeit: bestellt → nächste Lieferung"><div class="votbl"><span>Lieferzeit</span><b>${t}</b></div><div class="votbb"><i></i></div></div>`;}
 function rvo(){const L=$('voList');if(!L)return;const all=voAll();
  $('voForm').innerHTML=voPasteOn?voPasteForm():voEdit?voForm(voEdit==='new'?{id:'new',bestAm:dmy(new Date().toISOString().slice(0,10)),menge:1,da:0}:VOD[voEdit]||{id:'new'}):'';
  const G={};all.forEach(o=>{const k=String(o.lief||'–').trim().toLowerCase()+'|'+String(o.saison||'').trim();(G[k]=G[k]||{lief:String(o.lief||'–').trim(),saison:String(o.saison||'').trim(),it:[]}).it.push(o);});
@@ -953,7 +960,7 @@ function rvo(){const L=$('voList');if(!L)return;const all=voAll();
   <div class="volg">${lg?`<img src="${imgU(lg)}" alt="">`:`<span>${esc(g.lief.slice(0,2).toUpperCase())}</span>`}</div>
   <div class="vott"><b>${esc(g.lief)}</b>${g.saison?`<span class="vosai">Saison ${esc(g.saison)}</span>`:''}<small>${g.it.length} Position${g.it.length===1?'':'en'}${lo&&lo.kdnr?' · Kd-Nr. '+esc(lo.kdnr):''}</small></div>
   <div class="vokv"><i>bestellt</i><b>${f(g.best)}</b></div><div class="vokv"><i>${g.done?'geliefert':'nächste Lieferung'}</i><b>${g.done?'komplett ✓':f(g.next)}</b></div>
-  <div class="vopr"><div class="vobar"><span style="width:${pc}%"></span></div><b>${g.da} / ${g.m}</b><i>Stück da · ${pc} %</i></div>${g.late?`<span class="vobad">⚠ ${g.late} überfällig</span>`:''}<span class="vochev">▾</span></div>
+  <div class="vopr"><div class="vobar"><span style="width:${pc}%"></span></div><b>${g.da} / ${g.m}</b><i>Stück da · ${pc} %</i></div>${g.late?`<span class="vobad">⚠ ${g.late} überfällig</span>`:''}<span class="vochev">▾</span></div>${voTBar(g)}
   <div class="vobody"><table class="votab"><thead><tr><th>Artikel</th><th>Art.-Nr.</th><th>Größe / Farbe</th><th>Kommt</th><th>Bestellt</th><th class="voc">Menge</th><th class="voc">Geliefert</th><th>Status</th><th></th></tr></thead><tbody>${rows.map(o=>{const m=voN(o.menge)||1,da=Math.min(voN(o.da),m),st=voSt(o);
    return `<tr class="vr-${st}"><td><b>${esc(o.artikel||'–')}</b>${o.notiz?`<small>📝 ${esc(o.notiz)}</small>`:''}</td><td class="vonr">${esc(o.artnr||'–')}</td><td>${esc(o.var||'–')}</td><td class="vodt">${o.kommt?voDs(o.kommt):'–'}</td><td class="vodt">${o.bestAm?voDs(o.bestAm):'–'}</td><td class="voc"><b class="vomg">${m}</b></td>
    <td class="voc"><span class="vostep"><button type="button" class="mini" data-vod="${esc(o.id)}" data-dd="-1" ${da<=0?'disabled':''}>−</button><b>${da}</b><button type="button" class="mini" data-vod="${esc(o.id)}" data-dd="1" ${da>=m?'disabled':''}>+</button></span></td>

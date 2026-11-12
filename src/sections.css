@@ -1121,3 +1121,9 @@ body.bgruh::after{display:none}
 @media(max-width:900px){.vohd{flex-wrap:wrap}.vopr{margin-left:0;width:100%}.vof .vofg>label{grid-column:1/-1!important}.vobody{overflow-x:auto}.votab{min-width:760px}}
 .votab{table-layout:fixed}.votab th:nth-child(1){width:25%}.votab th:nth-child(2){width:11%}.votab th:nth-child(3){width:12%}.votab th:nth-child(4),.votab th:nth-child(5){width:11%}.votab th:nth-child(6){width:6%}.votab th:nth-child(7){width:9%}.votab th:nth-child(8){width:9%}.votab th:nth-child(9){width:175px}.votab td.voact{overflow:visible}
 .votab td{overflow:hidden;text-overflow:ellipsis}
+/* 1.10.72 Lieferzeit-Balken je Vororder-Karte */
+.votb{padding:8px 16px 12px;border-bottom:1px solid rgba(57,242,107,.18);cursor:default}
+.vocard.shut .votb{border-bottom:0}
+.votbl{display:flex;align-items:baseline;gap:10px;margin-bottom:6px}.votbl span{font:700 11px Outfit,sans-serif;letter-spacing:.8px;text-transform:uppercase;color:#8FA0BC}.votbl b{font:700 13px Outfit,sans-serif;color:var(--lc)}
+.votbb{height:8px;border-radius:99px;background:rgba(255,255,255,.07);overflow:hidden}
+.votbb i{display:block;height:100%;width:calc(var(--lp)*100%);border-radius:99px;background:linear-gradient(90deg,color-mix(in srgb,var(--lc) 55%,transparent),var(--lc));box-shadow:0 0 10px color-mix(in srgb,var(--lc) 70%,transparent);transition:width .4s}

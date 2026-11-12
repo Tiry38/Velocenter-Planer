@@ -1426,6 +1426,12 @@ body.bgruh::after{display:none}
 @media(max-width:900px){.vohd{flex-wrap:wrap}.vopr{margin-left:0;width:100%}.vof .vofg>label{grid-column:1/-1!important}.vobody{overflow-x:auto}.votab{min-width:760px}}
 .votab{table-layout:fixed}.votab th:nth-child(1){width:25%}.votab th:nth-child(2){width:11%}.votab th:nth-child(3){width:12%}.votab th:nth-child(4),.votab th:nth-child(5){width:11%}.votab th:nth-child(6){width:6%}.votab th:nth-child(7){width:9%}.votab th:nth-child(8){width:9%}.votab th:nth-child(9){width:175px}.votab td.voact{overflow:visible}
 .votab td{overflow:hidden;text-overflow:ellipsis}
+/* 1.10.72 Lieferzeit-Balken je Vororder-Karte */
+.votb{padding:8px 16px 12px;border-bottom:1px solid rgba(57,242,107,.18);cursor:default}
+.vocard.shut .votb{border-bottom:0}
+.votbl{display:flex;align-items:baseline;gap:10px;margin-bottom:6px}.votbl span{font:700 11px Outfit,sans-serif;letter-spacing:.8px;text-transform:uppercase;color:#8FA0BC}.votbl b{font:700 13px Outfit,sans-serif;color:var(--lc)}
+.votbb{height:8px;border-radius:99px;background:rgba(255,255,255,.07);overflow:hidden}
+.votbb i{display:block;height:100%;width:calc(var(--lp)*100%);border-radius:99px;background:linear-gradient(90deg,color-mix(in srgb,var(--lc) 55%,transparent),var(--lc));box-shadow:0 0 10px color-mix(in srgb,var(--lc) 70%,transparent);transition:width .4s}
 
 [hidden]{display:none!important}
 #sTab td.b{font-weight:700}#sTab .pwm.ed{outline:none;padding:2px 6px;border-radius:6px;font-family:var(--mono)}#sTab td{vertical-align:top}
@@ -1615,7 +1621,7 @@ body.bgruh::after{display:none}
 <script>
 const FB_CONFIG={apiKey:"AIzaSyC_uZPvc5rJETwlS4JbfCoTkkE4ckjtp0M",authDomain:"velocenter-planer.firebaseapp.com",projectId:"velocenter-planer",storageBucket:"velocenter-planer.firebasestorage.app",messagingSenderId:"1018330488700",appId:"1:1018330488700:web:262a4d1660353e6fde8ef9"};
 /* ================= Velocenter Werkstatt-Cockpit – Oberfläche ================= */
-const CLIENT_VERSION='1.10.71';
+const CLIENT_VERSION='1.10.72';
 const USERS=[{id:'kevin',n:'Kevin',c:'#E2232D'},{id:'stefan',n:'Stefan',c:'#F59E0B'},{id:'martina',n:'Martina',c:'#EC4899'},{id:'sascha',n:'Sascha',c:'#22D3EE'},{id:'rene',n:'René',c:'#34D399'}];
 const U=id=>USERS.find(u=>u.id===id)||{n:'',c:'#64748B',id:''};
 /* 1.10.37: Profilfarbe je Nutzer (meta/prefs[ID].col, für alle sichtbar) – Cache für den Login-Bildschirm */
@@ -2552,6 +2558,13 @@ function voPasteForm(){return `<form class="edf card vof" data-vopaste autocompl
  <label class="w12">Positionen<textarea name="rows" rows="9" placeholder="Macina Cross P9.772 ; 23105231 ; 51 cm grün ; 2 ; 15.03.2027&#10;Macina Tour CX 610 ; 23105412 ; 56 cm ; 1"></textarea></label></div>${voLfDl()}
  <div class="acts"><button class="btn vogo" type="submit">Übernehmen</button><button class="btn" type="button" data-vocancel>Abbrechen</button><small id="voPrev"></small></div></form>`;}
 function voParse(txt){return String(txt||'').split(/\r?\n/).map(l=>l.trim()).filter(Boolean).map(l=>{const c=(l.includes('\t')?l.split('\t'):l.split(';')).map(x=>x.trim());return {artikel:c[0]||'',artnr:c[1]||'',var:c[2]||'',menge:voN(c[3])||1,kommt:c[4]||''};}).filter(r=>r.artikel&&!/^artikel$/i.test(r.artikel));}
+/* 1.10.72: Lieferzeit-Balken je Karte wie ltBar im Verkauf: (heute − bestellt) / (kommt − bestellt), grün; überfällig rot, komplett da voll grün */
+function voTBar(g){let p,c='#34D399',t;const td=new Date();td.setHours(0,0,0,0);const now=td.getTime();
+ if(g.done){p=1;t='Alles geliefert ✓';}
+ else{if(g.next==null||g.best==null)return '';const dd=Math.round((g.next-now)/864e5);
+  if(dd<0){p=1;c='#F87171';t=`Überfällig seit ${-dd} Tag${dd===-1?'':'en'}`;}
+  else{p=Math.max(0.02,Math.min(1,(now-g.best)/Math.max(864e5,g.next-g.best)));t=dd===0?'Kommt heute':`Noch ${dd} Tag${dd===1?'':'e'} · ${Math.round(p*100)} % der Wartezeit vorbei`;if(dd<=14)c='#FACC15';}}
+ return `<div class="votb" style="--lp:${p.toFixed(3)};--lc:${c}" title="Lieferzeit: bestellt → nächste Lieferung"><div class="votbl"><span>Lieferzeit</span><b>${t}</b></div><div class="votbb"><i></i></div></div>`;}
 function rvo(){const L=$('voList');if(!L)return;const all=voAll();
  $('voForm').innerHTML=voPasteOn?voPasteForm():voEdit?voForm(voEdit==='new'?{id:'new',bestAm:dmy(new Date().toISOString().slice(0,10)),menge:1,da:0}:VOD[voEdit]||{id:'new'}):'';
  const G={};all.forEach(o=>{const k=String(o.lief||'–').trim().toLowerCase()+'|'+String(o.saison||'').trim();(G[k]=G[k]||{lief:String(o.lief||'–').trim(),saison:String(o.saison||'').trim(),it:[]}).it.push(o);});
@@ -2569,7 +2582,7 @@ function rvo(){const L=$('voList');if(!L)return;const all=voAll();
   <div class="volg">${lg?`<img src="${imgU(lg)}" alt="">`:`<span>${esc(g.lief.slice(0,2).toUpperCase())}</span>`}</div>
   <div class="vott"><b>${esc(g.lief)}</b>${g.saison?`<span class="vosai">Saison ${esc(g.saison)}</span>`:''}<small>${g.it.length} Position${g.it.length===1?'':'en'}${lo&&lo.kdnr?' · Kd-Nr. '+esc(lo.kdnr):''}</small></div>
   <div class="vokv"><i>bestellt</i><b>${f(g.best)}</b></div><div class="vokv"><i>${g.done?'geliefert':'nächste Lieferung'}</i><b>${g.done?'komplett ✓':f(g.next)}</b></div>
-  <div class="vopr"><div class="vobar"><span style="width:${pc}%"></span></div><b>${g.da} / ${g.m}</b><i>Stück da · ${pc} %</i></div>${g.late?`<span class="vobad">⚠ ${g.late} überfällig</span>`:''}<span class="vochev">▾</span></div>
+  <div class="vopr"><div class="vobar"><span style="width:${pc}%"></span></div><b>${g.da} / ${g.m}</b><i>Stück da · ${pc} %</i></div>${g.late?`<span class="vobad">⚠ ${g.late} überfällig</span>`:''}<span class="vochev">▾</span></div>${voTBar(g)}
   <div class="vobody"><table class="votab"><thead><tr><th>Artikel</th><th>Art.-Nr.</th><th>Größe / Farbe</th><th>Kommt</th><th>Bestellt</th><th class="voc">Menge</th><th class="voc">Geliefert</th><th>Status</th><th></th></tr></thead><tbody>${rows.map(o=>{const m=voN(o.menge)||1,da=Math.min(voN(o.da),m),st=voSt(o);
    return `<tr class="vr-${st}"><td><b>${esc(o.artikel||'–')}</b>${o.notiz?`<small>📝 ${esc(o.notiz)}</small>`:''}</td><td class="vonr">${esc(o.artnr||'–')}</td><td>${esc(o.var||'–')}</td><td class="vodt">${o.kommt?voDs(o.kommt):'–'}</td><td class="vodt">${o.bestAm?voDs(o.bestAm):'–'}</td><td class="voc"><b class="vomg">${m}</b></td>
    <td class="voc"><span class="vostep"><button type="button" class="mini" data-vod="${esc(o.id)}" data-dd="-1" ${da<=0?'disabled':''}>−</button><b>${da}</b><button type="button" class="mini" data-vod="${esc(o.id)}" data-dd="1" ${da>=m?'disabled':''}>+</button></span></td>
