@@ -1438,6 +1438,10 @@ body.bgruh::after{display:none}
 .vogf{margin:0;padding:14px 16px;border-bottom:1px solid rgba(57,242,107,.18);background:linear-gradient(90deg,rgba(34,211,238,.10),rgba(57,242,107,.06) 60%,transparent);cursor:default}
 .vogf>b{color:#EFFFF3;font:800 15px Outfit,sans-serif}
 .vogf .vogdel{margin-left:auto;color:#FF9A9D;border-color:rgba(229,72,77,.5)}.vogf .vogdel.sure{background:#E5484D;color:#fff;border-color:#E5484D}
+/* 1.10.74 (Tiry): Termin mit verknüpftem Rad/Bestellung = nur die Kachel, ohne gelbe Kante + Verlauf */
+#grid .e:has(>.tlk),#grid .e:has(.tx.tlk){background:transparent!important;box-shadow:none!important;padding:3px 4px!important}
+#grid .e:has(.tx.tlk)::before{display:none}
+#grid .e:has(.tx.tlk) .tlk .wp{margin:0}
 
 [hidden]{display:none!important}
 #sTab td.b{font-weight:700}#sTab .pwm.ed{outline:none;padding:2px 6px;border-radius:6px;font-family:var(--mono)}#sTab td{vertical-align:top}
@@ -1627,7 +1631,7 @@ body.bgruh::after{display:none}
 <script>
 const FB_CONFIG={apiKey:"AIzaSyC_uZPvc5rJETwlS4JbfCoTkkE4ckjtp0M",authDomain:"velocenter-planer.firebaseapp.com",projectId:"velocenter-planer",storageBucket:"velocenter-planer.firebasestorage.app",messagingSenderId:"1018330488700",appId:"1:1018330488700:web:262a4d1660353e6fde8ef9"};
 /* ================= Velocenter Werkstatt-Cockpit – Oberfläche ================= */
-const CLIENT_VERSION='1.10.73';
+const CLIENT_VERSION='1.10.74';
 const USERS=[{id:'kevin',n:'Kevin',c:'#E2232D'},{id:'stefan',n:'Stefan',c:'#F59E0B'},{id:'martina',n:'Martina',c:'#EC4899'},{id:'sascha',n:'Sascha',c:'#22D3EE'},{id:'rene',n:'René',c:'#34D399'}];
 const U=id=>USERS.find(u=>u.id===id)||{n:'',c:'#64748B',id:''};
 /* 1.10.37: Profilfarbe je Nutzer (meta/prefs[ID].col, für alle sichtbar) – Cache für den Login-Bildschirm */
