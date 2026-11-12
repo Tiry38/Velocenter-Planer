@@ -856,7 +856,7 @@ function ltOpts(cur){const now=new Date();now.setHours(12,0,0,0);const mo=new Da
  let a=w1(isoY(from)),y=-1;while(a<=end){const yy=isoY(a);if(yy!==y){if(y!==-1)h+='</optgroup>';h+=`<optgroup label="${yy}">`;y=yy;}
   const e=new Date(a);e.setDate(e.getDate()+5);const v='KW '+kw(a)+'/'+String(yy%100).padStart(2,'0'),isNow=+a===+mo;vals.push(v);h+=op(v,'KW '+kw(a)+'  ·  '+dd(a)+'–'+dd(e)+(isNow?'  ◀ diese Woche':''),isNow?' data-now="1"':'');a=new Date(a);a.setDate(a.getDate()+7);}
  h+='</optgroup>';if(cur&&!vals.includes(cur))h=op(cur,cur)+h;return h;}
-const VKFORM=['US','H','TZ','MTB'],VKGR=['16"','18"','20"','22"','43cm','45cm','46cm','48cm','50cm','51cm','53cm','55cm','56cm','57cm','58cm','60cm','61cm','63cm'];
+const VKFORM=['US','H','TZ','MTB'],VKGR=['S','M','L','XL','XXL','16"','18"','20"','22"','43cm','45cm','46cm','48cm','50cm','51cm','53cm','55cm','56cm','57cm','58cm','60cm','61cm','63cm'];
 function pickOpts(list,cur){const op=v=>`<option value="${esc(v)}"${v===cur?' selected':''}>${esc(v||'–  leer')}</option>`;return op('')+(cur&&!list.includes(cur)?op(cur):'')+list.map(op).join('');}
 function pEdit(td){const b=V.find(x=>x.id===td.dataset.vid);if(!b)return;const f=td.dataset.pf;popPick(td,b,f,pickOpts(f==='form'?VKFORM:VKGR,b[f]||''),f==='form'?'Form':'Größe');}
 /* 1.10.41: LT-Auswahl als eigene Liste (Tiry) – eingetragene bzw. aktuelle KW steht beim Öffnen genau in der Mitte, frei hoch/runter scrollen, ↑/↓ + Enter, Esc */
