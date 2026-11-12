@@ -1127,3 +1127,9 @@ body.bgruh::after{display:none}
 .votbl{display:flex;align-items:baseline;gap:10px;margin-bottom:6px}.votbl span{font:700 11px Outfit,sans-serif;letter-spacing:.8px;text-transform:uppercase;color:#8FA0BC}.votbl b{font:700 13px Outfit,sans-serif;color:var(--lc)}
 .votbb{height:8px;border-radius:99px;background:rgba(255,255,255,.07);overflow:hidden}
 .votbb i{display:block;height:100%;width:calc(var(--lp)*100%);border-radius:99px;background:linear-gradient(90deg,color-mix(in srgb,var(--lc) 55%,transparent),var(--lc));box-shadow:0 0 10px color-mix(in srgb,var(--lc) 70%,transparent);transition:width .4s}
+
+/* 1.10.73 Vororder-Kopf bearbeiten */
+.voged{flex:0 0 auto;width:auto!important;padding:4px 12px!important;font:700 13px Outfit,sans-serif!important;color:#9FF5B8!important;border-color:rgba(57,242,107,.45)!important}
+.vogf{margin:0;padding:14px 16px;border-bottom:1px solid rgba(57,242,107,.18);background:linear-gradient(90deg,rgba(34,211,238,.10),rgba(57,242,107,.06) 60%,transparent);cursor:default}
+.vogf>b{color:#EFFFF3;font:800 15px Outfit,sans-serif}
+.vogf .vogdel{margin-left:auto;color:#FF9A9D;border-color:rgba(229,72,77,.5)}.vogf .vogdel.sure{background:#E5484D;color:#fff;border-color:#E5484D}

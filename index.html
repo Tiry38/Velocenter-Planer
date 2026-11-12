@@ -1433,6 +1433,12 @@ body.bgruh::after{display:none}
 .votbb{height:8px;border-radius:99px;background:rgba(255,255,255,.07);overflow:hidden}
 .votbb i{display:block;height:100%;width:calc(var(--lp)*100%);border-radius:99px;background:linear-gradient(90deg,color-mix(in srgb,var(--lc) 55%,transparent),var(--lc));box-shadow:0 0 10px color-mix(in srgb,var(--lc) 70%,transparent);transition:width .4s}
 
+/* 1.10.73 Vororder-Kopf bearbeiten */
+.voged{flex:0 0 auto;width:auto!important;padding:4px 12px!important;font:700 13px Outfit,sans-serif!important;color:#9FF5B8!important;border-color:rgba(57,242,107,.45)!important}
+.vogf{margin:0;padding:14px 16px;border-bottom:1px solid rgba(57,242,107,.18);background:linear-gradient(90deg,rgba(34,211,238,.10),rgba(57,242,107,.06) 60%,transparent);cursor:default}
+.vogf>b{color:#EFFFF3;font:800 15px Outfit,sans-serif}
+.vogf .vogdel{margin-left:auto;color:#FF9A9D;border-color:rgba(229,72,77,.5)}.vogf .vogdel.sure{background:#E5484D;color:#fff;border-color:#E5484D}
+
 [hidden]{display:none!important}
 #sTab td.b{font-weight:700}#sTab .pwm.ed{outline:none;padding:2px 6px;border-radius:6px;font-family:var(--mono)}#sTab td{vertical-align:top}
 #sTab td.ce,#ltab td.ce{cursor:text;border-bottom:1px dashed #2A3446;outline:none}#sTab td.ce:focus,#sTab .pwm.ed:focus,#ltab td.ce:focus{box-shadow:inset 0 0 0 2px var(--cyan);background:var(--panel2)}#ltab td.tg{cursor:pointer;user-select:none}#sTab td.ce:hover,#ltab td.tg:hover,#ltab td.ce:hover{background:rgba(255,255,255,.04)}#ltab td.tg:focus-visible{outline:2px solid var(--cyan)}
@@ -1621,7 +1627,7 @@ body.bgruh::after{display:none}
 <script>
 const FB_CONFIG={apiKey:"AIzaSyC_uZPvc5rJETwlS4JbfCoTkkE4ckjtp0M",authDomain:"velocenter-planer.firebaseapp.com",projectId:"velocenter-planer",storageBucket:"velocenter-planer.firebasestorage.app",messagingSenderId:"1018330488700",appId:"1:1018330488700:web:262a4d1660353e6fde8ef9"};
 /* ================= Velocenter Werkstatt-Cockpit – Oberfläche ================= */
-const CLIENT_VERSION='1.10.72';
+const CLIENT_VERSION='1.10.73';
 const USERS=[{id:'kevin',n:'Kevin',c:'#E2232D'},{id:'stefan',n:'Stefan',c:'#F59E0B'},{id:'martina',n:'Martina',c:'#EC4899'},{id:'sascha',n:'Sascha',c:'#22D3EE'},{id:'rene',n:'René',c:'#34D399'}];
 const U=id=>USERS.find(u=>u.id===id)||{n:'',c:'#64748B',id:''};
 /* 1.10.37: Profilfarbe je Nutzer (meta/prefs[ID].col, für alle sichtbar) – Cache für den Login-Bildschirm */
@@ -2525,7 +2531,7 @@ $('bDone').addEventListener('click',e=>{bShowDone=!bShowDone;e.currentTarget.set
 /* ================= VORORDER (1.10.71, Tiry) =================
    Unter dem Bestellungen-Board. Gespeichert in meta/vororder {items:{id:{lief,saison,bestAm,kommt,artikel,artnr,var,menge,da,notiz,von,ts}}}
    (Regel meta/* reicht). Karte je Lieferant + Saison, Fortschritt geliefert/bestellt. Keine EK-Preise (Mitarbeiter sehen den Reiter). */
-let VOD={},voEdit=null,voShowDone=false,voPasteOn=false;
+let VOD={},voEdit=null,voShowDone=false,voPasteOn=false,voGEd=null;
 const voAll=()=>Object.values(VOD).filter(x=>x&&x.id);
 const voN=v=>{const n=parseInt(String(v||'').replace(/[^\d]/g,''),10);return isNaN(n)?0:n;};
 const voT=v=>{const i=bIso(v);return i?fromIso(i).getTime():null;};
@@ -2565,6 +2571,17 @@ function voTBar(g){let p,c='#34D399',t;const td=new Date();td.setHours(0,0,0,0);
   if(dd<0){p=1;c='#F87171';t=`Überfällig seit ${-dd} Tag${dd===-1?'':'en'}`;}
   else{p=Math.max(0.02,Math.min(1,(now-g.best)/Math.max(864e5,g.next-g.best)));t=dd===0?'Kommt heute':`Noch ${dd} Tag${dd===1?'':'e'} · ${Math.round(p*100)} % der Wartezeit vorbei`;if(dd<=14)c='#FACC15';}}
  return `<div class="votb" style="--lp:${p.toFixed(3)};--lc:${c}" title="Lieferzeit: bestellt → nächste Lieferung"><div class="votbl"><span>Lieferzeit</span><b>${t}</b></div><div class="votbb"><i></i></div></div>`;}
+/* 1.10.73 (Tiry): Kopf der Vororder-Karte bearbeiten – Lieferant, Saison, Kd-Nr., Bestellt am, Kommt am für alle Positionen der Karte.
+   Nur geänderte Felder werden übernommen (data-o = Ausgangswert); „Kommt am“ gilt nur für noch nicht komplett gelieferte Positionen. */
+function voGForm(g,key){const one=(k,it)=>{const v=[...new Set(it.map(o=>bIso(o[k])||''))];return v.length===1?v[0]:'';},op=g.it.filter(o=>voSt(o)!=='ok'),lo=voLf(g.lief);
+ const bA=one('bestAm',g.it),kA=one('kommt',op.length?op:g.it),mixB=!bA&&g.it.some(o=>o.bestAm),mixK=!kA&&(op.length?op:g.it).some(o=>o.kommt);
+ return `<form class="edf vof vogf" data-vogf="${esc(key)}" autocomplete="off"><b>✎ Vororder bearbeiten – gilt für alle ${g.it.length} Position${g.it.length===1?'':'en'} dieser Karte</b><div class="vofg">
+ <label class="w3">Lieferant<input name="lief" value="${esc(g.lief==='–'?'':g.lief)}" data-o="${esc(g.lief==='–'?'':g.lief)}" list="voLfList" required></label>
+ <label class="w2">Saison<input name="saison" value="${esc(g.saison)}" data-o="${esc(g.saison)}" placeholder="z. B. 2027"></label>
+ <label class="w2">Kd-Nr.${lo?`<input name="kdnr" value="${esc(lo.kdnr||'')}" data-o="${esc(lo.kdnr||'')}" title="wird beim Lieferanten gespeichert">`:`<input disabled placeholder="Lieferant nicht angelegt">`}</label>
+ <label class="w2">Bestellt am<input type="date" class="bfd" name="bestAm" value="${bA}" data-o="${bA}">${mixB?'<small class="bfold">unterschiedlich – leer = bleibt</small>':''}</label>
+ <label class="w3">Kommt am (offene Positionen)<input type="date" class="bfd" name="kommt" value="${kA}" data-o="${kA}">${mixK?'<small class="bfold">unterschiedlich – leer = bleibt</small>':''}</label></div>${voLfDl()}
+ <div class="acts"><button class="btn vogo" type="submit">Speichern</button><button class="btn" type="button" data-vogcan>Abbrechen</button><button class="btn vogdel" type="button" data-vogdel="${esc(key)}">🗑 Ganze Vororder löschen</button></div></form>`;}
 function rvo(){const L=$('voList');if(!L)return;const all=voAll();
  $('voForm').innerHTML=voPasteOn?voPasteForm():voEdit?voForm(voEdit==='new'?{id:'new',bestAm:dmy(new Date().toISOString().slice(0,10)),menge:1,da:0}:VOD[voEdit]||{id:'new'}):'';
  const G={};all.forEach(o=>{const k=String(o.lief||'–').trim().toLowerCase()+'|'+String(o.saison||'').trim();(G[k]=G[k]||{lief:String(o.lief||'–').trim(),saison:String(o.saison||'').trim(),it:[]}).it.push(o);});
@@ -2582,7 +2599,7 @@ function rvo(){const L=$('voList');if(!L)return;const all=voAll();
   <div class="volg">${lg?`<img src="${imgU(lg)}" alt="">`:`<span>${esc(g.lief.slice(0,2).toUpperCase())}</span>`}</div>
   <div class="vott"><b>${esc(g.lief)}</b>${g.saison?`<span class="vosai">Saison ${esc(g.saison)}</span>`:''}<small>${g.it.length} Position${g.it.length===1?'':'en'}${lo&&lo.kdnr?' · Kd-Nr. '+esc(lo.kdnr):''}</small></div>
   <div class="vokv"><i>bestellt</i><b>${f(g.best)}</b></div><div class="vokv"><i>${g.done?'geliefert':'nächste Lieferung'}</i><b>${g.done?'komplett ✓':f(g.next)}</b></div>
-  <div class="vopr"><div class="vobar"><span style="width:${pc}%"></span></div><b>${g.da} / ${g.m}</b><i>Stück da · ${pc} %</i></div>${g.late?`<span class="vobad">⚠ ${g.late} überfällig</span>`:''}<span class="vochev">▾</span></div>${voTBar(g)}
+  <div class="vopr"><div class="vobar"><span style="width:${pc}%"></span></div><b>${g.da} / ${g.m}</b><i>Stück da · ${pc} %</i></div>${g.late?`<span class="vobad">⚠ ${g.late} überfällig</span>`:''}<button type="button" class="mini voged" data-voged="${esc(key)}" title="Kopf bearbeiten: Lieferant, Saison, Kd-Nr., Bestellt am, Kommt am">✎ Bearbeiten</button><span class="vochev">▾</span></div>${voGEd===key?voGForm(g,key):''}${voTBar(g)}
   <div class="vobody"><table class="votab"><thead><tr><th>Artikel</th><th>Art.-Nr.</th><th>Größe / Farbe</th><th>Kommt</th><th>Bestellt</th><th class="voc">Menge</th><th class="voc">Geliefert</th><th>Status</th><th></th></tr></thead><tbody>${rows.map(o=>{const m=voN(o.menge)||1,da=Math.min(voN(o.da),m),st=voSt(o);
    return `<tr class="vr-${st}"><td><b>${esc(o.artikel||'–')}</b>${o.notiz?`<small>📝 ${esc(o.notiz)}</small>`:''}</td><td class="vonr">${esc(o.artnr||'–')}</td><td>${esc(o.var||'–')}</td><td class="vodt">${o.kommt?voDs(o.kommt):'–'}</td><td class="vodt">${o.bestAm?voDs(o.bestAm):'–'}</td><td class="voc"><b class="vomg">${m}</b></td>
    <td class="voc"><span class="vostep"><button type="button" class="mini" data-vod="${esc(o.id)}" data-dd="-1" ${da<=0?'disabled':''}>−</button><b>${da}</b><button type="button" class="mini" data-vod="${esc(o.id)}" data-dd="1" ${da>=m?'disabled':''}>+</button></span></td>
@@ -2591,11 +2608,23 @@ $('v-bestell').addEventListener('click',e=>{
  const tg=e.target.closest('[data-votog]');if(tg&&!e.target.closest('button')){const k=tg.dataset.votog;let cl=JSON.parse(ls.get('vc_vocl','[]')||'[]');cl=cl.includes(k)?cl.filter(x=>x!==k):[...cl,k];ls.set('vc_vocl',JSON.stringify(cl));tg.parentElement.classList.toggle('shut');return;}
  const st=e.target.closest('[data-vod]');if(st){const o=VOD[st.dataset.vod];if(!o)return;const m=voN(o.menge)||1;putVO(Object.assign({},o,{da:Math.max(0,Math.min(m,voN(o.da)+ +st.dataset.dd))}));return;}
  const al=e.target.closest('[data-voall]');if(al){const o=VOD[al.dataset.voall];if(!o)return;const old=o.da;putVO(Object.assign({},o,{da:voN(o.menge)||1,daAm:dmy(new Date().toISOString().slice(0,10)),daVon:ME.id}));toast('Komplett geliefert ✓',()=>putVO(Object.assign({},VOD[o.id],{da:old})));return;}
+ const ge=e.target.closest('[data-voged]');if(ge){voGEd=voGEd===ge.dataset.voged?null:ge.dataset.voged;rvo();const i=document.querySelector('[data-vogf] input[name=lief]');if(i)i.focus();return;}
+ if(e.target.closest('[data-vogcan]')){voGEd=null;rvo();return;}
+ const gd=e.target.closest('[data-vogdel]');if(gd){const its=voAll().filter(o=>String(o.lief||'–').trim().toLowerCase()+'|'+String(o.saison||'').trim()===gd.dataset.vogdel);if(!gd.dataset.sure){gd.dataset.sure=1;gd.textContent=`Wirklich alle ${its.length} löschen?`;gd.classList.add('sure');setTimeout(()=>{if(gd.isConnected){delete gd.dataset.sure;gd.textContent='🗑 Ganze Vororder löschen';gd.classList.remove('sure');}},3000);return;}
+  voGEd=null;its.forEach(o=>delVO(o.id));toast(its.length+' Positionen gelöscht',()=>putVOs(its));return;}
  const ed=e.target.closest('[data-voed]');if(ed){voEdit=ed.dataset.voed;voPasteOn=false;rvo();$('voForm').scrollIntoView({block:'center'});return;}
  const du=e.target.closest('[data-vodup]');if(du){const o=VOD[du.dataset.vodup];voEdit=null;rvo();$('voForm').innerHTML=voForm(Object.assign({},o,{id:'new',da:0,artnr:'',var:''}));voEdit='dup';return;}
  if(e.target.closest('[data-vocancel]')){voEdit=null;voPasteOn=false;rvo();return;}
  const dl=e.target.closest('[data-vodel]');if(dl){if(!dl.dataset.sure){dl.dataset.sure=1;dl.textContent='löschen?';dl.classList.add('sure');setTimeout(()=>{if(dl.isConnected){delete dl.dataset.sure;dl.textContent='×';dl.classList.remove('sure');}},3000);return;}const o=VOD[dl.dataset.vodel];delVO(o.id);toast('Position gelöscht',()=>putVO(o));}});
-$('v-bestell').addEventListener('submit',e=>{const f=e.target;if(f.dataset.vof===undefined&&f.dataset.vopaste===undefined)return;e.preventDefault();const d=new FormData(f),g=k=>String(d.get(k)||'').trim();
+$('v-bestell').addEventListener('submit',async e=>{const f=e.target;if(f.dataset.vogf!==undefined){e.preventDefault();const key=f.dataset.vogf,ch=k=>{const i=f.querySelector('[name='+k+']');return i&&!i.disabled&&i.value.trim()!==(i.dataset.o||'')?i.value.trim():null;};
+  const its=voAll().filter(o=>String(o.lief||'–').trim().toLowerCase()+'|'+String(o.saison||'').trim()===key),lo=voLf(its[0]?its[0].lief:'');
+  const lf=ch('lief'),sa=ch('saison'),kn=ch('kdnr'),ba=ch('bestAm'),ko=ch('kommt'),old=its.map(o=>Object.assign({},o));
+  const up=its.map(o=>{const n=Object.assign({},o);if(lf!=null)n.lief=lf;if(sa!=null)n.saison=sa;if(ba!=null&&(ba||f.bestAm.dataset.o))n.bestAm=ba?dmy(ba):'';if(ko!=null&&voSt(o)!=='ok'&&(ko||f.kommt.dataset.o))n.kommt=ko?dmy(ko):'';return n;}).filter((n,i)=>JSON.stringify(n)!==JSON.stringify(its[i]));
+  voGEd=null;if(lf!=null||sa!=null){const nk=String(lf??its[0].lief).trim().toLowerCase()+'|'+String(sa??its[0].saison??'').trim();let cl=JSON.parse(ls.get('vc_vocl','[]')||'[]');if(cl.includes(key)){cl=cl.filter(x=>x!==key);cl.push(nk);ls.set('vc_vocl',JSON.stringify(cl));}}
+  if(up.length)putVOs(up);else rvo();
+  if(kn!=null&&lo){const n=Object.assign({},lo,{kdnr:kn});delete n.hasLogin;const i=S.indexOf(lo);S[i]=Object.assign({},n,{hasLogin:lo.hasLogin});try{await save('S',n);}catch(_){}rvo();}
+  toast(up.length||kn!=null?`Gespeichert${up.length?' · '+up.length+' Position'+(up.length===1?'':'en'):''}${kn!=null?' · Kd-Nr. beim Lieferanten':''}`:'Nichts geändert',up.length?()=>putVOs(old):undefined);return;}
+ if(f.dataset.vof===undefined&&f.dataset.vopaste===undefined)return;e.preventDefault();const d=new FormData(f),g=k=>String(d.get(k)||'').trim();
  const dt=k=>{const v=g(k),inp=f.querySelector('[name='+k+']');return v?dmy(v):(inp&&inp.dataset.old||'');};
  if(f.dataset.vopaste!==undefined){const rs=voParse(d.get('rows'));if(!rs.length){toast('Keine Position erkannt');return;}const hd={lief:g('lief'),saison:g('saison'),bestAm:dt('bestAm'),kommt:dt('kommt')};
   const list=rs.map(r=>Object.assign({id:nid('vo'),da:0,von:ME.id},hd,r,{kommt:r.kommt?(bIso(r.kommt)?dmy(bIso(r.kommt)):r.kommt):hd.kommt}));voPasteOn=false;putVOs(list);toast(list.length+' Positionen übernommen ✓',()=>list.forEach(o=>delVO(o.id)));return;}
