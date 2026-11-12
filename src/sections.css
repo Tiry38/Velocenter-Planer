@@ -1145,6 +1145,8 @@ body.bgruh::after{display:none}
 #grid .e.k-bst .bstl{display:grid;place-items:center;height:38px;padding:3px 6px;border-radius:8px;cursor:pointer;background:rgba(255,255,255,.05);box-shadow:inset 0 0 0 1px rgba(57,242,107,.45),0 0 10px rgba(57,242,107,.18);white-space:normal}
 #grid .e.k-bst .bstl:hover{box-shadow:inset 0 0 0 1px #39F26B,0 0 14px rgba(57,242,107,.45)}
 #grid .e.k-bst .bstl img{max-width:96px;max-height:30px;object-fit:contain;display:block}
+#grid .e.k-bst .bstl:has(.bstfr){height:auto;min-height:38px;gap:2px;padding:4px 6px}
+#grid .e.k-bst .bstl .bstfr{font:800 11.5px/1 Outfit,sans-serif;letter-spacing:.02em;color:#FFD84D;text-shadow:0 0 8px rgba(255,216,77,.45);white-space:nowrap}
 #grid .e.k-bst .bstl b{font:800 12px/1.15 Outfit,sans-serif;color:#9FF5B8;text-align:center;word-break:break-word}
 .lfpick{display:flex;flex-direction:column;gap:6px;border-color:rgba(57,242,107,.5)}
 .lfpick .lfq{width:100%;box-sizing:border-box;padding:8px 10px;border-radius:8px;border:1px solid rgba(57,242,107,.4);background:rgba(255,255,255,.05);color:#fff;font:600 14px Outfit,sans-serif;outline:none}

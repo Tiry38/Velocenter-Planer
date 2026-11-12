@@ -522,8 +522,11 @@ function render(){const g=$('grid');if(document.querySelector('#grid .edit'))ret
  $('cOpen').textContent=P.filter(e=>e.erledigt!=='1'&&e.datum>=today).length;}
 /* 1.10.75 (Tiry): Planer-Spalte „Bestellen“ – je Tag Lieferanten wählen, bei denen bestellt werden muss (Erinnerung).
    Planer-Eintrag spalte 'bst', text = Lieferantenname, lid = Lieferanten-ID; wandert wie Intern täglich auf heute (ROLL_NEU), erledigt = löschen. */
-function bstTile(e){const l=S.find(x=>x.id===e.lid)||voLf(e.text),lg=l?sLogo(l):'',n=l?l.name:e.text;
- return `<div class="e k-bst" draggable="true" data-id="${esc(e.id)}"><span class="tx bstl" data-bsted="${esc(e.id)}" title="Bei ${esc(n)} bestellen${U(e.von).n?' · eingetragen von '+esc(U(e.von).n):''} · Klick = ändern">${lg?`<img src="${imgU(lg)}" alt="${esc(n)}">`:`<b>${esc(n||'–')}</b>`}</span><button class="x" type="button" data-x="${esc(e.id)}" aria-label="Erledigt – löschen" title="Bestellt – löschen">×</button></div>`;}
+/* Bestell-Schluss je Lieferant (Tiry 12.11.2026): Hartje = bis 15 Uhr abschicken */
+const BST_FRIST=[[/hartje/i,'bis 15 Uhr!']];
+const bstFrist=n=>{const f=BST_FRIST.find(([re])=>re.test(n||''));return f?f[1]:''};
+function bstTile(e){const l=S.find(x=>x.id===e.lid)||voLf(e.text),lg=l?sLogo(l):'',n=l?l.name:e.text,fr=bstFrist(n);
+ return `<div class="e k-bst" draggable="true" data-id="${esc(e.id)}"><span class="tx bstl" data-bsted="${esc(e.id)}" title="Bei ${esc(n)} bestellen${fr?' – '+esc(fr):''}${U(e.von).n?' · eingetragen von '+esc(U(e.von).n):''} · Klick = ändern">${lg?`<img src="${imgU(lg)}" alt="${esc(n)}">`:`<b>${esc(n||'–')}</b>`}${fr?`<small class="bstfr">${esc(fr)}</small>`:''}</span><button class="x" type="button" data-x="${esc(e.id)}" aria-label="Erledigt – löschen" title="Bestellt – löschen">×</button></div>`;}
 function lfPick(anchor,cur,pick){document.querySelectorAll('.lfpick').forEach(x=>x.remove());const box=document.createElement('div');box.className='tpick lfpick';
  box.innerHTML='<input class="lfq" placeholder="Lieferant suchen …"><div class="lfl"></div>';document.body.append(box);const inp=box.querySelector('.lfq'),L=box.querySelector('.lfl');let sel=0,its=[];
  const r=anchor.getBoundingClientRect(),w=300,below=innerHeight-r.bottom;box.style.width=w+'px';box.style.left=Math.max(8,Math.min(innerWidth-w-8,r.left))+'px';

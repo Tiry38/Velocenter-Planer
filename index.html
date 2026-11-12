@@ -1450,6 +1450,8 @@ body.bgruh::after{display:none}
 #grid .e.k-bst .bstl{display:grid;place-items:center;height:38px;padding:3px 6px;border-radius:8px;cursor:pointer;background:rgba(255,255,255,.05);box-shadow:inset 0 0 0 1px rgba(57,242,107,.45),0 0 10px rgba(57,242,107,.18);white-space:normal}
 #grid .e.k-bst .bstl:hover{box-shadow:inset 0 0 0 1px #39F26B,0 0 14px rgba(57,242,107,.45)}
 #grid .e.k-bst .bstl img{max-width:96px;max-height:30px;object-fit:contain;display:block}
+#grid .e.k-bst .bstl:has(.bstfr){height:auto;min-height:38px;gap:2px;padding:4px 6px}
+#grid .e.k-bst .bstl .bstfr{font:800 11.5px/1 Outfit,sans-serif;letter-spacing:.02em;color:#FFD84D;text-shadow:0 0 8px rgba(255,216,77,.45);white-space:nowrap}
 #grid .e.k-bst .bstl b{font:800 12px/1.15 Outfit,sans-serif;color:#9FF5B8;text-align:center;word-break:break-word}
 .lfpick{display:flex;flex-direction:column;gap:6px;border-color:rgba(57,242,107,.5)}
 .lfpick .lfq{width:100%;box-sizing:border-box;padding:8px 10px;border-radius:8px;border:1px solid rgba(57,242,107,.4);background:rgba(255,255,255,.05);color:#fff;font:600 14px Outfit,sans-serif;outline:none}
@@ -1647,7 +1649,7 @@ body.bgruh::after{display:none}
 <script>
 const FB_CONFIG={apiKey:"AIzaSyC_uZPvc5rJETwlS4JbfCoTkkE4ckjtp0M",authDomain:"velocenter-planer.firebaseapp.com",projectId:"velocenter-planer",storageBucket:"velocenter-planer.firebasestorage.app",messagingSenderId:"1018330488700",appId:"1:1018330488700:web:262a4d1660353e6fde8ef9"};
 /* ================= Velocenter Werkstatt-Cockpit – Oberfläche ================= */
-const CLIENT_VERSION='1.10.75';
+const CLIENT_VERSION='1.10.76';
 const USERS=[{id:'kevin',n:'Kevin',c:'#E2232D'},{id:'stefan',n:'Stefan',c:'#F59E0B'},{id:'martina',n:'Martina',c:'#EC4899'},{id:'sascha',n:'Sascha',c:'#22D3EE'},{id:'rene',n:'René',c:'#34D399'}];
 const U=id=>USERS.find(u=>u.id===id)||{n:'',c:'#64748B',id:''};
 /* 1.10.37: Profilfarbe je Nutzer (meta/prefs[ID].col, für alle sichtbar) – Cache für den Login-Bildschirm */
@@ -2170,8 +2172,11 @@ function render(){const g=$('grid');if(document.querySelector('#grid .edit'))ret
  $('cOpen').textContent=P.filter(e=>e.erledigt!=='1'&&e.datum>=today).length;}
 /* 1.10.75 (Tiry): Planer-Spalte „Bestellen“ – je Tag Lieferanten wählen, bei denen bestellt werden muss (Erinnerung).
    Planer-Eintrag spalte 'bst', text = Lieferantenname, lid = Lieferanten-ID; wandert wie Intern täglich auf heute (ROLL_NEU), erledigt = löschen. */
-function bstTile(e){const l=S.find(x=>x.id===e.lid)||voLf(e.text),lg=l?sLogo(l):'',n=l?l.name:e.text;
- return `<div class="e k-bst" draggable="true" data-id="${esc(e.id)}"><span class="tx bstl" data-bsted="${esc(e.id)}" title="Bei ${esc(n)} bestellen${U(e.von).n?' · eingetragen von '+esc(U(e.von).n):''} · Klick = ändern">${lg?`<img src="${imgU(lg)}" alt="${esc(n)}">`:`<b>${esc(n||'–')}</b>`}</span><button class="x" type="button" data-x="${esc(e.id)}" aria-label="Erledigt – löschen" title="Bestellt – löschen">×</button></div>`;}
+/* Bestell-Schluss je Lieferant (Tiry 12.11.2026): Hartje = bis 15 Uhr abschicken */
+const BST_FRIST=[[/hartje/i,'bis 15 Uhr!']];
+const bstFrist=n=>{const f=BST_FRIST.find(([re])=>re.test(n||''));return f?f[1]:''};
+function bstTile(e){const l=S.find(x=>x.id===e.lid)||voLf(e.text),lg=l?sLogo(l):'',n=l?l.name:e.text,fr=bstFrist(n);
+ return `<div class="e k-bst" draggable="true" data-id="${esc(e.id)}"><span class="tx bstl" data-bsted="${esc(e.id)}" title="Bei ${esc(n)} bestellen${fr?' – '+esc(fr):''}${U(e.von).n?' · eingetragen von '+esc(U(e.von).n):''} · Klick = ändern">${lg?`<img src="${imgU(lg)}" alt="${esc(n)}">`:`<b>${esc(n||'–')}</b>`}${fr?`<small class="bstfr">${esc(fr)}</small>`:''}</span><button class="x" type="button" data-x="${esc(e.id)}" aria-label="Erledigt – löschen" title="Bestellt – löschen">×</button></div>`;}
 function lfPick(anchor,cur,pick){document.querySelectorAll('.lfpick').forEach(x=>x.remove());const box=document.createElement('div');box.className='tpick lfpick';
  box.innerHTML='<input class="lfq" placeholder="Lieferant suchen …"><div class="lfl"></div>';document.body.append(box);const inp=box.querySelector('.lfq'),L=box.querySelector('.lfl');let sel=0,its=[];
  const r=anchor.getBoundingClientRect(),w=300,below=innerHeight-r.bottom;box.style.width=w+'px';box.style.left=Math.max(8,Math.min(innerWidth-w-8,r.left))+'px';
