@@ -1649,7 +1649,7 @@ body.bgruh::after{display:none}
 <script>
 const FB_CONFIG={apiKey:"AIzaSyC_uZPvc5rJETwlS4JbfCoTkkE4ckjtp0M",authDomain:"velocenter-planer.firebaseapp.com",projectId:"velocenter-planer",storageBucket:"velocenter-planer.firebasestorage.app",messagingSenderId:"1018330488700",appId:"1:1018330488700:web:262a4d1660353e6fde8ef9"};
 /* ================= Velocenter Werkstatt-Cockpit – Oberfläche ================= */
-const CLIENT_VERSION='1.10.77';
+const CLIENT_VERSION='1.10.78';
 const USERS=[{id:'kevin',n:'Kevin',c:'#E2232D'},{id:'stefan',n:'Stefan',c:'#F59E0B'},{id:'martina',n:'Martina',c:'#EC4899'},{id:'sascha',n:'Sascha',c:'#22D3EE'},{id:'rene',n:'René',c:'#34D399'}];
 const U=id=>USERS.find(u=>u.id===id)||{n:'',c:'#64748B',id:''};
 /* 1.10.37: Profilfarbe je Nutzer (meta/prefs[ID].col, für alle sichtbar) – Cache für den Login-Bildschirm */
@@ -2714,7 +2714,7 @@ const LS=[
  {k:'AS',n:'Assona',sub:'Versicherung · Schäden',ac:'#64748B',drei:null,is:'–',vs:'–',gs:'nein',abh:[],
   ser:['Rechnungsadresse: MLF Mercador','Rahmennummer + Schadensgrund in die Rechnung','!Keine Gutschrift','!Unter 60 € muss der Kunde selbst bezahlen']}];
 // Leasing-Infos nach Tirys Fragenliste, Versicherungen mit eigenen Händler-Feldern (Volltext-Prüfung offizieller Seiten/PDFs, Stand 02.11.2026; Eurorad + assona am 03.11.2026 geprüft). Neue Fassung → LSREC_VER hochzählen und betroffene Einträge mit "v": <neue Version> markieren – nur die werden überschrieben.
-const LSREC_VER=5;
+const LSREC_VER=6;
 const LSREC=[
 {
 "k": "JR",
@@ -3095,6 +3095,7 @@ const LSREC=[
 },
 {
 "k": "EN",
+"v": 6,
 "pak": [
 "Rundumschutz Plus (nur neue E-Bikes/S-Pedelecs): Diebstahl, Teilediebstahl, Raub, Vandalismus, Unfall/Sturz/Panne, unsachgemäße Handhabung, Elektronik-/Akkudefekt, Brand/Elementar, Pick-Up-Service + Verschleiß inkl. Akku",
 "Rundumschutz (gebrauchte bzw. über 6 Monate alte E-Bikes, alle Fahrräder/Anhänger): wie Plus, aber ohne Verschleiß",
@@ -3102,7 +3103,7 @@ const LSREC=[
 "Laufzeit 1 Jahr, verlängert automatisch bis max. 7 Jahre · Prämie per SEPA jährlich oder monatlich (mit Aufpreis), Preis per Tarifrechner (Kaufpreis + PLZ)",
 "Versicherer Bovemij (NL), ENRA ist Vermittler · auch Versicherer beim BusinessBike-Leasing (dort Abwicklung über das BusinessBike-Portal)"
 ],
-"vRad": "E-Bikes/Pedelecs + S-Pedelecs bis 15.000 € · Fahrräder/Anhänger bis 6.000 € (Rechnungspreis nach Rabatt inkl. Schloss + fest verschraubtem Zubehör) · auch Lastenräder, Dreiräder · neu = Erstbesitz, max. 6 Monate ab Kauf · älter/gebraucht nur über ENRA-Partner (prüft Zustand, legt Wert fest) · CE nötig · gewerblich, Sport/Bikepark, Dirt/Downhill/Triathlon nur Diebstahlschutz · Schloss UVP mind. 50 € · Wohnsitz in Deutschland",
+"vRad": "E-Bikes/Pedelecs + S-Pedelecs bis 10.000 € Kaufpreis (laut enra.eu, Stand 12.11.2026; teurere Räder nur nach Rücksprache mit ENRA) · Fahrräder/Anhänger bis 6.000 € (Rechnungspreis nach Rabatt inkl. Schloss + fest verschraubtem Zubehör) · auch Lastenräder, Dreiräder · neu = Erstbesitz, max. 6 Monate ab Kauf · älter/gebraucht nur über ENRA-Partner (prüft Zustand, legt Wert fest) · CE nötig · gewerblich, Sport/Bikepark, Dirt/Downhill/Triathlon nur Diebstahlschutz · Schloss UVP mind. 50 € · Wohnsitz in Deutschland",
 "spe": true,
 "drei": true,
 "vAbs": "Antrag (ENRA-Formular, mit unserer ENRA-Vertragspartner-Nr.) per E-Mail oder Post an ENRA oder per Upload im ENRA-Partnerportal · SEPA-Mandat dazu · Police kommt per Mail · wir bekommen Provision (Höhe nicht öffentlich) · neue Räder kann der Kunde auch selbst online abschließen",

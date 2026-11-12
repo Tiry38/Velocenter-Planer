@@ -1,5 +1,5 @@
 // Leasing-Infos nach Tirys Fragenliste, Versicherungen mit eigenen Händler-Feldern (Volltext-Prüfung offizieller Seiten/PDFs, Stand 02.11.2026; Eurorad + assona am 03.11.2026 geprüft). Neue Fassung → LSREC_VER hochzählen und betroffene Einträge mit "v": <neue Version> markieren – nur die werden überschrieben.
-const LSREC_VER=5;
+const LSREC_VER=6;
 const LSREC=[
 {
 "k": "JR",
@@ -380,6 +380,7 @@ const LSREC=[
 },
 {
 "k": "EN",
+"v": 6,
 "pak": [
 "Rundumschutz Plus (nur neue E-Bikes/S-Pedelecs): Diebstahl, Teilediebstahl, Raub, Vandalismus, Unfall/Sturz/Panne, unsachgemäße Handhabung, Elektronik-/Akkudefekt, Brand/Elementar, Pick-Up-Service + Verschleiß inkl. Akku",
 "Rundumschutz (gebrauchte bzw. über 6 Monate alte E-Bikes, alle Fahrräder/Anhänger): wie Plus, aber ohne Verschleiß",
@@ -387,7 +388,7 @@ const LSREC=[
 "Laufzeit 1 Jahr, verlängert automatisch bis max. 7 Jahre · Prämie per SEPA jährlich oder monatlich (mit Aufpreis), Preis per Tarifrechner (Kaufpreis + PLZ)",
 "Versicherer Bovemij (NL), ENRA ist Vermittler · auch Versicherer beim BusinessBike-Leasing (dort Abwicklung über das BusinessBike-Portal)"
 ],
-"vRad": "E-Bikes/Pedelecs + S-Pedelecs bis 15.000 € · Fahrräder/Anhänger bis 6.000 € (Rechnungspreis nach Rabatt inkl. Schloss + fest verschraubtem Zubehör) · auch Lastenräder, Dreiräder · neu = Erstbesitz, max. 6 Monate ab Kauf · älter/gebraucht nur über ENRA-Partner (prüft Zustand, legt Wert fest) · CE nötig · gewerblich, Sport/Bikepark, Dirt/Downhill/Triathlon nur Diebstahlschutz · Schloss UVP mind. 50 € · Wohnsitz in Deutschland",
+"vRad": "E-Bikes/Pedelecs + S-Pedelecs bis 10.000 € Kaufpreis (laut enra.eu, Stand 12.11.2026; teurere Räder nur nach Rücksprache mit ENRA) · Fahrräder/Anhänger bis 6.000 € (Rechnungspreis nach Rabatt inkl. Schloss + fest verschraubtem Zubehör) · auch Lastenräder, Dreiräder · neu = Erstbesitz, max. 6 Monate ab Kauf · älter/gebraucht nur über ENRA-Partner (prüft Zustand, legt Wert fest) · CE nötig · gewerblich, Sport/Bikepark, Dirt/Downhill/Triathlon nur Diebstahlschutz · Schloss UVP mind. 50 € · Wohnsitz in Deutschland",
 "spe": true,
 "drei": true,
 "vAbs": "Antrag (ENRA-Formular, mit unserer ENRA-Vertragspartner-Nr.) per E-Mail oder Post an ENRA oder per Upload im ENRA-Partnerportal · SEPA-Mandat dazu · Police kommt per Mail · wir bekommen Provision (Höhe nicht öffentlich) · neue Räder kann der Kunde auch selbst online abschließen",
