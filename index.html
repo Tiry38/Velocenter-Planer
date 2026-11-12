@@ -1381,6 +1381,51 @@ body.bgruh::after{display:none}
  body.navmini .app,body.navpeek .app{grid-template-columns:calc(84px * var(--nz,1)) 1fr!important}
  nav{overflow-y:auto!important;overflow-x:hidden!important;scrollbar-width:none}nav::-webkit-scrollbar{display:none}
 }
+/* ===== VORORDER (1.10.71) ===== */
+.vohead{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:26px 0 12px;padding:12px 16px;border-radius:14px;background:linear-gradient(90deg,rgba(57,242,107,.20),rgba(34,211,238,.10) 45%,transparent 80%);border:1px solid rgba(57,242,107,.35);box-shadow:0 0 24px rgba(57,242,107,.12) inset}
+.vohead h2{margin:0;display:flex;align-items:center;gap:10px;font:800 24px Outfit,sans-serif;letter-spacing:.5px;color:#EFFFF3;text-shadow:0 0 14px rgba(57,242,107,.55)}
+.vohead h2 .voic{display:grid;place-items:center;width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,#39F26B,#22D3EE);font-size:20px;box-shadow:0 0 16px rgba(57,242,107,.5)}
+.vohead h2 small{font:600 13px Outfit,sans-serif;color:#9FE8B5;text-shadow:none;margin-left:6px}
+.vohead .vlate{color:#FF6B6B;font-weight:800}
+.votools{margin-left:auto;display:flex;gap:8px;flex-wrap:wrap}
+.btn.vogo{background:linear-gradient(135deg,#39F26B,#22D3EE)!important;border-color:#39F26B!important;color:#062b12!important;font-weight:800}
+.vof .vofg{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:10px;margin:10px 0}
+.vof .w1{grid-column:span 1}.vof .w2{grid-column:span 2}.vof .w3{grid-column:span 3}.vof .w4{grid-column:span 4}.vof .w5{grid-column:span 5}.vof .w12{grid-column:1/-1}
+.vof textarea{width:100%;font:14px/1.5 Outfit,sans-serif;background:var(--panel);color:var(--tx);border:1px solid var(--line);border-radius:10px;padding:10px;resize:vertical}
+.vof .vohint{margin:6px 0;color:#B8C4D9;font-size:13px}.vof code{background:rgba(57,242,107,.12);color:#9FF5B8;padding:2px 6px;border-radius:5px}
+#voPrev{color:#39F26B;font-weight:700;align-self:center}
+.voempty{padding:22px;text-align:center;color:#9AA6BC;border:1px dashed rgba(57,242,107,.35);border-radius:14px}
+.vocard{margin-bottom:14px;border-radius:16px;overflow:hidden;background:linear-gradient(180deg,rgba(24,30,48,.92),rgba(16,20,34,.92));border:1px solid rgba(57,242,107,.28);box-shadow:0 6px 24px rgba(0,0,0,.35),0 0 0 1px rgba(255,255,255,.02) inset}
+.vocard.done{border-color:rgba(52,211,153,.5);opacity:.82}
+.vohd{display:flex;align-items:center;gap:18px;padding:12px 16px;cursor:pointer;background:linear-gradient(90deg,rgba(57,242,107,.14),transparent 60%);border-bottom:1px solid rgba(57,242,107,.18)}
+.vocard.shut .vohd{border-bottom:0}.vocard.shut .vobody{display:none}.vocard.shut .vochev{transform:rotate(-90deg)}
+.volg{flex:0 0 auto;width:96px;height:48px;display:grid;place-items:center;border-radius:10px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08)}
+.volg img{max-width:86px;max-height:38px;object-fit:contain}.volg span{font:800 20px Outfit,sans-serif;color:#39F26B}
+.vott{display:flex;flex-direction:column;gap:2px;min-width:170px}.vott b{font:800 20px Outfit,sans-serif;color:#fff}.vott small{color:#9AA6BC;font-size:12px}
+.vosai{align-self:flex-start;font:800 11px Outfit,sans-serif;letter-spacing:1px;text-transform:uppercase;padding:2px 9px;border-radius:999px;background:linear-gradient(90deg,#A78BFA,#22D3EE);color:#0b1020}
+.vokv{display:flex;flex-direction:column;gap:2px}.vokv i{font-style:normal;font-size:11px;letter-spacing:.8px;text-transform:uppercase;color:#8FA0BC}.vokv b{font:700 16px Outfit,sans-serif;color:#E8F0FF}
+.vokv em,.vodt em{font-style:normal;font-size:11px;color:#7FD9A0;margin-left:4px}
+.vopr{margin-left:auto;display:grid;grid-template-columns:auto auto;align-items:center;column-gap:10px;min-width:210px}
+.vobar{grid-column:1/-1;height:10px;border-radius:99px;background:rgba(255,255,255,.08);overflow:hidden;margin-bottom:4px}
+.vobar span{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,#22D3EE,#39F26B);box-shadow:0 0 12px rgba(57,242,107,.7);transition:width .4s}
+.vopr b{font:800 18px Outfit,sans-serif;color:#39F26B}.vopr i{font-style:normal;font-size:12px;color:#9AA6BC}
+.vobad{font:800 12px Outfit,sans-serif;color:#fff;background:#E5484D;padding:4px 10px;border-radius:999px;box-shadow:0 0 12px rgba(229,72,77,.6)}
+.vochev{color:#39F26B;font-size:18px;transition:transform .2s}
+.votab{width:100%;border-collapse:collapse;font-size:14px}
+.votab th{text-align:left;padding:8px 12px;font:700 11px Outfit,sans-serif;letter-spacing:.8px;text-transform:uppercase;color:#7FD9A0;background:rgba(57,242,107,.06)}
+.votab td{padding:8px 12px;border-top:1px solid rgba(255,255,255,.05);vertical-align:middle;color:#DDE6F5}
+.votab .voc{text-align:center}.votab .vonr{font-size:13px;color:#B8C4D9;letter-spacing:.3px}.votab td b{color:#fff}.votab td small{display:block;color:#F5D06B;font-size:12px}
+.votab tr:hover td{background:rgba(57,242,107,.05)}
+.votab tr.vr-ok td{opacity:.6}.votab tr.vr-late td:first-child{box-shadow:inset 3px 0 #E5484D}.votab tr.vr-soon td:first-child{box-shadow:inset 3px 0 #F5B83D}.votab tr.vr-open td:first-child{box-shadow:inset 3px 0 #22D3EE}.votab tr.vr-ok td:first-child{box-shadow:inset 3px 0 #39F26B}
+.vomg{font:800 16px Outfit,sans-serif}
+.vostep{display:inline-flex;align-items:center;gap:6px}.vostep b{min-width:20px;font:800 16px Outfit,sans-serif;color:#39F26B!important}.vostep .mini{width:26px;padding:2px 0}.vostep .mini:disabled{opacity:.3;cursor:default}
+.vost{font:700 12px Outfit,sans-serif;padding:3px 9px;border-radius:999px;white-space:nowrap}
+.vost.s-ok{background:rgba(57,242,107,.16);color:#39F26B}.vost.s-late{background:rgba(229,72,77,.18);color:#FF7A7E}.vost.s-soon{background:rgba(245,184,61,.18);color:#F5C55B}.vost.s-open{background:rgba(34,211,238,.14);color:#67E8F9}
+.voact{white-space:nowrap;text-align:right}.voact>*{margin-left:4px;vertical-align:middle}
+.votab .mini.go{background:#39F26B;border-color:#39F26B;color:#062b12}.mini.vox.sure{background:#E5484D;color:#fff;border-color:#E5484D}
+@media(max-width:900px){.vohd{flex-wrap:wrap}.vopr{margin-left:0;width:100%}.vof .vofg>label{grid-column:1/-1!important}.vobody{overflow-x:auto}.votab{min-width:760px}}
+.votab{table-layout:fixed}.votab th:nth-child(1){width:25%}.votab th:nth-child(2){width:11%}.votab th:nth-child(3){width:12%}.votab th:nth-child(4),.votab th:nth-child(5){width:11%}.votab th:nth-child(6){width:6%}.votab th:nth-child(7){width:9%}.votab th:nth-child(8){width:9%}.votab th:nth-child(9){width:175px}.votab td.voact{overflow:visible}
+.votab td{overflow:hidden;text-overflow:ellipsis}
 
 [hidden]{display:none!important}
 #sTab td.b{font-weight:700}#sTab .pwm.ed{outline:none;padding:2px 6px;border-radius:6px;font-family:var(--mono)}#sTab td{vertical-align:top}
@@ -1500,6 +1545,10 @@ body.bgruh::after{display:none}
     </div>
     <div id="bForm"></div>
     <div class="cols" id="bCols"></div>
+    <div class="vohead"><h2><span class="voic">📦</span>Vororder<small id="voSum"></small></h2>
+      <div class="votools"><button class="btn" type="button" id="voDone" aria-pressed="false">Komplett gelieferte zeigen</button><button class="btn" type="button" id="voPaste">📋 Liste einfügen</button><button class="btn vogo" type="button" id="voAdd">+ Vororder-Position</button></div></div>
+    <div id="voForm"></div>
+    <div id="voList"></div>
   </section>
 
   <!-- LEASING -->
@@ -1566,7 +1615,7 @@ body.bgruh::after{display:none}
 <script>
 const FB_CONFIG={apiKey:"AIzaSyC_uZPvc5rJETwlS4JbfCoTkkE4ckjtp0M",authDomain:"velocenter-planer.firebaseapp.com",projectId:"velocenter-planer",storageBucket:"velocenter-planer.firebasestorage.app",messagingSenderId:"1018330488700",appId:"1:1018330488700:web:262a4d1660353e6fde8ef9"};
 /* ================= Velocenter Werkstatt-Cockpit – Oberfläche ================= */
-const CLIENT_VERSION='1.10.70';
+const CLIENT_VERSION='1.10.71';
 const USERS=[{id:'kevin',n:'Kevin',c:'#E2232D'},{id:'stefan',n:'Stefan',c:'#F59E0B'},{id:'martina',n:'Martina',c:'#EC4899'},{id:'sascha',n:'Sascha',c:'#22D3EE'},{id:'rene',n:'René',c:'#34D399'}];
 const U=id=>USERS.find(u=>u.id===id)||{n:'',c:'#64748B',id:''};
 /* 1.10.37: Profilfarbe je Nutzer (meta/prefs[ID].col, für alle sichtbar) – Cache für den Login-Bildschirm */
@@ -2028,6 +2077,7 @@ function startLive(){stopLive();const from=iso(new Date(Date.now()-35*864e5));
  unsubs.push(db.doc('meta/prefs').onSnapshot(d=>{PREFALL=d.exists?d.data():{};const mp=ME&&PREFALL[ME.id];if(mp&&mp.kick&&+mp.kick>+ls.get('vc_lin',0)){ls.set('vc_lin',Date.now());toast('Ein Admin hat dich auf allen Geräten abgemeldet');$('switchUser').click();return;}if(ucolApply(PREFALL))renderAll();if(document.querySelector('#dlgBox .umgrid'))umRefresh();},()=>{}));
  unsubs.push(db.doc('meta/layout').onSnapshot(d=>{const x=d.exists?d.data():{},j=JSON.stringify(x);if(j===LAYJ)return;LAYJ=j;LAYALL=x;layPlaner();layRefresh();},()=>{}));
  unsubs.push(db.doc('meta/import').onSnapshot(d=>{IMPX=d.exists?d.data():{};if(!BK_IMPOK){BK_IMPOK=true;setTimeout(bkRemind,6000);}KDIMP=!!(d.exists&&d.data().kunden);if($('kdImp'))$('kdImp').hidden=!(ME&&ME.adm)||KDIMP;},()=>{}));
+ unsubs.push(db.doc('meta/vororder').onSnapshot(d=>{VOD=(d.exists&&d.data().items)||{};scheduleRender();},()=>{}));
  unsubs.push(db.doc('meta/reklam').onSnapshot(d=>{RKD=(d.exists&&d.data().items)||{};scheduleRender();},()=>{}));
  unsubs.push(db.doc('meta/brands').onSnapshot(d=>{const x=d.exists?d.data():{};BUSER.list=x.list||[];BLEG=x.logos||{};blMerge();scheduleRender();blMig();},()=>{}));
  for(let n=0;n<BLN;n++)unsubs.push(db.doc('meta/blg_'+n).onSnapshot(d=>{BSH[n]=d.exists&&d.data().l||{};BLOK.add(n);blMerge();scheduleRender();blMig();},()=>{}));
@@ -2446,7 +2496,7 @@ function rb(){const m=b=>true;
  $('bCols').innerHTML=cols.map(([k,n])=>{const it=B.filter(b=>(b.status||'offen')===k&&m(b));return `<div class="col" data-k="${k}"><h3><i></i>${n} <span>${it.length}</span></h3>${it.length?'':'<p class="empty">Nichts hier ✓</p>'}${it.map(b=>`<div class="order">${bLfBadge(b)}<b>${esc(b.artikel||'–')}</b>${b.telefon?`<div class="bkd" title="Kundenbestellung">👤 <span>Kunde</span> ${esc(b.telefon)}</div>`:''}${b.kunde?`<small>${esc(b.kunde)}</small>`:''}<small>${[b.lieferant?'Lieferant: '+esc(b.lieferant):'',b.lieferzeit?'kommt '+esc(b.lieferzeit):'',b.datum?'bestellt '+esc(b.datum):''].filter(Boolean).join(' · ')}</small>${b.notiz?`<small>📝 ${esc(b.notiz)}</small>`:''}
  <div class="oacts"><span class="paid ${b.bezahlt==='ja'?'y':b.bezahlt==='nein'?'n':'u'}" data-bpaid="${esc(b.id)}" role="button" tabindex="0" title="Klick = wechseln: – → bezahlt → nicht bezahlt">${b.bezahlt==='ja'?'✓ bezahlt':b.bezahlt==='nein'?'nicht bezahlt':'bezahlt –'}</span>${av(b.von,'angelegt von','B',b.id,b.ts)}<span style="flex:1"></span>
  ${k!=='offen'?`<button class="mini" type="button" data-bmv="${esc(b.id)}" data-to="${k==='fertig'?'da':k==='da'?'bestellt':'offen'}" title="zurück">←</button>`:''}${k!=='fertig'?`<button class="mini go" type="button" data-bmv="${esc(b.id)}" data-to="${k==='offen'?'bestellt':k==='bestellt'?'da':'fertig'}">${k==='offen'?'bestellt →':k==='bestellt'?'ist da →':'✓ erledigt'}</button>`:''}<button class="mini" type="button" data-bedit="${esc(b.id)}" title="bearbeiten">✎</button></div></div>`).join('')}</div>`;}).join('');
- $('nBest').textContent=B.filter(b=>(b.status||'offen')!=='fertig').length;}
+ $('nBest').textContent=B.filter(b=>(b.status||'offen')!=='fertig').length;rvo();}
 /* 1.9.3: Lieferant der Bestellung als Logo oben rechts (sonst Name) */
 function bLf(b){const n=String(b.lieferant||'').trim().toLowerCase();return n?S.find(o=>String(o.name||'').trim().toLowerCase()===n):null;}
 function bLfBadge(b){if(!String(b.lieferant||'').trim())return '';const o=bLf(b),lg=o?sLogo(o):'';return lg?`<img class="olg" src="${imgU(lg)}" alt="" title="Lieferant: ${esc(b.lieferant)}">`:`<span class="olgt" title="Lieferant">${esc(b.lieferant)}</span>`;}
@@ -2465,6 +2515,83 @@ $('v-bestell').addEventListener('click',e=>{const i=e.target.closest('input.bfd'
 $('v-bestell').addEventListener('submit',e=>{if(!e.target.dataset.bf)return;e.preventDefault();const f=e.target,id=f.dataset.bf,d=new FormData(f);const b=id==='new'?{id:nid('b'),status:'offen',von:ME.id}:Object.assign({},B.find(x=>x.id===id));BF.forEach(([k])=>{let v=String(d.get(k)||'').trim();if(k==='datum'||k==='lieferzeit'){const inp=f.querySelector('[name='+k+']');v=v?dmy(v):(inp&&inp.dataset.old||'');}b[k]=v;});b.bezahlt=d.get('bezahlt')||'';bEdit=null;putB(b);toast('Gespeichert');});
 $('bAdd').addEventListener('click',()=>{bEdit='new';rb();const f=document.querySelector('[data-bf=new] input[name=kunde]');if(f)f.focus();});
 $('bDone').addEventListener('click',e=>{bShowDone=!bShowDone;e.currentTarget.setAttribute('aria-pressed',bShowDone);rb();});
+
+/* ================= VORORDER (1.10.71, Tiry) =================
+   Unter dem Bestellungen-Board. Gespeichert in meta/vororder {items:{id:{lief,saison,bestAm,kommt,artikel,artnr,var,menge,da,notiz,von,ts}}}
+   (Regel meta/* reicht). Karte je Lieferant + Saison, Fortschritt geliefert/bestellt. Keine EK-Preise (Mitarbeiter sehen den Reiter). */
+let VOD={},voEdit=null,voShowDone=false,voPasteOn=false;
+const voAll=()=>Object.values(VOD).filter(x=>x&&x.id);
+const voN=v=>{const n=parseInt(String(v||'').replace(/[^\d]/g,''),10);return isNaN(n)?0:n;};
+const voT=v=>{const i=bIso(v);return i?fromIso(i).getTime():null;};
+function voDs(v){const i=bIso(v);if(!i)return esc(v||'');const d=fromIso(i);return `${String(d.getDate()).padStart(2,'0')}.${String(d.getMonth()+1).padStart(2,'0')}.${String(d.getFullYear()).slice(2)} <em>KW ${kw(d)}</em>`;}
+function voSt(o){const m=voN(o.menge)||1,da=Math.min(voN(o.da),m);if(da>=m)return 'ok';const t=voT(o.kommt);if(t==null)return 'open';const td=new Date();td.setHours(0,0,0,0);const dd=Math.round((t-td)/864e5);return dd<0?'late':dd<=14?'soon':'open';}
+const VOSTL={ok:'✓ komplett da',late:'überfällig',soon:'kommt bald',open:'unterwegs'};
+async function putVO(o){o=clean(o);o.ts=stamp();o.tsVon=ME?ME.id:'';VOD=Object.assign({},VOD,{[o.id]:o});rvo();
+ try{await db.doc('meta/vororder').update({['items.'+o.id]:o});}catch(e){try{const d=await db.doc('meta/vororder').get();const it=Object.assign({},(d.exists&&d.data().items)||{},{[o.id]:o});await db.doc('meta/vororder').set({items:it},{merge:true});}catch(e2){fail(e2);}}}
+async function putVOs(list){const up={};list.forEach(o=>{o=clean(o);o.ts=stamp();o.tsVon=ME?ME.id:'';up['items.'+o.id]=o;VOD=Object.assign({},VOD,{[o.id]:o});});rvo();
+ try{await db.doc('meta/vororder').update(up);}catch(e){try{const d=await db.doc('meta/vororder').get();const it=Object.assign({},(d.exists&&d.data().items)||{});for(const k in up)it[k.slice(6)]=up[k];await db.doc('meta/vororder').set({items:it},{merge:true});}catch(e2){fail(e2);}}}
+async function delVO(id){const n=Object.assign({},VOD);delete n[id];VOD=n;rvo();try{await db.doc('meta/vororder').update({['items.'+id]:null});}catch(e){fail(e);}}
+const voLf=n=>{n=String(n||'').trim().toLowerCase();return n?S.find(o=>String(o.name||'').trim().toLowerCase()===n):null;};
+const voLfDl=()=>`<datalist id="voLfList">${[...new Set(S.map(o=>String(o.name||'').trim()).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'de')).map(n=>`<option value="${esc(n)}">`).join('')}</datalist>`;
+function voForm(o){const nw=o.id==='new',di=k=>`<input type="date" class="bfd" name="${k}" value="${bIso(o[k])}" data-old="${bIso(o[k])?'':esc(o[k]||'')}">${!bIso(o[k])&&o[k]?`<small class="bfold">bisher: ${esc(o[k])}</small>`:''}`;
+ return `<form class="edf card vof" data-vof="${esc(o.id)}" autocomplete="off"><b>${nw?'Neue Vororder-Position':'Vororder-Position bearbeiten'}</b><div class="vofg">
+ <label class="w4">Lieferant<input name="lief" value="${esc(o.lief||'')}" list="voLfList" placeholder="Lieferant wählen oder tippen" required></label>
+ <label class="w2">Saison<input name="saison" value="${esc(o.saison||'')}" placeholder="z. B. 2027"></label>
+ <label class="w3">Bestellt am${di('bestAm')}</label><label class="w3">Kommt am${di('kommt')}</label>
+ <label class="w5">Artikel / Modell<input name="artikel" value="${esc(o.artikel||'')}" required></label>
+ <label class="w3">Art.-Nr.<input name="artnr" value="${esc(o.artnr||'')}"></label>
+ <label class="w2">Größe / Farbe<input name="var" value="${esc(o.var||'')}"></label>
+ <label class="w1">Menge<input name="menge" type="number" min="1" value="${esc(o.menge||1)}"></label>
+ <label class="w1">Geliefert<input name="da" type="number" min="0" value="${esc(o.da||0)}"></label>
+ <label class="w12">Notiz<input name="notiz" value="${esc(o.notiz||'')}"></label></div>${voLfDl()}
+ <div class="acts"><button class="btn vogo" type="submit">Speichern</button><button class="btn" type="button" data-vocancel>Abbrechen</button>${nw?'':`<button class="btn" type="button" data-vodup="${esc(o.id)}">⧉ Als neue Position kopieren</button>`}</div></form>`;}
+function voPasteForm(){return `<form class="edf card vof" data-vopaste autocomplete="off"><b>📋 Vororder-Liste einfügen</b>
+ <p class="vohint">Kopf einmal ausfüllen, darunter eine Zeile je Artikel – direkt aus Excel kopieren (Tab) oder mit <b>;</b> getrennt:<br><code>Artikel ; Art.-Nr. ; Größe/Farbe ; Menge ; Kommt am</code> &nbsp;– nur Artikel ist Pflicht, Menge leer = 1, „Kommt am“ leer = Datum aus dem Kopf.</p>
+ <div class="vofg"><label class="w4">Lieferant<input name="lief" list="voLfList" required></label><label class="w2">Saison<input name="saison" placeholder="z. B. 2027"></label>
+ <label class="w3">Bestellt am<input type="date" class="bfd" name="bestAm" value="${new Date().toISOString().slice(0,10)}"></label><label class="w3">Kommt am<input type="date" class="bfd" name="kommt"></label>
+ <label class="w12">Positionen<textarea name="rows" rows="9" placeholder="Macina Cross P9.772 ; 23105231 ; 51 cm grün ; 2 ; 15.03.2027&#10;Macina Tour CX 610 ; 23105412 ; 56 cm ; 1"></textarea></label></div>${voLfDl()}
+ <div class="acts"><button class="btn vogo" type="submit">Übernehmen</button><button class="btn" type="button" data-vocancel>Abbrechen</button><small id="voPrev"></small></div></form>`;}
+function voParse(txt){return String(txt||'').split(/\r?\n/).map(l=>l.trim()).filter(Boolean).map(l=>{const c=(l.includes('\t')?l.split('\t'):l.split(';')).map(x=>x.trim());return {artikel:c[0]||'',artnr:c[1]||'',var:c[2]||'',menge:voN(c[3])||1,kommt:c[4]||''};}).filter(r=>r.artikel&&!/^artikel$/i.test(r.artikel));}
+function rvo(){const L=$('voList');if(!L)return;const all=voAll();
+ $('voForm').innerHTML=voPasteOn?voPasteForm():voEdit?voForm(voEdit==='new'?{id:'new',bestAm:dmy(new Date().toISOString().slice(0,10)),menge:1,da:0}:VOD[voEdit]||{id:'new'}):'';
+ const G={};all.forEach(o=>{const k=String(o.lief||'–').trim().toLowerCase()+'|'+String(o.saison||'').trim();(G[k]=G[k]||{lief:String(o.lief||'–').trim(),saison:String(o.saison||'').trim(),it:[]}).it.push(o);});
+ let gs=Object.values(G).map(g=>{g.m=g.it.reduce((s,o)=>s+(voN(o.menge)||1),0);g.da=g.it.reduce((s,o)=>s+Math.min(voN(o.da),voN(o.menge)||1),0);g.done=g.da>=g.m;
+  const ks=g.it.filter(o=>voSt(o)!=='ok').map(o=>voT(o.kommt)).filter(x=>x!=null);g.next=ks.length?Math.min(...ks):null;const bs=g.it.map(o=>voT(o.bestAm)).filter(x=>x!=null);g.best=bs.length?Math.min(...bs):null;
+  g.late=g.it.filter(o=>voSt(o)==='late').length;return g;});
+ const tot=gs.reduce((s,g)=>s+g.m,0),totDa=gs.reduce((s,g)=>s+g.da,0),late=gs.reduce((s,g)=>s+g.late,0);
+ $('voSum').innerHTML=all.length?`${gs.filter(g=>!g.done).length} offen · ${totDa}/${tot} Stück da${late?` · <span class="vlate">${late} überfällig</span>`:''}`:'';
+ const vis=gs.filter(g=>voShowDone||!g.done).sort((a,b)=>(a.done-b.done)||((a.next??9e15)-(b.next??9e15))||a.lief.localeCompare(b.lief,'de'));
+ if(!vis.length){L.innerHTML=`<div class="voempty">${all.length?'Alle Vororder komplett geliefert ✓':'Noch keine Vororder. „+ Vororder-Position“ oder „📋 Liste einfügen“.'}</div>`;return;}
+ const cl=JSON.parse(ls.get('vc_vocl','[]')||'[]');
+ L.innerHTML=vis.map(g=>{const key=g.lief.toLowerCase()+'|'+g.saison,lo=voLf(g.lief),lg=lo?sLogo(lo):'',pc=g.m?Math.round(g.da/g.m*100):0,shut=cl.includes(key),f=d=>d==null?'–':voDs(dmy(new Date(d).toISOString().slice(0,10)));
+  const rows=g.it.slice().sort((a,b)=>((voT(a.kommt)??9e15)-(voT(b.kommt)??9e15))||String(a.artikel).localeCompare(String(b.artikel),'de'));
+  return `<div class="vocard${g.done?' done':''}${shut?' shut':''}" data-vok="${esc(key)}"><div class="vohd" data-votog="${esc(key)}" title="Klick = auf-/zuklappen">
+  <div class="volg">${lg?`<img src="${imgU(lg)}" alt="">`:`<span>${esc(g.lief.slice(0,2).toUpperCase())}</span>`}</div>
+  <div class="vott"><b>${esc(g.lief)}</b>${g.saison?`<span class="vosai">Saison ${esc(g.saison)}</span>`:''}<small>${g.it.length} Position${g.it.length===1?'':'en'}${lo&&lo.kdnr?' · Kd-Nr. '+esc(lo.kdnr):''}</small></div>
+  <div class="vokv"><i>bestellt</i><b>${f(g.best)}</b></div><div class="vokv"><i>${g.done?'geliefert':'nächste Lieferung'}</i><b>${g.done?'komplett ✓':f(g.next)}</b></div>
+  <div class="vopr"><div class="vobar"><span style="width:${pc}%"></span></div><b>${g.da} / ${g.m}</b><i>Stück da · ${pc} %</i></div>${g.late?`<span class="vobad">⚠ ${g.late} überfällig</span>`:''}<span class="vochev">▾</span></div>
+  <div class="vobody"><table class="votab"><thead><tr><th>Artikel</th><th>Art.-Nr.</th><th>Größe / Farbe</th><th>Kommt</th><th>Bestellt</th><th class="voc">Menge</th><th class="voc">Geliefert</th><th>Status</th><th></th></tr></thead><tbody>${rows.map(o=>{const m=voN(o.menge)||1,da=Math.min(voN(o.da),m),st=voSt(o);
+   return `<tr class="vr-${st}"><td><b>${esc(o.artikel||'–')}</b>${o.notiz?`<small>📝 ${esc(o.notiz)}</small>`:''}</td><td class="vonr">${esc(o.artnr||'–')}</td><td>${esc(o.var||'–')}</td><td class="vodt">${o.kommt?voDs(o.kommt):'–'}</td><td class="vodt">${o.bestAm?voDs(o.bestAm):'–'}</td><td class="voc"><b class="vomg">${m}</b></td>
+   <td class="voc"><span class="vostep"><button type="button" class="mini" data-vod="${esc(o.id)}" data-dd="-1" ${da<=0?'disabled':''}>−</button><b>${da}</b><button type="button" class="mini" data-vod="${esc(o.id)}" data-dd="1" ${da>=m?'disabled':''}>+</button></span></td>
+   <td><span class="vost s-${st}">${VOSTL[st]}</span></td><td class="voact">${st!=='ok'?`<button type="button" class="mini go" data-voall="${esc(o.id)}" title="alles geliefert">✓ da</button>`:''}${av(o.von,'angelegt von')}<button type="button" class="mini" data-voed="${esc(o.id)}" title="bearbeiten">✎</button><button type="button" class="mini vox" data-vodel="${esc(o.id)}" title="löschen">×</button></td></tr>`;}).join('')}</tbody></table></div></div>`;}).join('');}
+$('v-bestell').addEventListener('click',e=>{
+ const tg=e.target.closest('[data-votog]');if(tg&&!e.target.closest('button')){const k=tg.dataset.votog;let cl=JSON.parse(ls.get('vc_vocl','[]')||'[]');cl=cl.includes(k)?cl.filter(x=>x!==k):[...cl,k];ls.set('vc_vocl',JSON.stringify(cl));tg.parentElement.classList.toggle('shut');return;}
+ const st=e.target.closest('[data-vod]');if(st){const o=VOD[st.dataset.vod];if(!o)return;const m=voN(o.menge)||1;putVO(Object.assign({},o,{da:Math.max(0,Math.min(m,voN(o.da)+ +st.dataset.dd))}));return;}
+ const al=e.target.closest('[data-voall]');if(al){const o=VOD[al.dataset.voall];if(!o)return;const old=o.da;putVO(Object.assign({},o,{da:voN(o.menge)||1,daAm:dmy(new Date().toISOString().slice(0,10)),daVon:ME.id}));toast('Komplett geliefert ✓',()=>putVO(Object.assign({},VOD[o.id],{da:old})));return;}
+ const ed=e.target.closest('[data-voed]');if(ed){voEdit=ed.dataset.voed;voPasteOn=false;rvo();$('voForm').scrollIntoView({block:'center'});return;}
+ const du=e.target.closest('[data-vodup]');if(du){const o=VOD[du.dataset.vodup];voEdit=null;rvo();$('voForm').innerHTML=voForm(Object.assign({},o,{id:'new',da:0,artnr:'',var:''}));voEdit='dup';return;}
+ if(e.target.closest('[data-vocancel]')){voEdit=null;voPasteOn=false;rvo();return;}
+ const dl=e.target.closest('[data-vodel]');if(dl){if(!dl.dataset.sure){dl.dataset.sure=1;dl.textContent='löschen?';dl.classList.add('sure');setTimeout(()=>{if(dl.isConnected){delete dl.dataset.sure;dl.textContent='×';dl.classList.remove('sure');}},3000);return;}const o=VOD[dl.dataset.vodel];delVO(o.id);toast('Position gelöscht',()=>putVO(o));}});
+$('v-bestell').addEventListener('submit',e=>{const f=e.target;if(f.dataset.vof===undefined&&f.dataset.vopaste===undefined)return;e.preventDefault();const d=new FormData(f),g=k=>String(d.get(k)||'').trim();
+ const dt=k=>{const v=g(k),inp=f.querySelector('[name='+k+']');return v?dmy(v):(inp&&inp.dataset.old||'');};
+ if(f.dataset.vopaste!==undefined){const rs=voParse(d.get('rows'));if(!rs.length){toast('Keine Position erkannt');return;}const hd={lief:g('lief'),saison:g('saison'),bestAm:dt('bestAm'),kommt:dt('kommt')};
+  const list=rs.map(r=>Object.assign({id:nid('vo'),da:0,von:ME.id},hd,r,{kommt:r.kommt?(bIso(r.kommt)?dmy(bIso(r.kommt)):r.kommt):hd.kommt}));voPasteOn=false;putVOs(list);toast(list.length+' Positionen übernommen ✓',()=>list.forEach(o=>delVO(o.id)));return;}
+ const id=f.dataset.vof,o=id==='new'?{id:nid('vo'),von:ME.id}:Object.assign({},VOD[id]);
+ ['lief','saison','artikel','artnr','var','notiz'].forEach(k=>o[k]=g(k));o.bestAm=dt('bestAm');o.kommt=dt('kommt');o.menge=Math.max(1,voN(g('menge'))||1);o.da=Math.min(o.menge,voN(g('da')));voEdit=null;putVO(o);toast('Gespeichert');});
+$('v-bestell').addEventListener('input',e=>{if(e.target.name==='rows'&&$('voPrev'))$('voPrev').textContent=voParse(e.target.value).length+' Positionen erkannt';});
+$('voAdd').addEventListener('click',()=>{voEdit='new';voPasteOn=false;rvo();const i=document.querySelector('[data-vof=new] input[name=lief]');if(i){i.focus();i.scrollIntoView({block:'center'});}});
+$('voPaste').addEventListener('click',()=>{voPasteOn=true;voEdit=null;rvo();const i=document.querySelector('[data-vopaste] input[name=lief]');if(i){i.focus();i.scrollIntoView({block:'center'});}});
+$('voDone').addEventListener('click',e=>{voShowDone=!voShowDone;e.currentTarget.setAttribute('aria-pressed',voShowDone);rvo();});
 
 /* ================= LEASING ================= */
 const LS=[
