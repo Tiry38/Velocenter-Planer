@@ -1076,3 +1076,48 @@ body.bgruh::after{display:none}
  body.navmini .app,body.navpeek .app{grid-template-columns:calc(84px * var(--nz,1)) 1fr!important}
  nav{overflow-y:auto!important;overflow-x:hidden!important;scrollbar-width:none}nav::-webkit-scrollbar{display:none}
 }
+/* ===== VORORDER (1.10.71) ===== */
+.vohead{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:26px 0 12px;padding:12px 16px;border-radius:14px;background:linear-gradient(90deg,rgba(57,242,107,.20),rgba(34,211,238,.10) 45%,transparent 80%);border:1px solid rgba(57,242,107,.35);box-shadow:0 0 24px rgba(57,242,107,.12) inset}
+.vohead h2{margin:0;display:flex;align-items:center;gap:10px;font:800 24px Outfit,sans-serif;letter-spacing:.5px;color:#EFFFF3;text-shadow:0 0 14px rgba(57,242,107,.55)}
+.vohead h2 .voic{display:grid;place-items:center;width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,#39F26B,#22D3EE);font-size:20px;box-shadow:0 0 16px rgba(57,242,107,.5)}
+.vohead h2 small{font:600 13px Outfit,sans-serif;color:#9FE8B5;text-shadow:none;margin-left:6px}
+.vohead .vlate{color:#FF6B6B;font-weight:800}
+.votools{margin-left:auto;display:flex;gap:8px;flex-wrap:wrap}
+.btn.vogo{background:linear-gradient(135deg,#39F26B,#22D3EE)!important;border-color:#39F26B!important;color:#062b12!important;font-weight:800}
+.vof .vofg{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:10px;margin:10px 0}
+.vof .w1{grid-column:span 1}.vof .w2{grid-column:span 2}.vof .w3{grid-column:span 3}.vof .w4{grid-column:span 4}.vof .w5{grid-column:span 5}.vof .w12{grid-column:1/-1}
+.vof textarea{width:100%;font:14px/1.5 Outfit,sans-serif;background:var(--panel);color:var(--tx);border:1px solid var(--line);border-radius:10px;padding:10px;resize:vertical}
+.vof .vohint{margin:6px 0;color:#B8C4D9;font-size:13px}.vof code{background:rgba(57,242,107,.12);color:#9FF5B8;padding:2px 6px;border-radius:5px}
+#voPrev{color:#39F26B;font-weight:700;align-self:center}
+.voempty{padding:22px;text-align:center;color:#9AA6BC;border:1px dashed rgba(57,242,107,.35);border-radius:14px}
+.vocard{margin-bottom:14px;border-radius:16px;overflow:hidden;background:linear-gradient(180deg,rgba(24,30,48,.92),rgba(16,20,34,.92));border:1px solid rgba(57,242,107,.28);box-shadow:0 6px 24px rgba(0,0,0,.35),0 0 0 1px rgba(255,255,255,.02) inset}
+.vocard.done{border-color:rgba(52,211,153,.5);opacity:.82}
+.vohd{display:flex;align-items:center;gap:18px;padding:12px 16px;cursor:pointer;background:linear-gradient(90deg,rgba(57,242,107,.14),transparent 60%);border-bottom:1px solid rgba(57,242,107,.18)}
+.vocard.shut .vohd{border-bottom:0}.vocard.shut .vobody{display:none}.vocard.shut .vochev{transform:rotate(-90deg)}
+.volg{flex:0 0 auto;width:96px;height:48px;display:grid;place-items:center;border-radius:10px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08)}
+.volg img{max-width:86px;max-height:38px;object-fit:contain}.volg span{font:800 20px Outfit,sans-serif;color:#39F26B}
+.vott{display:flex;flex-direction:column;gap:2px;min-width:170px}.vott b{font:800 20px Outfit,sans-serif;color:#fff}.vott small{color:#9AA6BC;font-size:12px}
+.vosai{align-self:flex-start;font:800 11px Outfit,sans-serif;letter-spacing:1px;text-transform:uppercase;padding:2px 9px;border-radius:999px;background:linear-gradient(90deg,#A78BFA,#22D3EE);color:#0b1020}
+.vokv{display:flex;flex-direction:column;gap:2px}.vokv i{font-style:normal;font-size:11px;letter-spacing:.8px;text-transform:uppercase;color:#8FA0BC}.vokv b{font:700 16px Outfit,sans-serif;color:#E8F0FF}
+.vokv em,.vodt em{font-style:normal;font-size:11px;color:#7FD9A0;margin-left:4px}
+.vopr{margin-left:auto;display:grid;grid-template-columns:auto auto;align-items:center;column-gap:10px;min-width:210px}
+.vobar{grid-column:1/-1;height:10px;border-radius:99px;background:rgba(255,255,255,.08);overflow:hidden;margin-bottom:4px}
+.vobar span{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,#22D3EE,#39F26B);box-shadow:0 0 12px rgba(57,242,107,.7);transition:width .4s}
+.vopr b{font:800 18px Outfit,sans-serif;color:#39F26B}.vopr i{font-style:normal;font-size:12px;color:#9AA6BC}
+.vobad{font:800 12px Outfit,sans-serif;color:#fff;background:#E5484D;padding:4px 10px;border-radius:999px;box-shadow:0 0 12px rgba(229,72,77,.6)}
+.vochev{color:#39F26B;font-size:18px;transition:transform .2s}
+.votab{width:100%;border-collapse:collapse;font-size:14px}
+.votab th{text-align:left;padding:8px 12px;font:700 11px Outfit,sans-serif;letter-spacing:.8px;text-transform:uppercase;color:#7FD9A0;background:rgba(57,242,107,.06)}
+.votab td{padding:8px 12px;border-top:1px solid rgba(255,255,255,.05);vertical-align:middle;color:#DDE6F5}
+.votab .voc{text-align:center}.votab .vonr{font-size:13px;color:#B8C4D9;letter-spacing:.3px}.votab td b{color:#fff}.votab td small{display:block;color:#F5D06B;font-size:12px}
+.votab tr:hover td{background:rgba(57,242,107,.05)}
+.votab tr.vr-ok td{opacity:.6}.votab tr.vr-late td:first-child{box-shadow:inset 3px 0 #E5484D}.votab tr.vr-soon td:first-child{box-shadow:inset 3px 0 #F5B83D}.votab tr.vr-open td:first-child{box-shadow:inset 3px 0 #22D3EE}.votab tr.vr-ok td:first-child{box-shadow:inset 3px 0 #39F26B}
+.vomg{font:800 16px Outfit,sans-serif}
+.vostep{display:inline-flex;align-items:center;gap:6px}.vostep b{min-width:20px;font:800 16px Outfit,sans-serif;color:#39F26B!important}.vostep .mini{width:26px;padding:2px 0}.vostep .mini:disabled{opacity:.3;cursor:default}
+.vost{font:700 12px Outfit,sans-serif;padding:3px 9px;border-radius:999px;white-space:nowrap}
+.vost.s-ok{background:rgba(57,242,107,.16);color:#39F26B}.vost.s-late{background:rgba(229,72,77,.18);color:#FF7A7E}.vost.s-soon{background:rgba(245,184,61,.18);color:#F5C55B}.vost.s-open{background:rgba(34,211,238,.14);color:#67E8F9}
+.voact{white-space:nowrap;text-align:right}.voact>*{margin-left:4px;vertical-align:middle}
+.votab .mini.go{background:#39F26B;border-color:#39F26B;color:#062b12}.mini.vox.sure{background:#E5484D;color:#fff;border-color:#E5484D}
+@media(max-width:900px){.vohd{flex-wrap:wrap}.vopr{margin-left:0;width:100%}.vof .vofg>label{grid-column:1/-1!important}.vobody{overflow-x:auto}.votab{min-width:760px}}
+.votab{table-layout:fixed}.votab th:nth-child(1){width:25%}.votab th:nth-child(2){width:11%}.votab th:nth-child(3){width:12%}.votab th:nth-child(4),.votab th:nth-child(5){width:11%}.votab th:nth-child(6){width:6%}.votab th:nth-child(7){width:9%}.votab th:nth-child(8){width:9%}.votab th:nth-child(9){width:175px}.votab td.voact{overflow:visible}
+.votab td{overflow:hidden;text-overflow:ellipsis}
