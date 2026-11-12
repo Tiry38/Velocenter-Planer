@@ -1,0 +1,12 @@
+const {chromium}=require('playwright');
+(async()=>{const b=await chromium.launch();const c=await b.newContext({viewport:{width:1500,height:900}});await c.route(/gstatic|googleapis|cdnjs/,r=>r.abort());const p=await c.newPage();const er=[];p.on('pageerror',e=>er.push(e.message));let F=0;const ok=(n,v)=>{console.log((v?'OK  ':'FAIL ')+n);if(!v)F++;};
+await p.goto('file://'+process.cwd()+'/test_fb.html');await p.waitForTimeout(400);await p.click('.wt[data-u=kevin]');await p.fill('#pw1','1');await p.fill('#pw2','1');await p.click('#pwGo');await p.waitForTimeout(900);
+await p.evaluate(async()=>{await db.collection('lieferanten').doc('s1').set({id:'s1',name:'Zeg'});await db.collection('lieferanten').doc('s2').set({id:'s2',name:'Hartje'});});await p.waitForTimeout(500);
+const hd=await p.evaluate(()=>COLS.map(c=>c.n));hd.unshift('');const _x=await p.$$eval('#grid .h',h=>h.map(x=>x.textContent.trim()));ok('Kopf Bestellen nach Intern',/Intern/.test(hd[1])&&/Bestellen/.test(hd[2]));ok('Notiz weg',!hd.some(x=>/^Notiz$/.test(x)));
+const t=await p.evaluate(()=>TODAY());const cell=`#grid .c[data-col=bst][data-iso="${t}"]`;ok('Zelle da',!!await p.$(cell));
+await p.click(cell);await p.waitForTimeout(200);ok('Auswahl offen',!!await p.$('.lfpick'));await p.fill('.lfq','har');await p.keyboard.press('Enter');await p.waitForTimeout(500);
+let e=await p.evaluate(()=>P.filter(x=>x.spalte==='bst'));ok('Eintrag Hartje',e.length===1&&e[0].text==='Hartje'&&e[0].lid==='s2');
+await p.click(cell+' .bstl');await p.waitForTimeout(200);await p.click('.lfpick .lfi:has-text("Zeg")');await p.waitForTimeout(500);
+e=await p.evaluate(()=>P.filter(x=>x.spalte==='bst'));ok('geändert auf Zeg',e.length===1&&e[0].text==='Zeg');
+await p.screenshot({path:'bst.png',clip:{x:0,y:0,width:900,height:400}});
+ok('keine JS-Fehler',!er.length);if(er.length)console.log(er);await b.close();process.exit(F?1:0);})();

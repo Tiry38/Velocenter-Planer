@@ -1137,3 +1137,19 @@ body.bgruh::after{display:none}
 #grid .e:has(>.tlk),#grid .e:has(.tx.tlk){background:transparent!important;box-shadow:none!important;padding:3px 4px!important}
 #grid .e:has(.tx.tlk)::before{display:none}
 #grid .e:has(.tx.tlk) .tlk .wp{margin:0}
+
+/* 1.10.75 Planer-Spalte „Bestellen“ (Lieferanten-Logos) */
+#grid .c[data-col="bst"]{display:flex;flex-direction:column;align-items:stretch;gap:5px;padding:5px 6px}
+#grid .e.k-bst{padding:0!important;background:transparent!important;box-shadow:none!important}
+#grid .e.k-bst::before{display:none}
+#grid .e.k-bst .bstl{display:grid;place-items:center;height:38px;padding:3px 6px;border-radius:8px;cursor:pointer;background:rgba(255,255,255,.05);box-shadow:inset 0 0 0 1px rgba(57,242,107,.45),0 0 10px rgba(57,242,107,.18);white-space:normal}
+#grid .e.k-bst .bstl:hover{box-shadow:inset 0 0 0 1px #39F26B,0 0 14px rgba(57,242,107,.45)}
+#grid .e.k-bst .bstl img{max-width:96px;max-height:30px;object-fit:contain;display:block}
+#grid .e.k-bst .bstl b{font:800 12px/1.15 Outfit,sans-serif;color:#9FF5B8;text-align:center;word-break:break-word}
+.lfpick{display:flex;flex-direction:column;gap:6px;border-color:rgba(57,242,107,.5)}
+.lfpick .lfq{width:100%;box-sizing:border-box;padding:8px 10px;border-radius:8px;border:1px solid rgba(57,242,107,.4);background:rgba(255,255,255,.05);color:#fff;font:600 14px Outfit,sans-serif;outline:none}
+.lfpick .lfl{overflow:auto;min-height:0}
+.lfpick .lfi{display:flex;align-items:center;gap:10px;padding:5px 8px;border-radius:8px;cursor:pointer;color:#E8F0FF}
+.lfpick .lfi:hover,.lfpick .lfi.on{background:rgba(57,242,107,.14)}.lfpick .lfi.cur{box-shadow:inset 3px 0 #39F26B}
+.lfpick .lflg{flex:0 0 70px;height:26px;display:grid;place-items:center}.lfpick .lflg img{max-width:70px;max-height:26px;object-fit:contain}
+.lfpick .lfi b{font:700 14px Outfit,sans-serif}
