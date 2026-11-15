@@ -1,0 +1,12 @@
+const {chromium}=require('playwright');
+(async()=>{const b=await chromium.launch();const p=await b.newPage({viewport:{width:1500,height:900}});await p.route(/gstatic|googleapis|cdnjs/,r=>r.abort());const er=[];p.on('pageerror',e=>er.push(e.message));let F=0;const ok=(n,v)=>{console.log((v?'OK  ':'FAIL ')+n);if(!v)F++;};
+/* Sonntag 15.11.2026 */await p.clock.install({time:new Date('2026-11-15T10:00:00')});
+await p.goto('file://'+process.cwd()+'/test_fb.html');await p.waitForTimeout(400);await p.click('.wt[data-u=kevin]');await p.fill('#pw1','1');await p.fill('#pw2','1');await p.click('#pwGo');await p.waitForTimeout(900);
+await p.evaluate(async()=>{const c=db.collection('planer');const s=(id,datum,spalte)=>c.doc(id).set({id,datum,spalte,text:id,von:'kevin'});
+await s('r1','2026-11-14','int');await s('r2','2026-11-14','t1');await s('r3','2026-11-14','ws');await s('r4','2026-11-15','bst');await s('r5','2026-11-14','x_neu');await s('r6','2026-11-10','t1');await s('r7','2026-11-14','best');
+await db.doc('meta/rollover').set({datum:'2026-11-15'});await rollover();});await p.waitForTimeout(500);
+const d=await p.evaluate(async()=>{const o={};(await db.collection('planer').get()).forEach(x=>o[x.id]=x.data().datum);return o;});
+ok('Ziel am Sonntag = Montag',await p.evaluate(()=>rollZiel())==='2026-11-16');
+ok('Intern Sa → Mo',d.r1==='2026-11-16');ok('Termin Sa → Mo',d.r2==='2026-11-16');ok('Werkstatt Sa → Mo',d.r3==='2026-11-16');ok('Bestellen So → Mo',d.r4==='2026-11-16');ok('eigene Spalte Sa → Mo',d.r5==='2026-11-16');
+ok('alter Termin (vor 14.11.) bleibt',d.r6==='2026-11-10');ok('alte Bestellungen-Spalte bleibt',d.r7==='2026-11-14');
+ok('keine JS-Fehler',!er.length);if(er.length)console.log(er);await b.close();process.exit(F?1:0);})();

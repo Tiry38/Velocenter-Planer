@@ -479,14 +479,17 @@ async function seedLeasing(){if(!ME||!ME.adm)return;try{await db.runTransaction(
 // Leasing-Infos einmalig auf die neue Struktur (Tirys Fragenliste) bringen; alte Listen werden in „alt“ gesichert
 let recDone=false;async function recLeasing(){if(recDone||!ME||!ME.adm||!L.length)return;recDone=true;try{await db.runTransaction(async t=>{const f=db.doc('meta/seed');const d=await t.get(f);const old=d.exists?(d.data().rec||0):0;if(old>=LSREC_VER)return;
   LSREC.filter(x=>(x.v||3)>old).forEach(x=>{/* nur neue Fassungen überschreiben, eigene Änderungen an anderen Karten bleiben */const o=L.find(l=>l.id===x.k)||L.find(l=>l.k===x.k);if(!o)return;const u=recMerge(o,x);u.ts=stamp();t.set(db.collection('leasing').doc(o.id),u,{merge:true});});t.set(f,{rec:LSREC_VER},{merge:true});});}catch(e){recDone=false;fail(e);}}
-// Offenes (nicht gelöscht = nicht erledigt) wandert auf heute: Werkstatt wie bisher, dazu Intern/WhatsApp/Notiz ab 02.11.2026 (ältere = Sheet-Historie)
-const ROLL_NEU=['int','wa','not','bst'],ROLL_AB='2026-11-02';
-async function rollover(){const t=TODAY();let go=false;try{go=await db.runTransaction(async tr=>{const f=db.doc('meta/rollover');const d=await tr.get(f);if(d.exists&&d.data().datum===t)return false;tr.set(f,{datum:t,von:ME.id});return true;});
+// Offenes (nicht gelöscht = nicht erledigt) wandert auf den nächsten sichtbaren Tag (heute; Sonntag → Montag, 1.10.88).
+// Sonstiges Werkstatt immer; Intern/Bestellen/WhatsApp/Notiz ab 02.11.2026; ab 1.10.88 (Tiry) ALLE übrigen Spalten (Termine, Anfragen, eigene) ab 14.11.2026 – ältere = Historie.
+const ROLL_NEU=['int','wa','not','bst'],ROLL_AB='2026-11-02',ROLL_ALL_AB='2026-11-14';
+const rollZiel=()=>{const d=new Date();if(d.getDay()===0)d.setDate(d.getDate()+1);return iso(d);};
+const rollMit=o=>{const dt=String(o.datum||'');if(o.spalte==='ws')return true;if(o.spalte==='best')return false;if(ROLL_NEU.includes(o.spalte))return dt>=ROLL_AB;return dt>=ROLL_ALL_AB;};
+async function rollover(){const t=rollZiel();let go=false;try{go=await db.runTransaction(async tr=>{const f=db.doc('meta/rollover');const d=await tr.get(f);if(d.exists&&d.data().datum===t)return false;tr.set(f,{datum:t,von:ME.id});return true;});
   if(!go)return;const snap=await db.collection('planer').where('datum','<',t).get();const refs=[];
-  snap.forEach(d=>{const o=d.data();if(o.erledigt==='1')return;if(o.spalte==='ws'||(ROLL_NEU.includes(o.spalte)&&String(o.datum)>=ROLL_AB))refs.push(d.ref);});
+  snap.forEach(d=>{const o=d.data();if(o.erledigt==='1')return;if(rollMit(o))refs.push(d.ref);});
   /* 1.10.63: Firestore erlaubt max. 500 Änderungen je Paket → in Paketen zu 450 */for(let i=0;i<refs.length;i+=450){const b=db.batch();refs.slice(i,i+450).forEach(r=>b.update(r,{datum:t,ts:stamp(),tsVon:ME.id}));await b.commit();}}catch(e){if(go){try{await db.doc('meta/rollover').set({datum:'',von:ME.id});}catch(_){}}}}
 // Mitternacht: läuft die App durch, rutscht Offenes ebenfalls automatisch auf den neuen Tag
-let rollDay=TODAY();setInterval(()=>{const t=TODAY();if(t!==rollDay&&ME){rollDay=t;rollover();scheduleRender();}},60000);
+let rollDay=rollZiel();setInterval(()=>{const t=rollZiel();if(t!==rollDay&&ME){rollDay=t;rollover();scheduleRender();}},60000);
 /* Auto-Update: neue Version auf GitHub → Seite lädt sich selbst neu (nicht während einer Eingabe) */
 async function verCheck(){try{const r=await fetch('version.txt?'+Date.now(),{cache:'no-store'});if(!r.ok)throw 0;const v=(await r.text()).trim();if(!/^\d+\.\d+\.\d+$/.test(v))throw 0;if(v&&v!==CLIENT_VERSION){if(editing()){$('upd').hidden=false;return;}location.replace(location.pathname+'?v='+encodeURIComponent(v));}}catch(_){}}
 setInterval(verCheck,30000);setTimeout(verCheck,3000);
