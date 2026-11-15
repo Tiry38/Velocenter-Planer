@@ -2313,18 +2313,22 @@ html:root .merk{background:var(--hp-riff),linear-gradient(115deg,transparent 30%
 :root{--hp-kwW:calc(62.9vh + 96px);--hp-kwH:calc(135vh + 206px)}
 html:root #grid .kw{
   background-color:#868282!important;
-  background-image:
+  background-image:repeating-linear-gradient(45deg,rgba(255,255,255,.07) 0 1px,transparent 1px 6px),
+    repeating-linear-gradient(-45deg,rgba(0,0,0,.10) 0 1px,transparent 1px 6px),
+    linear-gradient(180deg,rgba(255,255,255,.12) 0%,rgba(255,255,255,0) 40%,rgba(0,0,0,.16) 100%),
     linear-gradient(to bottom left,transparent calc(50% - 4px),#F4F6F9 calc(50% - 4px),#C3C8D0 calc(50% - 2px),#8E939B calc(50% - .5px),#5F6168 50%,transparent 50%),
-    linear-gradient(to bottom left,#C8102E 0%,#A50D26 49.9%,transparent 50%),
     var(--hp-blade),
     linear-gradient(115deg,transparent calc(6.344vw + 5.982vh),#6A6666 calc(6.344vw + 5.982vh),#6A6666 calc(7.250vw + 6.404vh),transparent calc(7.250vw + 6.404vh),transparent calc(56.19vw + 26.20vh),#6A6666 calc(56.19vw + 26.20vh),#6A6666 calc(57.55vw + 26.84vh),transparent calc(57.55vw + 26.84vh),transparent calc(59.82vw + 27.89vh),#CF1A2C calc(59.82vw + 27.89vh),#CF1A2C calc(60.72vw + 28.31vh),transparent calc(60.72vw + 28.31vh)),
-    repeating-linear-gradient(45deg,rgba(255,255,255,.07) 0 1px,transparent 1px 6px),
-    repeating-linear-gradient(-45deg,rgba(0,0,0,.10) 0 1px,transparent 1px 6px),
-    linear-gradient(180deg,rgba(255,255,255,.14) 0%,rgba(255,255,255,0) 40%,rgba(0,0,0,.20) 100%),
-    linear-gradient(90deg,#969292 0%,#868282 55%,#706C6C 100%)!important;
-  background-size:var(--hp-kwW) var(--hp-kwH),var(--hp-kwW) var(--hp-kwH),var(--hp-bladeW) var(--hp-bladeH),100vw 100vh,auto,auto,auto,auto!important;
-  background-position:right -96px top 0,right -96px top 0,right -96px top var(--hp-bladeY),0 0,0 0,0 0,0 0,0 0!important;
-  background-repeat:no-repeat,no-repeat,no-repeat,no-repeat,repeat,repeat,no-repeat,no-repeat!important;background-attachment:fixed,fixed,fixed,fixed,scroll,scroll,scroll,scroll!important;background-blend-mode:normal!important;
+    linear-gradient(to bottom left,transparent 50%,#868282 50%),
+    linear-gradient(#868282,#868282),
+    linear-gradient(115deg,rgba(255,255,255,0) 18%,rgba(255,255,255,.22) 40%,rgba(255,255,255,0) 60%),
+    var(--hp-brush),
+    var(--hp-metal)!important;
+  background-size:auto,auto,auto,var(--hp-kwW) var(--hp-kwH),var(--hp-bladeW) var(--hp-bladeH),100vw 100vh,var(--hp-kwW) var(--hp-kwH),calc(100vw - var(--hp-kwW) + 96px) 100vh,var(--hp-kwW) var(--hp-kwH),512px 128px,var(--hp-kwW) var(--hp-kwH), var(--hp-kwW) var(--hp-kwH), var(--hp-kwW) var(--hp-kwH), var(--hp-kwW) var(--hp-kwH), var(--hp-kwW) var(--hp-kwH), var(--hp-kwW) var(--hp-kwH), var(--hp-kwW) var(--hp-kwH)!important;
+  background-position:0 0,0 0,0 0,right -96px top 0,right -96px top var(--hp-bladeY),0 0,right -96px top 0,0 0,right -96px top 0,right -96px top 0,right -96px top 0, right -96px top 0, right -96px top 0, right -96px top 0, right -96px top 0, right -96px top 0, right -96px top 0!important;
+  background-repeat:repeat,repeat,no-repeat,no-repeat,no-repeat,no-repeat,no-repeat,no-repeat,no-repeat,repeat,repeat, repeat, repeat, repeat, repeat, repeat, repeat!important;
+  background-attachment:scroll,scroll,scroll,fixed,fixed,fixed,fixed,fixed,fixed,fixed,fixed, fixed, fixed, fixed, fixed, fixed, fixed!important;
+  background-blend-mode:normal,normal,normal,normal,normal,normal,normal,normal,normal,overlay,normal, normal, normal, normal, normal, normal, normal!important;
   color:#fff!important;border-bottom-color:#868282!important}
 html:root #grid .kw::after{background:none!important}
 
@@ -2540,7 +2544,7 @@ html:root .kwbrand span{color:#F1F1F1!important;text-shadow:0 1px 2px rgba(0,0,0
 <script>
 const FB_CONFIG={apiKey:"AIzaSyC_uZPvc5rJETwlS4JbfCoTkkE4ckjtp0M",authDomain:"velocenter-planer.firebaseapp.com",projectId:"velocenter-planer",storageBucket:"velocenter-planer.firebasestorage.app",messagingSenderId:"1018330488700",appId:"1:1018330488700:web:262a4d1660353e6fde8ef9"};
 /* ================= Velocenter Werkstatt-Cockpit – Oberfläche ================= */
-const CLIENT_VERSION='1.10.86';
+const CLIENT_VERSION='1.10.87';
 const USERS=[{id:'kevin',n:'Kevin',c:'#E2232D'},{id:'stefan',n:'Stefan',c:'#F59E0B'},{id:'martina',n:'Martina',c:'#EC4899'},{id:'sascha',n:'Sascha',c:'#22D3EE'},{id:'rene',n:'René',c:'#34D399'}];
 const U=id=>USERS.find(u=>u.id===id)||{n:'',c:'#64748B',id:''};
 /* 1.10.37: Profilfarbe je Nutzer (meta/prefs[ID].col, für alle sichtbar) – Cache für den Login-Bildschirm */
