@@ -11,12 +11,18 @@ extra=open('sections.css').read()+'''
 @media (max-width:720px){#navTog{display:none!important}.metools{grid-template-columns:repeat(2,38px);margin-top:0;flex:none}.me{margin-top:0;flex:none}}
 '''
 body=open('body_fb.html').read()
-logo=open('logo_small.b64').read().strip()
-body=body.replace('<img src="data:image/webp;base64,__LOGO__" alt="Velocenter Hessert"><h2 id="whoT">','<img id="whoLogo" src="data:image/webp;base64,'+logo+'" alt="Velocenter Hessert"><h2 id="whoT">')
-js=open('app_fb.js').read().replace('__LSDEF__',open('ls_seed.js').read()).replace('__LSREC__',open('ls_rec.js').read()).replace('__LOGOS__',open('logos_small.js').read()).replace('__SKON__',open('skon.js').read()).replace('__OKLOGO__',open('oklogo.b64').read().strip()).replace('__VERSION__',VERSION)
-meta='<!doctype html>\n<html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><meta name="theme-color" content="#07090D"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icon-192.png"><link rel="apple-touch-icon" href="icon-192.png">\n'
+import base64
+# 1.10.80: Velocenter-Logo als scharfes SVG (Homepage velocenter-logo.svg, Originalfarben) – Anmeldung + O.K.-Aufkleber
+logo=base64.b64encode(open('vclogo.svg','rb').read()).decode()
+body=body.replace('<img src="data:image/webp;base64,__LOGO__" alt="Velocenter Hessert"><h2 id="whoT">','<img id="whoLogo" src="data:image/svg+xml;base64,'+logo+'" alt="Velocenter Hessert"><h2 id="whoT">')
+js=open('app_fb.js').read().replace('__LSDEF__',open('ls_seed.js').read()).replace('__LSREC__',open('ls_rec.js').read()).replace('__LOGOS__',open('logos_small.js').read()).replace('__SKON__',open('skon.js').read()).replace('__OKLOGO__',logo).replace('__VERSION__',VERSION)
+meta='<!doctype html>\n<html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><meta name="theme-color" content="#D3DCE5"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icon-192.png"><link rel="apple-touch-icon" href="icon-192.png">\n'
+# 1.10.80 Homepage-Design A (hell): App-CSS automatisch dunkel -> hell umgerechnet (theme_xform.py, nur Farben) + Handarbeit theme_hp.css
+sys.dont_write_bytecode=True
+import theme_xform
+THEME='\n/* ===== Homepage-Design A (1.10.80) – automatisch umgerechnete Farben ===== */\n'+theme_xform.walk(theme_xform.strip_comments(head.split('<style>',1)[1]+extra))+'\n'+open('theme_hp.css').read()
 def page(fbscripts):
-    return meta+head+extra+'</style></head><body>\n'+body+'\n'+fbscripts+'\n<script>\n'+CFG+'\n'+js+'\n</script>\n</body></html>\n'
+    return meta+head+extra+THEME+'</style></head><body>\n'+body+'\n'+fbscripts+'\n<script>\n'+CFG+'\n'+js+'\n</script>\n</body></html>\n'
 FB='\n'.join(f'<script src="https://www.gstatic.com/firebasejs/10.12.2/{n}-compat.js"></script>' for n in ['firebase-app','firebase-auth','firebase-firestore'])
 OUT='..'
 open(OUT+'/index.html','w').write(page(FB))

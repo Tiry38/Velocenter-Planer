@@ -36,8 +36,15 @@ async function del(k,id){try{await db.collection(COL[k]).doc(String(id)).delete(
 const IMGU=new Map();function imgU(s){if(!s||typeof s!=='string')return '';let u=IMGU.get(s);if(u!==undefined)return u;
  const m=s.length>1500&&/^data:(image\/[\w.+-]+);base64,/.exec(s);u=esc(s);
  if(m&&/^[A-Za-z0-9+/=\s]*$/.test(s.slice(m[0].length))){try{const b=atob(s.slice(m[0].length).replace(/\s/g,'')),a=new Uint8Array(b.length);for(let i=0;i<b.length;i++)a[i]=b.charCodeAt(i);u=URL.createObjectURL(new Blob([a],{type:m[1]}));}catch(e){}}
- if(IMGU.size>400)IMGU.clear();IMGU.set(s,u);return u;}
-const OKLOGO='data:image/webp;base64,__OKLOGO__';
+ if(IMGU.size>400)IMGU.clear();IMGU.set(s,u);if(/^data:image\/(png|webp|jpe?g|gif)/.test(s)&&!LGSAFE.has(s))lgFix(s,u);return u;}
+/* 1.10.80 (helles Homepage-Design): früher für den dunklen Grund weiß/hell gemachte Logos (Firestore: Lieferanten-, Marken-, Leasing-Logos) beim Anzeigen dunkel drehen – die gespeicherten Daten bleiben unverändert */
+const LGSAFE=new Set();let LGQ=Promise.resolve();
+function lgFix(s,u){LGSAFE.add(s);LGQ=LGQ.then(()=>new Promise(res=>{const i=new Image();i.onload=()=>{try{const w=i.naturalWidth,h=i.naturalHeight;if(!w||!h||w*h>4e6)return res();const c=cvs(w,h),x=c.getContext('2d');x.drawImage(i,0,0);const D=x.getImageData(0,0,w,h),o=D.data;
+ let lt=0,al=0;for(let p=0;p<o.length;p+=4){const a=o[p+3]/255;if(a<.12)continue;al+=a;const r=o[p],g=o[p+1],b=o[p+2],mx=Math.max(r,g,b),mn=Math.min(r,g,b);if((!mx||(mx-mn)/mx<.25)&&(.2126*r+.7152*g+.0722*b)>175)lt+=a;}
+ if(!al||lt/al<.3)return res();
+ for(let p=0;p<o.length;p+=4){if(o[p+3]<4)continue;const r=o[p],g=o[p+1],b=o[p+2],mx=Math.max(r,g,b),mn=Math.min(r,g,b);if(!mx||(mx-mn)/mx<.25){const l=(.2126*r+.7152*g+.0722*b)/255;const v=Math.round(28+(1-l)*200);o[p]=v;o[p+1]=v;o[p+2]=Math.min(255,v+8);}}
+ x.putImageData(D,0,0);c.toBlob(bl=>{if(bl){const nu=URL.createObjectURL(bl);IMGU.set(s,nu);document.querySelectorAll('img').forEach(im=>{if(im.getAttribute('src')===u)im.setAttribute('src',nu);});}res();},'image/png');}catch(e){res();}};i.onerror=()=>res();i.src=u.replace(/&amp;/g,'&');}));}
+const OKLOGO='data:image/svg+xml;base64,__OKLOGO__';
 /* ---------- Datum ---------- */
 const WD=['Sonntag','Montag','Dienstag','Mittwoch','Donnerstag','Freitag','Samstag'];
 const WDS=['SO','MO','DI','MI','DO','FR','SA'];
@@ -357,17 +364,16 @@ async function procLogo(file,H=80){const img=await loadImg(file);let w=img.natur
  const O=ox.getImageData(0,0,tw,th),o=O.data,src=new Uint8ClampedArray(o),amt=.45;
  for(let j=1;j<th-1;j++)for(let i=1;i<tw-1;i++){const p=(j*tw+i)*4;if(src[p+3]<8)continue;for(let k=0;k<3;k++){const bl=(src[p+k]*4+src[p-4+k]+src[p+4+k]+src[p-tw*4+k]+src[p+tw*4+k])/8;o[p+k]=src[p+k]+amt*(src[p+k]-bl);}}
  ox.putImageData(O,0,0);
- // 5) Dunkles Logo auf dunkler Oberfläche unsichtbar → dunkle, unbunte Teile automatisch hell
- if(logoDark(o))logoLight(o);ox.putImageData(O,0,0);
+ // 5) 1.10.80: kein automatisches Aufhellen mehr (helles Design – Logo bleibt in Originalfarben)
  return out.toDataURL('image/png');}
-function logoDark(o){let s=0,n=0;for(let p=0;p<o.length;p+=4){const a=o[p+3]/255;if(a<.3)continue;s+=a*(.2126*o[p]+.7152*o[p+1]+.0722*o[p+2])/255;n+=a;}return n>0&&s/n<.3;}
-function logoLight(o){for(let p=0;p<o.length;p+=4){if(o[p+3]<8)continue;const r=o[p],g=o[p+1],b=o[p+2],mx=Math.max(r,g,b),mn=Math.min(r,g,b),sat=mx?(mx-mn)/mx:0,l=(.2126*r+.7152*g+.0722*b)/255;if(sat<.25&&l<.55){const v=Math.round(240-l*40);o[p]=v;o[p+1]=v;o[p+2]=Math.min(255,v+8);}}}
 async function logoInvert(url){const i=new Image();await new Promise((r,j)=>{i.onload=r;i.onerror=j;i.src=url;});const c=cvs(i.width,i.height),x=c.getContext('2d');x.drawImage(i,0,0);const D=x.getImageData(0,0,c.width,c.height),o=D.data;
  for(let p=0;p<o.length;p+=4){if(o[p+3]<8)continue;const r=o[p],g=o[p+1],b=o[p+2],mx=Math.max(r,g,b),mn=Math.min(r,g,b);if(!mx||(mx-mn)/mx<.25){o[p]=255-r;o[p+1]=255-g;o[p+2]=255-b;}}x.putImageData(D,0,0);return c.toDataURL('image/png');}
 // Logos verteilt auf meta/blg_0..15 (Firestore: max. 1 MB je Dokument), meta/brands nur Liste (+ alte Logos)
 const BLN=16,blShard=k=>{let h=0;for(const c of String(k))h=(h*31+c.charCodeAt(0))>>>0;return h%BLN;};
 let BLEG={},BSH={};
-function blMerge(){const l=Object.assign({},BLEG);for(const n in BSH){const m=BSH[n]||{};for(const k in m){if(m[k])l[k]=m[k];else delete l[k];}}BUSER.logos=l;}
+function blMerge(){const l=Object.assign({},BLEG);for(const n in BSH){const m=BSH[n]||{};for(const k in m){if(m[k])l[k]=m[k];else delete l[k];}}
+ /* 1.10.80: eingebaute Original-Logos (Homepage) haben Vorrang */for(const b of allBrands()){const x=BLOGO[bNorm(b.n)]||BLOGO[bNorm(b.k)];if(x)l[b.k]=x;}for(const n in BLOGO)l[bKey(BNAME[n]||n)]=BLOGO[n];BUSER.logos=l;}
+const BNAME={ktm:'KTM',isy:'i:SY',gudereit:'Gudereit',qio:'QiO',stevens:'Stevens',vanraam:'Van Raam',velodeville:'Velo de Ville',victoria:'Victoria'};
 function blPut(k,u){const n=blShard(k);BSH[n]=Object.assign({},BSH[n],{[k]:u||null});blMerge();return db.doc('meta/blg_'+n).set({l:{[k]:u||null},ts:stamp()},{merge:true});}
 let BLOK=new Set(),BLMIG=false;
 // Einmalig (Admin): alte Logos aus meta/brands in die Teil-Dokumente verschieben, danach meta/brands ohne Logos
@@ -400,7 +406,7 @@ function brandDlg(){const A0=allBrands(),A=A0.concat([...new Map(V.filter(b=>Str
  const row=b=>{const u=ul.find(x=>x.k===b.k)||{};const lg=LG[b.k];return `<div class="brow" data-bk="${esc(b.k)}">
   <div class="bprev">${lg?`<img src="${imgU(lg)}" alt="${esc(b.n)}" class="bp1"><img src="${imgU(lg)}" alt="" class="bp2">`:`<span class="bchip"${b.c?` style="color:${b.c}"`:''}>${esc(b.n)}</span><em>noch kein Logo</em>`}</div>
   <div class="binfo"><b>${esc(b.n)}</b><label>${b.own?'Erkennungswörter im Modell':'Zusätzliche Erkennungswörter'}<input class="bw" value="${esc(u.w||'')}" placeholder="${b.own?'z. B. Endeavour, Image, Entice':'automatisch erkannt – optional ergänzen'}"></label></div>
-  <div class="bacts"><label class="btn bup">⬆ Logo<input type="file" accept="image/*" hidden></label>${lg?`<button class="btn" type="button" data-binv title="Schwarz/Weiß-Teile tauschen">Hell ⇄</button><button class="btn" type="button" data-bdel title="Logo entfernen">✕</button>`:''}${b.own?`<button class="btn" type="button" data-bkill title="Marke löschen">🗑</button>`:''}</div></div>`;};
+  <div class="bacts">${BLOGO[bNorm(b.n)]||BLOGO[bNorm(b.k)]?'<span class="bfix" title="Original-Logo der Homepage – fest eingebaut, scharf in jeder Größe">★ Original-Logo</span>':`<label class="btn bup">⬆ Logo<input type="file" accept="image/*" hidden></label>${lg?`<button class="btn" type="button" data-binv title="Schwarz/Weiß-Teile tauschen">Hell/Dunkel ⇄</button><button class="btn" type="button" data-bdel title="Logo entfernen">✕</button>`:''}${b.own?`<button class="btn" type="button" data-bkill title="Marke löschen">🗑</button>`:''}`}</div></div>`;};
  $('dlgBox').classList.add('wide');
  dlg(`<h3>🏷 Markenlogos</h3><p class="hint">Logo hochladen (PNG, JPG, SVG, WebP – Screenshot reicht). Die App stellt automatisch frei, schneidet zu, schärft und bringt es auf die passende Größe für Liste und Karten. Gilt sofort auf allen PCs.</p>
  <div id="brF" class="blist">${A.map(row).join('')}</div>
@@ -409,7 +415,7 @@ function brandDlg(){const A0=allBrands(),A=A0.concat([...new Map(V.filter(b=>Str
  <div class="err" id="brE"></div><div class="acts"><button class="btn" type="button" data-close>Fertig</button></div>`);
  const box=$('dlgBox'),E=t=>{$('brE').textContent=t||'';};{const cp=$('cfgPw');if(cp)cp.addEventListener('click',()=>{dlgClose();$('meSet').click();});}
  box.querySelectorAll('.brow').forEach(r=>{const k=r.dataset.bk;
-  r.querySelector('input[type=file]').addEventListener('change',async e=>{const f=e.target.files[0];if(!f)return;E('Logo wird aufbereitet …');try{const u=await procLogo(f);if(u.length>300000)throw new Error('Logo zu groß');await blPut(k,u);E('');toast('Logo gespeichert');brandDlg();}catch(err){E(err.message||String(err));}});
+  const fi=r.querySelector('input[type=file]');if(fi)fi.addEventListener('change',async e=>{const f=e.target.files[0];if(!f)return;E('Logo wird aufbereitet …');try{const u=await procLogo(f);if(u.length>300000)throw new Error('Logo zu groß');await blPut(k,u);E('');toast('Logo gespeichert');brandDlg();}catch(err){E(err.message||String(err));}});
   const inv=r.querySelector('[data-binv]');if(inv)inv.addEventListener('click',async()=>{try{await blPut(k,await logoInvert(BUSER.logos[k]));}catch(err){fail(err);}brandDlg();});
   const del=r.querySelector('[data-bdel]');if(del)del.addEventListener('click',async()=>{try{await blPut(k,null);}catch(err){fail(err);}brandDlg();});
   const kill=r.querySelector('[data-bkill]');if(kill)kill.addEventListener('click',async()=>{BUSER.list=(BUSER.list||[]).filter(x=>x.k!==k);try{await brSave();if(BUSER.logos[k])await blPut(k,null);}catch(err){fail(err);}brandDlg();});
