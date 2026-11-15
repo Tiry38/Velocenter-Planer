@@ -33,7 +33,7 @@
   --hp-btn:linear-gradient(180deg,rgba(255,255,255,.18),rgba(255,255,255,0) 55%),linear-gradient(100deg,#D9142F,#C8102E 45%,#A50D26);
   --hp-sh:0 1px 0 rgba(255,255,255,.9) inset,0 18px 40px -22px rgba(27,30,37,.35),0 3px 10px -4px rgba(27,30,37,.12);
   --hp-cardsh:0 16px 36px -22px rgba(27,30,37,.4),inset 0 0 0 1px rgba(184,115,51,.18);
-  color-scheme:light;
+  color-scheme:light dark;
 }
 html body,body[data-v]{background-color:#D3DCE5!important;color:var(--fg)}
 body.bgruh::after{display:block}
