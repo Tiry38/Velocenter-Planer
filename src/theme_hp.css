@@ -121,7 +121,7 @@ html:root section.view :is(p.hint,h3.sub,.ausel,.auhint,.vohead h2){background-c
 html:root section.view :is(.auhint b,.ausel b,h3.sub small){background:none;box-shadow:none}
 
 /* ---------- 1.10.82 (Tiry 15.11.): feines Riffelmuster (115°) auf Perlmutt/Eisblau + farbige Navi ---------- */
-:root{--hp-riff:repeating-linear-gradient(115deg,rgba(255,255,255,.6) 0 1px,rgba(70,95,125,.075) 1px 2px,rgba(255,255,255,0) 2px 4px)}
+:root{--hp-riff:repeating-linear-gradient(115deg,rgba(255,255,255,0) 0,rgba(255,255,255,.26) 2px,rgba(255,255,255,0) 4px)}
 html:root #grid .c,html:root #grid .t,html:root #grid :is(.hd,.day,.dc){background-image:var(--hp-riff)!important}
 html:root :is(.board,.vtab,.rktab,.kdboard,.nboard,#sTab,#tgTab,.board .bcol,.lsgrid .lc){background-image:var(--hp-riff),var(--hp-pearl)!important}
 html:root :is(#grid .hd,thead th){background:var(--hp-riff),linear-gradient(115deg,transparent 30%,rgba(255,255,255,.7) 48%,transparent 66%),var(--hp-ice)!important}
