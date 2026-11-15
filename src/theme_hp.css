@@ -148,22 +148,21 @@ html:root .merk{background:var(--hp-riff),linear-gradient(115deg,transparent 30%
 :root{--hp-kwW:calc(62.9vh + 96px);--hp-kwH:calc(135vh + 206px)}
 html:root #grid .kw{
   background-color:#868282!important;
-  background-image:repeating-linear-gradient(45deg,rgba(255,255,255,.07) 0 1px,transparent 1px 6px),
-    repeating-linear-gradient(-45deg,rgba(0,0,0,.10) 0 1px,transparent 1px 6px),
-    linear-gradient(180deg,rgba(255,255,255,.12) 0%,rgba(255,255,255,0) 40%,rgba(0,0,0,.16) 100%),
-    linear-gradient(to bottom left,transparent calc(50% - 4px),#F4F6F9 calc(50% - 4px),#C3C8D0 calc(50% - 2px),#8E939B calc(50% - .5px),#5F6168 50%,transparent 50%),
+  background-image:linear-gradient(to bottom left,transparent calc(50% - 4px),#F4F6F9 calc(50% - 4px),#C3C8D0 calc(50% - 2px),#8E939B calc(50% - .5px),#5F6168 50%,transparent 50%),
     var(--hp-blade),
     linear-gradient(115deg,transparent calc(6.344vw + 5.982vh),#6A6666 calc(6.344vw + 5.982vh),#6A6666 calc(7.250vw + 6.404vh),transparent calc(7.250vw + 6.404vh),transparent calc(56.19vw + 26.20vh),#6A6666 calc(56.19vw + 26.20vh),#6A6666 calc(57.55vw + 26.84vh),transparent calc(57.55vw + 26.84vh),transparent calc(59.82vw + 27.89vh),#CF1A2C calc(59.82vw + 27.89vh),#CF1A2C calc(60.72vw + 28.31vh),transparent calc(60.72vw + 28.31vh)),
+    url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg'><defs><pattern id='p' width='8.485' height='8.485' patternUnits='userSpaceOnUse'><path d='M0 8.485 L8.485 0' stroke='rgba(255,255,255,.07)' stroke-width='1'/><path d='M0 0 L8.485 8.485' stroke='rgba(0,0,0,.10)' stroke-width='1'/></pattern><clipPath id='c' clipPathUnits='objectBoundingBox'><polygon points='0,0 1,1 0,1'/></clipPath></defs><rect width='100%' height='100%' fill='url(%23p)' clip-path='url(%23c)'/></svg>"),
+    url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg'><defs><pattern id='p' width='8.485' height='8.485' patternUnits='userSpaceOnUse'><path d='M0 8.485 L8.485 0' stroke='rgba(255,255,255,.07)' stroke-width='1'/><path d='M0 0 L8.485 8.485' stroke='rgba(0,0,0,.10)' stroke-width='1'/></pattern></defs><rect width='100%' height='100%' fill='url(%23p)'/></svg>"),
     linear-gradient(to bottom left,transparent 50%,#868282 50%),
     linear-gradient(#868282,#868282),
     linear-gradient(115deg,rgba(255,255,255,0) 18%,rgba(255,255,255,.22) 40%,rgba(255,255,255,0) 60%),
     var(--hp-brush),
     var(--hp-metal)!important;
-  background-size:auto,auto,auto,var(--hp-kwW) var(--hp-kwH),var(--hp-bladeW) var(--hp-bladeH),100vw 100vh,var(--hp-kwW) var(--hp-kwH),calc(100vw - var(--hp-kwW) + 96px) 100vh,var(--hp-kwW) var(--hp-kwH),512px 128px,var(--hp-kwW) var(--hp-kwH), var(--hp-kwW) var(--hp-kwH), var(--hp-kwW) var(--hp-kwH), var(--hp-kwW) var(--hp-kwH), var(--hp-kwW) var(--hp-kwH), var(--hp-kwW) var(--hp-kwH), var(--hp-kwW) var(--hp-kwH)!important;
-  background-position:0 0,0 0,0 0,right -96px top 0,right -96px top var(--hp-bladeY),0 0,right -96px top 0,0 0,right -96px top 0,right -96px top 0,right -96px top 0, right -96px top 0, right -96px top 0, right -96px top 0, right -96px top 0, right -96px top 0, right -96px top 0!important;
-  background-repeat:repeat,repeat,no-repeat,no-repeat,no-repeat,no-repeat,no-repeat,no-repeat,no-repeat,repeat,repeat, repeat, repeat, repeat, repeat, repeat, repeat!important;
-  background-attachment:scroll,scroll,scroll,fixed,fixed,fixed,fixed,fixed,fixed,fixed,fixed, fixed, fixed, fixed, fixed, fixed, fixed!important;
-  background-blend-mode:normal,normal,normal,normal,normal,normal,normal,normal,normal,overlay,normal, normal, normal, normal, normal, normal, normal!important;
+  background-size:var(--hp-kwW) var(--hp-kwH),var(--hp-bladeW) var(--hp-bladeH),100vw 100vh,var(--hp-kwW) var(--hp-kwH),calc(100vw - var(--hp-kwW) + 96px) 100vh,var(--hp-kwW) var(--hp-kwH),calc(100vw - var(--hp-kwW) + 96px) 100vh,var(--hp-kwW) var(--hp-kwH),512px 128px,var(--hp-kwW) var(--hp-kwH), var(--hp-kwW) var(--hp-kwH), var(--hp-kwW) var(--hp-kwH), var(--hp-kwW) var(--hp-kwH), var(--hp-kwW) var(--hp-kwH), var(--hp-kwW) var(--hp-kwH), var(--hp-kwW) var(--hp-kwH)!important;
+  background-position:right -96px top 0,right -96px top var(--hp-bladeY),0 0,right -96px top 0,0 0,right -96px top 0,0 0,right -96px top 0,calc(100vw + 96px - var(--hp-kwW)) 0,right -96px top 0, right -96px top 0, right -96px top 0, right -96px top 0, right -96px top 0, right -96px top 0, right -96px top 0!important;
+  background-repeat:no-repeat,no-repeat,no-repeat,no-repeat,no-repeat,no-repeat,no-repeat,no-repeat,repeat,repeat, repeat, repeat, repeat, repeat, repeat, repeat!important;
+  background-attachment:fixed!important;
+  background-blend-mode:normal,normal,normal,normal,normal,normal,normal,normal,overlay,normal,normal,normal,normal,normal,normal,normal!important;
   color:#fff!important;border-bottom-color:#868282!important}
 html:root #grid .kw::after{background:none!important}
 

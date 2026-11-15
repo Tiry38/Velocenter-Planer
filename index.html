@@ -2313,22 +2313,21 @@ html:root .merk{background:var(--hp-riff),linear-gradient(115deg,transparent 30%
 :root{--hp-kwW:calc(62.9vh + 96px);--hp-kwH:calc(135vh + 206px)}
 html:root #grid .kw{
   background-color:#868282!important;
-  background-image:repeating-linear-gradient(45deg,rgba(255,255,255,.07) 0 1px,transparent 1px 6px),
-    repeating-linear-gradient(-45deg,rgba(0,0,0,.10) 0 1px,transparent 1px 6px),
-    linear-gradient(180deg,rgba(255,255,255,.12) 0%,rgba(255,255,255,0) 40%,rgba(0,0,0,.16) 100%),
-    linear-gradient(to bottom left,transparent calc(50% - 4px),#F4F6F9 calc(50% - 4px),#C3C8D0 calc(50% - 2px),#8E939B calc(50% - .5px),#5F6168 50%,transparent 50%),
+  background-image:linear-gradient(to bottom left,transparent calc(50% - 4px),#F4F6F9 calc(50% - 4px),#C3C8D0 calc(50% - 2px),#8E939B calc(50% - .5px),#5F6168 50%,transparent 50%),
     var(--hp-blade),
     linear-gradient(115deg,transparent calc(6.344vw + 5.982vh),#6A6666 calc(6.344vw + 5.982vh),#6A6666 calc(7.250vw + 6.404vh),transparent calc(7.250vw + 6.404vh),transparent calc(56.19vw + 26.20vh),#6A6666 calc(56.19vw + 26.20vh),#6A6666 calc(57.55vw + 26.84vh),transparent calc(57.55vw + 26.84vh),transparent calc(59.82vw + 27.89vh),#CF1A2C calc(59.82vw + 27.89vh),#CF1A2C calc(60.72vw + 28.31vh),transparent calc(60.72vw + 28.31vh)),
+    url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg'><defs><pattern id='p' width='8.485' height='8.485' patternUnits='userSpaceOnUse'><path d='M0 8.485 L8.485 0' stroke='rgba(255,255,255,.07)' stroke-width='1'/><path d='M0 0 L8.485 8.485' stroke='rgba(0,0,0,.10)' stroke-width='1'/></pattern><clipPath id='c' clipPathUnits='objectBoundingBox'><polygon points='0,0 1,1 0,1'/></clipPath></defs><rect width='100%' height='100%' fill='url(%23p)' clip-path='url(%23c)'/></svg>"),
+    url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg'><defs><pattern id='p' width='8.485' height='8.485' patternUnits='userSpaceOnUse'><path d='M0 8.485 L8.485 0' stroke='rgba(255,255,255,.07)' stroke-width='1'/><path d='M0 0 L8.485 8.485' stroke='rgba(0,0,0,.10)' stroke-width='1'/></pattern></defs><rect width='100%' height='100%' fill='url(%23p)'/></svg>"),
     linear-gradient(to bottom left,transparent 50%,#868282 50%),
     linear-gradient(#868282,#868282),
     linear-gradient(115deg,rgba(255,255,255,0) 18%,rgba(255,255,255,.22) 40%,rgba(255,255,255,0) 60%),
     var(--hp-brush),
     var(--hp-metal)!important;
-  background-size:auto,auto,auto,var(--hp-kwW) var(--hp-kwH),var(--hp-bladeW) var(--hp-bladeH),100vw 100vh,var(--hp-kwW) var(--hp-kwH),calc(100vw - var(--hp-kwW) + 96px) 100vh,var(--hp-kwW) var(--hp-kwH),512px 128px,var(--hp-kwW) var(--hp-kwH), var(--hp-kwW) var(--hp-kwH), var(--hp-kwW) var(--hp-kwH), var(--hp-kwW) var(--hp-kwH), var(--hp-kwW) var(--hp-kwH), var(--hp-kwW) var(--hp-kwH), var(--hp-kwW) var(--hp-kwH)!important;
-  background-position:0 0,0 0,0 0,right -96px top 0,right -96px top var(--hp-bladeY),0 0,right -96px top 0,0 0,right -96px top 0,right -96px top 0,right -96px top 0, right -96px top 0, right -96px top 0, right -96px top 0, right -96px top 0, right -96px top 0, right -96px top 0!important;
-  background-repeat:repeat,repeat,no-repeat,no-repeat,no-repeat,no-repeat,no-repeat,no-repeat,no-repeat,repeat,repeat, repeat, repeat, repeat, repeat, repeat, repeat!important;
-  background-attachment:scroll,scroll,scroll,fixed,fixed,fixed,fixed,fixed,fixed,fixed,fixed, fixed, fixed, fixed, fixed, fixed, fixed!important;
-  background-blend-mode:normal,normal,normal,normal,normal,normal,normal,normal,normal,overlay,normal, normal, normal, normal, normal, normal, normal!important;
+  background-size:var(--hp-kwW) var(--hp-kwH),var(--hp-bladeW) var(--hp-bladeH),100vw 100vh,var(--hp-kwW) var(--hp-kwH),calc(100vw - var(--hp-kwW) + 96px) 100vh,var(--hp-kwW) var(--hp-kwH),calc(100vw - var(--hp-kwW) + 96px) 100vh,var(--hp-kwW) var(--hp-kwH),512px 128px,var(--hp-kwW) var(--hp-kwH), var(--hp-kwW) var(--hp-kwH), var(--hp-kwW) var(--hp-kwH), var(--hp-kwW) var(--hp-kwH), var(--hp-kwW) var(--hp-kwH), var(--hp-kwW) var(--hp-kwH), var(--hp-kwW) var(--hp-kwH)!important;
+  background-position:right -96px top 0,right -96px top var(--hp-bladeY),0 0,right -96px top 0,0 0,right -96px top 0,0 0,right -96px top 0,calc(100vw + 96px - var(--hp-kwW)) 0,right -96px top 0, right -96px top 0, right -96px top 0, right -96px top 0, right -96px top 0, right -96px top 0, right -96px top 0!important;
+  background-repeat:no-repeat,no-repeat,no-repeat,no-repeat,no-repeat,no-repeat,no-repeat,no-repeat,repeat,repeat, repeat, repeat, repeat, repeat, repeat, repeat!important;
+  background-attachment:fixed!important;
+  background-blend-mode:normal,normal,normal,normal,normal,normal,normal,normal,overlay,normal,normal,normal,normal,normal,normal,normal!important;
   color:#fff!important;border-bottom-color:#868282!important}
 html:root #grid .kw::after{background:none!important}
 
@@ -2544,7 +2543,7 @@ html:root .kwbrand span{color:#F1F1F1!important;text-shadow:0 1px 2px rgba(0,0,0
 <script>
 const FB_CONFIG={apiKey:"AIzaSyC_uZPvc5rJETwlS4JbfCoTkkE4ckjtp0M",authDomain:"velocenter-planer.firebaseapp.com",projectId:"velocenter-planer",storageBucket:"velocenter-planer.firebasestorage.app",messagingSenderId:"1018330488700",appId:"1:1018330488700:web:262a4d1660353e6fde8ef9"};
 /* ================= Velocenter Werkstatt-Cockpit – Oberfläche ================= */
-const CLIENT_VERSION='1.10.87';
+const CLIENT_VERSION='1.10.88';
 const USERS=[{id:'kevin',n:'Kevin',c:'#E2232D'},{id:'stefan',n:'Stefan',c:'#F59E0B'},{id:'martina',n:'Martina',c:'#EC4899'},{id:'sascha',n:'Sascha',c:'#22D3EE'},{id:'rene',n:'René',c:'#34D399'}];
 const U=id=>USERS.find(u=>u.id===id)||{n:'',c:'#64748B',id:''};
 /* 1.10.37: Profilfarbe je Nutzer (meta/prefs[ID].col, für alle sichtbar) – Cache für den Login-Bildschirm */
@@ -3024,14 +3023,17 @@ async function seedLeasing(){if(!ME||!ME.adm)return;try{await db.runTransaction(
 // Leasing-Infos einmalig auf die neue Struktur (Tirys Fragenliste) bringen; alte Listen werden in „alt“ gesichert
 let recDone=false;async function recLeasing(){if(recDone||!ME||!ME.adm||!L.length)return;recDone=true;try{await db.runTransaction(async t=>{const f=db.doc('meta/seed');const d=await t.get(f);const old=d.exists?(d.data().rec||0):0;if(old>=LSREC_VER)return;
   LSREC.filter(x=>(x.v||3)>old).forEach(x=>{/* nur neue Fassungen überschreiben, eigene Änderungen an anderen Karten bleiben */const o=L.find(l=>l.id===x.k)||L.find(l=>l.k===x.k);if(!o)return;const u=recMerge(o,x);u.ts=stamp();t.set(db.collection('leasing').doc(o.id),u,{merge:true});});t.set(f,{rec:LSREC_VER},{merge:true});});}catch(e){recDone=false;fail(e);}}
-// Offenes (nicht gelöscht = nicht erledigt) wandert auf heute: Werkstatt wie bisher, dazu Intern/WhatsApp/Notiz ab 02.11.2026 (ältere = Sheet-Historie)
-const ROLL_NEU=['int','wa','not','bst'],ROLL_AB='2026-11-02';
-async function rollover(){const t=TODAY();let go=false;try{go=await db.runTransaction(async tr=>{const f=db.doc('meta/rollover');const d=await tr.get(f);if(d.exists&&d.data().datum===t)return false;tr.set(f,{datum:t,von:ME.id});return true;});
+// Offenes (nicht gelöscht = nicht erledigt) wandert auf den nächsten sichtbaren Tag (heute; Sonntag → Montag, 1.10.88).
+// Sonstiges Werkstatt immer; Intern/Bestellen/WhatsApp/Notiz ab 02.11.2026; ab 1.10.88 (Tiry) ALLE übrigen Spalten (Termine, Anfragen, eigene) ab 14.11.2026 – ältere = Historie.
+const ROLL_NEU=['int','wa','not','bst'],ROLL_AB='2026-11-02',ROLL_ALL_AB='2026-11-14';
+const rollZiel=()=>{const d=new Date();if(d.getDay()===0)d.setDate(d.getDate()+1);return iso(d);};
+const rollMit=o=>{const dt=String(o.datum||'');if(o.spalte==='ws')return true;if(o.spalte==='best')return false;if(ROLL_NEU.includes(o.spalte))return dt>=ROLL_AB;return dt>=ROLL_ALL_AB;};
+async function rollover(){const t=rollZiel();let go=false;try{go=await db.runTransaction(async tr=>{const f=db.doc('meta/rollover');const d=await tr.get(f);if(d.exists&&d.data().datum===t)return false;tr.set(f,{datum:t,von:ME.id});return true;});
   if(!go)return;const snap=await db.collection('planer').where('datum','<',t).get();const refs=[];
-  snap.forEach(d=>{const o=d.data();if(o.erledigt==='1')return;if(o.spalte==='ws'||(ROLL_NEU.includes(o.spalte)&&String(o.datum)>=ROLL_AB))refs.push(d.ref);});
+  snap.forEach(d=>{const o=d.data();if(o.erledigt==='1')return;if(rollMit(o))refs.push(d.ref);});
   /* 1.10.63: Firestore erlaubt max. 500 Änderungen je Paket → in Paketen zu 450 */for(let i=0;i<refs.length;i+=450){const b=db.batch();refs.slice(i,i+450).forEach(r=>b.update(r,{datum:t,ts:stamp(),tsVon:ME.id}));await b.commit();}}catch(e){if(go){try{await db.doc('meta/rollover').set({datum:'',von:ME.id});}catch(_){}}}}
 // Mitternacht: läuft die App durch, rutscht Offenes ebenfalls automatisch auf den neuen Tag
-let rollDay=TODAY();setInterval(()=>{const t=TODAY();if(t!==rollDay&&ME){rollDay=t;rollover();scheduleRender();}},60000);
+let rollDay=rollZiel();setInterval(()=>{const t=rollZiel();if(t!==rollDay&&ME){rollDay=t;rollover();scheduleRender();}},60000);
 /* Auto-Update: neue Version auf GitHub → Seite lädt sich selbst neu (nicht während einer Eingabe) */
 async function verCheck(){try{const r=await fetch('version.txt?'+Date.now(),{cache:'no-store'});if(!r.ok)throw 0;const v=(await r.text()).trim();if(!/^\d+\.\d+\.\d+$/.test(v))throw 0;if(v&&v!==CLIENT_VERSION){if(editing()){$('upd').hidden=false;return;}location.replace(location.pathname+'?v='+encodeURIComponent(v));}}catch(_){}}
 setInterval(verCheck,30000);setTimeout(verCheck,3000);
