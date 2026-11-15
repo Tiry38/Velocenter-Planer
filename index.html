@@ -2370,6 +2370,14 @@ html:root nav .navbtn[aria-current="true"]::after{content:""!important;position:
 html:root nav .navbtn[aria-current="true"] .tile{box-shadow:inset 0 1px 0 rgba(255,255,255,.4),0 0 0 4px rgba(255,243,220,.35),0 0 16px 5px rgba(240,200,160,.75),0 0 30px 8px rgba(184,115,51,.35)!important}
 html:root nav .navbtn[aria-current="true"] .lbl,html:root nav .navbtn[aria-current="true"] .lbl b{color:#fff!important;text-shadow:0 1px 2px rgba(0,0,0,.45)!important}
 html:root nav .navbtn[aria-current="true"] .lbl small{color:#FFE7B8!important}
+/* 1.10.91 (Tiry: „noch offensichtlicher“): Goldschimmer hinter dem Symbol (Halo wie Innenglanz von .hring), Kachel leicht größer, Ring leuchtet stärker, Zeile kräftiger gold */
+html:root nav .navbtn[aria-current="true"]::before{display:block!important;content:""!important;position:absolute!important;left:-28px!important;top:-28px!important;bottom:auto!important;width:108px!important;height:108px!important;border-radius:50%!important;z-index:0;pointer-events:none;box-shadow:none!important;
+  background:radial-gradient(closest-side,rgba(255,244,214,1) 0%,rgba(255,228,170,1) 46%,rgba(246,204,140,.85) 58%,rgba(226,170,95,.5) 74%,rgba(200,140,70,.18) 88%,rgba(184,115,51,0) 100%)!important}
+html:root nav .navbtn[aria-current="true"] .tile{z-index:1;transform:scale(1.06)}
+html:root nav .navbtn[aria-current="true"]::after{z-index:2;filter:drop-shadow(0 0 4px rgba(255,220,160,.95)) drop-shadow(0 0 10px rgba(212,160,90,.8))}
+html:root nav .navbtn[aria-current="true"]:not(:hover){background:linear-gradient(90deg,rgba(240,200,160,.55),rgba(240,200,160,.18) 60%,transparent 92%)!important;box-shadow:inset 0 0 0 1px rgba(240,200,160,.55)!important}
+body.navmini nav .navbtn[aria-current="true"]:not(:hover){background:transparent!important;box-shadow:none!important}
+html:root nav .navbtn[aria-current="true"] .lbl,html:root nav .navbtn[aria-current="true"] .n{position:relative;z-index:1}
 </style></head><body>
 <div class="app">
 <nav aria-label="Bereiche">
@@ -2554,7 +2562,7 @@ html:root nav .navbtn[aria-current="true"] .lbl small{color:#FFE7B8!important}
 <script>
 const FB_CONFIG={apiKey:"AIzaSyC_uZPvc5rJETwlS4JbfCoTkkE4ckjtp0M",authDomain:"velocenter-planer.firebaseapp.com",projectId:"velocenter-planer",storageBucket:"velocenter-planer.firebasestorage.app",messagingSenderId:"1018330488700",appId:"1:1018330488700:web:262a4d1660353e6fde8ef9"};
 /* ================= Velocenter Werkstatt-Cockpit – Oberfläche ================= */
-const CLIENT_VERSION='1.10.90';
+const CLIENT_VERSION='1.10.91';
 const USERS=[{id:'kevin',n:'Kevin',c:'#E2232D'},{id:'stefan',n:'Stefan',c:'#F59E0B'},{id:'martina',n:'Martina',c:'#EC4899'},{id:'sascha',n:'Sascha',c:'#22D3EE'},{id:'rene',n:'René',c:'#34D399'}];
 const U=id=>USERS.find(u=>u.id===id)||{n:'',c:'#64748B',id:''};
 /* 1.10.37: Profilfarbe je Nutzer (meta/prefs[ID].col, für alle sichtbar) – Cache für den Login-Bildschirm */
