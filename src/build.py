@@ -16,7 +16,7 @@ import base64
 logo=base64.b64encode(open('vclogo.svg','rb').read()).decode()
 body=body.replace('<img src="data:image/webp;base64,__LOGO__" alt="Velocenter Hessert"><h2 id="whoT">','<img id="whoLogo" src="data:image/svg+xml;base64,'+logo+'" alt="Velocenter Hessert"><h2 id="whoT">')
 js=open('app_fb.js').read().replace('__LSDEF__',open('ls_seed.js').read()).replace('__LSREC__',open('ls_rec.js').read()).replace('__LOGOS__',open('logos_small.js').read()).replace('__SKON__',open('skon.js').read()).replace('__OKLOGO__',logo).replace('__VERSION__',VERSION)
-meta='<!doctype html>\n<html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><meta name="theme-color" content="#D3DCE5"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icon-192.png"><link rel="apple-touch-icon" href="icon-192.png">\n'
+meta='<!doctype html>\n<html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><meta name="theme-color" content="#D3DCE5"><meta name="color-scheme" content="light dark"><meta name="darkreader-lock"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icon-192.png"><link rel="apple-touch-icon" href="icon-192.png">\n'
 # 1.10.80 Homepage-Design A (hell): App-CSS automatisch dunkel -> hell umgerechnet (theme_xform.py, nur Farben) + Handarbeit theme_hp.css
 sys.dont_write_bytecode=True
 import theme_xform
