@@ -2284,6 +2284,28 @@ html:root #grid .kw::after{background:linear-gradient(90deg,rgba(255,255,255,.6)
 /* Texte direkt auf dem Grund (über Metall/Strichen) bekommen eine Perlmutt-Unterlage – ohne Größenänderung */
 html:root section.view :is(p.hint,h3.sub,.ausel,.auhint,.vohead h2){background-color:rgba(246,249,252,.92);box-shadow:0 0 0 5px rgba(246,249,252,.92),0 10px 20px -12px rgba(27,30,37,.35);border-radius:8px}
 html:root section.view :is(.auhint b,.ausel b,h3.sub small){background:none;box-shadow:none}
+
+/* ---------- 1.10.82 (Tiry 15.11.): feines Riffelmuster (115°) auf Perlmutt/Eisblau + farbige Navi ---------- */
+:root{--hp-riff:repeating-linear-gradient(115deg,rgba(255,255,255,.6) 0 1px,rgba(70,95,125,.075) 1px 2px,rgba(255,255,255,0) 2px 4px)}
+html:root #grid .c,html:root #grid .t,html:root #grid :is(.hd,.day,.dc){background-image:var(--hp-riff)!important}
+html:root :is(.board,.vtab,.rktab,.kdboard,.nboard,#sTab,#tgTab,.board .bcol,.lsgrid .lc){background-image:var(--hp-riff),var(--hp-pearl)!important}
+html:root :is(#grid .hd,thead th){background:var(--hp-riff),linear-gradient(115deg,transparent 30%,rgba(255,255,255,.7) 48%,transparent 66%),var(--hp-ice)!important}
+body::before{background-image:var(--hp-blade),var(--hp-grain),var(--hp-hex),var(--hp-riff),var(--hp-sheen),var(--hp-sky)!important}
+/* Navi: Eis mit Farbschimmern (Crimson oben, Blau/Violett Mitte, Türkis unten) statt Weiß */
+html:root nav{background-color:#DCE4EE!important;
+  background-image:var(--hp-hexi),var(--hp-riff),
+   radial-gradient(120% 34% at 0% 0%,rgba(200,16,46,.30),transparent 70%),
+   radial-gradient(110% 30% at 100% 38%,rgba(37,99,235,.22),transparent 72%),
+   radial-gradient(120% 32% at 0% 66%,rgba(124,58,237,.22),transparent 72%),
+   radial-gradient(130% 30% at 100% 100%,rgba(8,145,178,.26),transparent 72%),
+   linear-gradient(180deg,#F1E6EC 0%,#E2E9F3 35%,#E4E0F2 65%,#D8EBF0 100%)!important;
+  background-size:56px 97px,auto,auto,auto,auto,auto,auto!important;background-repeat:repeat,repeat,no-repeat,no-repeat,no-repeat,no-repeat,no-repeat!important;
+  box-shadow:inset -3px 0 0 rgba(200,16,46,.55),inset -4px 0 0 rgba(255,255,255,.7)!important}
+/* jede Kachel mit Schimmer ihrer eigenen Farbe */
+html:root nav .navbtn:not([aria-current="true"]){background:linear-gradient(90deg,color-mix(in srgb,var(--ac) 26%,transparent),color-mix(in srgb,var(--ac) 8%,transparent) 60%,transparent 92%)!important;border-radius:14px!important}
+html:root nav .navbtn:not([aria-current="true"]):hover{background:linear-gradient(90deg,color-mix(in srgb,var(--ac) 42%,transparent),color-mix(in srgb,var(--ac) 14%,transparent) 70%,transparent)!important}
+html:root nav .navbtn:not([aria-current="true"]) .lbl small{color:color-mix(in srgb,var(--ac) 55%,#1B1E25)!important}
+body.navmini nav .navbtn:not([aria-current="true"]){background:transparent!important}
 </style></head><body>
 <div class="app">
 <nav aria-label="Bereiche">
@@ -2468,7 +2490,7 @@ html:root section.view :is(.auhint b,.ausel b,h3.sub small){background:none;box-
 <script>
 const FB_CONFIG={apiKey:"AIzaSyC_uZPvc5rJETwlS4JbfCoTkkE4ckjtp0M",authDomain:"velocenter-planer.firebaseapp.com",projectId:"velocenter-planer",storageBucket:"velocenter-planer.firebasestorage.app",messagingSenderId:"1018330488700",appId:"1:1018330488700:web:262a4d1660353e6fde8ef9"};
 /* ================= Velocenter Werkstatt-Cockpit – Oberfläche ================= */
-const CLIENT_VERSION='1.10.81';
+const CLIENT_VERSION='1.10.82';
 const USERS=[{id:'kevin',n:'Kevin',c:'#E2232D'},{id:'stefan',n:'Stefan',c:'#F59E0B'},{id:'martina',n:'Martina',c:'#EC4899'},{id:'sascha',n:'Sascha',c:'#22D3EE'},{id:'rene',n:'René',c:'#34D399'}];
 const U=id=>USERS.find(u=>u.id===id)||{n:'',c:'#64748B',id:''};
 /* 1.10.37: Profilfarbe je Nutzer (meta/prefs[ID].col, für alle sichtbar) – Cache für den Login-Bildschirm */
