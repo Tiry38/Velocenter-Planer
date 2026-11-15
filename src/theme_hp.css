@@ -194,3 +194,14 @@ html:root .kwbrand{background:none!important;border-color:transparent!important;
 html:root .kwbrand small{color:#FFC2CB!important;text-shadow:0 1px 2px rgba(0,0,0,.45)}
 html:root .kwbrand b{color:#fff!important;text-shadow:0 2px 4px rgba(0,0,0,.45)}
 html:root .kwbrand span{color:#F1F1F1!important;text-shadow:0 1px 2px rgba(0,0,0,.4)}
+/* 1.10.90 (Tiry): aktiver Navi-Reiter – statt roter Pille goldener Kringel wie der Showroom-Ring der Homepage (.hring: Kupfer #B87333 / Champagner #F0C8A0),
+   hier nicht animiert, geschlossen und kräftiger. Ring = .navbtn::after um die Kachel (Kachel 38 px bei 7/7 → Ring 52 px). */
+html:root nav .navbtn[aria-current="true"]{background:linear-gradient(90deg,rgba(240,200,160,.34),rgba(240,200,160,.10) 60%,transparent 92%)!important;border-radius:14px!important;box-shadow:none!important}
+body.navmini nav .navbtn[aria-current="true"]{background:transparent!important}
+html:root nav .navbtn[aria-current="true"]::before{display:none!important}
+html:root nav .navbtn[aria-current="true"]::after{content:""!important;position:absolute;left:0;top:0;width:52px;height:52px;box-sizing:border-box;border-radius:50%;padding:3px;pointer-events:none;
+  background:conic-gradient(from 200deg,#8A5A2B,#B87333 10%,#F0C8A0 22%,#FFF3DC 28%,#E2B47A 38%,#B87333 52%,#D9A066 64%,#F0C8A0 72%,#FFE9C4 77%,#C98A4B 88%,#8A5A2B)!important;
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude}
+html:root nav .navbtn[aria-current="true"] .tile{box-shadow:inset 0 1px 0 rgba(255,255,255,.4),0 0 0 4px rgba(255,243,220,.35),0 0 16px 5px rgba(240,200,160,.75),0 0 30px 8px rgba(184,115,51,.35)!important}
+html:root nav .navbtn[aria-current="true"] .lbl,html:root nav .navbtn[aria-current="true"] .lbl b{color:#fff!important;text-shadow:0 1px 2px rgba(0,0,0,.45)!important}
+html:root nav .navbtn[aria-current="true"] .lbl small{color:#FFE7B8!important}
