@@ -141,3 +141,5 @@ html:root nav .navbtn:not([aria-current="true"]){background:linear-gradient(90de
 html:root nav .navbtn:not([aria-current="true"]):hover{background:linear-gradient(90deg,color-mix(in srgb,var(--ac) 42%,transparent),color-mix(in srgb,var(--ac) 14%,transparent) 70%,transparent)!important}
 html:root nav .navbtn:not([aria-current="true"]) .lbl small{color:color-mix(in srgb,var(--ac) 55%,#1B1E25)!important}
 body.navmini nav .navbtn:not([aria-current="true"]){background:transparent!important}
+/* 1.10.83 (Tiry): WICHTIG/MERKER-Leiste deckend – Metall-Keil schien halb durch und wirkte abgeschnitten */
+html:root .merk{background:var(--hp-riff),linear-gradient(115deg,transparent 30%,rgba(255,255,255,.7) 48%,transparent 66%),var(--hp-ice)!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
