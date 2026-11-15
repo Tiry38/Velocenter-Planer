@@ -186,3 +186,8 @@ html:root nav .navbtn .n{background:rgba(0,0,0,.22)!important;color:#fff!importa
 html:root nav hr,html:root nav .sep,html:root nav .navsep{border-color:rgba(255,255,255,.22)!important;background:rgba(255,255,255,.22)!important}
 body.navmini nav .navbtn:not([aria-current="true"]){background:transparent!important}
 html:root #grid .kw,html:root #grid .kw *{color:#fff!important;text-shadow:0 0 3px rgba(0,0,0,.85),0 1px 1px rgba(0,0,0,.9)!important;font-weight:800!important}
+/* 1.10.86 (Tiry): KW-Kachel oben ohne roten Kasten, Schrift direkt auf dem Navi-Grau */
+html:root .kwbrand{background:none!important;border-color:transparent!important;box-shadow:none!important}
+html:root .kwbrand small{color:#FFC2CB!important;text-shadow:0 1px 2px rgba(0,0,0,.45)}
+html:root .kwbrand b{color:#fff!important;text-shadow:0 2px 4px rgba(0,0,0,.45)}
+html:root .kwbrand span{color:#F1F1F1!important;text-shadow:0 1px 2px rgba(0,0,0,.4)}
