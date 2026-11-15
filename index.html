@@ -2351,6 +2351,11 @@ html:root nav .navbtn .n{background:rgba(0,0,0,.22)!important;color:#fff!importa
 html:root nav hr,html:root nav .sep,html:root nav .navsep{border-color:rgba(255,255,255,.22)!important;background:rgba(255,255,255,.22)!important}
 body.navmini nav .navbtn:not([aria-current="true"]){background:transparent!important}
 html:root #grid .kw,html:root #grid .kw *{color:#fff!important;text-shadow:0 0 3px rgba(0,0,0,.85),0 1px 1px rgba(0,0,0,.9)!important;font-weight:800!important}
+/* 1.10.86 (Tiry): KW-Kachel oben ohne roten Kasten, Schrift direkt auf dem Navi-Grau */
+html:root .kwbrand{background:none!important;border-color:transparent!important;box-shadow:none!important}
+html:root .kwbrand small{color:#FFC2CB!important;text-shadow:0 1px 2px rgba(0,0,0,.45)}
+html:root .kwbrand b{color:#fff!important;text-shadow:0 2px 4px rgba(0,0,0,.45)}
+html:root .kwbrand span{color:#F1F1F1!important;text-shadow:0 1px 2px rgba(0,0,0,.4)}
 </style></head><body>
 <div class="app">
 <nav aria-label="Bereiche">
@@ -2535,7 +2540,7 @@ html:root #grid .kw,html:root #grid .kw *{color:#fff!important;text-shadow:0 0 3
 <script>
 const FB_CONFIG={apiKey:"AIzaSyC_uZPvc5rJETwlS4JbfCoTkkE4ckjtp0M",authDomain:"velocenter-planer.firebaseapp.com",projectId:"velocenter-planer",storageBucket:"velocenter-planer.firebasestorage.app",messagingSenderId:"1018330488700",appId:"1:1018330488700:web:262a4d1660353e6fde8ef9"};
 /* ================= Velocenter Werkstatt-Cockpit – Oberfläche ================= */
-const CLIENT_VERSION='1.10.85';
+const CLIENT_VERSION='1.10.86';
 const USERS=[{id:'kevin',n:'Kevin',c:'#E2232D'},{id:'stefan',n:'Stefan',c:'#F59E0B'},{id:'martina',n:'Martina',c:'#EC4899'},{id:'sascha',n:'Sascha',c:'#22D3EE'},{id:'rene',n:'René',c:'#34D399'}];
 const U=id=>USERS.find(u=>u.id===id)||{n:'',c:'#64748B',id:''};
 /* 1.10.37: Profilfarbe je Nutzer (meta/prefs[ID].col, für alle sichtbar) – Cache für den Login-Bildschirm */
