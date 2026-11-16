@@ -150,7 +150,7 @@ html:root #grid .kw{
   background-color:#868282!important;
   background-image:linear-gradient(to bottom left,transparent calc(50% - 4px),#F4F6F9 calc(50% - 4px),#C3C8D0 calc(50% - 2px),#8E939B calc(50% - .5px),#5F6168 50%,transparent 50%),
     var(--hp-blade),
-    linear-gradient(115deg,transparent calc(6.344vw + 5.982vh),#6A6666 calc(6.344vw + 5.982vh),#6A6666 calc(7.250vw + 6.404vh),transparent calc(7.250vw + 6.404vh),transparent calc(56.19vw + 26.20vh),#6A6666 calc(56.19vw + 26.20vh),#6A6666 calc(57.55vw + 26.84vh),transparent calc(57.55vw + 26.84vh),transparent calc(59.82vw + 27.89vh),#CF1A2C calc(59.82vw + 27.89vh),#CF1A2C calc(60.72vw + 28.31vh),transparent calc(60.72vw + 28.31vh)),
+    linear-gradient(transparent,transparent),
     url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg'><defs><pattern id='p' width='8.485' height='8.485' patternUnits='userSpaceOnUse'><path d='M0 8.485 L8.485 0' stroke='rgba(255,255,255,.07)' stroke-width='1'/><path d='M0 0 L8.485 8.485' stroke='rgba(0,0,0,.10)' stroke-width='1'/></pattern><clipPath id='c' clipPathUnits='objectBoundingBox'><polygon points='0,0 1,1 0,1'/></clipPath></defs><rect width='100%' height='100%' fill='url(%23p)' clip-path='url(%23c)'/></svg>"),
     url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg'><defs><pattern id='p' width='8.485' height='8.485' patternUnits='userSpaceOnUse'><path d='M0 8.485 L8.485 0' stroke='rgba(255,255,255,.07)' stroke-width='1'/><path d='M0 0 L8.485 8.485' stroke='rgba(0,0,0,.10)' stroke-width='1'/></pattern></defs><rect width='100%' height='100%' fill='url(%23p)'/></svg>"),
     linear-gradient(to bottom left,transparent 50%,#868282 50%),
@@ -213,3 +213,13 @@ html:root nav .navbtn[aria-current="true"]::after{z-index:2;filter:drop-shadow(0
 html:root nav .navbtn[aria-current="true"]:not(:hover){background:linear-gradient(90deg,rgba(240,200,160,.55),rgba(240,200,160,.18) 60%,transparent 92%)!important;box-shadow:inset 0 0 0 1px rgba(240,200,160,.55)!important}
 body.navmini nav .navbtn[aria-current="true"]:not(:hover){background:transparent!important;box-shadow:none!important}
 html:root nav .navbtn[aria-current="true"] .lbl,html:root nav .navbtn[aria-current="true"] .n{position:relative;z-index:1}
+/* 1.10.92 (Tiry): Striche enden vor dem roten Keil (außen am weißen Chrom-Band) – Hintergrund (.app) und KW-Leisten.
+   Maske = alles außer dem Keil-Dreieck (gleiche Box wie body::after, Band 44 px). KW-Striche als fixierte Ebene .kw::before,
+   von der Leiste per clip-path:inset(0) zugeschnitten. */
+:root{--hp-strM:linear-gradient(to bottom left,transparent calc(50% + 44px),#000 calc(50% + 44px)),linear-gradient(#000,#000)}
+.app::before,.app::after,html:root #grid .kw::before{-webkit-mask-image:var(--hp-strM);mask-image:var(--hp-strM);
+  -webkit-mask-size:var(--hp-kwW) var(--hp-kwH),calc(100vw - var(--hp-kwW) + 96px) 100vh;mask-size:var(--hp-kwW) var(--hp-kwH),calc(100vw - var(--hp-kwW) + 96px) 100vh;
+  -webkit-mask-position:right -96px top 0,0 0;mask-position:right -96px top 0,0 0;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat}
+html:root #grid .kw{position:relative;clip-path:inset(0)}
+html:root #grid .kw::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
+  background:linear-gradient(115deg,transparent calc(6.344vw + 5.982vh),#6A6666 calc(6.344vw + 5.982vh),#6A6666 calc(7.250vw + 6.404vh),transparent calc(7.250vw + 6.404vh),transparent calc(56.19vw + 26.20vh),#6A6666 calc(56.19vw + 26.20vh),#6A6666 calc(57.55vw + 26.84vh),transparent calc(57.55vw + 26.84vh),transparent calc(59.82vw + 27.89vh),#CF1A2C calc(59.82vw + 27.89vh),#CF1A2C calc(60.72vw + 28.31vh),transparent calc(60.72vw + 28.31vh))}
