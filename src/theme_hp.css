@@ -239,3 +239,16 @@ html:root #grid .kw{clip-path:none!important;background-attachment:scroll!import
     linear-gradient(90deg,#969292 0%,#868282 55%,#706C6C 100%)!important;
   background-size:auto!important;background-position:0 0!important;background-repeat:repeat,repeat,no-repeat,no-repeat!important;background-blend-mode:normal!important}
 html:root #grid .kw::before{display:none!important}
+/* 1.10.96 (Tiry: Option 2): Keil + weißes Band + Striche laufen wieder durch die KW-Leisten – aber als eigene, fest am Fenster
+   stehende Ebenen (position:fixed, will-change) statt background-attachment:fixed. Der Browser verschiebt beim Scrollen nur den
+   Zuschnitt (clip-path der Leiste), gezeichnet wird nichts neu. Ebenen: ::before = Striche (Maske wie .app), .kwk = weißes Chrom-Band
+   (wie body::before), ::after = roter Metall-Keil (Kopie von body::after, gleiche Box). Grau/Kreuzmuster bleibt die Leiste selbst. */
+html:root #grid .kw{position:relative!important;clip-path:inset(.5px 0)!important}
+html:root #grid .kw::before{display:block!important;will-change:transform}
+html:root #grid .kw>.kwk{position:fixed;top:var(--hp-bladeY);right:-96px;width:var(--hp-bladeW);height:var(--hp-bladeH);z-index:-1;pointer-events:none;
+  background:var(--hp-blade)!important;will-change:transform}
+html:root #grid .kw::after{display:block!important;content:""!important;position:fixed!important;top:0!important;right:-96px!important;left:auto!important;bottom:auto!important;
+  flex:none!important;width:var(--hp-kwW)!important;height:var(--hp-kwH)!important;z-index:-1;pointer-events:none;will-change:transform;
+  clip-path:polygon(0 0,100% 0,100% 100%);
+  background:linear-gradient(to bottom left,transparent calc(50% - 4px),#F4F6F9 calc(50% - 4px),#C3C8D0 calc(50% - 2px),#8E939B calc(50% - .5px),#5F6168 50%),var(--hp-brushx),var(--hp-metal)!important;
+  background-blend-mode:normal,normal,overlay,normal,normal,normal,normal,normal,normal,normal!important}
