@@ -955,8 +955,8 @@ function voForm(o){const nw=o.id==='new',di=k=>`<input type="date" class="bfd" n
  <label class="w2">Saison<input name="saison" value="${esc(o.saison||'')}" placeholder="z. B. 2027"></label>
  <label class="w3">Bestellt am${di('bestAm')}</label><label class="w3">Kommt am${di('kommt')}</label>
  <label class="w5">Artikel / Modell<input name="artikel" value="${esc(o.artikel||'')}" required></label>
- <label class="w3">Art.-Nr.<input name="artnr" value="${esc(o.artnr||'')}"></label>
  <label class="w2">Größe / Farbe<input name="var" value="${esc(o.var||'')}"></label>
+ <label class="w3">Art.-Nr.<input name="artnr" value="${esc(o.artnr||'')}"></label>
  <label class="w1">Menge<input name="menge" type="number" min="1" value="${esc(o.menge||1)}"></label>
  <label class="w1">Geliefert<input name="da" type="number" min="0" value="${esc(o.da||0)}"></label>
  <label class="w12">Notiz<input name="notiz" value="${esc(o.notiz||'')}"></label></div>${voLfDl()}
@@ -1004,8 +1004,8 @@ function rvo(){const L=$('voList');if(!L)return;const all=voAll();
   <div class="vott"><b>${esc(g.lief)}</b>${g.saison?`<span class="vosai">Saison ${esc(g.saison)}</span>`:''}<small>${g.it.length} Position${g.it.length===1?'':'en'}${lo&&lo.kdnr?' · Kd-Nr. '+esc(lo.kdnr):''}</small></div>
   <div class="vokv"><i>bestellt</i><b>${f(g.best)}</b></div><div class="vokv"><i>${g.done?'geliefert':'nächste Lieferung'}</i><b>${g.done?'komplett ✓':f(g.next)}</b></div>
   <div class="vopr"><div class="vobar"><span style="width:${pc}%"></span></div><b>${g.da} / ${g.m}</b><i>Stück da · ${pc} %</i></div>${g.late?`<span class="vobad">⚠ ${g.late} überfällig</span>`:''}<button type="button" class="mini voged" data-voged="${esc(key)}" title="Kopf bearbeiten: Lieferant, Saison, Kd-Nr., Bestellt am, Kommt am">✎ Bearbeiten</button><span class="vochev">▾</span></div>${voGEd===key?voGForm(g,key):''}${voTBar(g)}
-  <div class="vobody"><table class="votab"><thead><tr><th>Artikel</th><th>Art.-Nr.</th><th>Größe / Farbe</th><th>Kommt</th><th>Bestellt</th><th class="voc">Menge</th><th class="voc">Geliefert</th><th>Status</th><th></th></tr></thead><tbody>${rows.map(o=>{const m=voN(o.menge)||1,da=Math.min(voN(o.da),m),st=voSt(o);
-   return `<tr class="vr-${st}"><td><b>${esc(o.artikel||'–')}</b>${o.notiz?`<small>📝 ${esc(o.notiz)}</small>`:''}</td><td class="vonr">${esc(o.artnr||'–')}</td><td>${esc(o.var||'–')}</td><td class="vodt">${o.kommt?voDs(o.kommt):'–'}</td><td class="vodt">${o.bestAm?voDs(o.bestAm):'–'}</td><td class="voc"><b class="vomg">${m}</b></td>
+  <div class="vobody"><table class="votab"><thead><tr><th>Artikel</th><th>Größe / Farbe</th><th>Art.-Nr.</th><th>Kommt</th><th>Bestellt</th><th class="voc">Menge</th><th class="voc">Geliefert</th><th>Status</th><th></th></tr></thead><tbody>${rows.map(o=>{const m=voN(o.menge)||1,da=Math.min(voN(o.da),m),st=voSt(o);
+   return `<tr class="vr-${st}"><td><b>${esc(o.artikel||'–')}</b>${o.notiz?`<small>📝 ${esc(o.notiz)}</small>`:''}</td><td>${esc(o.var||'–')}</td><td class="vonr">${esc(o.artnr||'–')}</td><td class="vodt">${o.kommt?voDs(o.kommt):'–'}</td><td class="vodt">${o.bestAm?voDs(o.bestAm):'–'}</td><td class="voc"><b class="vomg">${m}</b></td>
    <td class="voc"><span class="vostep"><button type="button" class="mini" data-vod="${esc(o.id)}" data-dd="-1" ${da<=0?'disabled':''}>−</button><b>${da}</b><button type="button" class="mini" data-vod="${esc(o.id)}" data-dd="1" ${da>=m?'disabled':''}>+</button></span></td>
    <td><span class="vost s-${st}">${VOSTL[st]}</span></td><td class="voact">${st!=='ok'?`<button type="button" class="mini go" data-voall="${esc(o.id)}" title="alles geliefert">✓ geliefert?</button>`:''}${av(o.von,'angelegt von')}<button type="button" class="mini" data-voed="${esc(o.id)}" title="bearbeiten">✎</button><button type="button" class="mini vox" data-vodel="${esc(o.id)}" title="löschen">×</button></td></tr>`;}).join('')}</tbody></table></div></div>`;}).join('');}
 $('v-bestell').addEventListener('click',e=>{
