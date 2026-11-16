@@ -16,7 +16,7 @@ import base64
 logo=base64.b64encode(open('vclogo.svg','rb').read()).decode()
 body=body.replace('<img src="data:image/webp;base64,__LOGO__" alt="Velocenter Hessert"><h2 id="whoT">','<img id="whoLogo" src="data:image/svg+xml;base64,'+logo+'" alt="Velocenter Hessert"><h2 id="whoT">')
 js=open('app_fb.js').read().replace('__LSDEF__',open('ls_seed.js').read()).replace('__LSREC__',open('ls_rec.js').read()).replace('__LOGOS__',open('logos_small.js').read()).replace('__SKON__',open('skon.js').read()).replace('__OKLOGO__',logo).replace('__VERSION__',VERSION)
-meta='<!doctype html>\n<html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><meta name="theme-color" content="#D3DCE5"><meta name="color-scheme" content="light dark"><meta name="darkreader-lock"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icon-192.png"><link rel="apple-touch-icon" href="icon-192.png">\n'
+meta='<!doctype html>\n<html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><meta name="theme-color" content="#D3DCE5"><meta name="color-scheme" content="light dark"><meta name="darkreader-lock"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="favicon.png?v=2"><link rel="apple-touch-icon" href="icon-192.png">\n'
 # 1.10.80 Homepage-Design A (hell): App-CSS automatisch dunkel -> hell umgerechnet (theme_xform.py, nur Farben) + Handarbeit theme_hp.css
 sys.dont_write_bytecode=True
 import theme_xform
@@ -36,5 +36,8 @@ for n in (192,512):
     c=Image.new('RGBA',(n,n),(7,9,13,255));w=int(n*.82);t=lg.copy();t.thumbnail((w,w),Image.LANCZOS);c.alpha_composite(t,((n-t.width)//2,(n-t.height)//2));c.convert('RGB').save(OUT+f'/icon-{n}.png',optimize=True)
     # 1.10.63: eigenes Android-Symbol (maskable) – Logo kleiner, damit es im runden/abgeschnittenen Rahmen (sichere Zone 80 %) ganz sichtbar bleibt
     c=Image.new('RGBA',(n,n),(7,9,13,255));w=int(n*.6);t=lg.copy();t.thumbnail((w,w),Image.LANCZOS);c.alpha_composite(t,((n-t.width)//2,(n-t.height)//2));c.convert('RGB').save(OUT+f'/icon-maskable-{n}.png',optimize=True)
+# 1.10.94 (Tiry): Logo im Browser-Reiter auf Weiß statt Schwarz (App-Symbole bleiben dunkel)
+for n,fn in ((64,'favicon.png'),):
+    c=Image.new('RGBA',(n,n),(255,255,255,255));w=int(n*.94);t=lg.copy();t.thumbnail((w,w),Image.LANCZOS);c.alpha_composite(t,((n-t.width)//2,(n-t.height)//2));c.convert('RGB').save(OUT+'/'+fn,optimize=True)
 open(OUT+'/.nojekyll','w').write('')
 print('ok',VERSION,os.path.getsize(OUT+'/index.html'))

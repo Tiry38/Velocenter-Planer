@@ -229,7 +229,7 @@ html:root #grid .kw{border-bottom:0!important;border-image:none!important;paddin
 /* Leiste liegt bei Zoom/Skalierung auf halben Pixeln: Grau wird auf ganze Pixel gerundet, clip-path nicht → Striche 0,5 px nach innen zuschneiden,
    so bleiben sie immer innerhalb der grauen Fläche. */
 html:root #grid .kw{clip-path:inset(.5px 0)!important}
-/* 1.10.94 (Tiry: „Planer laggt beim Scrollen“): KW-Leisten ohne durchlaufenden Keil/Striche (background-attachment:fixed
+/* 1.10.95 (Tiry: „Planer laggt beim Scrollen“): KW-Leisten ohne durchlaufenden Keil/Striche (background-attachment:fixed
    mit 16 Ebenen × 11 Leisten = Neuzeichnen bei jedem Scroll-Schritt, gemessen 380 → 28 ms/Bild bei 6× gebremster CPU).
    Jetzt schlicht wie die Navi: Logo-Grau + 45°-Kreuzmuster, Licht oben/Schatten unten. Nicht wieder fixed einbauen. */
 html:root #grid .kw{clip-path:none!important;background-attachment:scroll!important;background-color:#7A7676!important;
