@@ -2388,6 +2388,12 @@ html:root nav .navbtn[aria-current="true"] .lbl,html:root nav .navbtn[aria-curre
 html:root #grid .kw{position:relative;clip-path:inset(0)}
 html:root #grid .kw::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
   background:linear-gradient(115deg,transparent calc(6.344vw + 5.982vh),#6A6666 calc(6.344vw + 5.982vh),#6A6666 calc(7.250vw + 6.404vh),transparent calc(7.250vw + 6.404vh),transparent calc(56.19vw + 26.20vh),#6A6666 calc(56.19vw + 26.20vh),#6A6666 calc(57.55vw + 26.84vh),transparent calc(57.55vw + 26.84vh),transparent calc(59.82vw + 27.89vh),#CF1A2C calc(59.82vw + 27.89vh),#CF1A2C calc(60.72vw + 28.31vh),transparent calc(60.72vw + 28.31vh))}
+/* 1.10.93 (Tiry): Striche ragten 1 px in die Tabelle – der untere Rand der KW-Leiste war ein halbdurchsichtiger border-image-Strich,
+   über den die Striche gemalt wurden. Rand weg (Höhe bleibt über padding), Leiste deckend bis zur Kante. */
+html:root #grid .kw{border-bottom:0!important;border-image:none!important;padding-bottom:4px!important}
+/* Leiste liegt bei Zoom/Skalierung auf halben Pixeln: Grau wird auf ganze Pixel gerundet, clip-path nicht → Striche 0,5 px nach innen zuschneiden,
+   so bleiben sie immer innerhalb der grauen Fläche. */
+html:root #grid .kw{clip-path:inset(.5px 0)!important}
 </style></head><body>
 <div class="app">
 <nav aria-label="Bereiche">
@@ -2572,7 +2578,7 @@ html:root #grid .kw::before{content:"";position:fixed;inset:0;z-index:-1;pointer
 <script>
 const FB_CONFIG={apiKey:"AIzaSyC_uZPvc5rJETwlS4JbfCoTkkE4ckjtp0M",authDomain:"velocenter-planer.firebaseapp.com",projectId:"velocenter-planer",storageBucket:"velocenter-planer.firebasestorage.app",messagingSenderId:"1018330488700",appId:"1:1018330488700:web:262a4d1660353e6fde8ef9"};
 /* ================= Velocenter Werkstatt-Cockpit – Oberfläche ================= */
-const CLIENT_VERSION='1.10.92';
+const CLIENT_VERSION='1.10.93';
 const USERS=[{id:'kevin',n:'Kevin',c:'#E2232D'},{id:'stefan',n:'Stefan',c:'#F59E0B'},{id:'martina',n:'Martina',c:'#EC4899'},{id:'sascha',n:'Sascha',c:'#22D3EE'},{id:'rene',n:'René',c:'#34D399'}];
 const U=id=>USERS.find(u=>u.id===id)||{n:'',c:'#64748B',id:''};
 /* 1.10.37: Profilfarbe je Nutzer (meta/prefs[ID].col, für alle sichtbar) – Cache für den Login-Bildschirm */
