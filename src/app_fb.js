@@ -2201,7 +2201,7 @@ $('v-ausw').addEventListener('change',e=>{if(e.target.id==='auF'||e.target.id===
    Zeile oben in „Kunden“, nie doppelt (Beleg-Nr.), Marke/Modell in der Schreibweise der letzten 12 Monate (rollierend ab heute),
    Leasing über die Erkennungswörter der Rechnungsadresse (Leasing-Infos, Feld reW). Fehlt etwas → Zeile gelb „prüfen“ (Feld pr).
    ENRA/Versicherung bleibt Handarbeit. Übernahmeerklärung (typ ue) ergänzt nur Kundendaten, Zuordnung über Rahmen-Nr./FID. */
-const REW0={BB:'PEAC Germany',KM:'Kazenmaier Leasing',RD:'Ride Mobility',CB:'company bike solutions',ER:'AGL'};const REW_VER=1;
+const REW0={BL:'Lesora',BB:'PEAC Germany',KM:'Kazenmaier Leasing',RD:'Ride Mobility',CB:'company bike solutions',ER:'AGL'};const REW_VER=2;
 let KDEIN=[],kdeinBusy=false,kdeinT=null;
 const kdeN=s=>String(s||'').toLowerCase().replace(/ß/g,'ss').replace(/[^a-z0-9äöü]+/g,' ').trim();
 const kdeRa=s=>String(s||'').toUpperCase().replace(/[^A-Z0-9]/g,'');
@@ -2225,8 +2225,8 @@ const kdeName=(vn,nn,full)=>{vn=String(vn||'').trim();nn=String(nn||'').trim();i
    Bei Leasing ist die Rechnungsadresse der Leasinggeber → Kandidaten mit Leasing-Wort im Namen oder aus der Adresse zählen nicht. */
 function kdeKunde(x,lea){const lw=lea?kdeWords((L||[]).find(f=>f.k===lea.k)):[];const isL=s=>{const a=' '+kdeN(s)+' ';return lw.some(w=>a.includes(' '+w+' '));};
  const K=(Array.isArray(x.kd)?x.kd:[]).filter(k=>k&&(k.name||k.nn)&&!isL([k.vn,k.nn,k.name].join(' '))&&!(lea&&k.q==='adr'));
- const k=K[0]||null;if(!k)return {kunde:'',tel:'',mail:'',kq:''};
- const tels=[].concat(...K.map(o=>[].concat(o.tel||[]))).map(s=>String(s).trim()).filter(Boolean),mails=[...new Set([].concat(...K.map(o=>[].concat(o.mail||[]))).map(s=>String(s).trim().toLowerCase()).filter(s=>/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(s)))];
+ const k=K[0]||null;const KT=(Array.isArray(x.kd)?x.kd:[]).filter(k=>k&&!isL([k.vn,k.nn,k.name].join(' ')));if(!k){const t0=[].concat(...KT.map(o=>[].concat(o.tel||[]))).map(s=>String(s).trim()).filter(Boolean);return {kunde:'',tel:t0.find(t=>kdWaNums(t).length)||t0[0]||'',mail:'',kq:''};}
+ const tels=[].concat(...KT.map(o=>[].concat(o.tel||[]))).map(s=>String(s).trim()).filter(Boolean),mails=[...new Set([].concat(...K.map(o=>[].concat(o.mail||[]))).map(s=>String(s).trim().toLowerCase()).filter(s=>/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(s)))];
  const hand=tels.find(t=>kdWaNums(t).length);
  return {kunde:kdeName(k.vn,k.nn,k.name),tel:hand||tels[0]||'',mail:mails.slice(0,3).join(', '),kq:k.q||''};}
 const KDE_PF={kunde:'Kunde',marke:'Marke',modell:'Modell',preis:'Preis',rahmen:'Rahmen-Nr.',tel:'Telefon',mail:'E-Mail'};
