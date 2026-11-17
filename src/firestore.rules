@@ -20,6 +20,8 @@ service cloud.firestore {
     match /leasing/{id}     { allow read, write: if team(); allow read: if tablet(); }
     match /lieferanten/{id} { allow read, write: if team(); }
     match /info/{id}        { allow read, write: if team(); }
+    // 1.11.4: Eingangskorb Kunden aus Veloport-Rechnungen/Übernahmen – KI-Zentrale (Konto „Tablet“) legt nur an, Admins übernehmen und löschen
+    match /kdein/{id}       { allow read, delete: if admin(); allow create: if tablet() && id.matches('k[a-z0-9_-]{3,60}') && request.resource.data.quelle == 'kizentrale'; allow get: if tablet() && id.matches('k[a-z0-9_-]{3,60}') && resource.data.quelle == 'kizentrale'; }
 
     // Tresor: verschlüsselt (Schlüssel = PIN). Lieferanten-Logins für alle, Passwortliste nur Admins.
     match /tresor/logins    { allow read, write: if team(); }

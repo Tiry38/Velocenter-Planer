@@ -255,3 +255,7 @@ html:root #grid .kw::after{display:block!important;content:""!important;position
 /* 1.10.99 (Tiry): Goldring + Halo immer mittig zur Kachel – Kachel ist im Knopf vertikal zentriert, Knopf wird bei navFit niedriger */
 html:root nav .navbtn[aria-current="true"]::after{top:calc(50% - 26px)!important}
 html:root nav .navbtn[aria-current="true"]::before{top:calc(50% - 54px)!important}
+/* 1.11.4: Kunden-Zeile aus Veloport-Rechnung „bitte prüfen“ – kräftig gelb auch im hellen Design */
+.kdgrid .row.kpr>.c{background:linear-gradient(90deg,#FFE45C,#FFF2A8)!important;color:#2a2200}
+.kdgrid .row.kpr>.c:first-child{box-shadow:inset 3px 0 0 #E0A800}
+.kdgrid .kprok{background:#E0A800;color:#fff}
