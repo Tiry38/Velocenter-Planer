@@ -1155,3 +1155,6 @@ body.bgruh::after{display:none}
 .lfpick .lfi:hover,.lfpick .lfi.on{background:rgba(57,242,107,.14)}.lfpick .lfi.cur{box-shadow:inset 3px 0 #39F26B}
 .lfpick .lflg{flex:0 0 70px;height:26px;display:grid;place-items:center}.lfpick .lflg img{max-width:70px;max-height:26px;object-fit:contain}
 .lfpick .lfi b{font:700 14px Outfit,sans-serif}
+
+/* 1.11.3 (Tiry): LT-Woche erreicht = Balken gelb-orange gestreift (statisch, keine Animation) */
+.vtab tr.lbs .ltbar{height:4px;background:repeating-linear-gradient(115deg,#F59E0B 0 7px,#FDE047 7px 12px)!important}
