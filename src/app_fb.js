@@ -651,7 +651,8 @@ function ltBar(b){if(b.a==='1')return null;const s=String(b.lt||'').trim();
     Früherer Liefertermin = immer längerer Balken, unabhängig vom Bestelldatum (steht nur im Tooltip). */
  const rest=Math.max(0,Math.ceil((z-now)/864e5)),p=now>=z?1:Math.max(0.03,Math.min(1,1-rest/LT_H)),a=vkDate(b.dat),
   seit=a?' · bestellt vor '+Math.max(0,Math.round((now-a)/864e5))+' Tagen':'';
- return {p:+p.toFixed(3),c:'#34D399',t:'Liefertermin KW '+L.k+(now>=z?': diese Woche':': noch '+rest+(rest===1?' Tag':' Tage'))+seit};}
+ if(now>=z)return {p:1,c:'#F59E0B',s:1,t:'Liefertermin KW '+L.k+': kommt diese Woche'+seit};/* 1.11.3 (Tiry): LT-Woche erreicht = gelb-orange gestreift, voll grün nur wenn Rad da */
+ return {p:+p.toFixed(3),c:'#34D399',t:'Liefertermin KW '+L.k+': noch '+rest+(rest===1?' Tag':' Tage')+seit};}
 const LT_H=182;
 function ltBarPos(){requestAnimationFrame(()=>{const t=document.querySelector('#cards .vtab table');if(!t)return;const r=t.querySelector('tr.vr');if(!r)return;const a=r.querySelector('td.who2'),n=r.querySelector('td.vnote');if(!a||!n)return;
  const f=r.cells[0].getBoundingClientRect().left,al=a.getBoundingClientRect().left,w=n.getBoundingClientRect().right-f;if(w>0){const W=Math.round(w)+'px',X=Math.round(al-f)+'px';if(t.style.getPropertyValue('--lbw')!==W)t.style.setProperty('--lbw',W);if(t.style.getPropertyValue('--lbx')!==X)t.style.setProperty('--lbx',X);}});}
@@ -704,7 +705,7 @@ function vkRow(b){const st=b.a==='1'?'a':b.b==='1'?'b':b.m==='1'?'m':b.an==='1'?
  const dcD=(f,v)=>`<td class="dcell d-dat" data-vid="${esc(b.id)}" data-df="${f}" title="Klick = Datum wählen" tabindex="0">${esc(dshort(v))}</td>`;
  const dc=(f,v,cls)=>{if(v&&!/\d/.test(v))v='';/* 1.7.2: „??“ u. ä. aus dem Sheet = nicht eingetragen */return `<td class="dcell ${cls}${f==='antrag'&&!v?' amiss':''}" data-vid="${esc(b.id)}" data-df="${f}" title="${esc(v||'')} · Klick = Datum wählen" tabindex="0">${esc(dshort(v))}${v?lvB(b,f):''}</td>`;};
  const lb=ltBar(b);
- return `<tr class="vr st-${st}${lb?' lbr':''}"${lb?` style="--lp:${lb.p};--lc:${lb.c}" title="${esc(lb.t)}"`:''}>
+ return `<tr class="vr st-${st}${lb?' lbr':''}${lb&&lb.s?' lbs':''}"${lb?` style="--lp:${lb.p};--lc:${lb.c}" title="${esc(lb.t)}"`:''}>
  <td class="sdot" title="${{o:'offen',l:'angeliefert',m:'montiert',b:'O.K. – abholbereit',a:'abgeholt'}[st]}"><i></i></td>
  <td class="who2${vkSty(b)?' wfx':''}" style="${vkSty(b)}">${lb?'<i class="ltbar"></i>':''}<div class="wp">${b.b==='1'&&b.a!=='1'?'<img class="oklg" src="'+imgU(OKLOGO)+'" alt="" title="Fertig & abholbereit – Velocenter-Aufkleber ist drauf">':''}<b class="ef" contenteditable="true" spellcheck="false" data-vid="${esc(b.id)}" data-f="name" title="Klick = Kunde bearbeiten">${esc(b.name||'')}</b><small>${bModelE(b)}</small></div></td>
  <td class="pcell pf" data-vid="${esc(b.id)}" data-pf="form" title="Klick = Form wählen" tabindex="0">${esc(b.form||'')}</td><td class="pcell pg" data-vid="${esc(b.id)}" data-pf="gr" title="Klick = Größe wählen" tabindex="0">${esc(b.gr||'')}</td>

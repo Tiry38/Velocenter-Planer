@@ -1461,6 +1461,9 @@ body.bgruh::after{display:none}
 .lfpick .lflg{flex:0 0 70px;height:26px;display:grid;place-items:center}.lfpick .lflg img{max-width:70px;max-height:26px;object-fit:contain}
 .lfpick .lfi b{font:700 14px Outfit,sans-serif}
 
+/* 1.11.3 (Tiry): LT-Woche erreicht = Balken gelb-orange gestreift (statisch, keine Animation) */
+.vtab tr.lbs .ltbar{height:4px;background:repeating-linear-gradient(115deg,#F59E0B 0 7px,#FDE047 7px 12px)!important}
+
 [hidden]{display:none!important}
 #sTab td.b{font-weight:700}#sTab .pwm.ed{outline:none;padding:2px 6px;border-radius:6px;font-family:var(--mono)}#sTab td{vertical-align:top}
 #sTab td.ce,#ltab td.ce{cursor:text;border-bottom:1px dashed #2A3446;outline:none}#sTab td.ce:focus,#sTab .pwm.ed:focus,#ltab td.ce:focus{box-shadow:inset 0 0 0 2px var(--cyan);background:var(--panel2)}#ltab td.tg{cursor:pointer;user-select:none}#sTab td.ce:hover,#ltab td.tg:hover,#ltab td.ce:hover{background:rgba(255,255,255,.04)}#ltab td.tg:focus-visible{outline:2px solid var(--cyan)}
@@ -2604,7 +2607,7 @@ html:root nav .navbtn[aria-current="true"]::before{top:calc(50% - 54px)!importan
 <script>
 const FB_CONFIG={apiKey:"AIzaSyC_uZPvc5rJETwlS4JbfCoTkkE4ckjtp0M",authDomain:"velocenter-planer.firebaseapp.com",projectId:"velocenter-planer",storageBucket:"velocenter-planer.firebasestorage.app",messagingSenderId:"1018330488700",appId:"1:1018330488700:web:262a4d1660353e6fde8ef9"};
 /* ================= Velocenter Werkstatt-Cockpit – Oberfläche ================= */
-const CLIENT_VERSION='1.11.2';
+const CLIENT_VERSION='1.11.3';
 const USERS=[{id:'kevin',n:'Kevin',c:'#E2232D'},{id:'stefan',n:'Stefan',c:'#F59E0B'},{id:'martina',n:'Martina',c:'#EC4899'},{id:'sascha',n:'Sascha',c:'#22D3EE'},{id:'rene',n:'René',c:'#34D399'}];
 const U=id=>USERS.find(u=>u.id===id)||{n:'',c:'#64748B',id:''};
 /* 1.10.37: Profilfarbe je Nutzer (meta/prefs[ID].col, für alle sichtbar) – Cache für den Login-Bildschirm */
@@ -3256,7 +3259,8 @@ function ltBar(b){if(b.a==='1')return null;const s=String(b.lt||'').trim();
     Früherer Liefertermin = immer längerer Balken, unabhängig vom Bestelldatum (steht nur im Tooltip). */
  const rest=Math.max(0,Math.ceil((z-now)/864e5)),p=now>=z?1:Math.max(0.03,Math.min(1,1-rest/LT_H)),a=vkDate(b.dat),
   seit=a?' · bestellt vor '+Math.max(0,Math.round((now-a)/864e5))+' Tagen':'';
- return {p:+p.toFixed(3),c:'#34D399',t:'Liefertermin KW '+L.k+(now>=z?': diese Woche':': noch '+rest+(rest===1?' Tag':' Tage'))+seit};}
+ if(now>=z)return {p:1,c:'#F59E0B',s:1,t:'Liefertermin KW '+L.k+': kommt diese Woche'+seit};/* 1.11.3 (Tiry): LT-Woche erreicht = gelb-orange gestreift, voll grün nur wenn Rad da */
+ return {p:+p.toFixed(3),c:'#34D399',t:'Liefertermin KW '+L.k+': noch '+rest+(rest===1?' Tag':' Tage')+seit};}
 const LT_H=182;
 function ltBarPos(){requestAnimationFrame(()=>{const t=document.querySelector('#cards .vtab table');if(!t)return;const r=t.querySelector('tr.vr');if(!r)return;const a=r.querySelector('td.who2'),n=r.querySelector('td.vnote');if(!a||!n)return;
  const f=r.cells[0].getBoundingClientRect().left,al=a.getBoundingClientRect().left,w=n.getBoundingClientRect().right-f;if(w>0){const W=Math.round(w)+'px',X=Math.round(al-f)+'px';if(t.style.getPropertyValue('--lbw')!==W)t.style.setProperty('--lbw',W);if(t.style.getPropertyValue('--lbx')!==X)t.style.setProperty('--lbx',X);}});}
@@ -3309,7 +3313,7 @@ function vkRow(b){const st=b.a==='1'?'a':b.b==='1'?'b':b.m==='1'?'m':b.an==='1'?
  const dcD=(f,v)=>`<td class="dcell d-dat" data-vid="${esc(b.id)}" data-df="${f}" title="Klick = Datum wählen" tabindex="0">${esc(dshort(v))}</td>`;
  const dc=(f,v,cls)=>{if(v&&!/\d/.test(v))v='';/* 1.7.2: „??“ u. ä. aus dem Sheet = nicht eingetragen */return `<td class="dcell ${cls}${f==='antrag'&&!v?' amiss':''}" data-vid="${esc(b.id)}" data-df="${f}" title="${esc(v||'')} · Klick = Datum wählen" tabindex="0">${esc(dshort(v))}${v?lvB(b,f):''}</td>`;};
  const lb=ltBar(b);
- return `<tr class="vr st-${st}${lb?' lbr':''}"${lb?` style="--lp:${lb.p};--lc:${lb.c}" title="${esc(lb.t)}"`:''}>
+ return `<tr class="vr st-${st}${lb?' lbr':''}${lb&&lb.s?' lbs':''}"${lb?` style="--lp:${lb.p};--lc:${lb.c}" title="${esc(lb.t)}"`:''}>
  <td class="sdot" title="${{o:'offen',l:'angeliefert',m:'montiert',b:'O.K. – abholbereit',a:'abgeholt'}[st]}"><i></i></td>
  <td class="who2${vkSty(b)?' wfx':''}" style="${vkSty(b)}">${lb?'<i class="ltbar"></i>':''}<div class="wp">${b.b==='1'&&b.a!=='1'?'<img class="oklg" src="'+imgU(OKLOGO)+'" alt="" title="Fertig & abholbereit – Velocenter-Aufkleber ist drauf">':''}<b class="ef" contenteditable="true" spellcheck="false" data-vid="${esc(b.id)}" data-f="name" title="Klick = Kunde bearbeiten">${esc(b.name||'')}</b><small>${bModelE(b)}</small></div></td>
  <td class="pcell pf" data-vid="${esc(b.id)}" data-pf="form" title="Klick = Form wählen" tabindex="0">${esc(b.form||'')}</td><td class="pcell pg" data-vid="${esc(b.id)}" data-pf="gr" title="Klick = Größe wählen" tabindex="0">${esc(b.gr||'')}</td>
