@@ -252,3 +252,6 @@ html:root #grid .kw::after{display:block!important;content:""!important;position
   clip-path:polygon(0 0,100% 0,100% 100%);
   background:linear-gradient(to bottom left,transparent calc(50% - 4px),#F4F6F9 calc(50% - 4px),#C3C8D0 calc(50% - 2px),#8E939B calc(50% - .5px),#5F6168 50%),var(--hp-brushx),var(--hp-metal)!important;
   background-blend-mode:normal,normal,overlay,normal,normal,normal,normal,normal,normal,normal!important}
+/* 1.10.99 (Tiry): Goldring + Halo immer mittig zur Kachel – Kachel ist im Knopf vertikal zentriert, Knopf wird bei navFit niedriger */
+html:root nav .navbtn[aria-current="true"]::after{top:calc(50% - 26px)!important}
+html:root nav .navbtn[aria-current="true"]::before{top:calc(50% - 54px)!important}
