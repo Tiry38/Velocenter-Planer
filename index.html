@@ -2417,6 +2417,9 @@ html:root #grid .kw::after{display:block!important;content:""!important;position
   clip-path:polygon(0 0,100% 0,100% 100%);
   background:linear-gradient(to bottom left,transparent calc(50% - 4px),#F4F6F9 calc(50% - 4px),#C3C8D0 calc(50% - 2px),#8E939B calc(50% - .5px),#5F6168 50%),var(--hp-brushx),var(--hp-metal)!important;
   background-blend-mode:normal,normal,overlay,normal,normal,normal,normal,normal,normal,normal!important}
+/* 1.10.99 (Tiry): Goldring + Halo immer mittig zur Kachel – Kachel ist im Knopf vertikal zentriert, Knopf wird bei navFit niedriger */
+html:root nav .navbtn[aria-current="true"]::after{top:calc(50% - 26px)!important}
+html:root nav .navbtn[aria-current="true"]::before{top:calc(50% - 54px)!important}
 </style></head><body>
 <div class="app">
 <nav aria-label="Bereiche">
@@ -2601,7 +2604,7 @@ html:root #grid .kw::after{display:block!important;content:""!important;position
 <script>
 const FB_CONFIG={apiKey:"AIzaSyC_uZPvc5rJETwlS4JbfCoTkkE4ckjtp0M",authDomain:"velocenter-planer.firebaseapp.com",projectId:"velocenter-planer",storageBucket:"velocenter-planer.firebasestorage.app",messagingSenderId:"1018330488700",appId:"1:1018330488700:web:262a4d1660353e6fde8ef9"};
 /* ================= Velocenter Werkstatt-Cockpit – Oberfläche ================= */
-const CLIENT_VERSION='1.10.98';
+const CLIENT_VERSION='1.10.99';
 const USERS=[{id:'kevin',n:'Kevin',c:'#E2232D'},{id:'stefan',n:'Stefan',c:'#F59E0B'},{id:'martina',n:'Martina',c:'#EC4899'},{id:'sascha',n:'Sascha',c:'#22D3EE'},{id:'rene',n:'René',c:'#34D399'}];
 const U=id=>USERS.find(u=>u.id===id)||{n:'',c:'#64748B',id:''};
 /* 1.10.37: Profilfarbe je Nutzer (meta/prefs[ID].col, für alle sichtbar) – Cache für den Login-Bildschirm */
