@@ -1158,3 +1158,9 @@ body.bgruh::after{display:none}
 
 /* 1.11.3 (Tiry): LT-Woche erreicht = Balken gelb-orange gestreift (statisch, keine Animation) */
 .vtab tr.lbs .ltbar{height:4px;background:repeating-linear-gradient(115deg,#F59E0B 0 7px,#FDE047 7px 12px)!important}
+/* 1.11.4: Kunden aus Veloport-Rechnung – gelb = bitte prüfen (Feld pr), ✓ = geprüft */
+.kdgrid .row.kpr>.c{background:linear-gradient(90deg,rgba(255,214,10,.30),rgba(255,214,10,.16))!important}
+.kdgrid .row.kpr>.c:first-child{box-shadow:inset 3px 0 0 #FFC800}
+.kdgrid .row.kpr .kdel{opacity:1;gap:2px}
+.kdgrid .kprok{border:0;border-radius:5px;background:#FFC800;color:#1a1400;font-weight:800;font-size:12px;line-height:1;padding:3px 4px;cursor:pointer}
+.kdgrid .kprok:hover{filter:brightness(1.1)}

@@ -1463,6 +1463,12 @@ body.bgruh::after{display:none}
 
 /* 1.11.3 (Tiry): LT-Woche erreicht = Balken gelb-orange gestreift (statisch, keine Animation) */
 .vtab tr.lbs .ltbar{height:4px;background:repeating-linear-gradient(115deg,#F59E0B 0 7px,#FDE047 7px 12px)!important}
+/* 1.11.4: Kunden aus Veloport-Rechnung – gelb = bitte prüfen (Feld pr), ✓ = geprüft */
+.kdgrid .row.kpr>.c{background:linear-gradient(90deg,rgba(255,214,10,.30),rgba(255,214,10,.16))!important}
+.kdgrid .row.kpr>.c:first-child{box-shadow:inset 3px 0 0 #FFC800}
+.kdgrid .row.kpr .kdel{opacity:1;gap:2px}
+.kdgrid .kprok{border:0;border-radius:5px;background:#FFC800;color:#1a1400;font-weight:800;font-size:12px;line-height:1;padding:3px 4px;cursor:pointer}
+.kdgrid .kprok:hover{filter:brightness(1.1)}
 
 [hidden]{display:none!important}
 #sTab td.b{font-weight:700}#sTab .pwm.ed{outline:none;padding:2px 6px;border-radius:6px;font-family:var(--mono)}#sTab td{vertical-align:top}
@@ -2164,6 +2170,9 @@ body.rowhl #v-planer .row:hover{background-color:rgba(27,30,37,0.032)}
 .lfpick .lfi{color:#272A2F}
 .lfpick .lfi:hover,.lfpick .lfi.on{background:rgba(39,174,75,0.112)}
 .lfpick .lfi.cur{box-shadow:inset 3px 0 rgba(12,161,63,0.38)}
+.kdgrid .row.kpr>.c{background:linear-gradient(90deg,rgba(171,144,24,0.24),rgba(171,144,24,0.128))!important}
+.kdgrid .row.kpr>.c:first-child{box-shadow:inset 3px 0 0 rgba(165,129,5,0.38)}
+.kdgrid .kprok{color:#1A1400}
 #sTab td.ce,#ltab td.ce{border-bottom:1px dashed #CED2D7}
 #sTab td.ce:hover,#ltab td.tg:hover,#ltab td.ce:hover{background:rgba(27,30,37,0.036)}
 /* theme_hp.css – Velocenter Planer im Design der Homepage velo-center.de (Design A, 1.10.80, Tiry 15.11.2026).
@@ -2423,6 +2432,10 @@ html:root #grid .kw::after{display:block!important;content:""!important;position
 /* 1.10.99 (Tiry): Goldring + Halo immer mittig zur Kachel – Kachel ist im Knopf vertikal zentriert, Knopf wird bei navFit niedriger */
 html:root nav .navbtn[aria-current="true"]::after{top:calc(50% - 26px)!important}
 html:root nav .navbtn[aria-current="true"]::before{top:calc(50% - 54px)!important}
+/* 1.11.4: Kunden-Zeile aus Veloport-Rechnung „bitte prüfen“ – kräftig gelb auch im hellen Design */
+.kdgrid .row.kpr>.c{background:linear-gradient(90deg,#FFE45C,#FFF2A8)!important;color:#2a2200}
+.kdgrid .row.kpr>.c:first-child{box-shadow:inset 3px 0 0 #E0A800}
+.kdgrid .kprok{background:#E0A800;color:#fff}
 </style></head><body>
 <div class="app">
 <nav aria-label="Bereiche">
@@ -2607,7 +2620,7 @@ html:root nav .navbtn[aria-current="true"]::before{top:calc(50% - 54px)!importan
 <script>
 const FB_CONFIG={apiKey:"AIzaSyC_uZPvc5rJETwlS4JbfCoTkkE4ckjtp0M",authDomain:"velocenter-planer.firebaseapp.com",projectId:"velocenter-planer",storageBucket:"velocenter-planer.firebasestorage.app",messagingSenderId:"1018330488700",appId:"1:1018330488700:web:262a4d1660353e6fde8ef9"};
 /* ================= Velocenter Werkstatt-Cockpit – Oberfläche ================= */
-const CLIENT_VERSION='1.11.3';
+const CLIENT_VERSION='1.11.4';
 const USERS=[{id:'kevin',n:'Kevin',c:'#E2232D'},{id:'stefan',n:'Stefan',c:'#F59E0B'},{id:'martina',n:'Martina',c:'#EC4899'},{id:'sascha',n:'Sascha',c:'#22D3EE'},{id:'rene',n:'René',c:'#34D399'}];
 const U=id=>USERS.find(u=>u.id===id)||{n:'',c:'#64748B',id:''};
 /* 1.10.37: Profilfarbe je Nutzer (meta/prefs[ID].col, für alle sichtbar) – Cache für den Login-Bildschirm */
@@ -3065,10 +3078,11 @@ function stopLive(){BK_IMPOK=false;unsubs.forEach(u=>{try{u();}catch(_){}});unsu
 function startLive(){stopLive();const from=iso(new Date(Date.now()-35*864e5));
  listen('P',x=>P=x,db.collection('planer').where('datum','>=',from));
  listen('V',x=>V=x);listen('B',x=>B=x);listen('T',x=>T=x);listen('S',x=>{S=x;smbwSeed().then(()=>skonSeed());});
- listen('L',x=>{L=x.map(o=>Object.assign({},o,{k:o.k||o.id}));fnUpd();setTimeout(leasRename,0);if(!x.length)seedLeasing();else recLeasing();});
+ listen('L',x=>{L=x.map(o=>Object.assign({},o,{k:o.k||o.id}));fnUpd();setTimeout(leasRename,0);if(!x.length)seedLeasing();else recLeasing().then(rewSeed);});
  listen('I',x=>{I={};x.forEach(o=>I[o.id]=o.wert);});
  if(ME&&ME.adm)unsubs.push(db.doc('tresor/pw').onSnapshot(d=>{if(KEY&&NOTES&&d.exists&&d.data().ct&&(d.data().sid?d.data().sid!==TABID:d.data().tsVon!==ME.id)&&!document.querySelector('#nGrid [contenteditable]:focus'))open_(KEY,d.data()).then(x=>{if(!Array.isArray(x)){NOTES=x.notes||[];PWGRID=x.grid||PWGRID;rn();}}).catch(()=>{});},()=>{}));
- if(ME&&ME.adm)for(let y=1995;y<=new Date().getFullYear()+1;y++)unsubs.push(db.doc('meta/kd_'+y).onSnapshot(d=>{KD[y]=(d.exists&&d.data().items)||{};kdDirty=true;scheduleRender();},()=>{}));
+ if(ME&&ME.adm)for(let y=1995;y<=new Date().getFullYear()+1;y++)unsubs.push(db.doc('meta/kd_'+y).onSnapshot(d=>{KD[y]=(d.exists&&d.data().items)||{};kdDirty=true;scheduleRender();if(KDEIN.length)kdeinRun();},()=>{}));
+ if(ME&&ME.adm)unsubs.push(db.collection('kdein').onSnapshot(q=>{KDEIN=q.docs.map(d=>Object.assign({},d.data(),{id:d.id}));kdeinRun();},()=>{}));
  if(ME&&ME.adm){unsubs.push(db.doc('meta/mailauto').onSnapshot(d=>{MAU=d.exists?(d.data()||{}):{};mauBadge();},()=>{}));mauStart();}
  if(ME&&ME.adm)unsubs.push(db.doc('meta/kd_trash').onSnapshot(d=>{const it=(d.exists&&d.data().items)||{},o={};for(const k in it)if(it[k])o[k]=it[k];KDT=o;kdDirty=true;scheduleRender();kdBinPrune();},()=>{}));
  if(ME&&ME.adm)unsubs.push(db.doc('meta/kd_x').onSnapshot(d=>{KD.x=(d.exists&&d.data().items)||{};kdDirty=true;scheduleRender();},()=>{}));
@@ -4162,7 +4176,7 @@ const logoOf=f=>f.logo||LOGOS[f.k]||LOGOS[f.id]||'';/* 1.10.9: Logo bleibt, auch
 // Feste Fragen je Anbieter (Tirys Liste) – [Feld, Frage, 't' = ja/nein/offen]
 const LQG=[['🔧 Inspektion & Verschleiß',[['isz','Inspektion – wir bekommen'],['vsd','Verschleiß dabei?'],['abMon','Einreichen ab Monat'],['isCode','Inspektionscode für Kunden?']]],
  ['🛡 Versicherung',[['vers','Versicherung dabei?']]],
- ['🧾 Rechnungsadressen',[['reNeu','Neurad'],['reIV','Inspektion & Verschleiß'],['reSch','Schaden']]],
+ ['🧾 Rechnungsadressen',[['reNeu','Neurad'],['reIV','Inspektion & Verschleiß'],['reSch','Schaden'],['reW','Erkennung auf der Veloport-Rechnung (Wörter aus der Rechnungsadresse, mit Komma)','','o']]],/* 1.11.4: reW = Leasing-Erkennung für Kunden aus Rechnungen */
  ['🚲 Erlaubt zu leasen',[['drei','E-Dreirad','t'],['spe','S-Pedelec','t']]],
  ['🔑 Neuradabholung',[['code','Abholcode?'],['mit','Kunde bringt mit']]],
  ['📞 Kontakt & Leasingende',[['kon','Händler-Kontakt','','o'],['ende','Leasingende / Rückgabe','','o'],['preis','Preisgrenzen','','o']]]];/* 1.7.6: 'o' = nur anzeigen, wenn gefüllt */
@@ -4361,7 +4375,8 @@ function rk(){const g=$('kdGrid');if(!g)return;kdAngMig();const all=kdAll();{con
  if(!all.length){kdPopClose();g.innerHTML=h+`<div class="kdempty">${ME&&ME.adm?'Noch keine Kunden – oben „📥 Kunden aus Sheet übernehmen“ und die .xlsx des Sheets wählen.':'Noch keine Kunden übernommen.'}</div>`;return;}
  for(const r of list){const y=kdYear(r);if(y!==yr){yr=y;h+=`<div class="kw kdy">${y}<span>${cnt[y]} ${cnt[y]===1?'Verkauf':'Verkäufe'}${q||fk.length?' (Treffer)':''}</span></div>`;}
   const id=esc(r.id),ky=esc(r.y);
-  h+=`<div class="row kr"><div class="c kc kgrip" draggable="true" data-kid="${id}" data-ky="${ky}" title="Ziehen = Zeile verschieben">⋮⋮</div>${cols.map(c=>kdCell(c,r,id,ky)).join('')}<div class="c kc kdel" data-kid="${id}" data-ky="${ky}"><button class="nx" type="button" data-kdel="${id}" data-ky="${ky}" title="Eintrag löschen">×</button></div></div>`;}
+  const pr=Array.isArray(r.pr)&&r.pr.length?r.pr:null;
+  h+=`<div class="row kr${pr?' kpr':''}"${pr?` title="🧾 Aus Veloport-Rechnung – bitte prüfen: ${esc(pr.join(', '))}"`:''}><div class="c kc kgrip" draggable="true" data-kid="${id}" data-ky="${ky}" title="Ziehen = Zeile verschieben">⋮⋮</div>${cols.map(c=>kdCell(c,r,id,ky)).join('')}<div class="c kc kdel" data-kid="${id}" data-ky="${ky}">${pr?`<button class="kprok" type="button" data-kprok="${id}" data-ky="${ky}" title="Geprüft – gelb weg (fehlte: ${esc(pr.join(', '))})">✓</button>`:''}<button class="nx" type="button" data-kdel="${id}" data-ky="${ky}" title="Eintrag löschen">×</button></div></div>`;}
  g.innerHTML=h+((q||fk.length)&&!list.length?'<div class="kdempty">Nichts gefunden.</div>':'');}
 /* 1.10.13: Telefon → WhatsApp Web. Handynummern (015x/016x/017x) in jeder Schreibweise (0176-72654293, +49 176 …, 0049…) → 49176…; Festnetz = kein WhatsApp. */
 const WAICO='<svg viewBox="0 0 24 24" width="17" height="17" shape-rendering="geometricPrecision" aria-hidden="true"><path fill="currentColor" d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>';
@@ -4415,6 +4430,7 @@ $('kdSearch').addEventListener('input',()=>{clearTimeout(window._kdT);window._kd
 $('kdMore').addEventListener('click',()=>{kdYears+=3;rk();});
 $('kdAdd').addEventListener('click',()=>{kdEdit='new';rk();$('kdForm').scrollIntoView({block:'start'});});
 $('v-kunden').addEventListener('click',e=>{if(e.target.closest('[data-kcancel]')){kdEdit=null;rk();return;}
+ const pk=e.target.closest('[data-kprok]');if(pk){const y=pk.dataset.ky,id=pk.dataset.kprok,cur=KD[y]&&KD[y][id];if(!cur)return;const n=Object.assign({},cur,{pr:[],prOk:ME.id});kdPut(y,n).then(rk);toast('✓ Geprüft');return;}
  const dl=e.target.closest('[data-kdel]');if(dl){const y=dl.dataset.ky,id=dl.dataset.kdel,old=KD[y]&&KD[y][id];if(!old)return;if(!dl.dataset.sure){dl.dataset.sure=1;dl.textContent='?';dl.title='Nochmal klicken = löschen';return;}
   const n=Object.assign({},KD[y]);delete n[id];KD[y]=n;kdDirty=true;rk();db.doc('meta/kd_'+y).update({['items.'+id]:null}).catch(fail);const tr=Object.assign({},old,{_y:y,_del:Date.now(),_von:ME?ME.id:''});delete tr._t;delete tr._d;delete tr._o;kdBinSet(id,tr);toast('Gelöscht – auch später über „↩ Gelöschte“ zurückholbar',()=>{kdRestore(id);toast('Wiederhergestellt');});}});
 $('v-kunden').addEventListener('submit',async e=>{if(!e.target.dataset.kf2)return;e.preventDefault();const d=new FormData(e.target),y=String(new Date().getFullYear());const r={id:nid('k'),y};
@@ -5341,6 +5357,86 @@ $('v-ausw').addEventListener('change',e=>{if(e.target.id==='auF'||e.target.id===
 {let tip=null;const hide=()=>{if(tip){tip.remove();tip=null;}};
  $('v-ausw').addEventListener('mouseover',e=>{const t=e.target.closest('[data-tip]');if(!t||!t.dataset.tip){hide();return;}if(!tip){tip=document.createElement('div');tip.className='autip';document.body.append(tip);}tip.textContent=t.dataset.tip;const r=t.getBoundingClientRect();tip.style.left=Math.max(8,Math.min(innerWidth-tip.offsetWidth-8,r.left+r.width/2-tip.offsetWidth/2))+'px';tip.style.top=(r.top-tip.offsetHeight-8<8?r.bottom+8:r.top-tip.offsetHeight-8)+'px';});
  $('v-ausw').addEventListener('mouseleave',hide);document.addEventListener('scroll',hide,true);}
+
+/* ================= 1.11.4 (Tiry 17.11.2026, CLAUDE.md §9): Kunden automatisch aus Veloport-Rechnungen =================
+   Die KI-Zentrale legt erkannte Neurad-Rechnungen (Position „ArtNr: FID…“ mit Marke/Modell, Preis > 2.000 €) und Übernahmeerklärungen
+   nur in den Eingangskorb „kdein“ (create-only, Konto „Tablet“). Ein offener Planer mit Admin übernimmt sie nach meta/kd_<Jahr>:
+   Zeile oben in „Kunden“, nie doppelt (Beleg-Nr.), Marke/Modell in der Schreibweise der letzten 12 Monate (rollierend ab heute),
+   Leasing über die Erkennungswörter der Rechnungsadresse (Leasing-Infos, Feld reW). Fehlt etwas → Zeile gelb „prüfen“ (Feld pr).
+   ENRA/Versicherung bleibt Handarbeit. Übernahmeerklärung (typ ue) ergänzt nur Kundendaten, Zuordnung über Rahmen-Nr./FID. */
+const REW0={BB:'PEAC Germany',KM:'Kazenmaier Leasing',RD:'Ride Mobility',CB:'company bike solutions',ER:'AGL'};const REW_VER=1;
+let KDEIN=[],kdeinBusy=false,kdeinT=null;
+const kdeN=s=>String(s||'').toLowerCase().replace(/ß/g,'ss').replace(/[^a-z0-9äöü]+/g,' ').trim();
+const kdeRa=s=>String(s||'').toUpperCase().replace(/[^A-Z0-9]/g,'');
+const kdeTok=s=>kdeN(s).split(' ').filter(Boolean).sort().join(' ');
+const kdeWords=f=>String(f&&f.reW!=null?f.reW:'').split(/[,;\n]+/).map(w=>kdeN(w)).filter(w=>w.length>=3);
+/* Leasing-Kürzel aus der Rechnungsadresse (längstes passendes Wort gewinnt) */
+function kdeLeas(adr){const a=' '+kdeN(adr)+' ';if(a.trim()==='')return null;let best=null;
+ for(const f of (L||[])){if(isVers(f))continue;for(const w of kdeWords(f))if(a.includes(' '+w+' ')&&(!best||w.length>best.w.length))best={k:f.k,w};}return best;}
+/* Beleg „R26-1422“ → Nummer „1422“ (Kunden-Liste zeigt R<JJ>- aus dem Datum davor), sonst unverändert */
+const kdeNr=s=>{s=String(s||'').trim();const m=s.match(/^R?\s*(\d{2})\s*-\s*(\d+)$/i);return m?m[2]:s;};
+const kdeBel=(nr,dat)=>{const n=kdeNr(nr),d=vkDate(dat);return /^\d+$/.test(n)&&d?'R'+String(new Date(d).getFullYear()).slice(2)+'-'+n:String(nr||'').trim().toUpperCase();};
+/* Schreibweise angleichen: gleiche Marke/gleiches Modell (ohne Groß-/Klein-, Leer- und Sonderzeichen bzw. gleiche Wörter) in den letzten 12 Monaten ab heute → häufigste Schreibweise */
+function kdeSpell(v,rows,f,mk){v=String(v||'').trim();if(!v)return v;const n=kdeN(v).replace(/ /g,''),t=kdeTok(v),c={};
+ for(const r of rows){if(mk&&kdeN(r.marke).replace(/ /g,'')!==mk)continue;const x=String(r[f]||'').trim();if(!x)continue;if(kdeN(x).replace(/ /g,'')===n||kdeTok(x)===t)c[x]=(c[x]||0)+1;}
+ const b=Object.keys(c).sort((a,b)=>c[b]-c[a])[0];return b||v;}
+const kdeRecent=()=>{const ab=Date.now()-365*864e5;return kdAll().filter(r=>r._d&&r._d>=ab&&r._d<=Date.now()+864e5);};
+/* „Kevin Thirolf“ → „Thirolf Kevin“ (Kunden-Liste: Nachname zuerst); Firmen bleiben */
+const kdeName=(vn,nn,full)=>{vn=String(vn||'').trim();nn=String(nn||'').trim();if(nn)return (nn+' '+vn).trim();full=String(full||'').trim().replace(/^(herr|frau|familie)\s+/i,'');
+ if(!full||/\b(gmbh|ag|kg|ug|e\.?\s?k|ohg|gbr|mbh|co\.?)\b/i.test(full)||full.includes(','))return full;const p=full.split(/\s+/);return p.length>1?p[p.length-1]+' '+p.slice(0,-1).join(' '):full;};
+/* Kunde aus den Kandidaten der KI-Zentrale (Reihenfolge: Übernahme, Fahrzeug-Export über Rahmen-Nr., Kunden-Nr. der Rechnung, Rechnungsadresse).
+   Bei Leasing ist die Rechnungsadresse der Leasinggeber → Kandidaten mit Leasing-Wort im Namen oder aus der Adresse zählen nicht. */
+function kdeKunde(x,lea){const lw=lea?kdeWords((L||[]).find(f=>f.k===lea.k)):[];const isL=s=>{const a=' '+kdeN(s)+' ';return lw.some(w=>a.includes(' '+w+' '));};
+ const K=(Array.isArray(x.kd)?x.kd:[]).filter(k=>k&&(k.name||k.nn)&&!isL([k.vn,k.nn,k.name].join(' '))&&!(lea&&k.q==='adr'));
+ const k=K[0]||null;if(!k)return {kunde:'',tel:'',mail:'',kq:''};
+ const tels=[].concat(...K.map(o=>[].concat(o.tel||[]))).map(s=>String(s).trim()).filter(Boolean),mails=[...new Set([].concat(...K.map(o=>[].concat(o.mail||[]))).map(s=>String(s).trim().toLowerCase()).filter(s=>/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(s)))];
+ const hand=tels.find(t=>kdWaNums(t).length);
+ return {kunde:kdeName(k.vn,k.nn,k.name),tel:hand||tels[0]||'',mail:mails.slice(0,3).join(', '),kq:k.q||''};}
+const KDE_PF={kunde:'Kunde',marke:'Marke',modell:'Modell',preis:'Preis',rahmen:'Rahmen-Nr.',tel:'Telefon',mail:'E-Mail'};
+const kdePr=r=>Object.keys(KDE_PF).filter(f=>!String(r[f]||'').trim()).map(f=>KDE_PF[f]).concat(r.kq==='adr'?['Kunde nur aus Rechnungsadresse']:[]);
+/* Zeile aus einer Rechnung bauen (ohne Speichern) */
+function kdeRow(x,recent){let dat=String(x.dat||'').trim();const dOk=/^\d{1,2}\.\d{1,2}\.\d{4}$/.test(dat)&&vkDate(dat);if(!dOk)dat=deDate(new Date());const d=vkDate(dat),y=String(new Date(d).getFullYear());
+ const lea=kdeLeas(x.adr);const kd=kdeKunde(x,lea);
+ const marke=kdeSpell(x.marke,recent,'marke'),mk=kdeN(marke).replace(/ /g,'');
+ const pr=+x.preis>0?(Math.round(+x.preis*100)/100):0;
+ const r={id:'k'+kdeBel(x.nr,dat).toLowerCase().replace(/[^a-z0-9]/g,''),y,dat,nr:kdeNr(x.nr),marke,modell:kdeSpell(x.modell,recent,'modell',mk),
+  preis:pr?String(pr).replace('.',','):'',leas:lea?lea.k:'',kunde:kd.kunde,vers:'',rahmen:String(x.rahmen||'').trim(),tel:kd.tel,mail:kd.mail,
+  src:'re',kq:kd.kq,fid:String(x.fid||'').trim(),kdnr:String(x.kdnr||'').trim(),reAm:stamp()};
+ if(kd.mail)r.mailSrc='rechnung';r.pr=kdePr(r).concat(dOk?[]:['Datum']);return r;}
+/* Übernahme-Daten in eine bestehende Zeile (nur leere Felder; Kunde auch, wenn er nur aus der Rechnungsadresse kam) */
+function kdeUeApply(r,u){const n=Object.assign({},r);let ch=false;const nm=kdeName(u.vn,u.nn,u.name);
+ if(nm&&(!String(n.kunde||'').trim()||n.kq==='adr')){n.kunde=nm;n.kq='ue';ch=true;}
+ const tels=[].concat(u.tel||[]).map(s=>String(s).trim()).filter(Boolean),hand=tels.find(t=>kdWaNums(t).length)||tels[0];
+ if(hand&&!String(n.tel||'').trim()){n.tel=hand;ch=true;}
+ const ms=[].concat(u.mail||[]).map(s=>String(s).trim().toLowerCase()).filter(s=>/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(s));
+ if(ms.length&&!kdMails(n).length){n.mail=ms.slice(0,3).join(', ');n.mailSrc='uebernahme';ch=true;}
+ if(u.rahmen&&!String(n.rahmen||'').trim()){n.rahmen=String(u.rahmen).trim();ch=true;}
+ if(ch&&Array.isArray(n.pr))n.pr=kdePr(n).concat(n.pr.includes('Datum')?['Datum']:[]);return ch?n:null;}
+const kdeMatch=(r,u)=>{const a=kdeRa(u.rahmen),f=kdeRa(u.fid);return (a.length>=5&&kdeRa(r.rahmen)===a)||(f.length>=3&&kdeRa(r.fid)===f);};
+/* Läuft nur bei Admins, wenn alle nötigen Kunden-Jahre geladen sind. Mehrere offene Planer: Transaktion je Jahres-Doc, Zeilen-ID = Beleg → nie doppelt. */
+function kdeinRun(){if(kdeinT)return;kdeinT=setTimeout(()=>{kdeinT=null;kdeinGo().catch(e=>console.warn('kdein',e));},800);}
+async function kdeinGo(){if(kdeinBusy||!ME||!ME.adm||!KDEIN.length)return;const cy=new Date().getFullYear();for(let y=cy-1;y<=cy;y++)if(!KD[y])return;kdeinBusy=true;
+ try{const recent=kdeRecent(),done=[];let neu=0,erg=0;
+  for(const x of KDEIN.filter(z=>z.typ==='re')){
+   if(!String(x.nr||'').trim()){done.push(x.id);continue;}const r=kdeRow(x,recent),bel=kdeBel(x.nr,r.dat);
+   if(kdAll().some(r=>kdNr(r).toUpperCase()===bel)){done.push(x.id);continue;}
+   for(const u of KDEIN.filter(z=>z.typ==='ue'&&kdeMatch(r,z))){const n=kdeUeApply(r,u);if(n)Object.assign(r,n);done.push(u.id);}
+   r.ts=stamp();r.tsVon='rechnung';
+   const ok=await db.runTransaction(async t=>{const f=db.doc('meta/kd_'+r.y);const d=await t.get(f);const it=(d.exists&&d.data().items)||{};if(it[r.id])return false;
+    if(d.exists)t.update(f,{['items.'+r.id]:r});else t.set(f,{items:{[r.id]:r}});return true;});
+   if(ok){KD[r.y]=Object.assign({},KD[r.y]||{},{[r.id]:r});kdDirty=true;neu++;recent.push(r);}
+   done.push(x.id);}
+  /* Übernahmen zu schon vorhandenen Zeilen (Rechnung kam vorher) */
+  for(const u of KDEIN.filter(z=>z.typ==='ue'&&!done.includes(z.id))){
+   const hit=kdAll().filter(r=>r._d&&r._d>=Date.now()-400*864e5&&kdeMatch(r,u));
+   if(hit.length===1){const r=hit[0],n=kdeUeApply(r,u);if(n){await kdPut(r.y,n);erg++;}done.push(u.id);}
+   else if(hit.length>1||(+u.ts||0)<Date.now()-60*864e5)done.push(u.id);} /* mehrdeutig oder nach 60 Tagen ohne Rechnung: verwerfen */
+  for(const id of [...new Set(done)])await db.collection('kdein').doc(id).delete().catch(()=>{});
+  if(neu||erg){kdDirty=true;scheduleRender();toast('🧾 Aus Veloport-Rechnungen: '+(neu?neu+' neue'+(neu===1?'r Kunde':' Kunden'):'')+(neu&&erg?' · ':'')+(erg?erg+' ergänzt (Übernahme)':''));}
+ }finally{kdeinBusy=false;}}
+/* Erkennungswörter einmalig vorbelegen (nur leere Felder, nur Belegtes aus reNeu) */
+let rewDone=false;async function rewSeed(){if(rewDone||!ME||!ME.adm||!L.length)return;rewDone=true;try{const f=db.doc('meta/seed');const d=await f.get();if(d.exists&&(d.data().rew||0)>=REW_VER)return;
+ for(const o of L){const w=REW0[o.id];if(w&&!String(o.reW||'').trim())await db.collection('leasing').doc(o.id).update({reW:w});}await f.set({rew:REW_VER},{merge:true});}catch(e){rewDone=false;}}
 
 /* ================= START ================= */
 auth.onAuthStateChanged(u=>{if(u&&u.email&&u.email.endsWith(DOMAIN)){const id=u.email.slice(0,-DOMAIN.length);if(U(id).n){start({id,n:U(id).n,adm:ADMINS.includes(id)});return;}}ME=null;showLogin();});
