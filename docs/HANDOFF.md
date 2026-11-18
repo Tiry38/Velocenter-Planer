@@ -10,7 +10,7 @@ Alles Ausgelieferte steht in `CLAUDE.md` §6. Hier nur, was offen ist.
 ## Offen
 1. **Vororder mit echten Daten im Laden prüfen** (Tiry). Wenn Tiry eine Vororder schickt: als Text im Format
    `Artikel ; Art.-Nr. ; Größe/Farbe ; Menge ; Kommt am` (eine Zeile je Artikel) zurückgeben – Tiry fügt sie über „📋 Liste einfügen“ ein. Kein Firebase-Zugang für Claude.
-2. **`firestore.rules` in der Konsole veröffentlichen** (Tiry): `meta/mailauto|mailcfg|mailtpl` nur Admins, `meta/kd_*` nur Admins.
+2. ~~`firestore.rules` in der Konsole veröffentlichen~~ **erledigt 18.11.2026, 11:31** (Tiry; Konsole = Repo-Datei, per Screenshot geprüft): `meta/mailauto|mailcfg|mailtpl` und `meta/kd_*` nur Admins.
 3. Audit-Vorschläge 2, 3, 7 (aus Audit 06.11.) – nicht beauftragt.
 4. Verbesserungsvorschläge 1–5 aus früherer Sitzung – nicht beauftragt.
 5. Text „Kalenderwoche“ wird bei sehr starkem Browser-Zoom abgeschnitten (klein, nicht beauftragt).
