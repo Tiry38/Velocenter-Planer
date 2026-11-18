@@ -1469,6 +1469,7 @@ body.bgruh::after{display:none}
 .kdgrid .row.kpr .kdel{opacity:1;gap:2px}
 .kdgrid .kprok{border:0;border-radius:5px;background:#FFC800;color:#1a1400;font-weight:800;font-size:12px;line-height:1;padding:3px 4px;cursor:pointer}
 .kdgrid .kprok:hover{filter:brightness(1.1)}
+#v-planer .tchip.toff{font-size:10px!important;line-height:1.1!important;white-space:normal!important;text-align:center}
 
 [hidden]{display:none!important}
 #sTab td.b{font-weight:700}#sTab .pwm.ed{outline:none;padding:2px 6px;border-radius:6px;font-family:var(--mono)}#sTab td{vertical-align:top}
@@ -2620,7 +2621,7 @@ html:root nav .navbtn[aria-current="true"]::before{top:calc(50% - 54px)!importan
 <script>
 const FB_CONFIG={apiKey:"AIzaSyC_uZPvc5rJETwlS4JbfCoTkkE4ckjtp0M",authDomain:"velocenter-planer.firebaseapp.com",projectId:"velocenter-planer",storageBucket:"velocenter-planer.firebasestorage.app",messagingSenderId:"1018330488700",appId:"1:1018330488700:web:262a4d1660353e6fde8ef9"};
 /* ================= Velocenter Werkstatt-Cockpit – Oberfläche ================= */
-const CLIENT_VERSION='1.11.8';
+const CLIENT_VERSION='1.11.9';
 const USERS=[{id:'kevin',n:'Kevin',c:'#E2232D'},{id:'stefan',n:'Stefan',c:'#F59E0B'},{id:'martina',n:'Martina',c:'#EC4899'},{id:'sascha',n:'Sascha',c:'#22D3EE'},{id:'rene',n:'René',c:'#34D399'}];
 const U=id=>USERS.find(u=>u.id===id)||{n:'',c:'#64748B',id:''};
 /* 1.10.37: Profilfarbe je Nutzer (meta/prefs[ID].col, für alle sichtbar) – Cache für den Login-Bildschirm */
@@ -3141,7 +3142,7 @@ function render(){const g=$('grid');if(document.querySelector('#grid .edit'))ret
   if(k!==lastKw){h+=`<div class="kw"><i class="kwk" aria-hidden="true"></i>KW ${k}</div>`;lastKw=k;}
   h+=`<div class="row ${wd==='SA'?'sa':''} ${wd==='MI'?'mi':''} ${ds===today?'today':''} ${past?'past':''} ${HOL[ds]?'hol':''}" data-iso="${ds}"><div class="c date"><b>${String(d.getDate()).padStart(2,'0')}.${String(d.getMonth()+1).padStart(2,'0')}</b><span>${wd[0]+wd.slice(1).toLowerCase()}</span>${ds===today?'<em>Heute</em>':HOL[ds]?`<em>${esc(HOL[ds])}</em>`:''}</div>`;
   cols.forEach(c=>{
-   if(c.of){const t=items.filter(e=>e.spalte===c.of&&(!openOnly||e.erledigt!=='1')).sort(tmSort);h+=`<div class="c zt" style="--cc:${c.c}" data-iso="${ds}" data-of="${c.of}" title="Klick = Uhrzeit wählen">${t.map(e=>`<button class="tchip${e.zeit?'':' empty'}" type="button" data-tm="${esc(e.id)}" title="Uhrzeit für: ${esc(e.text)}">${e.zeit?esc(e.zeit):'––:––'}</button>`).join('')}</div>`;return;}
+   if(c.of){const t=items.filter(e=>e.spalte===c.of&&(!openOnly||e.erledigt!=='1')).sort(tmSort);h+=`<div class="c zt" style="--cc:${c.c}" data-iso="${ds}" data-of="${c.of}" title="Klick = Uhrzeit wählen">${t.map(e=>`<button class="tchip${e.zeit?'':' empty'}${e.zeit==='?'?' toff':''}" type="button" data-tm="${esc(e.id)}" title="Uhrzeit für: ${esc(e.text)}">${e.zeit==='?'?'Uhrzeit offen':e.zeit?esc(e.zeit):'––:––'}</button>`).join('')}</div>`;return;}
    let its=items.filter(e=>e.spalte===c.k&&(!openOnly||e.erledigt!=='1'));if(/^t[12]$/.test(c.k))its=its.sort(tmSort);
    const hit=e=>q&&(e.text+' '+e.zeit).toLowerCase().includes(q);
    h+=`<div class="c" style="--cc:${c.c}" data-iso="${ds}" data-col="${c.k}">`+(c.dot?its.map(e=>`<button class="dot${hit(e)?' hit':''}" type="button" data-dot="${esc(e.id)}" aria-label="Anfrage: ${esc(e.text)}"><span class="tip"><b>Anfrage Abholung/Reparatur</b>${esc(e.text)}<small>${U(e.von).n?'von '+esc(U(e.von).n)+' · ':''}Klick = bearbeiten</small></span></button>`).join(''):
@@ -3176,7 +3177,7 @@ function parseTm(v,col){if(!/^t[12]$/.test(col))return{zeit:'',text:v};const q=v
 const TSLOTS=(()=>{const a=[],f=n=>String(Math.floor(n/60)).padStart(2,'0')+':'+String(n%60).padStart(2,'0');for(let n=9*60;n<=12*60;n+=15)a.push(f(n));for(let n=14*60+30;n<=17*60+45;n+=15)a.push(f(n));return a;})();
 function timeEdit(anchor,val,saveFn){const i=document.createElement('select');i.className='edit tin';i.id='edit';i.size=1;
  const opts=TSLOTS.slice();if(val&&val!=='?'&&!opts.includes(val))opts.push(val),opts.sort();
- i.innerHTML='<option value="">– Uhrzeit –</option><option value="?"'+(val==='?'?' selected':'')+'>? – Uhrzeit noch offen</option><optgroup label="Vormittag">'+opts.filter(t=>t<'13:00').map(t=>`<option${t===val?' selected':''}>${t}</option>`).join('')+'</optgroup><optgroup label="Nachmittag">'+opts.filter(t=>t>='13:00').map(t=>`<option${t===val?' selected':''}>${t}</option>`).join('')+'</optgroup>';
+ i.innerHTML='<option value="">– Uhrzeit –</option><option value="?"'+(val==='?'?' selected':'')+'>Uhrzeit offen</option><optgroup label="Vormittag">'+opts.filter(t=>t<'13:00').map(t=>`<option${t===val?' selected':''}>${t}</option>`).join('')+'</optgroup><optgroup label="Nachmittag">'+opts.filter(t=>t>='13:00').map(t=>`<option${t===val?' selected':''}>${t}</option>`).join('')+'</optgroup>';
  anchor.replaceWith(i);i.focus();try{i.showPicker();}catch(_){}
  let done=false;const fin=ok=>{if(done)return;done=true;const v=i.value;i.remove();if(ok&&/^(\d\d:\d\d|\?)$/.test(v)&&v!==val)saveFn(v);else render();};
  i.addEventListener('change',()=>fin(true));i.addEventListener('keydown',k=>{if(k.key==='Enter'){k.preventDefault();fin(true);}if(k.key==='Escape')fin(false);});i.addEventListener('blur',()=>setTimeout(()=>fin(false),200));}
@@ -3218,7 +3219,7 @@ $('grid').addEventListener('click',ev=>{
  const be=ev.target.closest('[data-bsted]');if(be){const e=findE(be.dataset.bsted);if(e)lfPick(be,e.lid,v=>putE(Object.assign({},e,v)));return;}
  const ed=ev.target.closest('[data-ed]');if(ed){const e=findE(ed.dataset.ed);if(!e)return;inlineEdit(ed.closest('.e'),(e.zeit?e.zeit+' ':'')+e.text,e.spalte,(v,lk)=>{const p=parseTm(v,e.spalte);putE(Object.assign({},e,{text:p.text||e.text,zeit:p.zeit||(/^t[12]$/.test(e.spalte)?'':e.zeit)},lk||((p.text||v)!==e.text?{vid:'',bid:''}:{})));},()=>delE(e.id));return;}
  const tc=ev.target.closest('[data-tm]');if(tc){const e=findE(tc.dataset.tm);if(e)timeEdit(tc,e.zeit,v=>putE(Object.assign({},e,{zeit:v})));return;}
- const zc=ev.target.closest('.c.zt');if(zc&&ev.target===zc){const ph=document.createElement('span');zc.append(ph);timeEdit(ph,'',v=>{render();const cell=document.querySelector(`.c[data-iso="${zc.dataset.iso}"][data-col="${zc.dataset.of}"]`);if(!cell)return;const a=document.createElement('span');cell.append(a);inlineEdit(a,'',zc.dataset.of,(txt,lk)=>{const p=parseTm(txt,zc.dataset.of);putE(Object.assign({id:nid('p'),datum:zc.dataset.iso,spalte:zc.dataset.of,text:p.text||txt,zeit:p.zeit||v,erledigt:'',von:ME.id,erledigtVon:''},lk||{}));});const inp=$('edit');if(inp){inp.placeholder=(v==='?'?'Termin, Uhrzeit noch offen':'Termin um '+v)+' – z. B. Abholung Müller';}});return;}
+ const zc=ev.target.closest('.c.zt');if(zc&&ev.target===zc){const ph=document.createElement('span');zc.append(ph);timeEdit(ph,'',v=>{render();const cell=document.querySelector(`.c[data-iso="${zc.dataset.iso}"][data-col="${zc.dataset.of}"]`);if(!cell)return;const a=document.createElement('span');cell.append(a);inlineEdit(a,'',zc.dataset.of,(txt,lk)=>{const p=parseTm(txt,zc.dataset.of);putE(Object.assign({id:nid('p'),datum:zc.dataset.iso,spalte:zc.dataset.of,text:p.text||txt,zeit:p.zeit||v,erledigt:'',von:ME.id,erledigtVon:''},lk||{}));});const inp=$('edit');if(inp){inp.placeholder=(v==='?'?'Termin, Uhrzeit offen':'Termin um '+v)+' – z. B. Abholung Müller';}});return;}
  const ec=ev.target.closest('.c[data-col]');if(ec&&ev.target===ec&&!ec.querySelector('.edit')){const pb=ec.querySelector('[data-add]');if(pb)pb.click();return;}
  const pl=ev.target.closest('[data-add]');if(pl){const cell=pl.closest('.c');if(cell.dataset.col==='bst'){lfPick(cell,'',v=>{if(P.some(x=>x.spalte==='bst'&&x.datum===cell.dataset.iso&&(v.lid?x.lid===v.lid:x.text===v.text))){toast('Steht an dem Tag schon drin');return;}putE(Object.assign({id:nid('p'),datum:cell.dataset.iso,spalte:'bst',zeit:'',erledigt:'',von:ME.id,erledigtVon:''},v));});return;}inlineEdit(pl,'',cell.dataset.col,(v,lk)=>{const p=parseTm(v,cell.dataset.col);putE(Object.assign({id:nid('p'),datum:cell.dataset.iso,spalte:cell.dataset.col,text:p.text||v,zeit:p.zeit,erledigt:'',von:ME.id,erledigtVon:''},lk||{}));});}});
 let drag=null;
