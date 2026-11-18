@@ -1469,7 +1469,6 @@ body.bgruh::after{display:none}
 .kdgrid .row.kpr .kdel{opacity:1;gap:2px}
 .kdgrid .kprok{border:0;border-radius:5px;background:#FFC800;color:#1a1400;font-weight:800;font-size:12px;line-height:1;padding:3px 4px;cursor:pointer}
 .kdgrid .kprok:hover{filter:brightness(1.1)}
-#v-planer .tchip.toff{font-size:10px!important;line-height:1.1!important;white-space:normal!important;text-align:center}
 
 [hidden]{display:none!important}
 #sTab td.b{font-weight:700}#sTab .pwm.ed{outline:none;padding:2px 6px;border-radius:6px;font-family:var(--mono)}#sTab td{vertical-align:top}
@@ -2437,6 +2436,13 @@ html:root nav .navbtn[aria-current="true"]::before{top:calc(50% - 54px)!importan
 .kdgrid .row.kpr>.c{background:linear-gradient(90deg,#FFE45C,#FFF2A8)!important;color:#2a2200}
 .kdgrid .row.kpr>.c:first-child{box-shadow:inset 3px 0 0 #E0A800}
 .kdgrid .kprok{background:#E0A800;color:#fff}
+
+/* 1.11.10 Uhrzeit offen (Tiry) */
+#v-planer .tchip.toff{display:inline-flex!important;align-items:center;gap:5px;padding:3px 8px 3px 6px!important;border-radius:999px!important;border:1px dashed #D9A441!important;border-left:1px dashed #D9A441!important;background:linear-gradient(135deg,#FFF8E6,#FCEBC2)!important;color:#8A5A00!important;box-shadow:0 1px 4px rgba(217,164,65,.25),inset 0 1px 0 #fff!important;white-space:nowrap!important;line-height:1!important;transition:transform .15s,box-shadow .15s}
+#v-planer .tchip.toff:hover{transform:translateY(-1px);box-shadow:0 3px 10px rgba(217,164,65,.4),inset 0 1px 0 #fff!important}
+#v-planer .tchip.toff svg{width:15px;height:15px;flex:none;fill:none;stroke:#C98A12;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+#v-planer .tchip.toff span{display:flex;flex-direction:column;align-items:flex-start;font:800 11px/1.05 Outfit,sans-serif!important;letter-spacing:.02em;text-transform:uppercase}
+#v-planer .tchip.toff small{font:600 8.5px/1 Outfit,sans-serif;letter-spacing:.06em;opacity:.75}
 </style></head><body>
 <div class="app">
 <nav aria-label="Bereiche">
@@ -2621,7 +2627,7 @@ html:root nav .navbtn[aria-current="true"]::before{top:calc(50% - 54px)!importan
 <script>
 const FB_CONFIG={apiKey:"AIzaSyC_uZPvc5rJETwlS4JbfCoTkkE4ckjtp0M",authDomain:"velocenter-planer.firebaseapp.com",projectId:"velocenter-planer",storageBucket:"velocenter-planer.firebasestorage.app",messagingSenderId:"1018330488700",appId:"1:1018330488700:web:262a4d1660353e6fde8ef9"};
 /* ================= Velocenter Werkstatt-Cockpit – Oberfläche ================= */
-const CLIENT_VERSION='1.11.9';
+const CLIENT_VERSION='1.11.10';
 const USERS=[{id:'kevin',n:'Kevin',c:'#E2232D'},{id:'stefan',n:'Stefan',c:'#F59E0B'},{id:'martina',n:'Martina',c:'#EC4899'},{id:'sascha',n:'Sascha',c:'#22D3EE'},{id:'rene',n:'René',c:'#34D399'}];
 const U=id=>USERS.find(u=>u.id===id)||{n:'',c:'#64748B',id:''};
 /* 1.10.37: Profilfarbe je Nutzer (meta/prefs[ID].col, für alle sichtbar) – Cache für den Login-Bildschirm */
@@ -3142,7 +3148,7 @@ function render(){const g=$('grid');if(document.querySelector('#grid .edit'))ret
   if(k!==lastKw){h+=`<div class="kw"><i class="kwk" aria-hidden="true"></i>KW ${k}</div>`;lastKw=k;}
   h+=`<div class="row ${wd==='SA'?'sa':''} ${wd==='MI'?'mi':''} ${ds===today?'today':''} ${past?'past':''} ${HOL[ds]?'hol':''}" data-iso="${ds}"><div class="c date"><b>${String(d.getDate()).padStart(2,'0')}.${String(d.getMonth()+1).padStart(2,'0')}</b><span>${wd[0]+wd.slice(1).toLowerCase()}</span>${ds===today?'<em>Heute</em>':HOL[ds]?`<em>${esc(HOL[ds])}</em>`:''}</div>`;
   cols.forEach(c=>{
-   if(c.of){const t=items.filter(e=>e.spalte===c.of&&(!openOnly||e.erledigt!=='1')).sort(tmSort);h+=`<div class="c zt" style="--cc:${c.c}" data-iso="${ds}" data-of="${c.of}" title="Klick = Uhrzeit wählen">${t.map(e=>`<button class="tchip${e.zeit?'':' empty'}${e.zeit==='?'?' toff':''}" type="button" data-tm="${esc(e.id)}" title="Uhrzeit für: ${esc(e.text)}">${e.zeit==='?'?'Uhrzeit offen':e.zeit?esc(e.zeit):'––:––'}</button>`).join('')}</div>`;return;}
+   if(c.of){const t=items.filter(e=>e.spalte===c.of&&(!openOnly||e.erledigt!=='1')).sort(tmSort);h+=`<div class="c zt" style="--cc:${c.c}" data-iso="${ds}" data-of="${c.of}" title="Klick = Uhrzeit wählen">${t.map(e=>`<button class="tchip${e.zeit?'':' empty'}${e.zeit==='?'?' toff':''}" type="button" data-tm="${esc(e.id)}" title="Uhrzeit für: ${esc(e.text)}">${e.zeit==='?'?'<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><span><small>Uhrzeit</small>offen</span>':e.zeit?esc(e.zeit):'––:––'}</button>`).join('')}</div>`;return;}
    let its=items.filter(e=>e.spalte===c.k&&(!openOnly||e.erledigt!=='1'));if(/^t[12]$/.test(c.k))its=its.sort(tmSort);
    const hit=e=>q&&(e.text+' '+e.zeit).toLowerCase().includes(q);
    h+=`<div class="c" style="--cc:${c.c}" data-iso="${ds}" data-col="${c.k}">`+(c.dot?its.map(e=>`<button class="dot${hit(e)?' hit':''}" type="button" data-dot="${esc(e.id)}" aria-label="Anfrage: ${esc(e.text)}"><span class="tip"><b>Anfrage Abholung/Reparatur</b>${esc(e.text)}<small>${U(e.von).n?'von '+esc(U(e.von).n)+' · ':''}Klick = bearbeiten</small></span></button>`).join(''):
