@@ -2620,7 +2620,7 @@ html:root nav .navbtn[aria-current="true"]::before{top:calc(50% - 54px)!importan
 <script>
 const FB_CONFIG={apiKey:"AIzaSyC_uZPvc5rJETwlS4JbfCoTkkE4ckjtp0M",authDomain:"velocenter-planer.firebaseapp.com",projectId:"velocenter-planer",storageBucket:"velocenter-planer.firebasestorage.app",messagingSenderId:"1018330488700",appId:"1:1018330488700:web:262a4d1660353e6fde8ef9"};
 /* ================= Velocenter Werkstatt-Cockpit – Oberfläche ================= */
-const CLIENT_VERSION='1.11.7';
+const CLIENT_VERSION='1.11.8';
 const USERS=[{id:'kevin',n:'Kevin',c:'#E2232D'},{id:'stefan',n:'Stefan',c:'#F59E0B'},{id:'martina',n:'Martina',c:'#EC4899'},{id:'sascha',n:'Sascha',c:'#22D3EE'},{id:'rene',n:'René',c:'#34D399'}];
 const U=id=>USERS.find(u=>u.id===id)||{n:'',c:'#64748B',id:''};
 /* 1.10.37: Profilfarbe je Nutzer (meta/prefs[ID].col, für alle sichtbar) – Cache für den Login-Bildschirm */
@@ -3130,7 +3130,7 @@ const pcolW=c=>c.bw?c.bw+'px':c.of?'80px':c.dot?'34px':c.fix?c.fix:'minmax('+(/^
 let showPast=false,openOnly=false,q='',weeks=10;
 function daysList(){const t=fromIso(TODAY()),start=new Date(t);if(showPast)start.setDate(start.getDate()-28);const end=new Date(t);end.setDate(end.getDate()+weeks*7);const lim=new Date(t);lim.setFullYear(lim.getFullYear()+2);const out=[];
  for(const d=new Date(start);d<=end&&d<=lim;d.setDate(d.getDate()+1)){if(d.getDay()===0)continue;out.push(iso(d));}return out;}
-const tmSort=(a,b)=>(a.zeit||'99').localeCompare(b.zeit||'99');
+const tmSort=(a,b)=>(a.zeit==='?'?'98':a.zeit||'99').localeCompare(b.zeit==='?'?'98':b.zeit||'99');
 function render(){const g=$('grid');if(document.querySelector('#grid .edit'))return;const cols=COLS.filter(c=>vis[c.of||c.k]);const today=TODAY();
  g.style.setProperty('--cols','var(--dcw,112px) '+cols.map(pcolW).join(' '));
  g.style.setProperty('--minw',(132+cols.reduce((a,c)=>a+(c.of?80:c.dot?34:/^t[12]$/.test(c.k)?180:150),0))+'px');
@@ -3172,16 +3172,16 @@ function lfPick(anchor,cur,pick){document.querySelectorAll('.lfpick').forEach(x=
  inp.addEventListener('keydown',k=>{if(k.key==='ArrowDown'||k.key==='ArrowUp'){k.preventDefault();if(!its.length)return;sel=k.key==='ArrowDown'?(sel+1)%its.length:(sel<=0?its.length-1:sel-1);draw();L.querySelector('.lfi.on')?.scrollIntoView({block:'nearest'});}if(k.key==='Enter'){k.preventDefault();take(its.length?sel:-1);}if(k.key==='Escape')close();});
  draw();inp.focus();}
 const findE=id=>P.find(e=>e.id===id);
-function parseTm(v,col){if(!/^t[12]$/.test(col))return{zeit:'',text:v};const m=v.match(/^(\d{1,2})[:.](\d{2})\s*(?:uhr)?\s*[-–]?\s*(.*)$/i);if(m&&+m[1]<24&&+m[2]<60)return{zeit:m[1].padStart(2,'0')+':'+m[2],text:m[3]||''};return{zeit:'',text:v};}
+function parseTm(v,col){if(!/^t[12]$/.test(col))return{zeit:'',text:v};const q=v.match(/^\?\s+(.*)$/);if(q)return{zeit:'?',text:q[1]};const m=v.match(/^(\d{1,2})[:.](\d{2})\s*(?:uhr)?\s*[-–]?\s*(.*)$/i);if(m&&+m[1]<24&&+m[2]<60)return{zeit:m[1].padStart(2,'0')+':'+m[2],text:m[3]||''};return{zeit:'',text:v};}
 const TSLOTS=(()=>{const a=[],f=n=>String(Math.floor(n/60)).padStart(2,'0')+':'+String(n%60).padStart(2,'0');for(let n=9*60;n<=12*60;n+=15)a.push(f(n));for(let n=14*60+30;n<=17*60+45;n+=15)a.push(f(n));return a;})();
 function timeEdit(anchor,val,saveFn){const i=document.createElement('select');i.className='edit tin';i.id='edit';i.size=1;
- const opts=TSLOTS.slice();if(val&&!opts.includes(val))opts.push(val),opts.sort();
- i.innerHTML='<option value="">– Uhrzeit –</option><optgroup label="Vormittag">'+opts.filter(t=>t<'13:00').map(t=>`<option${t===val?' selected':''}>${t}</option>`).join('')+'</optgroup><optgroup label="Nachmittag">'+opts.filter(t=>t>='13:00').map(t=>`<option${t===val?' selected':''}>${t}</option>`).join('')+'</optgroup>';
+ const opts=TSLOTS.slice();if(val&&val!=='?'&&!opts.includes(val))opts.push(val),opts.sort();
+ i.innerHTML='<option value="">– Uhrzeit –</option><option value="?"'+(val==='?'?' selected':'')+'>? – Uhrzeit noch offen</option><optgroup label="Vormittag">'+opts.filter(t=>t<'13:00').map(t=>`<option${t===val?' selected':''}>${t}</option>`).join('')+'</optgroup><optgroup label="Nachmittag">'+opts.filter(t=>t>='13:00').map(t=>`<option${t===val?' selected':''}>${t}</option>`).join('')+'</optgroup>';
  anchor.replaceWith(i);i.focus();try{i.showPicker();}catch(_){}
- let done=false;const fin=ok=>{if(done)return;done=true;const v=i.value;i.remove();if(ok&&/^\d\d:\d\d$/.test(v)&&v!==val)saveFn(v);else render();};
+ let done=false;const fin=ok=>{if(done)return;done=true;const v=i.value;i.remove();if(ok&&/^(\d\d:\d\d|\?)$/.test(v)&&v!==val)saveFn(v);else render();};
  i.addEventListener('change',()=>fin(true));i.addEventListener('keydown',k=>{if(k.key==='Enter'){k.preventDefault();fin(true);}if(k.key==='Escape')fin(false);});i.addEventListener('blur',()=>setTimeout(()=>fin(false),200));}
 function inlineEdit(anchor,val,col,saveFn,onEmpty){const i=document.createElement('input');i.className='edit';i.id='edit';i.value=val;i.placeholder=/^t[12]$/.test(col)?'10:30 Abholung Müller':'Text eingeben, Enter = speichern';anchor.replaceWith(i);i.focus();let done=false,link=null;
- const pk=/^t[12]$/.test(col)?tpkOpen(i,(v,l)=>{const m=i.value.match(/^\d{1,2}[:.]\d{2}\s*/);i.value=(m?m[0]:'')+v;link=l;fin(true);}):null;
+ const pk=/^t[12]$/.test(col)?tpkOpen(i,(v,l)=>{const m=i.value.match(/^(\d{1,2}[:.]\d{2}\s*|\?\s+)/);i.value=(m?m[0]:'')+v;link=l;fin(true);}):null;
  const fin=ok=>{if(done)return;done=true;if(pk)pk.close();const v=i.value.trim();i.remove();if(ok&&v)saveFn(v,link);else if(ok&&!v&&onEmpty&&val)onEmpty();render();};
  i.addEventListener('keydown',k=>{if(pk&&pk.key(k))return;if(k.key==='Enter')fin(true);if(k.key==='Escape')fin(false);});i.addEventListener('blur',()=>fin(true));}
 /* 1.10.28: Termin 1/2 – Auswahl verkaufter Räder + Bestellungen (Tiry). Verknüpfung über Feld vid (verkauf) bzw. bid (bestell). */
@@ -3190,7 +3190,7 @@ const vSt=b=>b.a==='1'?'a':b.b==='1'?'b':b.m==='1'?'m':b.an==='1'?'l':'o';
 function tpkOpen(inp,pick){const box=document.createElement('div');box.className='tpick';document.body.append(box);let sel=-1,its=[];
  const place=()=>{const r=inp.getBoundingClientRect(),w=Math.max(300,Math.min(380,innerWidth-16)),below=innerHeight-r.bottom;box.style.width=w+'px';box.style.left=Math.max(8,Math.min(innerWidth-w-8,r.left))+'px';if(below<260&&r.top>below){box.style.top='';box.style.bottom=(innerHeight-r.top+4)+'px';box.style.maxHeight=Math.min(420,r.top-12)+'px';}else{box.style.bottom='';box.style.top=(r.bottom+4)+'px';box.style.maxHeight=Math.min(420,below-12)+'px';}};
  const ord={b:0,m:1,l:2,o:3},bo={da:0,bestellt:1,offen:2};
- const draw=()=>{const q=inp.value.toLowerCase().replace(/^\d{1,2}[:.]\d{2}\s*/,'').trim(),hit=s=>!q||q.split(/\s+/).every(w=>s.toLowerCase().includes(w));
+ const draw=()=>{const q=inp.value.toLowerCase().replace(/^(\d{1,2}[:.]\d{2}\s*|\?\s+)/,'').trim(),hit=s=>!q||q.split(/\s+/).every(w=>s.toLowerCase().includes(w));
   const vs=V.filter(b=>b.a!=='1'&&(b.name||b.modell)&&hit([b.name,b.marke,b.modell].join(' '))).sort((x,y)=>ord[vSt(x)]-ord[vSt(y)]||String(x.name||'').localeCompare(String(y.name||''),'de'));
   const bs=B.filter(b=>(b.status||'offen')!=='fertig'&&(b.artikel||b.telefon)&&hit([b.artikel,b.kunde,b.telefon,b.lieferant].join(' '))).sort((x,y)=>(x.telefon?0:1)-(y.telefon?0:1)||bo[x.status||'offen']-bo[y.status||'offen']);
   its=[...vs.map(b=>({t:'v',b})),...bs.map(b=>({t:'b',b}))];if(sel>=its.length)sel=its.length-1;
@@ -3218,7 +3218,7 @@ $('grid').addEventListener('click',ev=>{
  const be=ev.target.closest('[data-bsted]');if(be){const e=findE(be.dataset.bsted);if(e)lfPick(be,e.lid,v=>putE(Object.assign({},e,v)));return;}
  const ed=ev.target.closest('[data-ed]');if(ed){const e=findE(ed.dataset.ed);if(!e)return;inlineEdit(ed.closest('.e'),(e.zeit?e.zeit+' ':'')+e.text,e.spalte,(v,lk)=>{const p=parseTm(v,e.spalte);putE(Object.assign({},e,{text:p.text||e.text,zeit:p.zeit||(/^t[12]$/.test(e.spalte)?'':e.zeit)},lk||((p.text||v)!==e.text?{vid:'',bid:''}:{})));},()=>delE(e.id));return;}
  const tc=ev.target.closest('[data-tm]');if(tc){const e=findE(tc.dataset.tm);if(e)timeEdit(tc,e.zeit,v=>putE(Object.assign({},e,{zeit:v})));return;}
- const zc=ev.target.closest('.c.zt');if(zc&&ev.target===zc){const ph=document.createElement('span');zc.append(ph);timeEdit(ph,'',v=>{render();const cell=document.querySelector(`.c[data-iso="${zc.dataset.iso}"][data-col="${zc.dataset.of}"]`);if(!cell)return;const a=document.createElement('span');cell.append(a);inlineEdit(a,'',zc.dataset.of,(txt,lk)=>{const p=parseTm(txt,zc.dataset.of);putE(Object.assign({id:nid('p'),datum:zc.dataset.iso,spalte:zc.dataset.of,text:p.text||txt,zeit:p.zeit||v,erledigt:'',von:ME.id,erledigtVon:''},lk||{}));});const inp=$('edit');if(inp){inp.placeholder='Termin um '+v+' – z. B. Abholung Müller';}});return;}
+ const zc=ev.target.closest('.c.zt');if(zc&&ev.target===zc){const ph=document.createElement('span');zc.append(ph);timeEdit(ph,'',v=>{render();const cell=document.querySelector(`.c[data-iso="${zc.dataset.iso}"][data-col="${zc.dataset.of}"]`);if(!cell)return;const a=document.createElement('span');cell.append(a);inlineEdit(a,'',zc.dataset.of,(txt,lk)=>{const p=parseTm(txt,zc.dataset.of);putE(Object.assign({id:nid('p'),datum:zc.dataset.iso,spalte:zc.dataset.of,text:p.text||txt,zeit:p.zeit||v,erledigt:'',von:ME.id,erledigtVon:''},lk||{}));});const inp=$('edit');if(inp){inp.placeholder=(v==='?'?'Termin, Uhrzeit noch offen':'Termin um '+v)+' – z. B. Abholung Müller';}});return;}
  const ec=ev.target.closest('.c[data-col]');if(ec&&ev.target===ec&&!ec.querySelector('.edit')){const pb=ec.querySelector('[data-add]');if(pb)pb.click();return;}
  const pl=ev.target.closest('[data-add]');if(pl){const cell=pl.closest('.c');if(cell.dataset.col==='bst'){lfPick(cell,'',v=>{if(P.some(x=>x.spalte==='bst'&&x.datum===cell.dataset.iso&&(v.lid?x.lid===v.lid:x.text===v.text))){toast('Steht an dem Tag schon drin');return;}putE(Object.assign({id:nid('p'),datum:cell.dataset.iso,spalte:'bst',zeit:'',erledigt:'',von:ME.id,erledigtVon:''},v));});return;}inlineEdit(pl,'',cell.dataset.col,(v,lk)=>{const p=parseTm(v,cell.dataset.col);putE(Object.assign({id:nid('p'),datum:cell.dataset.iso,spalte:cell.dataset.col,text:p.text||v,zeit:p.zeit,erledigt:'',von:ME.id,erledigtVon:''},lk||{}));});}});
 let drag=null;
