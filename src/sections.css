@@ -1164,3 +1164,8 @@ body.bgruh::after{display:none}
 .kdgrid .row.kpr .kdel{opacity:1;gap:2px}
 .kdgrid .kprok{border:0;border-radius:5px;background:#FFC800;color:#1a1400;font-weight:800;font-size:12px;line-height:1;padding:3px 4px;cursor:pointer}
 .kdgrid .kprok:hover{filter:brightness(1.1)}
+
+/* 1.11.13 Scrollen ohne Hover-Neuberechnung */
+.scrl>*{pointer-events:none}
+/* Hover ohne Ebenen-Wechsel (sonst Layout der ganzen Kundenliste je Zeile unter der Maus) */
+.kdgrid .kdel,.kdgrid .kmup{opacity:.001!important}.kdgrid .row.kr:hover .kdel,.kdgrid .kdel:focus-within,.kdgrid .row.kr:hover .kmup,.kdgrid .kmup:focus-within{opacity:.999!important}.kdgrid .row.kr:hover .kk{filter:none!important}
