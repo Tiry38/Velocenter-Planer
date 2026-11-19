@@ -2241,7 +2241,7 @@ function kdeRow(x,recent){let dat=String(x.dat||'').trim();const dOk=/^\d{1,2}\.
  const lea=kdeLeas(x.adr);const kd=kdeKunde(x,lea);
  const marke=kdeSpell(x.marke,recent,'marke'),mk=kdeN(marke).replace(/ /g,'');
  const pr=+x.preis>0?(Math.round(+x.preis*100)/100):0;
- const r={id:'k'+kdeBel(x.nr,dat).toLowerCase().replace(/[^a-z0-9]/g,''),y,dat,nr:kdeNr(x.nr),marke,modell:kdeRf(kdeSpell(x.modell,recent,'modell',mk),x.rf),
+ const r={id:'k'+kdeBel(x.nr,dat).toLowerCase().replace(/[^a-z0-9]/g,''),y,dat,nr:kdeNr(x.nr),marke,modell:kdeRf(kdeSpell(x.modell,recent,'modell',mk),[x.rf,x.fa].filter(Boolean).join(' ')),
   preis:pr?String(pr).replace('.',','):'',leas:lea?lea.k:'',kunde:kd.kunde,vers:'',rahmen:String(x.rahmen||'').trim(),tel:kd.tel,mail:kd.mail,
   src:'re',kq:kd.kq,fid:String(x.fid||'').trim(),kdnr:String(x.kdnr||'').trim(),reAm:stamp()};
  if(kd.mail)r.mailSrc='rechnung';r.pr=kdePr(r).concat(dOk?[]:['Datum']);return r;}
