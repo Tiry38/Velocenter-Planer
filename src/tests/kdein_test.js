@@ -8,17 +8,17 @@ const R=await p.evaluate(async()=>{const y=new Date().getFullYear(),dd=x=>{const
  await new Promise(r=>setTimeout(r,600));
  const dat=dd(0),yy=String(y).slice(2);
  // 1) normaler Verkauf, Kunde aus Kunden-Nr.
- await db.collection('kdein').doc('kr'+yy+'-2001').set({typ:'re',quelle:'kizentrale',nr:'R'+yy+'-2001',dat,marke:'ktm',modell:'macina race sx  LFC',preis:3999,rahmen:'WAB123456',fid:'FID777',adr:'Herr\nKevin Thirolf\nMusterstr. 1\n76744 Wörth',kd:[{q:'re',vn:'Kevin',nn:'Thirolf',tel:['07271 1234','0176-12345678'],mail:['k@t.de']}]});
+ await db.collection('kdein').doc('kr'+yy+'-2001').set({typ:'re',quelle:'kizentrale',nr:'R'+yy+'-2001',dat,marke:'ktm',modell:'macina race sx  LFC',preis:3999,rahmen:'WAB123456',fid:'FID777',adr:'Herr\nKevin Thirolf\nMusterstr. 1\n76744 Wörth',kd:[{q:'re',vn:'Kevin',nn:'Thirolf',tel:['07271 1234','0176-12345678'],mail:['k@t.de','info@jobrad.org']}]});
  // 2) Leasing PEAC: Kandidat aus Kunden-Nr. = Leasinggeber → verworfen; Übernahme liegt schon im Korb
- await db.collection('kdein').doc('kr'+yy+'-2002').set({typ:'re',quelle:'kizentrale',nr:'R'+yy+'-2002',dat,marke:'Gudereit',modell:'EC-35 Evo',preis:3200,rahmen:'GUD-99887',adr:'PEAC Germany GmbH\nBahnhofstr. 1\n12345 Ort',kd:[{q:'re',name:'PEAC Germany GmbH'}]});
+ await db.collection('kdein').doc('kr'+yy+'-2002').set({typ:'re',quelle:'kizentrale',nr:'R'+yy+'-2002',dat,marke:'Gudereit',modell:'EC-35 Evo',rf:'TZ, 51cm',preis:3200,rahmen:'GUD-99887',adr:'PEAC Germany GmbH\nBahnhofstr. 1\n12345 Ort',kd:[{q:'re',name:'PEAC Germany GmbH'}]});
  await db.collection('kdein').doc('kugud99887').set({typ:'ue',quelle:'kizentrale',rahmen:'GUD99887',name:'Maria Muster',tel:['0151 2222333'],mail:['m@m.de'],ts:Date.now()});
  // 3) schon vorhandener Beleg → nicht doppelt
  await db.collection('kdein').doc('kr'+yy+'-100').set({typ:'re',quelle:'kizentrale',nr:'R'+yy+'-100',dat:dd(40),marke:'KTM',modell:'X',preis:2500,adr:'',kd:[]});
  await new Promise(r=>setTimeout(r,3000));
  const it=KD[y];const q=await db.collection('kdein').get();
  return {a:it['kr'+yy+'2001'],b:it['kr'+yy+'2002'],n:Object.keys(it).length,korb:q.docs.length};});
-ok('Zeile 1 angelegt',!!R.a);ok('Modell angeglichen',R.a&&R.a.modell==='Macina Race SX LFC'&&R.a.marke==='KTM');
-ok('Kunde Nachname zuerst + Handy',R.a&&R.a.kunde==='Thirolf Kevin'&&R.a.tel==='0176-12345678'&&R.a.mail==='k@t.de');
+ok('Zeile 1 angelegt',!!R.a);ok('Rahmen ans Modell',(()=>{const b=Object.values(R).find(z=>z&&z.marke==='Gudereit');return b&&b.modell==='EC-35 Evo TZ 51cm';})());ok('Modell angeglichen',R.a&&R.a.modell==='Macina Race SX LFC'&&R.a.marke==='KTM');
+ok('Kunde Nachname zuerst + Handy, ohne JobRad-Mail',R.a&&R.a.kunde==='Thirolf Kevin'&&R.a.tel==='0176-12345678'&&R.a.mail==='k@t.de');
 ok('Beleg-Nr. + Preis',R.a&&R.a.nr==='2001'&&R.a.preis==='3999');ok('vollständig = nicht gelb',R.a&&R.a.pr.length===0);
 ok('Leasing BB erkannt',R.b&&R.b.leas==='BB');ok('Leasinggeber nicht als Kunde, Übernahme ergänzt',R.b&&R.b.kunde==='Muster Maria'&&R.b.tel==='0151 2222333'&&R.b.kq==='ue');
 ok('kein Doppel (3 Zeilen)',R.n===3);ok('Korb leer',R.korb===0);
