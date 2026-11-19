@@ -2627,7 +2627,7 @@ html:root nav .navbtn[aria-current="true"]::before{top:calc(50% - 54px)!importan
 <script>
 const FB_CONFIG={apiKey:"AIzaSyC_uZPvc5rJETwlS4JbfCoTkkE4ckjtp0M",authDomain:"velocenter-planer.firebaseapp.com",projectId:"velocenter-planer",storageBucket:"velocenter-planer.firebasestorage.app",messagingSenderId:"1018330488700",appId:"1:1018330488700:web:262a4d1660353e6fde8ef9"};
 /* ================= Velocenter Werkstatt-Cockpit – Oberfläche ================= */
-const CLIENT_VERSION='1.11.10';
+const CLIENT_VERSION='1.11.11';
 const USERS=[{id:'kevin',n:'Kevin',c:'#E2232D'},{id:'stefan',n:'Stefan',c:'#F59E0B'},{id:'martina',n:'Martina',c:'#EC4899'},{id:'sascha',n:'Sascha',c:'#22D3EE'},{id:'rene',n:'René',c:'#34D399'}];
 const U=id=>USERS.find(u=>u.id===id)||{n:'',c:'#64748B',id:''};
 /* 1.10.37: Profilfarbe je Nutzer (meta/prefs[ID].col, für alle sichtbar) – Cache für den Login-Bildschirm */
@@ -3088,7 +3088,7 @@ function startLive(){stopLive();const from=iso(new Date(Date.now()-35*864e5));
  listen('L',x=>{L=x.map(o=>Object.assign({},o,{k:o.k||o.id}));fnUpd();setTimeout(leasRename,0);if(!x.length)seedLeasing();else recLeasing().then(rewSeed);});
  listen('I',x=>{I={};x.forEach(o=>I[o.id]=o.wert);});
  if(ME&&ME.adm)unsubs.push(db.doc('tresor/pw').onSnapshot(d=>{if(KEY&&NOTES&&d.exists&&d.data().ct&&(d.data().sid?d.data().sid!==TABID:d.data().tsVon!==ME.id)&&!document.querySelector('#nGrid [contenteditable]:focus'))open_(KEY,d.data()).then(x=>{if(!Array.isArray(x)){NOTES=x.notes||[];PWGRID=x.grid||PWGRID;rn();}}).catch(()=>{});},()=>{}));
- if(ME&&ME.adm)for(let y=1995;y<=new Date().getFullYear()+1;y++)unsubs.push(db.doc('meta/kd_'+y).onSnapshot(d=>{KD[y]=(d.exists&&d.data().items)||{};kdDirty=true;scheduleRender();if(KDEIN.length)kdeinRun();},()=>{}));
+ if(ME&&ME.adm)for(let y=1995;y<=new Date().getFullYear()+1;y++)unsubs.push(db.doc('meta/kd_'+y).onSnapshot(d=>{KD[y]=(d.exists&&d.data().items)||{};kdDirty=true;scheduleRender();if(KDEIN.length)kdeinRun();else kdeMailFix();},()=>{}));
  if(ME&&ME.adm)unsubs.push(db.collection('kdein').onSnapshot(q=>{KDEIN=q.docs.map(d=>Object.assign({},d.data(),{id:d.id}));kdeinRun();},()=>{}));
  if(ME&&ME.adm){unsubs.push(db.doc('meta/mailauto').onSnapshot(d=>{MAU=d.exists?(d.data()||{}):{};mauBadge();},()=>{}));mauStart();}
  if(ME&&ME.adm)unsubs.push(db.doc('meta/kd_trash').onSnapshot(d=>{const it=(d.exists&&d.data().items)||{},o={};for(const k in it)if(it[k])o[k]=it[k];KDT=o;kdDirty=true;scheduleRender();kdBinPrune();},()=>{}));
@@ -5381,7 +5381,12 @@ $('v-ausw').addEventListener('change',e=>{if(e.target.id==='auF'||e.target.id===
    Zeile oben in „Kunden“, nie doppelt (Beleg-Nr.), Marke/Modell in der Schreibweise der letzten 12 Monate (rollierend ab heute),
    Leasing über die Erkennungswörter der Rechnungsadresse (Leasing-Infos, Feld reW). Fehlt etwas → Zeile gelb „prüfen“ (Feld pr).
    ENRA/Versicherung bleibt Handarbeit. Übernahmeerklärung (typ ue) ergänzt nur Kundendaten, Zuordnung über Rahmen-Nr./FID. */
-const REW0={BL:'Lesora',BB:'PEAC Germany',KM:'Kazenmaier Leasing',RD:'Ride Mobility',CB:'company bike solutions',ER:'AGL'};const REW_VER=2;
+const REW0={BL:'Lesora',BB:'PEAC Germany',KM:'Kazenmaier Leasing',RD:'Ride Mobility',CB:'company bike solutions',ER:'AGL',JR:'JobRad',LB:'Lease a Bike',DD:'Deutsche Dienstrad'};const REW_VER=3;
+/* 1.11.11: Rahmen aus der Rechnung („US, 45cm“) ans Modell hängen wie in den Sheet-Zeilen („… US 51cm“), nur Teile, die noch nicht drinstehen */
+/* 1.11.11 (Tiry): keine Adressen von Leasing-/Versicherungs-/Finanzfirmen als Kunden-Mail (z. B. info@jobrad.org aus Veloport) */
+const KDE_MAILNO=/@([a-z0-9-]+\.)*(jobrad|bikeleasing|bike-leasing|bls-|leaseabike|lease-a-bike|businessbike|business-bike|eurorad|dienstrad|deutsche-dienstrad|companybike|company-bike|kazenmaier|ride-mobility|ridemobility|lesora|peac|targobank|creditplus|enra|assona|alteos|fahrsicherung|mein-dienstrad|bikeleasing-service)[a-z0-9-]*\./i;
+const kdeMailOk=m=>!KDE_MAILNO.test(String(m||''));
+const kdeRf=(m,rf)=>{m=String(m||'').trim();const t=String(rf||'').split(/[\s,;\/]+/).map(x=>x.trim()).filter(Boolean),w=kdeN(m).split(' ');const add=t.filter(x=>!w.includes(kdeN(x)));return [m].concat(add).filter(Boolean).join(' ');};
 let KDEIN=[],kdeinBusy=false,kdeinT=null;
 const kdeN=s=>String(s||'').toLowerCase().replace(/ß/g,'ss').replace(/[^a-z0-9äöü]+/g,' ').trim();
 const kdeRa=s=>String(s||'').toUpperCase().replace(/[^A-Z0-9]/g,'');
@@ -5406,7 +5411,7 @@ const kdeName=(vn,nn,full)=>{vn=String(vn||'').trim();nn=String(nn||'').trim();i
 function kdeKunde(x,lea){const lw=lea?kdeWords((L||[]).find(f=>f.k===lea.k)):[];const isL=s=>{const a=' '+kdeN(s)+' ';return lw.some(w=>a.includes(' '+w+' '));};
  const K=(Array.isArray(x.kd)?x.kd:[]).filter(k=>k&&(k.name||k.nn)&&!isL([k.vn,k.nn,k.name].join(' '))&&!(lea&&k.q==='adr'));
  const k=K[0]||null;const KT=(Array.isArray(x.kd)?x.kd:[]).filter(k=>k&&!isL([k.vn,k.nn,k.name].join(' ')));if(!k){const t0=[].concat(...KT.map(o=>[].concat(o.tel||[]))).map(s=>String(s).trim()).filter(Boolean);return {kunde:'',tel:t0.find(t=>kdWaNums(t).length)||t0[0]||'',mail:'',kq:''};}
- const tels=[].concat(...KT.map(o=>[].concat(o.tel||[]))).map(s=>String(s).trim()).filter(Boolean),mails=[...new Set([].concat(...K.map(o=>[].concat(o.mail||[]))).map(s=>String(s).trim().toLowerCase()).filter(s=>/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(s)))];
+ const tels=[].concat(...KT.map(o=>[].concat(o.tel||[]))).map(s=>String(s).trim()).filter(Boolean),mails=[...new Set([].concat(...K.map(o=>[].concat(o.mail||[]))).map(s=>String(s).trim().toLowerCase()).filter(s=>/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(s)&&kdeMailOk(s)))];
  const hand=tels.find(t=>kdWaNums(t).length);
  return {kunde:kdeName(k.vn,k.nn,k.name),tel:hand||tels[0]||'',mail:mails.slice(0,3).join(', '),kq:k.q||''};}
 const KDE_PF={kunde:'Kunde',marke:'Marke',modell:'Modell',preis:'Preis',rahmen:'Rahmen-Nr.',tel:'Telefon',mail:'E-Mail'};
@@ -5416,7 +5421,7 @@ function kdeRow(x,recent){let dat=String(x.dat||'').trim();const dOk=/^\d{1,2}\.
  const lea=kdeLeas(x.adr);const kd=kdeKunde(x,lea);
  const marke=kdeSpell(x.marke,recent,'marke'),mk=kdeN(marke).replace(/ /g,'');
  const pr=+x.preis>0?(Math.round(+x.preis*100)/100):0;
- const r={id:'k'+kdeBel(x.nr,dat).toLowerCase().replace(/[^a-z0-9]/g,''),y,dat,nr:kdeNr(x.nr),marke,modell:kdeSpell(x.modell,recent,'modell',mk),
+ const r={id:'k'+kdeBel(x.nr,dat).toLowerCase().replace(/[^a-z0-9]/g,''),y,dat,nr:kdeNr(x.nr),marke,modell:kdeRf(kdeSpell(x.modell,recent,'modell',mk),x.rf),
   preis:pr?String(pr).replace('.',','):'',leas:lea?lea.k:'',kunde:kd.kunde,vers:'',rahmen:String(x.rahmen||'').trim(),tel:kd.tel,mail:kd.mail,
   src:'re',kq:kd.kq,fid:String(x.fid||'').trim(),kdnr:String(x.kdnr||'').trim(),reAm:stamp()};
  if(kd.mail)r.mailSrc='rechnung';r.pr=kdePr(r).concat(dOk?[]:['Datum']);return r;}
@@ -5425,14 +5430,18 @@ function kdeUeApply(r,u){const n=Object.assign({},r);let ch=false;const nm=kdeNa
  if(nm&&(!String(n.kunde||'').trim()||n.kq==='adr')){n.kunde=nm;n.kq='ue';ch=true;}
  const tels=[].concat(u.tel||[]).map(s=>String(s).trim()).filter(Boolean),hand=tels.find(t=>kdWaNums(t).length)||tels[0];
  if(hand&&!String(n.tel||'').trim()){n.tel=hand;ch=true;}
- const ms=[].concat(u.mail||[]).map(s=>String(s).trim().toLowerCase()).filter(s=>/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(s));
+ const ms=[].concat(u.mail||[]).map(s=>String(s).trim().toLowerCase()).filter(s=>/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(s)&&kdeMailOk(s));
  if(ms.length&&!kdMails(n).length){n.mail=ms.slice(0,3).join(', ');n.mailSrc='uebernahme';ch=true;}
  if(u.rahmen&&!String(n.rahmen||'').trim()){n.rahmen=String(u.rahmen).trim();ch=true;}
  if(ch&&Array.isArray(n.pr))n.pr=kdePr(n).concat(n.pr.includes('Datum')?['Datum']:[]);return ch?n:null;}
 const kdeMatch=(r,u)=>{const a=kdeRa(u.rahmen),f=kdeRa(u.fid);return (a.length>=5&&kdeRa(r.rahmen)===a)||(f.length>=3&&kdeRa(r.fid)===f);};
 /* Läuft nur bei Admins, wenn alle nötigen Kunden-Jahre geladen sind. Mehrere offene Planer: Transaktion je Jahres-Doc, Zeilen-ID = Beleg → nie doppelt. */
 function kdeinRun(){if(kdeinT)return;kdeinT=setTimeout(()=>{kdeinT=null;kdeinGo().catch(e=>console.warn('kdein',e));},800);}
-async function kdeinGo(){if(kdeinBusy||!ME||!ME.adm||!KDEIN.length)return;const cy=new Date().getFullYear();for(let y=cy-1;y<=cy;y++)if(!KD[y])return;kdeinBusy=true;
+/* 1.11.11: schon übernommene Rechnungs-Zeilen einmal von Leasingfirmen-Mails befreien (nur Zeilen aus der Rechnung, src:'re') */
+let kdeMfDone=false;async function kdeMailFix(){if(kdeMfDone||!ME||!ME.adm)return;const cy=new Date().getFullYear();for(let y=cy-1;y<=cy;y++)if(!KD[y])return;kdeMfDone=true;
+ for(let y=cy-1;y<=cy;y++){const up={};for(const [id,r] of Object.entries(KD[y]||{})){if(!r||r.src!=='re'||!r.mail)continue;const ms=String(r.mail).split(/\s*,\s*/).filter(Boolean),ok=ms.filter(kdeMailOk);if(ok.length!==ms.length)up['items.'+id+'.mail']=ok.join(', ');}
+  if(Object.keys(up).length)try{await db.doc('meta/kd_'+y).update(up);}catch(e){kdeMfDone=false;}}}
+async function kdeinGo(){kdeMailFix();if(kdeinBusy||!ME||!ME.adm||!KDEIN.length)return;const cy=new Date().getFullYear();for(let y=cy-1;y<=cy;y++)if(!KD[y])return;kdeinBusy=true;
  try{const recent=kdeRecent(),done=[];let neu=0,erg=0;
   for(const x of KDEIN.filter(z=>z.typ==='re')){
    if(!String(x.nr||'').trim()){done.push(x.id);continue;}const r=kdeRow(x,recent),bel=kdeBel(x.nr,r.dat);
