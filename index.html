@@ -2627,7 +2627,7 @@ html:root nav .navbtn[aria-current="true"]::before{top:calc(50% - 54px)!importan
 <script>
 const FB_CONFIG={apiKey:"AIzaSyC_uZPvc5rJETwlS4JbfCoTkkE4ckjtp0M",authDomain:"velocenter-planer.firebaseapp.com",projectId:"velocenter-planer",storageBucket:"velocenter-planer.firebasestorage.app",messagingSenderId:"1018330488700",appId:"1:1018330488700:web:262a4d1660353e6fde8ef9"};
 /* ================= Velocenter Werkstatt-Cockpit – Oberfläche ================= */
-const CLIENT_VERSION='1.11.11';
+const CLIENT_VERSION='1.11.12';
 const USERS=[{id:'kevin',n:'Kevin',c:'#E2232D'},{id:'stefan',n:'Stefan',c:'#F59E0B'},{id:'martina',n:'Martina',c:'#EC4899'},{id:'sascha',n:'Sascha',c:'#22D3EE'},{id:'rene',n:'René',c:'#34D399'}];
 const U=id=>USERS.find(u=>u.id===id)||{n:'',c:'#64748B',id:''};
 /* 1.10.37: Profilfarbe je Nutzer (meta/prefs[ID].col, für alle sichtbar) – Cache für den Login-Bildschirm */
@@ -5421,7 +5421,7 @@ function kdeRow(x,recent){let dat=String(x.dat||'').trim();const dOk=/^\d{1,2}\.
  const lea=kdeLeas(x.adr);const kd=kdeKunde(x,lea);
  const marke=kdeSpell(x.marke,recent,'marke'),mk=kdeN(marke).replace(/ /g,'');
  const pr=+x.preis>0?(Math.round(+x.preis*100)/100):0;
- const r={id:'k'+kdeBel(x.nr,dat).toLowerCase().replace(/[^a-z0-9]/g,''),y,dat,nr:kdeNr(x.nr),marke,modell:kdeRf(kdeSpell(x.modell,recent,'modell',mk),x.rf),
+ const r={id:'k'+kdeBel(x.nr,dat).toLowerCase().replace(/[^a-z0-9]/g,''),y,dat,nr:kdeNr(x.nr),marke,modell:kdeRf(kdeSpell(x.modell,recent,'modell',mk),[x.rf,x.fa].filter(Boolean).join(' ')),
   preis:pr?String(pr).replace('.',','):'',leas:lea?lea.k:'',kunde:kd.kunde,vers:'',rahmen:String(x.rahmen||'').trim(),tel:kd.tel,mail:kd.mail,
   src:'re',kq:kd.kq,fid:String(x.fid||'').trim(),kdnr:String(x.kdnr||'').trim(),reAm:stamp()};
  if(kd.mail)r.mailSrc='rechnung';r.pr=kdePr(r).concat(dOk?[]:['Datum']);return r;}
