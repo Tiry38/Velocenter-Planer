@@ -1,0 +1,13 @@
+const {chromium}=require('playwright');const V=process.env.V||'kunden',SEL=process.env.S||'#v-kunden .kdboard';const VAR=JSON.parse(process.env.VARS||'{}');
+(async()=>{const b=await chromium.launch();const c=await b.newContext({viewport:{width:1600,height:900}});await c.route(/gstatic|googleapis|cdnjs|emailjs/,r=>r.abort());
+const p=await c.newPage();const w=t=>p.waitForTimeout(t||250);
+await p.goto('file://'+process.cwd()+'/test_fb.html');await w(400);await p.click('.wt[data-u=kevin]');await p.fill('#pw1','1');await p.fill('#pw2','1');await p.click('#pwGo');await w(900);
+await p.evaluate(async()=>{const R=a=>a[Math.floor(Math.random()*a.length)],names=['Müller Hans','Schmidt Petra','Weber Klaus'];const t=new Date();
+ for(let i=0;i<300;i++){const d=new Date(t.getTime()+(i%80-30)*864e5);await db.collection('planer').doc('p'+i).set({id:'p'+i,datum:d.toISOString().slice(0,10),spalte:R(['int','t1','t2','ws','wa']),text:'Eintrag '+i,von:'kevin',ts:Date.now()});}
+ for(let i=0;i<180;i++)await db.collection('verkauf').doc('v'+i).set({id:'v'+i,name:R(names),modell:'KTM Macina Sport',dat:'01.10.2026',firma:R(['BL','JR','']),lt:'KW '+(40+i%12)+'/26',m:i%2?'1':'',notiz:'n'});
+ for(let y=1995;y<=2026;y++){const it={};for(let i=0;i<380;i++){const id='k'+y+'_'+i;it[id]={id,y:String(y),dat:'01.0'+(1+i%9)+'.'+y,nr:String(1000+i),marke:R(['KTM','Gudereit']),modell:'Modell '+i,preis:'2500',leas:R(['','JR']),kunde:R(names),tel:'0176'+i,mail:'x@x.de'};}await db.doc('meta/kd_'+y).set({items:it});}});
+const quiet=()=>p.evaluate(()=>new Promise(r=>{let t;const ob=new MutationObserver(()=>{clearTimeout(t);t=setTimeout(()=>{ob.disconnect();r();},1500);});ob.observe(document.body,{childList:true,subtree:true,attributes:true});t=setTimeout(()=>{ob.disconnect();r();},1500);}));
+await w(2000);await p.evaluate(v=>show(v),V);await quiet();const cdp=await c.newCDPSession(p);await cdp.send('Emulation.setCPUThrottlingRate',{rate:4});
+const sc=()=>p.evaluate(sel=>new Promise(res=>{const el=document.querySelector(sel);el.scrollTop=0;let n=0,fr=[],last;const f=t=>{if(last)fr.push(t-last);last=t;el.scrollTop+=60;if(++n<50)requestAnimationFrame(f);else{fr.sort((a,b)=>a-b);res(Math.round(fr.reduce((a,b)=>a+b)/fr.length*10)/10+' (p95 '+Math.round(fr[Math.floor(fr.length*.95)])+')');}};setTimeout(()=>requestAnimationFrame(f),300);}),SEL);
+for(const [k,css] of Object.entries({basis:'',...VAR})){await p.evaluate(css=>{let s=document.getElementById('__t');if(!s){s=document.createElement('style');s.id='__t';document.head.appendChild(s);}s.textContent=css;},css);await w(300);console.log(k.padEnd(14),await sc());}
+await b.close();})();

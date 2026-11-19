@@ -1470,6 +1470,11 @@ body.bgruh::after{display:none}
 .kdgrid .kprok{border:0;border-radius:5px;background:#FFC800;color:#1a1400;font-weight:800;font-size:12px;line-height:1;padding:3px 4px;cursor:pointer}
 .kdgrid .kprok:hover{filter:brightness(1.1)}
 
+/* 1.11.13 Scrollen ohne Hover-Neuberechnung */
+.scrl>*{pointer-events:none}
+/* Hover ohne Ebenen-Wechsel (sonst Layout der ganzen Kundenliste je Zeile unter der Maus) */
+.kdgrid .kdel,.kdgrid .kmup{opacity:.001!important}.kdgrid .row.kr:hover .kdel,.kdgrid .kdel:focus-within,.kdgrid .row.kr:hover .kmup,.kdgrid .kmup:focus-within{opacity:.999!important}.kdgrid .row.kr:hover .kk{filter:none!important}
+
 [hidden]{display:none!important}
 #sTab td.b{font-weight:700}#sTab .pwm.ed{outline:none;padding:2px 6px;border-radius:6px;font-family:var(--mono)}#sTab td{vertical-align:top}
 #sTab td.ce,#ltab td.ce{cursor:text;border-bottom:1px dashed #2A3446;outline:none}#sTab td.ce:focus,#sTab .pwm.ed:focus,#ltab td.ce:focus{box-shadow:inset 0 0 0 2px var(--cyan);background:var(--panel2)}#ltab td.tg{cursor:pointer;user-select:none}#sTab td.ce:hover,#ltab td.tg:hover,#ltab td.ce:hover{background:rgba(255,255,255,.04)}#ltab td.tg:focus-visible{outline:2px solid var(--cyan)}
@@ -2627,7 +2632,7 @@ html:root nav .navbtn[aria-current="true"]::before{top:calc(50% - 54px)!importan
 <script>
 const FB_CONFIG={apiKey:"AIzaSyC_uZPvc5rJETwlS4JbfCoTkkE4ckjtp0M",authDomain:"velocenter-planer.firebaseapp.com",projectId:"velocenter-planer",storageBucket:"velocenter-planer.firebasestorage.app",messagingSenderId:"1018330488700",appId:"1:1018330488700:web:262a4d1660353e6fde8ef9"};
 /* ================= Velocenter Werkstatt-Cockpit – Oberfläche ================= */
-const CLIENT_VERSION='1.11.12';
+const CLIENT_VERSION='1.11.13';
 const USERS=[{id:'kevin',n:'Kevin',c:'#E2232D'},{id:'stefan',n:'Stefan',c:'#F59E0B'},{id:'martina',n:'Martina',c:'#EC4899'},{id:'sascha',n:'Sascha',c:'#22D3EE'},{id:'rene',n:'René',c:'#34D399'}];
 const U=id=>USERS.find(u=>u.id===id)||{n:'',c:'#64748B',id:''};
 /* 1.10.37: Profilfarbe je Nutzer (meta/prefs[ID].col, für alle sichtbar) – Cache für den Login-Bildschirm */
@@ -2691,8 +2696,9 @@ const HOL={};(()=>{const y0=Math.max(2026,new Date().getFullYear()-1);return [y0
 function fitH(){const vw=document.querySelector('.view.on');if(!vw)return;for(const el of vw.querySelectorAll('.vtab,.board,.rktab,.nboard,.kdboard,#v-lief .tbl,#v-kasse .tbl')){if(!el.offsetParent)continue;const t=el.getBoundingClientRect().top,h=Math.max(240,(innerHeight-t-12)/UIZ)+'px';if(el.style.maxHeight!==h)el.style.maxHeight=h;}if(vw.id==='v-verkauf'&&typeof ltBarPos==='function')ltBarPos();}
 /* 1.8.6: Scroll-Position aller Listen bleibt beim Neuaufbau erhalten (vorher sprang die Liste nach jeder Änderung nach oben) */
 const SCRSEL='.vtab,.board,.rktab,.nboard,.kdboard,.tbl,.bcols,.cols';const SCR={};
-const scrKey=el=>((el.closest('.view')||{}).id||'')+'|'+[...el.classList].filter(c=>!/^(on|wfx)$/.test(c)).sort().join('.');
-document.addEventListener('scroll',e=>{const el=e.target;if(!(el instanceof Element)||!el.matches(SCRSEL))return;SCR[scrKey(el)]={t:el.scrollTop,l:el.scrollLeft};el.dataset.scr='1';},true);
+const scrKey=el=>((el.closest('.view')||{}).id||'')+'|'+[...el.classList].filter(c=>!/^(on|wfx|scrl)$/.test(c)).sort().join('.');
+/* 1.11.13 (Tiry: flüssig scrollen): während des Scrollens keine Maus-Treffer in der Liste (.scrl) – sonst rechnet jede Zeile unter der Maus Hover neu (Kunden 165 → 46 ms/Bild bei 4× gebremster CPU) */
+const SCRT=new WeakMap();document.addEventListener('scroll',e=>{const el=e.target;if(!(el instanceof Element)||!el.matches(SCRSEL))return;SCR[scrKey(el)]={t:el.scrollTop,l:el.scrollLeft};if(!el.dataset.scr)el.dataset.scr='1';if(!el.matches('.kdboard,.vtab'))return;if(!el.classList.contains('scrl'))el.classList.add('scrl');clearTimeout(SCRT.get(el));SCRT.set(el,setTimeout(()=>el.classList.remove('scrl'),180));},{capture:true,passive:true});
 function scrRestore(){const vw=document.querySelector('.view.on');if(!vw)return;for(const el of vw.querySelectorAll(SCRSEL)){if(el.dataset.scr)continue;el.dataset.scr='1';const v=SCR[scrKey(el)];if(v&&el.offsetParent){el.scrollTop=v.t;el.scrollLeft=v.l;}}}
 /* 1.10.68 (Tiry): Navi passt sich der Fensterhöhe an (Browser-Zoom Strg+Mausrad / kleine Bildschirme) – wird als Ganzes verkleinert statt zu überlappen; unter 50 % scrollt sie */
 let NZ=1;function navFit(){const n=document.querySelector('nav');if(!n)return;if(innerWidth<=720){if(NZ!==1){NZ=1;n.style.zoom='';n.style.height='';document.body.style.removeProperty('--nz');}return;}
