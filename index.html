@@ -1475,6 +1475,9 @@ body.bgruh::after{display:none}
 /* Hover ohne Ebenen-Wechsel (sonst Layout der ganzen Kundenliste je Zeile unter der Maus) */
 .kdgrid .kdel,.kdgrid .kmup{opacity:.001!important}.kdgrid .row.kr:hover .kdel,.kdgrid .kdel:focus-within,.kdgrid .row.kr:hover .kmup,.kdgrid .kmup:focus-within{opacity:.999!important}.kdgrid .row.kr:hover .kk{filter:none!important}
 
+/* 1.11.14 (Tiry: flüssig): verlassene Reiter behalten ihre fertige Darstellung (content-visibility:hidden statt display:none) – Zurückwechseln ohne komplettes Neuberechnen von Stil/Layout. Höhe 0, damit nichts Platz braucht. JS: sichtbar = .view.on (offsetParent reicht nicht mehr). */
+.view:not(.on){display:block;content-visibility:hidden;height:0;padding-block:0}
+
 [hidden]{display:none!important}
 #sTab td.b{font-weight:700}#sTab .pwm.ed{outline:none;padding:2px 6px;border-radius:6px;font-family:var(--mono)}#sTab td{vertical-align:top}
 #sTab td.ce,#ltab td.ce{cursor:text;border-bottom:1px dashed #2A3446;outline:none}#sTab td.ce:focus,#sTab .pwm.ed:focus,#ltab td.ce:focus{box-shadow:inset 0 0 0 2px var(--cyan);background:var(--panel2)}#ltab td.tg{cursor:pointer;user-select:none}#sTab td.ce:hover,#ltab td.tg:hover,#ltab td.ce:hover{background:rgba(255,255,255,.04)}#ltab td.tg:focus-visible{outline:2px solid var(--cyan)}
@@ -2632,7 +2635,7 @@ html:root nav .navbtn[aria-current="true"]::before{top:calc(50% - 54px)!importan
 <script>
 const FB_CONFIG={apiKey:"AIzaSyC_uZPvc5rJETwlS4JbfCoTkkE4ckjtp0M",authDomain:"velocenter-planer.firebaseapp.com",projectId:"velocenter-planer",storageBucket:"velocenter-planer.firebasestorage.app",messagingSenderId:"1018330488700",appId:"1:1018330488700:web:262a4d1660353e6fde8ef9"};
 /* ================= Velocenter Werkstatt-Cockpit – Oberfläche ================= */
-const CLIENT_VERSION='1.11.13';
+const CLIENT_VERSION='1.11.14';
 const USERS=[{id:'kevin',n:'Kevin',c:'#E2232D'},{id:'stefan',n:'Stefan',c:'#F59E0B'},{id:'martina',n:'Martina',c:'#EC4899'},{id:'sascha',n:'Sascha',c:'#22D3EE'},{id:'rene',n:'René',c:'#34D399'}];
 const U=id=>USERS.find(u=>u.id===id)||{n:'',c:'#64748B',id:''};
 /* 1.10.37: Profilfarbe je Nutzer (meta/prefs[ID].col, für alle sichtbar) – Cache für den Login-Bildschirm */
@@ -2693,13 +2696,13 @@ const HOL={};(()=>{const y0=Math.max(2026,new Date().getFullYear()-1);return [y0
  add(new Date(y,0,1,12),'Neujahr');add(off(-2),'Karfreitag');add(off(1),'Ostermontag');add(new Date(y,4,1,12),'1. Mai');add(off(39),'Himmelfahrt');add(off(50),'Pfingstmontag');add(off(60),'Fronleichnam');add(new Date(y,9,3,12),'Dt. Einheit');add(new Date(y,10,1,12),'Allerheiligen');add(new Date(y,11,24,12),'Heiligabend');add(new Date(y,11,25,12),'1. Weihnachtstag');add(new Date(y,11,26,12),'2. Weihnachtstag');add(new Date(y,11,31,12),'Silvester');});
 /* 1.8.1: Listen füllen die ganze Höhe bis zum unteren Rand */
 /* 1.10.58 Tempo: nur im sichtbaren Reiter suchen, Höhe nur bei Änderung schreiben, LT-Balken nur im Verkauf */
-function fitH(){const vw=document.querySelector('.view.on');if(!vw)return;for(const el of vw.querySelectorAll('.vtab,.board,.rktab,.nboard,.kdboard,#v-lief .tbl,#v-kasse .tbl')){if(!el.offsetParent)continue;const t=el.getBoundingClientRect().top,h=Math.max(240,(innerHeight-t-12)/UIZ)+'px';if(el.style.maxHeight!==h)el.style.maxHeight=h;}if(vw.id==='v-verkauf'&&typeof ltBarPos==='function')ltBarPos();}
+function fitH(){const vw=document.querySelector('.view.on');if(!vw)return;for(const el of vw.querySelectorAll('.vtab,.board,.rktab,.nboard,.kdboard,#v-lief .tbl,#v-kasse .tbl')){if(!el.offsetParent||el.closest('.view:not(.on)'))continue;const t=el.getBoundingClientRect().top,h=Math.max(240,(innerHeight-t-12)/UIZ)+'px';if(el.style.maxHeight!==h)el.style.maxHeight=h;}if(vw.id==='v-verkauf'&&typeof ltBarPos==='function')ltBarPos();}
 /* 1.8.6: Scroll-Position aller Listen bleibt beim Neuaufbau erhalten (vorher sprang die Liste nach jeder Änderung nach oben) */
 const SCRSEL='.vtab,.board,.rktab,.nboard,.kdboard,.tbl,.bcols,.cols';const SCR={};
 const scrKey=el=>((el.closest('.view')||{}).id||'')+'|'+[...el.classList].filter(c=>!/^(on|wfx|scrl)$/.test(c)).sort().join('.');
 /* 1.11.13 (Tiry: flüssig scrollen): während des Scrollens keine Maus-Treffer in der Liste (.scrl) – sonst rechnet jede Zeile unter der Maus Hover neu (Kunden 165 → 46 ms/Bild bei 4× gebremster CPU) */
 const SCRT=new WeakMap();document.addEventListener('scroll',e=>{const el=e.target;if(!(el instanceof Element)||!el.matches(SCRSEL))return;SCR[scrKey(el)]={t:el.scrollTop,l:el.scrollLeft};if(!el.dataset.scr)el.dataset.scr='1';if(!el.matches('.kdboard,.vtab'))return;if(!el.classList.contains('scrl'))el.classList.add('scrl');clearTimeout(SCRT.get(el));SCRT.set(el,setTimeout(()=>el.classList.remove('scrl'),180));},{capture:true,passive:true});
-function scrRestore(){const vw=document.querySelector('.view.on');if(!vw)return;for(const el of vw.querySelectorAll(SCRSEL)){if(el.dataset.scr)continue;el.dataset.scr='1';const v=SCR[scrKey(el)];if(v&&el.offsetParent){el.scrollTop=v.t;el.scrollLeft=v.l;}}}
+function scrRestore(){const vw=document.querySelector('.view.on');if(!vw)return;for(const el of vw.querySelectorAll(SCRSEL)){if(el.dataset.scr)continue;el.dataset.scr='1';const v=SCR[scrKey(el)];if(v&&el.offsetParent&&!el.closest('.view:not(.on)')){el.scrollTop=v.t;el.scrollLeft=v.l;}}}
 /* 1.10.68 (Tiry): Navi passt sich der Fensterhöhe an (Browser-Zoom Strg+Mausrad / kleine Bildschirme) – wird als Ganzes verkleinert statt zu überlappen; unter 50 % scrollt sie */
 let NZ=1;function navFit(){const n=document.querySelector('nav');if(!n)return;if(innerWidth<=720){if(NZ!==1){NZ=1;n.style.zoom='';n.style.height='';document.body.style.removeProperty('--nz');}return;}
  const z0=n.style.zoom,h0=n.style.height;/* 1.10.70: mit Höhe 0 messen – „auto“ streckte die Navi im Grid auf die Seitenlänge (Leasing-Infos → Navi winzig) */n.style.zoom='';n.style.height='0px';n.style.minHeight='0';const need=n.scrollHeight*UIZ;n.style.minHeight='';
@@ -3258,14 +3261,27 @@ const VF0=[['name','Kunde'],['marke','Marke'],['modell','Modell'],['dat','Vom Ku
 /* 1.10.9: Kürzel in Leasing-Infos umbenannt (z. B. LB → LaB) → offene Räder im Verkauf einmalig mitziehen (nur Admin) */
 function leasRename(){if(!ME||!ME.adm||!L.length||!V.length)return;const mp={};L.forEach(l=>{if(l.id&&l.k&&l.id!==l.k)mp[l.id]=l.k;});if(!Object.keys(mp).length)return;
  V.forEach(b=>{if(b.firma&&mp[b.firma]&&!FN[b.firma])putV(Object.assign({},b,{firma:mp[b.firma]}));});}
+/* 1.11.14: Liste ändern ohne alles neu zu zeichnen. items = [{k: Schlüssel, h: HTML genau EINES Elements, s: Vergleichswert (sonst h)}]. Unverändertes bleibt stehen (kein Neu-Parsen/Layout), Geändertes wird ersetzt, Reihenfolge angeglichen. */
+function domPatch(box,items){const old=new Map();for(const el of box.children)if(el._pk!=null&&!old.has(el._pk))old.set(el._pk,el);
+ const nodes=new Array(items.length),need=[];items.forEach((it,i)=>{const e=old.get(it.k);if(e&&e._ph===(it.s??it.h)){nodes[i]=e;old.delete(it.k);}else need.push(i);});
+ if(need.length){const tp=document.createElement('template');tp.innerHTML=need.map(i=>items[i].h).join('');const els=[...tp.content.children];
+  if(els.length!==need.length){box.innerHTML=items.map(it=>it.h).join('');return false;}need.forEach((i,j)=>{const e=els[j];e._pk=items[i].k;e._ph=items[i].s??items[i].h;nodes[i]=e;});}
+ let ref=box.firstChild;for(const n of nodes){if(n===ref)ref=n.nextSibling;else box.insertBefore(n,ref);}
+ while(ref){const nx=ref.nextSibling;ref.remove();ref=nx;}return true;}
+let VKSHELL='';const vkXs=b=>{let s='';for(const k in b)if(k.startsWith('x_'))s+='\u0001'+k+'='+b[k];return s;};/* eigene Spalten stehen nicht im Zeilen-HTML → in den Vergleichswert */
 function rv(){setTimeout(leasRename,0);
  const open=V.filter(b=>b.a!=='1'),F={nm:b=>b.a!=='1'&&b.m!=='1'&&b.b!=='1',mw:b=>b.a!=='1'&&b.m==='1'&&b.b!=='1',ok:b=>b.a!=='1'&&b.b==='1',lk:b=>b.a!=='1'&&b.firma&&!b.ok};
  const list=V.filter(b=>(vkShowDone?b.a==='1':b.a!=='1')||b.id===vkEdit);/* 1.8.3: „Abgeholte“ = nur abgeholte, zuletzt abgeholte oben */
  if(vkShowDone)list.sort((x,y)=>vkAbT(y)-vkAbT(x));else list.sort(vkCmp);
   const form=vkEdit==='new'?vkForm({id:'new'}):vkEdit&&V.find(x=>x.id===vkEdit)?vkForm(V.find(x=>x.id===vkEdit)):'';
  if(document.querySelector('#cards [contenteditable]:focus, #cards .din'))return;
- {const hold=$('vkCtlHold');['vkSortSel','vkDone','vkAdd'].forEach(id=>hold.append($(id)));vkSelSync();
- $('cards').className='vlist';$('cards').innerHTML=form+`<div class="tbl vtab"><table><thead><tr class="h1"><th colspan="7" class="hL"></th><th colspan="4" class="lgrp"><span>Leasing</span></th><th colspan="3" class="hR"></th></tr><tr class="h2">${vkHead()}</tr></thead><tbody>${list.length?list.map(vkRow).join(''):'<tr><td colspan="14" class="empty">Keine Räder in dieser Auswahl.</td></tr>'}</tbody></table></div>`;
+ /* 1.11.14 (Tiry: flüssig): Tabelle nur neu bauen, wenn sich Kopf/Formular/Layout ändern – sonst nur geänderte Zeilen tauschen (domPatch) */
+ const shell=form+'\u0001'+vkHead()+'\u0001'+(LAYJ||''),items=list.length?list.map(b=>{const h=vkRow(b),x=vkXs(b);return {k:'v'+b.id,h,s:x?h+x:h};}):[{k:'empty',h:'<tr><td colspan="14" class="empty">Keine Räder in dieser Auswahl.</td></tr>'}];
+ const tb=document.querySelector('#cards .vtab tbody'),t=tb&&tb.closest('table'),hd=t&&t.tHead&&t.tHead.rows[t.tHead.rows.length-1];vkSelSync();
+ if(tb&&VKSHELL===shell&&$('cards').className==='vlist'&&hd&&hd.dataset.lay&&domPatch(tb,items)){ltBarPos();}
+ else{const hold=$('vkCtlHold');['vkSortSel','vkDone','vkAdd'].forEach(id=>hold.append($(id)));
+ $('cards').className='vlist';$('cards').innerHTML=form+`<div class="tbl vtab"><table><thead><tr class="h1"><th colspan="7" class="hL"></th><th colspan="4" class="lgrp"><span>Leasing</span></th><th colspan="3" class="hR"></th></tr><tr class="h2">${vkHead()}</tr></thead><tbody></tbody></table></div>`;
+ domPatch(document.querySelector('#cards .vtab tbody'),items);VKSHELL=shell;
  document.querySelector('#cards th.hL').append($('vkSortSel'),$('vkDone'));document.querySelector('#cards th.hR').append($('vkAdd'));ltBarPos();}
  $('nOffen').textContent=V.filter(b=>b.a!=='1').length;}
 /* Sortierung: Datum „17.8.“ / „29.09.“ / LT „38“ „KW 38“ „Lager“ */
@@ -3289,7 +3305,7 @@ function ltBar(b){if(b.a==='1')return null;const s=String(b.lt||'').trim();
  if(now>=z)return {p:1,c:'#F59E0B',s:1,t:'Liefertermin KW '+L.k+': kommt diese Woche'+seit};/* 1.11.3 (Tiry): LT-Woche erreicht = gelb-orange gestreift, voll grün nur wenn Rad da */
  return {p:+p.toFixed(3),c:'#34D399',t:'Liefertermin KW '+L.k+': noch '+rest+(rest===1?' Tag':' Tage')+seit};}
 const LT_H=182;
-function ltBarPos(){requestAnimationFrame(()=>{const t=document.querySelector('#cards .vtab table');if(!t)return;const r=t.querySelector('tr.vr');if(!r)return;const a=r.querySelector('td.who2'),n=r.querySelector('td.vnote');if(!a||!n)return;
+function ltBarPos(){requestAnimationFrame(()=>{const t=document.querySelector('#v-verkauf.on #cards .vtab table');if(!t)return;const r=t.querySelector('tr.vr');if(!r)return;const a=r.querySelector('td.who2'),n=r.querySelector('td.vnote');if(!a||!n)return;
  const f=r.cells[0].getBoundingClientRect().left,al=a.getBoundingClientRect().left,w=n.getBoundingClientRect().right-f;if(w>0){const W=Math.round(w)+'px',X=Math.round(al-f)+'px';if(t.style.getPropertyValue('--lbw')!==W)t.style.setProperty('--lbw',W);if(t.style.getPropertyValue('--lbx')!==X)t.style.setProperty('--lbx',X);}});}
 addEventListener('resize',()=>ltBarPos());
 const LT_SOF=-1e4,LT_LAG=-1e4+1;function vkLt(s){s=String(s||'').trim();if(/^sofort/i.test(s))return LT_SOF;if(/lager|^l$/i.test(s))return LT_LAG;const p=ltParse(s);if(!p)return 999;return p.k+(p.y-isoYr(new Date()))*53;}
@@ -4384,13 +4400,14 @@ function rk(){const g=$('kdGrid');if(!g)return;kdAngMig();const all=kdAll();{con
  if($('kdClr'))$('kdClr').hidden=!(ME&&ME.adm)||!all.length;if($('kdMailImp'))$('kdMailImp').hidden=!(ME&&ME.adm)||!all.length;
  {const nb=Object.keys(KDT).length;$('kdBin').hidden=!nb;$('kdBinN').textContent=nb;}mauBadge();
  const cols=kdCols();kdTpl();
- let h=`<div class="hd kdh kgh" style="--hc:${KDRB[0]}"></div>`+cols.map((c,i)=>`<div class="hd kdh${c.k==='kunde'?' kl':''}${kdF[c.k]?' kfon':''}" draggable="true" data-kc="${c.k}" title="Klick = filtern · Ziehen = Spalte verschieben · rechter Rand = Breite" style="--hc:${KDRB[i%KDRB.length]}">${c.n||'·'}<i class="kfi">${kdF[c.k]?'▼':'▾'}</i><span class="kres" data-kres="${c.k}" title="Ziehen = Breite ändern · Doppelklick = Standard"></span></div>`).join('')+`<div class="hd kdh" style="--hc:${KDRB[KDRB.length-1]}"></div>`;let yr=null;const cnt={};list.forEach(r=>{const y=kdYear(r);cnt[y]=(cnt[y]||0)+1;});
+ const it=[];let h=`<div class="hd kdh kgh" style="--hc:${KDRB[0]}"></div>`;it.push({k:'h0',h});cols.forEach((c,i)=>it.push({k:'h'+(i+1),h:`<div class="hd kdh${c.k==='kunde'?' kl':''}${kdF[c.k]?' kfon':''}" draggable="true" data-kc="${c.k}" title="Klick = filtern · Ziehen = Spalte verschieben · rechter Rand = Breite" style="--hc:${KDRB[i%KDRB.length]}">${c.n||'·'}<i class="kfi">${kdF[c.k]?'▼':'▾'}</i><span class="kres" data-kres="${c.k}" title="Ziehen = Breite ändern · Doppelklick = Standard"></span></div>`}));it.push({k:'hz',h:`<div class="hd kdh" style="--hc:${KDRB[KDRB.length-1]}"></div>`});h=it.map(x=>x.h).join('');let yr=null;const cnt={};list.forEach(r=>{const y=kdYear(r);cnt[y]=(cnt[y]||0)+1;});
  if(!all.length){kdPopClose();g.innerHTML=h+`<div class="kdempty">${ME&&ME.adm?'Noch keine Kunden – oben „📥 Kunden aus Sheet übernehmen“ und die .xlsx des Sheets wählen.':'Noch keine Kunden übernommen.'}</div>`;return;}
- for(const r of list){const y=kdYear(r);if(y!==yr){yr=y;h+=`<div class="kw kdy">${y}<span>${cnt[y]} ${cnt[y]===1?'Verkauf':'Verkäufe'}${q||fk.length?' (Treffer)':''}</span></div>`;}
+ for(const r of list){const y=kdYear(r);if(y!==yr){yr=y;it.push({k:'y'+y,h:`<div class="kw kdy">${y}<span>${cnt[y]} ${cnt[y]===1?'Verkauf':'Verkäufe'}${q||fk.length?' (Treffer)':''}</span></div>`});}
   const id=esc(r.id),ky=esc(r.y);
   const pr=Array.isArray(r.pr)&&r.pr.length?r.pr:null;
-  h+=`<div class="row kr${pr?' kpr':''}"${pr?` title="🧾 Aus Veloport-Rechnung – bitte prüfen: ${esc(pr.join(', '))}"`:''}><div class="c kc kgrip" draggable="true" data-kid="${id}" data-ky="${ky}" title="Ziehen = Zeile verschieben">⋮⋮</div>${cols.map(c=>kdCell(c,r,id,ky)).join('')}<div class="c kc kdel" data-kid="${id}" data-ky="${ky}">${pr?`<button class="kprok" type="button" data-kprok="${id}" data-ky="${ky}" title="Geprüft – gelb weg (fehlte: ${esc(pr.join(', '))})">✓</button>`:''}<button class="nx" type="button" data-kdel="${id}" data-ky="${ky}" title="Eintrag löschen">×</button></div></div>`;}
- g.innerHTML=h+((q||fk.length)&&!list.length?'<div class="kdempty">Nichts gefunden.</div>':'');}
+  it.push({k:'r'+r.y+'/'+r.id,h:`<div class="row kr${pr?' kpr':''}"${pr?` title="🧾 Aus Veloport-Rechnung – bitte prüfen: ${esc(pr.join(', '))}"`:''}><div class="c kc kgrip" draggable="true" data-kid="${id}" data-ky="${ky}" title="Ziehen = Zeile verschieben">⋮⋮</div>${cols.map(c=>kdCell(c,r,id,ky)).join('')}<div class="c kc kdel" data-kid="${id}" data-ky="${ky}">${pr?`<button class="kprok" type="button" data-kprok="${id}" data-ky="${ky}" title="Geprüft – gelb weg (fehlte: ${esc(pr.join(', '))})">✓</button>`:''}<button class="nx" type="button" data-kdel="${id}" data-ky="${ky}" title="Eintrag löschen">×</button></div></div>`});}
+ if((q||fk.length)&&!list.length)it.push({k:'none',h:'<div class="kdempty">Nichts gefunden.</div>'});
+ domPatch(g,it);/* 1.11.14: nur geänderte Zeilen tauschen */}
 /* 1.10.13: Telefon → WhatsApp Web. Handynummern (015x/016x/017x) in jeder Schreibweise (0176-72654293, +49 176 …, 0049…) → 49176…; Festnetz = kein WhatsApp. */
 const WAICO='<svg viewBox="0 0 24 24" width="17" height="17" shape-rendering="geometricPrecision" aria-hidden="true"><path fill="currentColor" d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>';
 function kdWaNums(s){const o=[],seen={};for(const m of String(s||'').match(/(?:\+|00)?\d[\d\s\/()\-.]{6,}\d/g)||[]){let d=m.replace(/\D/g,'');if(m.trim().startsWith('+'))d='00'+d;

@@ -1169,3 +1169,6 @@ body.bgruh::after{display:none}
 .scrl>*{pointer-events:none}
 /* Hover ohne Ebenen-Wechsel (sonst Layout der ganzen Kundenliste je Zeile unter der Maus) */
 .kdgrid .kdel,.kdgrid .kmup{opacity:.001!important}.kdgrid .row.kr:hover .kdel,.kdgrid .kdel:focus-within,.kdgrid .row.kr:hover .kmup,.kdgrid .kmup:focus-within{opacity:.999!important}.kdgrid .row.kr:hover .kk{filter:none!important}
+
+/* 1.11.14 (Tiry: flüssig): verlassene Reiter behalten ihre fertige Darstellung (content-visibility:hidden statt display:none) – Zurückwechseln ohne komplettes Neuberechnen von Stil/Layout. Höhe 0, damit nichts Platz braucht. JS: sichtbar = .view.on (offsetParent reicht nicht mehr). */
+.view:not(.on){display:block;content-visibility:hidden;height:0;padding-block:0}
