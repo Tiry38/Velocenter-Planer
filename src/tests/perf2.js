@@ -2,7 +2,7 @@
 const {chromium}=require('playwright');const THR=+(process.env.THR||4);
 (async()=>{const b=await chromium.launch();const c=await b.newContext({viewport:{width:1600,height:900}});await c.route(/gstatic|googleapis|cdnjs|emailjs/,r=>r.abort());
 const p=await c.newPage();const er=[];p.on('pageerror',e=>er.push(e.message));const w=t=>p.waitForTimeout(t||250);
-await p.goto('file://'+process.cwd()+'/test_fb.html');await w(400);await p.click('.wt[data-u=kevin]');await p.fill('#pw1','1');await p.fill('#pw2','1');await p.click('#pwGo');await w(900);
+await p.goto('file://'+process.cwd()+'/'+(process.env.F||'test_fb.html'));await w(400);await p.click('.wt[data-u=kevin]');await p.fill('#pw1','1');await p.fill('#pw2','1');await p.click('#pwGo');await w(900);
 await p.evaluate(async()=>{const R=a=>a[Math.floor(Math.random()*a.length)],names=['Müller Hans','Schmidt Petra','Weber Klaus','Becker Anna','Wolf Peter','Roth Eva','Meier Jan'];
  const t=new Date();for(let i=0;i<300;i++){const d=new Date(t.getTime()+(i%80-30)*864e5);await db.collection('planer').doc('p'+i).set({id:'p'+i,datum:d.toISOString().slice(0,10),spalte:R(['int','t1','t2','ws','wa','bst']),text:'Eintrag '+i,zeit:i%3?'':'10:00',von:'kevin',ts:Date.now()});}
  for(let i=0;i<180;i++)await db.collection('verkauf').doc('v'+i).set({id:'v'+i,name:R(names),modell:R(['KTM Macina Sport','i:SY E5','Gudereit EC-35 Evo']),dat:'0'+(1+i%9)+'.10.2026',firma:R(['BL','JR','']),lt:'KW '+(40+i%12)+'/26',m:i%3?'1':'',b:i%4?'':'1',a:'',notiz:i%2?'Notiz '+i:''});
@@ -25,6 +25,10 @@ for(const v in SC){await p.evaluate(v=>show(v),v);await quiet();
 // Änderung im Planer / Verkauf (anderer Nutzer)
 for(const [v,col,id,f] of [['planer','planer','p1','text'],['verkauf','verkauf','v1','notiz'],['kunden',null]]){await p.evaluate(v=>show(v),v);await w(300);
  const ms=await p.evaluate(async([col,id,f])=>{const t0=performance.now();if(col)await db.collection(col).doc(id).update({[f]:'Neu '+Math.random()});else await db.doc('meta/kd_2026').update({'items.k2026_1.kunde':'Neu '+Math.random()});await new Promise(r=>requestAnimationFrame(()=>setTimeout(r,0)));return Math.round(performance.now()-t0);},[col,id,f]);console.log('Änderung',v,ms,'ms');}
+// 1.11.14: reines Neuzeichnen nach einer Änderung (ohne Testdatenbank-Schreibzeit): 1 Datensatz im Speicher ändern → renderAll → Layout erzwingen → nächstes Bild
+for(const v of ['verkauf','kunden','planer']){await p.evaluate(v=>show(v),v);await quiet();const ms=[];for(let i=0;i<4;i++)ms.push(await p.evaluate(v=>new Promise(r=>{const t0=performance.now();
+ if(v==='verkauf'){V[1]=Object.assign({},V[1],{notiz:'X'+Math.random()});}else if(v==='kunden'){const y=Object.keys(KD).sort().pop(),k=Object.keys(KD[y])[1];KD[y][k]=Object.assign({},KD[y][k],{kunde:'X'+Math.random()});kdDirty=true;}else{P[1]=Object.assign({},P[1],{text:'X'+Math.random()});}
+ renderAll();document.body.offsetHeight;requestAnimationFrame(()=>setTimeout(()=>r(Math.round(performance.now()-t0)),0));}),v));console.log('Neuzeichnen',v,JSON.stringify(ms),'ms');}
 await p.evaluate(()=>{window.__lt=[];new PerformanceObserver(l=>l.getEntries().forEach(e=>__lt.push(Math.round(e.duration)))).observe({entryTypes:['longtask']});show('planer');});
 await w(6000);console.log('Leerlauf Planer lange Aufgaben:',JSON.stringify(await p.evaluate(()=>__lt)));
 console.log('Fehler',er);await b.close();})();
