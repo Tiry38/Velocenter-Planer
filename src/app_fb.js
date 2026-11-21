@@ -458,7 +458,7 @@ function stopLive(){BK_IMPOK=false;unsubs.forEach(u=>{try{u();}catch(_){}});unsu
 function startLive(){stopLive();const from=iso(new Date(Date.now()-35*864e5));
  listen('P',x=>P=x,db.collection('planer').where('datum','>=',from));
  listen('V',x=>V=x);listen('B',x=>B=x);listen('T',x=>T=x);listen('S',x=>{S=x;smbwSeed().then(()=>skonSeed());});
- listen('L',x=>{L=x.map(o=>Object.assign({},o,{k:o.k||o.id}));fnUpd();setTimeout(leasRename,0);if(!x.length)seedLeasing();else recLeasing().then(rewSeed);});
+ listen('L',x=>{L=x.map(o=>Object.assign({},o,{k:o.k||o.id}));fnUpd();setTimeout(leasRename,0);if(!x.length)seedLeasing();else recLeasing().then(rewSeed).then(finSeed);});
  listen('I',x=>{I={};x.forEach(o=>I[o.id]=o.wert);});
  if(ME&&ME.adm)unsubs.push(db.doc('tresor/pw').onSnapshot(d=>{if(KEY&&NOTES&&d.exists&&d.data().ct&&(d.data().sid?d.data().sid!==TABID:d.data().tsVon!==ME.id)&&!document.querySelector('#nGrid [contenteditable]:focus'))open_(KEY,d.data()).then(x=>{if(!Array.isArray(x)){NOTES=x.notes||[];PWGRID=x.grid||PWGRID;rn();}}).catch(()=>{});},()=>{}));
  if(ME&&ME.adm)for(let y=1995;y<=new Date().getFullYear()+1;y++)unsubs.push(db.doc('meta/kd_'+y).onSnapshot(d=>{KD[y]=(d.exists&&d.data().items)||{};kdDirty=true;scheduleRender();if(KDEIN.length)kdeinRun();else kdeMailFix();},()=>{}));
@@ -479,6 +479,8 @@ function startLive(){stopLive();const from=iso(new Date(Date.now()-35*864e5));
 async function seedLeasing(){if(!ME||!ME.adm)return;try{await db.runTransaction(async t=>{const f=db.doc('meta/seed');const d=await t.get(f);if(d.exists&&d.data().leasing)return;
   LSDEF.forEach(x=>t.set(db.collection('leasing').doc(x.k),Object.assign(clean(x),{ts:stamp()})));t.set(f,{leasing:true,rec:LSREC_VER},{merge:true});});}catch(e){fail(e);}}
 // Leasing-Infos einmalig auf die neue Struktur (Tirys Fragenliste) bringen; alte Listen werden in „alt“ gesichert
+let finDone=false;async function finSeed(){/* 1.11.17 (Tiry): TARGOBANK als Finanzierung einmalig anlegen, falls noch nicht vorhanden */if(finDone||!ME||!ME.adm||!L.length)return;finDone=true;const x=LS.find(l=>l.k==='TB');if(!x)return;
+ if(L.some(l=>l.id==='TB'||l.k==='TB'||/targo/i.test(l.n||'')))return;try{await db.runTransaction(async t=>{const f=db.doc('meta/seed');const d=await t.get(f);if(d.exists&&d.data().fin)return;const r=db.collection('leasing').doc('TB');const o=await t.get(r);if(!o.exists)t.set(r,Object.assign(clean(Object.assign({},x)),{ts:stamp()}));t.set(f,{fin:1},{merge:true});});}catch(e){finDone=false;fail(e);}}
 let recDone=false;async function recLeasing(){if(recDone||!ME||!ME.adm||!L.length)return;recDone=true;try{await db.runTransaction(async t=>{const f=db.doc('meta/seed');const d=await t.get(f);const old=d.exists?(d.data().rec||0):0;if(old>=LSREC_VER)return;
   LSREC.filter(x=>(x.v||3)>old).forEach(x=>{/* nur neue Fassungen überschreiben, eigene Änderungen an anderen Karten bleiben */const o=L.find(l=>l.id===x.k)||L.find(l=>l.k===x.k);if(!o)return;const u=recMerge(o,x);u.ts=stamp();t.set(db.collection('leasing').doc(o.id),u,{merge:true});});t.set(f,{rec:LSREC_VER},{merge:true});});}catch(e){recDone=false;fail(e);}}
 // Offenes (nicht gelöscht = nicht erledigt) wandert auf den nächsten sichtbaren Tag (heute; Sonntag → Montag, 1.10.88).
@@ -1078,7 +1080,9 @@ const LQG=[['🔧 Inspektion & Verschleiß',[['isz','Inspektion – wir bekommen
  ['📞 Kontakt & Leasingende',[['kon','Händler-Kontakt','','o'],['ende','Leasingende / Rückgabe','','o'],['preis','Preisgrenzen','','o']]]];/* 1.7.6: 'o' = nur anzeigen, wenn gefüllt */
 const LQF=LQG.flatMap(g=>g[1]);
 const isVers=f=>/versicherung|schäden/i.test(f.sub||'');
-const qG=f=>isVers(f)?LVG:LQG,qF=f=>isVers(f)?LVF:LQF;
+const isFin=f=>!isVers(f)&&/finanzierung|ratenkauf|kredit/i.test(f.sub||'');/* 1.11.17: Finanzierer (TARGOBANK) eigene Gruppe */
+const lKind=f=>isVers(f)?2:isFin(f)?1:0;
+const qG=f=>isVers(f)?LVG:isFin(f)?LFG:LQG,qF=f=>isVers(f)?LVF:isFin(f)?LFF:LQF;
 // Versicherungen (ENRA, Alteos, Fahrsicherung, Assona): eigene, rein händlerrelevante Felder
 const LVG=[['🚲 Was ist versicherbar?',[['vRad','Räder · Alter · Wert'],['spe','S-Pedelec','t'],['drei','E-Dreirad','t']]],
  ['🤝 Abschluss über uns',[['vAbs','So schließen wir ab']]],
@@ -1086,8 +1090,15 @@ const LVG=[['🚲 Was ist versicherbar?',[['vRad','Räder · Alter · Wert'],['s
  ['🧾 Schaden',[['vMeld','Melden über'],['vKva','KVA / Freigabe'],['reSch','Rechnung an'],['vSb','Selbstbeteiligung']]],
  ['📞 Kontakt',[['vKon','Für Händler']]]];
 const LVF=LVG.flatMap(g=>g[1]);
+// Finanzierung (TARGOBANK): rein händlerrelevante Felder, 1.11.17
+const LFG=[['👤 Kunde braucht',[['fVor','Voraussetzungen'],['mit','Kunde bringt mit']]],
+ ['📝 Ablauf im Laden',[['fAnt','Antrag stellen'],['fId','Identifikation · Unterschrift'],['fEnt','Entscheidung']]],
+ ['💶 Geld für uns',[['fAus','Auszahlung an uns'],['fKost','Kosten für uns (0-%-Aktion)']]],
+ ['↩ Widerruf · Storno · Sicherheit',[['fWid','Widerruf / Storno'],['fSich','Sicherheit / Eigentum']]],
+ ['📞 Kontakt',[['kon','Für Händler']]]];
+const LFF=LFG.flatMap(g=>g[1]);
 const lRank=f=>{const r=LS.findIndex(x=>x.k===f.k);return r<0?99:r;};
-const lOrd=()=>L.map((f,i)=>[f,i]).sort((a,b)=>isVers(a[0])-isVers(b[0])||lRank(a[0])-lRank(b[0])||a[1]-b[1]);
+const lOrd=()=>L.map((f,i)=>[f,i]).sort((a,b)=>lKind(a[0])-lKind(b[0])||lRank(a[0])-lRank(b[0])||a[1]-b[1]);
 const OFFEN='<span class="qo">offen</span>';
 const triV=v=>v===true?'<span class="qy">✓ ja</span>':v===false?'<span class="qn">✗ nein</span>':OFFEN;
 const qv=(f,[k,,t])=>t==='t'?triV(f[k]):String(f[k]||'').trim()?hl(f[k]):OFFEN;
@@ -1098,24 +1109,34 @@ const lsHit=f=>!lsQ||JSON.stringify(Object.assign({},f,{logo:'',alt:''})).toLowe
 const lsShow=f=>(!lsDrei||f.drei===true)&&lsHit(f);
 const triC=(v,n)=>`<span class="lsf ${v===true?'y':v===false?'n':'o'}">${v===true?'✓':v===false?'✗':'?'} ${n}</span>`;
 function lsTab(f,i,on){const lg=logoOf(f);return `<button class="lstab${on?' on':''}${lsShow(f)?'':' nohit'}" type="button" role="tab" aria-selected="${on}" data-lst="${i}" style="--ac:${esc(f.ac||'#94A3B8')}" title="${esc(f.n)} · ${esc(f.k)}">${lg?`<img src="${imgU(lg)}" alt="${esc(f.n)}">`:`<b class="lstk">${esc(f.k)}</b>`}<small>${esc(f.n)}</small></button>`;}
-function lsCard(f,i){const nj=(f.zubJa||[]).length,nn=(f.zubNein||[]).length,vs=isVers(f),lg=logoOf(f);
+/* 1.11.16 (Tiry: „wesentlich übersichtlicher“): Texte in Stichpunkte (an „ · “), Ja/Nein als Schild, Zahlen/€ fett, Pakete mit Name + Preis-Kasten */
+const lsNum=x=>x.replace(/(\d[\d.,]*\s?(?:€|%|Tage?|Mon\.|Monate?|Jahre?|km|Ziffern)|\d+\s?×)/g,'<b class="lsn">$1</b>');
+const lsT=t=>lsNum(hl(t));
+const lsPts=t=>{const r=[];let d=0,c='';for(const ch of String(t||'').split(/(\s+·\s+|[()])/)){if(ch==='(')d++;else if(ch===')')d=Math.max(0,d-1);if(/^\s+·\s+$/.test(ch)&&!d){r.push(c);c='';}else c+=ch;}r.push(c);return r.map(x=>x.trim()).filter(Boolean);};/* nicht innerhalb von Klammern trennen */
+function lsVal(t){let x=String(t||'').trim(),yn='';const m=x.match(/^(ja|nein)\b\s*[–:,-]?\s*/i);if(m){yn=/^ja/i.test(m[1])?'<span class="qy lsyn">✓ ja</span>':'<span class="qn lsyn">✗ nein</span>';x=x.slice(m[0].length);}
+ const ps=lsPts(x);return yn+(ps.length>1?`<ul class="lspl">${ps.map(p=>`<li>${lsT(p)}</li>`).join('')}</ul>`:ps.length?`<span class="lsv1">${lsT(ps[0])}</span>`:'');}
+const qv2=(f,[k,,t])=>t==='t'?triV(f[k]):String(f[k]||'').trim()?lsVal(f[k]):OFFEN;
+function lsPak(t){let x=String(t||'').replace(/^!/,''),w=/^!/.test(t),ti='',pr='';const c=x.indexOf(':');if(c>1&&c<48&&!/\d\s*$/.test(x.slice(0,c))){ti=x.slice(0,c);x=x.slice(c+1).trim();}
+ const d=x.lastIndexOf(' – ');if(d>0&&/€/.test(x.slice(d))){pr=x.slice(d+3);x=x.slice(0,d);}
+ const ps=lsPts(x);return `<div class="lspk${w?' w':''}">${ti?`<h5>${hl(ti)}</h5>`:''}${ps.length>1?`<ul class="lspl">${ps.map(p=>`<li>${lsT(p)}</li>`).join('')}</ul>`:`<p>${lsT(ps[0]||'')}</p>`}${pr?`<div class="lspr">${lsPts(pr).map(p=>`<span>${lsT(p)}</span>`).join('')}</div>`:''}</div>`;}
+function lsCard(f,i){const nj=(f.zubJa||[]).length,nn=(f.zubNein||[]).length,fi=isFin(f),vs=isVers(f)||fi,lg=logoOf(f);
  const grp=qG(f).map(([h,qs])=>[h,qs.filter(q=>q[3]!=='o'||String(f[q[0]]||'').trim())]).filter(([h,qs])=>qs.length);
- const quick=vs?'':[triC(f.drei,'E-Dreirad'),triC(f.spe,'S-Pedelec'),String(f.vers||'').trim()?`<span class="lsf i" title="${esc(f.vers)}">🛡 ${esc(String(f.vers).slice(0,40))}${String(f.vers).length>40?'…':''}</span>`:''].join('');
+ const quick=vs?'':[triC(f.drei,'E-Dreirad'),triC(f.spe,'S-Pedelec')].join('');
  return `<article class="lsd" style="--ac:${esc(f.ac||'#94A3B8')}">
  <header class="lsdh"><div class="lsdlg">${lg?`<img src="${imgU(lg)}" alt="${esc(f.n)} Logo">`:`<div class="mono">${esc(f.k)}</div>`}</div>
  <div class="lsdt"><h2>${esc(f.n)}</h2><div class="lsdm"><span class="lsk">${esc(f.k)}</span><span>${esc(f.sub||'Leasing')}</span></div>${quick?`<div class="lsfq">${quick}</div>`:''}</div>
  <div class="lsda">${vs&&!nj&&!nn?'':`<button class="zubbtn" type="button" data-zub="${i}">🧩 Leasingfähiges Zubehör <span>${nj||nn?nj+' ✓ · '+nn+' ✗':'offen'}</span></button>`}<button class="edbtn" type="button" data-led="${i}" aria-label="${esc(f.n)} bearbeiten">✎ Bearbeiten</button></div></header>
- <section class="lsdp"><h4>${vs?'🛡 Tarife · Leistungen':'📦 Pakete · Leistungen · Preis für den Kunden'}</h4>${(f.pak||[]).length?`<ul>${f.pak.map(li).join('')}</ul>`:`<p class="qe">${OFFEN}</p>`}</section>
- <div class="lsdq">${grp.map(([h,qs])=>`<section class="lsg"><h4>${esc(h)}</h4><dl class="qa">${qs.map(q=>`<dt>${esc(q[1])}</dt><dd>${qv(f,q)}</dd>`).join('')}</dl></section>`).join('')}</div>
+ <section class="lsdp"><h4>${fi?'💶 Angebote · Konditionen für den Kunden':vs?'🛡 Tarife · Leistungen':'📦 Pakete · Leistungen · Preis für den Kunden'}</h4>${(f.pak||[]).length?`<div class="lspks">${f.pak.map(lsPak).join('')}</div>`:`<p class="qe">${OFFEN}</p>`}</section>
+ <div class="lsdq">${grp.map(([h,qs])=>`<section class="lsg"><h4>${esc(h)}</h4>${qs.map(q=>`<div class="lsr"><div class="lsq">${esc(q[1])}</div><div class="lsa">${qv2(f,q)}</div></div>`).join('')}</section>`).join('')}</div>
  </article>`;}
 function rl(){const ord=lOrd();
  let cur=ord.find(([f,i])=>i===lsEdit)||ord.find(([f])=>lsId(f)===lsSel);
  if(!cur||(!lsShow(cur[0])&&cur[1]!==lsEdit))cur=ord.find(([f])=>lsShow(f))||(lsQ||lsDrei?null:ord[0]);
- const tabs=g=>ord.filter(([f])=>isVers(f)===g).map(([f,i])=>lsTab(f,i,!!cur&&cur[1]===i)).join('');
+ const tabs=g=>ord.filter(([f])=>lKind(f)===g).map(([f,i])=>lsTab(f,i,!!cur&&cur[1]===i)).join('');
  const hit=ord.filter(([f])=>lsShow(f)).length;
- $('lgrid').innerHTML=`<div class="lsnav" role="tablist" aria-label="Anbieter"><div class="lsgrp"><span class="lsgl">Leasing</span><div class="lstabs">${tabs(false)}</div></div><div class="lsgrp vs"><span class="lsgl">Versicherungen</span><div class="lstabs">${tabs(true)}</div></div>${lsQ||lsDrei?`<span class="lshits">${hit} von ${ord.length} passen</span>`:''}</div>`+
+ $('lgrid').innerHTML=`<div class="lsnav" role="tablist" aria-label="Anbieter"><div class="lsgrp"><span class="lsgl">Leasing</span><div class="lstabs">${tabs(0)}</div></div>${ord.some(([f])=>lKind(f)===1)?`<div class="lsgrp vs"><span class="lsgl">Finanzierung</span><div class="lstabs">${tabs(1)}</div></div>`:''}<div class="lsgrp vs"><span class="lsgl">Versicherungen</span><div class="lstabs">${tabs(2)}</div></div>${lsQ||lsDrei?`<span class="lshits">${hit} von ${ord.length} passen</span>`:''}</div>`+
   (cur?(cur[1]===lsEdit?editCard(cur[0],cur[1]):lsCard(cur[0],cur[1])):'<p class="hint">Nichts gefunden.</p>');
- if(!document.querySelector('#ltab [contenteditable]:focus'))$('ltab').innerHTML='<thead><tr><th>Anbieter</th><th>E-Dreirad</th><th>S-Pedelec</th><th>Inspektion – wir bekommen</th><th>Verschleiß</th><th>Versicherung</th></tr></thead><tbody>'+ord.map(([f,i])=>`<tr><td><b style="color:${esc(f.ac)}">●</b> <a class="lsgo" href="#" data-lst="${i}">${esc(f.n)}</a></td>${['drei','spe'].map(k=>`<td class="tg ${f[k]===true?'y':f[k]===false?'n':''}" data-lt="${i}" data-f="${k}" role="button" tabindex="0" title="Klick = ✓ / ✗ / offen">${f[k]===true?'✓':f[k]===false?'✗':'–'}</td>`).join('')}${['isz','vsd','vers'].map(k=>`<td class="ce" contenteditable="true" spellcheck="false" data-lt="${i}" data-f="${k}">${esc(f[k]||'')}</td>`).join('')}</tr>`).join('')+'</tbody>';
+ if(!document.querySelector('#ltab [contenteditable]:focus'))$('ltab').innerHTML='<thead><tr><th>Anbieter</th><th>E-Dreirad</th><th>S-Pedelec</th><th>Inspektion – wir bekommen</th><th>Verschleiß</th><th>Versicherung</th></tr></thead><tbody>'+ord.filter(([f])=>!isFin(f)).map(([f,i])=>`<tr><td><b style="color:${esc(f.ac)}">●</b> <a class="lsgo" href="#" data-lst="${i}">${esc(f.n)}</a></td>${['drei','spe'].map(k=>`<td class="tg ${f[k]===true?'y':f[k]===false?'n':''}" data-lt="${i}" data-f="${k}" role="button" tabindex="0" title="Klick = ✓ / ✗ / offen">${f[k]===true?'✓':f[k]===false?'✗':'–'}</td>`).join('')}${['isz','vsd','vers'].map(k=>`<td class="ce" contenteditable="true" spellcheck="false" data-lt="${i}" data-f="${k}">${esc(f[k]||'')}</td>`).join('')}</tr>`).join('')+'</tbody>';
  fnUpd();}
 function lsPick(i){const f=L[i];if(!f)return;if(lsEdit>=0&&lsEdit!==i){if(L[lsEdit]&&L[lsEdit]._new)L.splice(lsEdit,1);lsEdit=-1;}lsSel=lsId(f);try{localStorage.setItem('vc_lstab',lsSel);}catch(_){}rl();}
 function fnUpd(){FN=Object.assign(Object.fromEntries(Object.entries({BL:'Bikeleasing',CB:'Company Bike',KM:'Kazenmaier',BB:'Businessbike',JR:'JobRad',DD:'Deutsche Dienstrad',LB:'Lease a Bike',RD:'RIDE',ER:'Eurorad',TB:'Targo Bank'}).filter(([k])=>!L.some(l=>l.id===k&&l.k&&l.k!==k))),Object.fromEntries(L.filter(f=>!/versicherung|schäden/i.test(f.sub||'')).map(f=>[f.k,f.n])));}
@@ -1129,9 +1150,9 @@ function editCard(f,i){const ta=(k,lbl,r)=>`<label>${lbl} <em>(eine Zeile pro Pu
  <div class="lh">${logoOf(f)?`<div class="logo"><img src="${imgU(logoOf(f))}" alt=""></div>`:`<div class="mono">${esc(f.k)}</div>`}<div style="flex:1;min-width:0"><b>Bearbeiten</b><small>Änderungen gelten sofort für alle</small></div></div>
  <div class="g2"><label>Name<input name="n" value="${esc(f.n)}" required></label><label>Kürzel<input name="k" value="${esc(f.k)}" maxlength="4" required></label>
  <label>Unterzeile<input name="sub" value="${esc(f.sub||'Leasing')}"></label><label>Farbe<input name="ac" type="color" value="${esc(f.ac||'#94A3B8')}"></label></div>
- ${ta('pak',isVers(f)?'Tarife · Leistungen':'Pakete · Leistungen · Preis für den Kunden',4)}
+ ${ta('pak',isFin(f)?'Angebote · Konditionen':isVers(f)?'Tarife · Leistungen':'Pakete · Leistungen · Preis für den Kunden',4)}
  <div class="g2">${qF(f).map(([k,n,t])=>t==='t'?`<label>${esc(n)}<select name="${k}"><option value="1"${f[k]===true?' selected':''}>✓ ja</option><option value="0"${f[k]===false?' selected':''}>✗ nein</option><option value=""${f[k]!==true&&f[k]!==false?' selected':''}>offen</option></select></label>`:`<label>${esc(n)}<input name="${k}" value="${esc(f[k]||'')}"></label>`).join('')}</div>
- ${isVers(f)?'':ta('zubJa','Leasingfähiges Zubehör',4)+ta('zubNein','Nicht leasingfähig',3)}
+ ${isVers(f)||isFin(f)?'':ta('zubJa','Leasingfähiges Zubehör',4)+ta('zubNein','Nicht leasingfähig',3)}
  <label class="up">Logo hochladen (PNG/SVG/WebP, freigestellt – wird automatisch verkleinert)<input name="logo" type="file" accept="image/png,image/svg+xml,image/webp,image/jpeg"></label>
  ${f.logo?`<button class="btn" type="button" data-rmlogo="${i}">Eigenes Logo entfernen</button>`:''}
  <div class="acts"><button class="btn red" type="submit">Speichern</button><button class="btn" type="button" data-lcancel>Abbrechen</button><button class="btn del" type="button" data-ldel="${i}">Anbieter löschen</button></div></form></article>`;}
