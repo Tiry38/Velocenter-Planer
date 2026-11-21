@@ -1172,3 +1172,50 @@ body.bgruh::after{display:none}
 
 /* 1.11.14 (Tiry: flüssig): verlassene Reiter behalten ihre fertige Darstellung (content-visibility:hidden statt display:none) – Zurückwechseln ohne komplettes Neuberechnen von Stil/Layout. Höhe 0, damit nichts Platz braucht. JS: sichtbar = .view.on (offsetParent reicht nicht mehr). */
 .view:not(.on){display:block;content-visibility:hidden;height:0;padding-block:0}
+/* ===== Leasing-Infos: Reiter + Detailseite (1.11.15, Tiry) ===== */
+#lgrid.lgrid{display:block}
+.lsnav{display:flex;flex-wrap:wrap;align-items:flex-end;gap:12px 18px;margin:0 0 14px;padding:12px 14px;border-radius:18px;background:var(--panel);border:1px solid var(--line)}
+.lsgrp{display:flex;flex-direction:column;gap:6px;min-width:0}
+.lsgl{font:700 10.5px "Outfit",sans-serif;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);padding-left:4px}
+.lsgrp.vs{padding-left:18px;border-left:1px solid var(--line)}
+.lstabs{display:flex;flex-wrap:wrap;gap:6px}
+.lstab{all:unset;box-sizing:border-box;cursor:pointer;width:108px;height:66px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;padding:8px 8px 6px;border-radius:14px;background:rgba(255,255,255,.03);border:1px solid var(--line);position:relative;transition:transform .15s,border-color .15s,background .15s}
+.lstab img{max-width:90px;max-height:30px;object-fit:contain}
+.lstab .lstk{font:800 18px "Outfit",sans-serif;color:var(--ac)}
+.lstab small{font:600 11px/1.1 "Outfit",sans-serif;color:#C7CEDA;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.lstab:hover{transform:translateY(-2px);border-color:color-mix(in srgb,var(--ac) 60%,transparent)}
+.lstab:focus-visible{outline:2px solid var(--cyan);outline-offset:2px}
+.lstab.on{border:2px solid var(--ac);background:color-mix(in srgb,var(--ac) 14%,transparent);box-shadow:0 6px 18px -8px var(--ac)}
+.lstab.on::after{content:"";position:absolute;left:22%;right:22%;bottom:-2px;height:4px;border-radius:4px 4px 0 0;background:var(--ac)}
+.lstab.on small{color:#fff}
+.lstab.nohit{opacity:.28}
+.lshits{margin-left:auto;align-self:center;font:600 12px "Outfit",sans-serif;color:#FCD34D}
+.lsd{position:relative;border-radius:20px;padding:20px 22px 22px;background:linear-gradient(160deg,color-mix(in srgb,var(--ac) 12%,var(--panel)),var(--panel) 40%);border:1px solid color-mix(in srgb,var(--ac) 35%,var(--line));border-top:5px solid var(--ac);display:flex;flex-direction:column;gap:18px}
+.lsdh{display:flex;align-items:center;gap:22px;flex-wrap:wrap}
+.lsdlg{width:220px;height:74px;flex:none;display:flex;align-items:center}
+.lsdlg img{max-width:100%;max-height:100%;object-fit:contain}
+.lsdt{flex:1;min-width:220px;display:flex;flex-direction:column;gap:6px}
+.lsdt h2{margin:0;font:800 26px/1.1 "Outfit",sans-serif;color:#fff}
+.lsdm{display:flex;gap:8px;align-items:center;font:600 12.5px "Outfit",sans-serif;color:var(--muted)}
+.lsk{font:800 12px "Outfit",sans-serif;padding:2px 9px;border-radius:99px;color:#fff;background:var(--ac)}
+.lsfq{display:flex;flex-wrap:wrap;gap:6px;margin-top:2px}
+.lsf{font:700 12px "Outfit",sans-serif;padding:3px 10px;border-radius:99px;border:1px solid var(--line);background:rgba(255,255,255,.04);color:#E2E8F0;max-width:420px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lsf.y{color:var(--ok);border-color:color-mix(in srgb,var(--ok) 50%,transparent)}.lsf.n{color:#FCA5A5;border-color:#5a1a22}.lsf.o{color:#FCD34D;border-color:#5a4710}
+.lsda{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-left:auto}
+.lsda .edbtn{margin-left:0;font-size:12.5px;padding:8px 14px}
+.lsda .zubbtn{margin-top:0}
+.lsd h4{margin:0 0 10px;font:700 12px "Outfit",sans-serif;letter-spacing:.12em;text-transform:uppercase;color:color-mix(in srgb,var(--ac) 70%,#fff)}
+.lsdp ul{margin:0;padding:0;list-style:none;display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:10px}
+.lsdp li{position:relative;padding:11px 13px 11px 30px;border-radius:12px;background:rgba(255,255,255,.035);border:1px solid var(--line);border-left:3px solid var(--ac);font-size:14px;line-height:1.45;color:#F1F5F9}
+.lsdp li::before{content:"";position:absolute;left:13px;top:18px;width:7px;height:7px;border-radius:50%;background:var(--ac)}
+.lsdp li.w{background:rgba(226,35,45,.10);border-left-color:var(--red);color:#FECACA;font-weight:600}.lsdp li.w::before{background:var(--red)}
+.lsdp li mark,.lsg mark{background:color-mix(in srgb,var(--warn) 35%,transparent);color:#fff;border-radius:3px}
+.lsdq{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:14px;align-items:start}
+.lsg{padding:14px 16px;border-radius:14px;background:rgba(255,255,255,.025);border:1px solid var(--line)}
+.lsg .qa{font-size:14px;grid-template-columns:1fr;gap:3px}
+.lsg .qa dt{font:700 11.5px "Outfit",sans-serif;letter-spacing:.04em;color:#9AA4B5;padding:8px 0 0 2px}
+.lsg .qa dt:first-child{padding-top:0}
+.lsg .qa dd{padding:8px 11px;line-height:1.45}
+a.lsgo{color:inherit;text-decoration:none;border-bottom:1px dotted currentColor}a.lsgo:hover{color:var(--cyan)}
+#lgrid .lc.editing{margin-top:0}
+@media (max-width:720px){.lsgrp.vs{padding-left:0;border-left:0}.lstab{width:96px;height:62px}.lstab img{max-width:78px}.lsdlg{width:160px;height:56px}.lsdq,.lsdp ul{grid-template-columns:1fr}.lsda{margin-left:0}}

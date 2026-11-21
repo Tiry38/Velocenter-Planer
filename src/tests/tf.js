@@ -64,8 +64,8 @@ await st('Bestellung → bestellt',async()=>{await p.click('[data-bmv][data-to=b
 // ── Reklamationen
 await st('Reklamationen öffnen',async()=>{await p.click('.navbtn[data-v=rekla]');await wait(300);return p.isVisible('#v-rekla');});
 // ── Leasing
-await st('Leasing: 13 Karten mit Logo',async()=>{await p.click('.navbtn[data-v=leasing]');await wait(400);return (await p.$$eval('.lc',c=>c.length))===13&&(await p.$$eval('.lc .logo img',i=>i.length))===13;});
-await st('Leasing bearbeiten → gespeichert',async()=>{await p.click('.edbtn[data-led="0"]');await wait(300);const f=p.locator('.edf input[type=text], .edf input:not([type]), .edf textarea').first();await f.fill('Testwert 95 €');await p.click('.edf button[type=submit]');await wait(600);return (await state(p)).includes('Testwert 95 €');});
+await st('Leasing: 13 Reiter mit Logo + 1 Detailseite',async()=>{await p.click('.navbtn[data-v=leasing]');await wait(400);return (await p.$$eval('.lstab',c=>c.length))===13&&(await p.$$eval('.lstab img',i=>i.length))===13&&(await p.$$eval('.lsd',c=>c.length))===1;});
+await st('Leasing bearbeiten → gespeichert',async()=>{await p.click('.lsd .edbtn');await wait(300);const f=p.locator('.edf input[type=text], .edf input:not([type]), .edf textarea').first();await f.fill('Testwert 95 €');await p.click('.edf button[type=submit]');await wait(600);return (await state(p)).includes('Testwert 95 €');});
 // ── Trinkgeld
 await st('Trinkgeld übernommen ohne GESAMT',async()=>{await p.click('.navbtn[data-v=kasse]');await wait(300);return p.evaluate(()=>T.length===3);});
 await st('Trinkgeld eintragen',async()=>{await p.fill('#tgAmt','4,50');await p.click('#tgForm button');await wait(500);return (await p.textContent('#tgStats')).includes('4,50');});
