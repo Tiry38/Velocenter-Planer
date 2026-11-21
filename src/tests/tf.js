@@ -11,7 +11,7 @@ const state=q=>q.evaluate(()=>JSON.stringify(__fbmState().docs));
 await st('Login: 5 Personen, keine Rollen',async()=>(await p.$$eval('.wt',w=>w.length))===5&&!(await p.$('.wt small')));
 await st('Erstlogin: Passwort festlegen',async()=>{await p.click('.wt[data-u=kevin]');await wait();return p.isVisible('#pw2');});
 await st('angemeldet mit Passwort "12"',async()=>{await p.fill('#pw1','12');await p.fill('#pw2','12');await p.click('#pwGo');await wait(900);return !(await p.isVisible('#whoOv'))&&(await p.textContent('#meName'))==='Kevin';});
-await st('Leasing-Anbieter automatisch angelegt (13)',()=>p.evaluate(()=>Object.keys(__fbmState().docs).filter(k=>k.startsWith('leasing/')).length===13));
+await st('Leasing-Anbieter automatisch angelegt (14)',()=>p.evaluate(()=>Object.keys(__fbmState().docs).filter(k=>k.startsWith('leasing/')).length===14));
 await st('Navi: kein Import-Knopf, kein grünes Feld',async()=>!(await p.isVisible('#meImport'))&&!(await p.$('.secure')));
 // ── Import aus Sheet (Knopf liegt versteckt, wird aus ⚙ Einstellungen ausgelöst)
 await st('Import fragt zuerst Tresor-PIN',async()=>{await p.evaluate(()=>document.getElementById('meImport').click());await wait();return p.isVisible('#pdF');});
@@ -64,7 +64,7 @@ await st('Bestellung → bestellt',async()=>{await p.click('[data-bmv][data-to=b
 // ── Reklamationen
 await st('Reklamationen öffnen',async()=>{await p.click('.navbtn[data-v=rekla]');await wait(300);return p.isVisible('#v-rekla');});
 // ── Leasing
-await st('Leasing: 13 Reiter mit Logo + 1 Detailseite',async()=>{await p.click('.navbtn[data-v=leasing]');await wait(400);return (await p.$$eval('.lstab',c=>c.length))===13&&(await p.$$eval('.lstab img',i=>i.length))===13&&(await p.$$eval('.lsd',c=>c.length))===1;});
+await st('Leasing: 14 Reiter mit Logo + 1 Detailseite',async()=>{await p.click('.navbtn[data-v=leasing]');await wait(400);return (await p.$$eval('.lstab',c=>c.length))===14&&(await p.$$eval('.lstab img',i=>i.length))===14&&(await p.$$eval('.lsd',c=>c.length))===1;});
 await st('Leasing bearbeiten → gespeichert',async()=>{await p.click('.lsd .edbtn');await wait(300);const f=p.locator('.edf input[type=text], .edf input:not([type]), .edf textarea').first();await f.fill('Testwert 95 €');await p.click('.edf button[type=submit]');await wait(600);return (await state(p)).includes('Testwert 95 €');});
 // ── Trinkgeld
 await st('Trinkgeld übernommen ohne GESAMT',async()=>{await p.click('.navbtn[data-v=kasse]');await wait(300);return p.evaluate(()=>T.length===3);});

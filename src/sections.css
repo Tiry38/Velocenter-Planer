@@ -1242,3 +1242,6 @@ b.lsn{font-weight:800;color:#fff;white-space:nowrap}
 .lsyn{display:inline-block;font:800 12.5px "Outfit",sans-serif;padding:2px 10px;border-radius:99px;margin:0 0 6px;border:1px solid currentColor}
 .lsyn+.lspl,.lsyn+.lsv1{display:block}
 @media (max-width:720px){.lsr{grid-template-columns:1fr;gap:4px}}
+
+/* 1.11.17: lange Wörter/Adressen umbrechen (Handy) */
+.lsa,.lsq,.lspk{min-width:0;overflow-wrap:anywhere;hyphens:auto}
