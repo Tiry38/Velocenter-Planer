@@ -1477,6 +1477,53 @@ body.bgruh::after{display:none}
 
 /* 1.11.14 (Tiry: flüssig): verlassene Reiter behalten ihre fertige Darstellung (content-visibility:hidden statt display:none) – Zurückwechseln ohne komplettes Neuberechnen von Stil/Layout. Höhe 0, damit nichts Platz braucht. JS: sichtbar = .view.on (offsetParent reicht nicht mehr). */
 .view:not(.on){display:block;content-visibility:hidden;height:0;padding-block:0}
+/* ===== Leasing-Infos: Reiter + Detailseite (1.11.15, Tiry) ===== */
+#lgrid.lgrid{display:block}
+.lsnav{display:flex;flex-wrap:wrap;align-items:flex-end;gap:12px 18px;margin:0 0 14px;padding:12px 14px;border-radius:18px;background:var(--panel);border:1px solid var(--line)}
+.lsgrp{display:flex;flex-direction:column;gap:6px;min-width:0}
+.lsgl{font:700 10.5px "Outfit",sans-serif;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);padding-left:4px}
+.lsgrp.vs{padding-left:18px;border-left:1px solid var(--line)}
+.lstabs{display:flex;flex-wrap:wrap;gap:6px}
+.lstab{all:unset;box-sizing:border-box;cursor:pointer;width:108px;height:66px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;padding:8px 8px 6px;border-radius:14px;background:rgba(255,255,255,.03);border:1px solid var(--line);position:relative;transition:transform .15s,border-color .15s,background .15s}
+.lstab img{max-width:90px;max-height:30px;object-fit:contain}
+.lstab .lstk{font:800 18px "Outfit",sans-serif;color:var(--ac)}
+.lstab small{font:600 11px/1.1 "Outfit",sans-serif;color:#C7CEDA;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.lstab:hover{transform:translateY(-2px);border-color:color-mix(in srgb,var(--ac) 60%,transparent)}
+.lstab:focus-visible{outline:2px solid var(--cyan);outline-offset:2px}
+.lstab.on{border:2px solid var(--ac);background:color-mix(in srgb,var(--ac) 14%,transparent);box-shadow:0 6px 18px -8px var(--ac)}
+.lstab.on::after{content:"";position:absolute;left:22%;right:22%;bottom:-2px;height:4px;border-radius:4px 4px 0 0;background:var(--ac)}
+.lstab.on small{color:#fff}
+.lstab.nohit{opacity:.28}
+.lshits{margin-left:auto;align-self:center;font:600 12px "Outfit",sans-serif;color:#FCD34D}
+.lsd{position:relative;border-radius:20px;padding:20px 22px 22px;background:linear-gradient(160deg,color-mix(in srgb,var(--ac) 12%,var(--panel)),var(--panel) 40%);border:1px solid color-mix(in srgb,var(--ac) 35%,var(--line));border-top:5px solid var(--ac);display:flex;flex-direction:column;gap:18px}
+.lsdh{display:flex;align-items:center;gap:22px;flex-wrap:wrap}
+.lsdlg{width:220px;height:74px;flex:none;display:flex;align-items:center}
+.lsdlg img{max-width:100%;max-height:100%;object-fit:contain}
+.lsdt{flex:1;min-width:220px;display:flex;flex-direction:column;gap:6px}
+.lsdt h2{margin:0;font:800 26px/1.1 "Outfit",sans-serif;color:#fff}
+.lsdm{display:flex;gap:8px;align-items:center;font:600 12.5px "Outfit",sans-serif;color:var(--muted)}
+.lsk{font:800 12px "Outfit",sans-serif;padding:2px 9px;border-radius:99px;color:#fff;background:var(--ac)}
+.lsfq{display:flex;flex-wrap:wrap;gap:6px;margin-top:2px}
+.lsf{font:700 12px "Outfit",sans-serif;padding:3px 10px;border-radius:99px;border:1px solid var(--line);background:rgba(255,255,255,.04);color:#E2E8F0;max-width:420px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lsf.y{color:var(--ok);border-color:color-mix(in srgb,var(--ok) 50%,transparent)}.lsf.n{color:#FCA5A5;border-color:#5a1a22}.lsf.o{color:#FCD34D;border-color:#5a4710}
+.lsda{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-left:auto}
+.lsda .edbtn{margin-left:0;font-size:12.5px;padding:8px 14px}
+.lsda .zubbtn{margin-top:0}
+.lsd h4{margin:0 0 10px;font:700 12px "Outfit",sans-serif;letter-spacing:.12em;text-transform:uppercase;color:color-mix(in srgb,var(--ac) 70%,#fff)}
+.lsdp ul{margin:0;padding:0;list-style:none;display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:10px}
+.lsdp li{position:relative;padding:11px 13px 11px 30px;border-radius:12px;background:rgba(255,255,255,.035);border:1px solid var(--line);border-left:3px solid var(--ac);font-size:14px;line-height:1.45;color:#F1F5F9}
+.lsdp li::before{content:"";position:absolute;left:13px;top:18px;width:7px;height:7px;border-radius:50%;background:var(--ac)}
+.lsdp li.w{background:rgba(226,35,45,.10);border-left-color:var(--red);color:#FECACA;font-weight:600}.lsdp li.w::before{background:var(--red)}
+.lsdp li mark,.lsg mark{background:color-mix(in srgb,var(--warn) 35%,transparent);color:#fff;border-radius:3px}
+.lsdq{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:14px;align-items:start}
+.lsg{padding:14px 16px;border-radius:14px;background:rgba(255,255,255,.025);border:1px solid var(--line)}
+.lsg .qa{font-size:14px;grid-template-columns:1fr;gap:3px}
+.lsg .qa dt{font:700 11.5px "Outfit",sans-serif;letter-spacing:.04em;color:#9AA4B5;padding:8px 0 0 2px}
+.lsg .qa dt:first-child{padding-top:0}
+.lsg .qa dd{padding:8px 11px;line-height:1.45}
+a.lsgo{color:inherit;text-decoration:none;border-bottom:1px dotted currentColor}a.lsgo:hover{color:var(--cyan)}
+#lgrid .lc.editing{margin-top:0}
+@media (max-width:720px){.lsgrp.vs{padding-left:0;border-left:0}.lstab{width:96px;height:62px}.lstab img{max-width:78px}.lsdlg{width:160px;height:56px}.lsdq,.lsdp ul{grid-template-columns:1fr}.lsda{margin-left:0}}
 
 [hidden]{display:none!important}
 #sTab td.b{font-weight:700}#sTab .pwm.ed{outline:none;padding:2px 6px;border-radius:6px;font-family:var(--mono)}#sTab td{vertical-align:top}
@@ -2181,6 +2228,22 @@ body.rowhl #v-planer .row:hover{background-color:rgba(27,30,37,0.032)}
 .kdgrid .row.kpr>.c{background:linear-gradient(90deg,rgba(171,144,24,0.24),rgba(171,144,24,0.128))!important}
 .kdgrid .row.kpr>.c:first-child{box-shadow:inset 3px 0 0 rgba(165,129,5,0.38)}
 .kdgrid .kprok{color:#1A1400}
+.lstab{background:rgba(27,30,37,0.027)}
+.lstab .lstk{color:oklch(from var(--ac) calc(min(l,0.5) - 0.26*(1 - min(c/0.05,1))) c h)}
+.lstab small{color:#404348}
+.lstab.on small{color:#1F1F1F}
+.lshits{color:#786003}
+.lsdt h2{color:#1F1F1F}
+.lsk{color:#FFFFFF}
+.lsf{background:rgba(27,30,37,0.036);color:#2E3033}
+.lsf.n{color:#934649;border-color:#FEBEC0}
+.lsf.o{color:#786003;border-color:#E5CF99}
+.lsd h4{color:color-mix(in srgb,var(--ac) 70%,#1F1F1F)}
+.lsdp li{background:rgba(27,30,37,0.032);color:#252728}
+.lsdp li.w{background:rgba(226,35,45,0.08);color:#7A4F50}
+.lsdp li mark,.lsg mark{color:#1F1F1F}
+.lsg{background:rgba(27,30,37,0.023)}
+.lsg .qa dt{color:#62666E}
 #sTab td.ce,#ltab td.ce{border-bottom:1px dashed #CED2D7}
 #sTab td.ce:hover,#ltab td.tg:hover,#ltab td.ce:hover{background:rgba(27,30,37,0.036)}
 /* theme_hp.css – Velocenter Planer im Design der Homepage velo-center.de (Design A, 1.10.80, Tiry 15.11.2026).
@@ -2635,7 +2698,7 @@ html:root nav .navbtn[aria-current="true"]::before{top:calc(50% - 54px)!importan
 <script>
 const FB_CONFIG={apiKey:"AIzaSyC_uZPvc5rJETwlS4JbfCoTkkE4ckjtp0M",authDomain:"velocenter-planer.firebaseapp.com",projectId:"velocenter-planer",storageBucket:"velocenter-planer.firebasestorage.app",messagingSenderId:"1018330488700",appId:"1:1018330488700:web:262a4d1660353e6fde8ef9"};
 /* ================= Velocenter Werkstatt-Cockpit – Oberfläche ================= */
-const CLIENT_VERSION='1.11.14';
+const CLIENT_VERSION='1.11.15';
 const USERS=[{id:'kevin',n:'Kevin',c:'#E2232D'},{id:'stefan',n:'Stefan',c:'#F59E0B'},{id:'martina',n:'Martina',c:'#EC4899'},{id:'sascha',n:'Sascha',c:'#22D3EE'},{id:'rene',n:'René',c:'#34D399'}];
 const U=id=>USERS.find(u=>u.id===id)||{n:'',c:'#64748B',id:''};
 /* 1.10.37: Profilfarbe je Nutzer (meta/prefs[ID].col, für alle sichtbar) – Cache für den Login-Bildschirm */
@@ -4224,16 +4287,33 @@ const lOrd=()=>L.map((f,i)=>[f,i]).sort((a,b)=>isVers(a[0])-isVers(b[0])||lRank(
 const OFFEN='<span class="qo">offen</span>';
 const triV=v=>v===true?'<span class="qy">✓ ja</span>':v===false?'<span class="qn">✗ nein</span>':OFFEN;
 const qv=(f,[k,,t])=>t==='t'?triV(f[k]):String(f[k]||'').trim()?hl(f[k]):OFFEN;
-function lsCard(f,i){const nj=(f.zubJa||[]).length,nn=(f.zubNein||[]).length;
- return `<article class="lc" style="--ac:${esc(f.ac||'#94A3B8')}"><div class="lctop"><button class="edbtn" type="button" data-led="${i}" aria-label="${esc(f.n)} bearbeiten">✎ Bearbeiten</button></div><div class="lh">${logoOf(f)?`<div class="logo"><img src="${imgU(logoOf(f))}" alt="${esc(f.n)} Logo"></div>`:`<div class="mono">${esc(f.k)}</div>`}<div style="min-width:0">${logoOf(f)?'':`<b>${esc(f.n)}</b>`}<small>${esc(f.sub||'Leasing')} · ${esc(f.k)}</small></div></div>
- <div class="blk"><h4>${isVers(f)?'🛡 Tarife · Leistungen':'📦 Pakete · Leistungen · Preis für den Kunden'}</h4>${(f.pak||[]).length?`<ul>${f.pak.map(li).join('')}</ul>`:`<p class="qe">${OFFEN}</p>`}</div>
- ${qG(f).map(([h,qs])=>[h,qs.filter(q=>q[3]!=='o'||String(f[q[0]]||'').trim())]).filter(([h,qs])=>qs.length).map(([h,qs])=>`<div class="blk"><h4>${esc(h)}</h4><dl class="qa">${qs.map(q=>`<dt>${esc(q[1])}</dt><dd>${qv(f,q)}</dd>`).join('')}</dl></div>`).join('')}
- ${isVers(f)&&!nj&&!nn?'':`<button class="zubbtn" type="button" data-zub="${i}">🧩 Leasingfähiges Zubehör <span>${nj||nn?nj+' ✓ · '+nn+' ✗':'offen'}</span></button>`}
+/* 1.11.15 (Tiry): Reiter-Leiste oben (alle Anbieter mit Logo), darunter EINE breite Detailseite statt 13 schmaler Kacheln */
+let lsSel=(()=>{try{return localStorage.getItem('vc_lstab')||'';}catch(_){return '';}})();
+const lsId=f=>f.id||f.k;
+const lsHit=f=>!lsQ||JSON.stringify(Object.assign({},f,{logo:'',alt:''})).toLowerCase().includes(lsQ);
+const lsShow=f=>(!lsDrei||f.drei===true)&&lsHit(f);
+const triC=(v,n)=>`<span class="lsf ${v===true?'y':v===false?'n':'o'}">${v===true?'✓':v===false?'✗':'?'} ${n}</span>`;
+function lsTab(f,i,on){const lg=logoOf(f);return `<button class="lstab${on?' on':''}${lsShow(f)?'':' nohit'}" type="button" role="tab" aria-selected="${on}" data-lst="${i}" style="--ac:${esc(f.ac||'#94A3B8')}" title="${esc(f.n)} · ${esc(f.k)}">${lg?`<img src="${imgU(lg)}" alt="${esc(f.n)}">`:`<b class="lstk">${esc(f.k)}</b>`}<small>${esc(f.n)}</small></button>`;}
+function lsCard(f,i){const nj=(f.zubJa||[]).length,nn=(f.zubNein||[]).length,vs=isVers(f),lg=logoOf(f);
+ const grp=qG(f).map(([h,qs])=>[h,qs.filter(q=>q[3]!=='o'||String(f[q[0]]||'').trim())]).filter(([h,qs])=>qs.length);
+ const quick=vs?'':[triC(f.drei,'E-Dreirad'),triC(f.spe,'S-Pedelec'),String(f.vers||'').trim()?`<span class="lsf i" title="${esc(f.vers)}">🛡 ${esc(String(f.vers).slice(0,40))}${String(f.vers).length>40?'…':''}</span>`:''].join('');
+ return `<article class="lsd" style="--ac:${esc(f.ac||'#94A3B8')}">
+ <header class="lsdh"><div class="lsdlg">${lg?`<img src="${imgU(lg)}" alt="${esc(f.n)} Logo">`:`<div class="mono">${esc(f.k)}</div>`}</div>
+ <div class="lsdt"><h2>${esc(f.n)}</h2><div class="lsdm"><span class="lsk">${esc(f.k)}</span><span>${esc(f.sub||'Leasing')}</span></div>${quick?`<div class="lsfq">${quick}</div>`:''}</div>
+ <div class="lsda">${vs&&!nj&&!nn?'':`<button class="zubbtn" type="button" data-zub="${i}">🧩 Leasingfähiges Zubehör <span>${nj||nn?nj+' ✓ · '+nn+' ✗':'offen'}</span></button>`}<button class="edbtn" type="button" data-led="${i}" aria-label="${esc(f.n)} bearbeiten">✎ Bearbeiten</button></div></header>
+ <section class="lsdp"><h4>${vs?'🛡 Tarife · Leistungen':'📦 Pakete · Leistungen · Preis für den Kunden'}</h4>${(f.pak||[]).length?`<ul>${f.pak.map(li).join('')}</ul>`:`<p class="qe">${OFFEN}</p>`}</section>
+ <div class="lsdq">${grp.map(([h,qs])=>`<section class="lsg"><h4>${esc(h)}</h4><dl class="qa">${qs.map(q=>`<dt>${esc(q[1])}</dt><dd>${qv(f,q)}</dd>`).join('')}</dl></section>`).join('')}</div>
  </article>`;}
-function rl(){
- $('lgrid').innerHTML=lOrd().filter(([f,i])=>i===lsEdit||((!lsDrei||f.drei===true)&&(!lsQ||JSON.stringify(Object.assign({},f,{logo:'',alt:''})).toLowerCase().includes(lsQ)))).map(([f,i])=>i===lsEdit?editCard(f,i):lsCard(f,i)).join('')||'<p class="hint">Nichts gefunden.</p>';
- if(!document.querySelector('#ltab [contenteditable]:focus'))$('ltab').innerHTML='<thead><tr><th>Anbieter</th><th>E-Dreirad</th><th>S-Pedelec</th><th>Inspektion – wir bekommen</th><th>Verschleiß</th><th>Versicherung</th></tr></thead><tbody>'+lOrd().map(([f,i])=>`<tr><td><b style="color:${esc(f.ac)}">●</b> ${esc(f.n)}</td>${['drei','spe'].map(k=>`<td class="tg ${f[k]===true?'y':f[k]===false?'n':''}" data-lt="${i}" data-f="${k}" role="button" tabindex="0" title="Klick = ✓ / ✗ / offen">${f[k]===true?'✓':f[k]===false?'✗':'–'}</td>`).join('')}${['isz','vsd','vers'].map(k=>`<td class="ce" contenteditable="true" spellcheck="false" data-lt="${i}" data-f="${k}">${esc(f[k]||'')}</td>`).join('')}</tr>`).join('')+'</tbody>';
+function rl(){const ord=lOrd();
+ let cur=ord.find(([f,i])=>i===lsEdit)||ord.find(([f])=>lsId(f)===lsSel);
+ if(!cur||(!lsShow(cur[0])&&cur[1]!==lsEdit))cur=ord.find(([f])=>lsShow(f))||(lsQ||lsDrei?null:ord[0]);
+ const tabs=g=>ord.filter(([f])=>isVers(f)===g).map(([f,i])=>lsTab(f,i,!!cur&&cur[1]===i)).join('');
+ const hit=ord.filter(([f])=>lsShow(f)).length;
+ $('lgrid').innerHTML=`<div class="lsnav" role="tablist" aria-label="Anbieter"><div class="lsgrp"><span class="lsgl">Leasing</span><div class="lstabs">${tabs(false)}</div></div><div class="lsgrp vs"><span class="lsgl">Versicherungen</span><div class="lstabs">${tabs(true)}</div></div>${lsQ||lsDrei?`<span class="lshits">${hit} von ${ord.length} passen</span>`:''}</div>`+
+  (cur?(cur[1]===lsEdit?editCard(cur[0],cur[1]):lsCard(cur[0],cur[1])):'<p class="hint">Nichts gefunden.</p>');
+ if(!document.querySelector('#ltab [contenteditable]:focus'))$('ltab').innerHTML='<thead><tr><th>Anbieter</th><th>E-Dreirad</th><th>S-Pedelec</th><th>Inspektion – wir bekommen</th><th>Verschleiß</th><th>Versicherung</th></tr></thead><tbody>'+ord.map(([f,i])=>`<tr><td><b style="color:${esc(f.ac)}">●</b> <a class="lsgo" href="#" data-lst="${i}">${esc(f.n)}</a></td>${['drei','spe'].map(k=>`<td class="tg ${f[k]===true?'y':f[k]===false?'n':''}" data-lt="${i}" data-f="${k}" role="button" tabindex="0" title="Klick = ✓ / ✗ / offen">${f[k]===true?'✓':f[k]===false?'✗':'–'}</td>`).join('')}${['isz','vsd','vers'].map(k=>`<td class="ce" contenteditable="true" spellcheck="false" data-lt="${i}" data-f="${k}">${esc(f[k]||'')}</td>`).join('')}</tr>`).join('')+'</tbody>';
  fnUpd();}
+function lsPick(i){const f=L[i];if(!f)return;if(lsEdit>=0&&lsEdit!==i){if(L[lsEdit]&&L[lsEdit]._new)L.splice(lsEdit,1);lsEdit=-1;}lsSel=lsId(f);try{localStorage.setItem('vc_lstab',lsSel);}catch(_){}rl();}
 function fnUpd(){FN=Object.assign(Object.fromEntries(Object.entries({BL:'Bikeleasing',CB:'Company Bike',KM:'Kazenmaier',BB:'Businessbike',JR:'JobRad',DD:'Deutsche Dienstrad',LB:'Lease a Bike',RD:'RIDE',ER:'Eurorad',TB:'Targo Bank'}).filter(([k])=>!L.some(l=>l.id===k&&l.k&&l.k!==k))),Object.fromEntries(L.filter(f=>!/versicherung|schäden/i.test(f.sub||'')).map(f=>[f.k,f.n])));}
 function zubDlg(f){const L1=a=>(a||[]).map(t=>`<li>${esc(t)}</li>`).join(''),E='<p class="qe"><span class="qo">offen</span></p>';
  dlg(`<div class="zubd" style="--ac:${esc(f.ac||'#94A3B8')}"><h3>🧩 Leasingfähiges Zubehör · ${esc(f.n)}</h3>
@@ -4253,14 +4333,16 @@ function editCard(f,i){const ta=(k,lbl,r)=>`<label>${lbl} <em>(eine Zeile pro Pu
  <div class="acts"><button class="btn red" type="submit">Speichern</button><button class="btn" type="button" data-lcancel>Abbrechen</button><button class="btn del" type="button" data-ldel="${i}">Anbieter löschen</button></div></form></article>`;}
 function shrink(file){return new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>{const img=new Image();img.onload=()=>{const sc=Math.min(1,360/img.width,140/img.height),c=document.createElement('canvas');c.width=Math.max(1,Math.round(img.width*sc));c.height=Math.max(1,Math.round(img.height*sc));c.getContext('2d').drawImage(img,0,0,c.width,c.height);let u=c.toDataURL('image/webp',.88);if(!u.startsWith('data:image/webp'))u=c.toDataURL('image/png');res(u);};img.onerror=()=>rej(new Error('Bild nicht lesbar'));img.src=r.result;};r.onerror=()=>rej(new Error('Datei nicht lesbar'));r.readAsDataURL(file);});}
 async function putL(f){const o=Object.assign({},f);const id=o.id||o.k;o.id=id;if(JSON.stringify(o).length>700000){toast('Logo zu groß – bitte kleineres Bild');return false;}
- const i=L.findIndex(x=>x.id===id);if(i<0)L.push(o);else L[i]=o;lsEdit=-1;rl();try{await save('L',o);}catch(_){}return true;}
+ const i=L.findIndex(x=>x.id===id);if(i<0)L.push(o);else L[i]=o;lsEdit=-1;lsSel=id;try{localStorage.setItem('vc_lstab',id);}catch(_){}rl();try{await save('L',o);}catch(_){}return true;}
 $('lgrid').addEventListener('click',async e=>{
- const ed=e.target.closest('[data-led]');if(ed){lsEdit=+ed.dataset.led;rl();document.querySelector('.lc.editing')?.scrollIntoView({block:'start',behavior:'smooth'});return;}
+ const tb=e.target.closest('[data-lst]');if(tb){lsPick(+tb.dataset.lst);return;}
+ const ed=e.target.closest('[data-led]');if(ed){lsEdit=+ed.dataset.led;rl();return;}
  if(e.target.closest('[data-lcancel]')){if(L[lsEdit]&&L[lsEdit]._new)L.splice(lsEdit,1);lsEdit=-1;rl();return;}
  const dl=e.target.closest('[data-ldel]');if(dl){const i=+dl.dataset.ldel;if(!dl.dataset.sure){dl.dataset.sure=1;dl.textContent='Wirklich löschen?';return;}const f=L[i];L.splice(i,1);lsEdit=-1;rl();if(!f._new)del('L',f.id);toast(f.n+' gelöscht');return;}
  const rm=e.target.closest('[data-rmlogo]');if(rm){const f=Object.assign({},L[+rm.dataset.rmlogo]);delete f.logo;putL(f);toast('Eigenes Logo entfernt');return;}
  const z=e.target.closest('[data-zub]');if(z){zubDlg(L[+z.dataset.zub]);return;}});
-$('ltab').addEventListener('click',e=>{const c=e.target.closest('.tg');if(!c)return;const f=Object.assign({},L[+c.dataset.lt]);const k=c.dataset.f;f[k]=f[k]===true?false:f[k]===false?null:true;putL(f).then(()=>toast('Gespeichert'));});
+$('lgrid').addEventListener('keydown',e=>{const t=e.target.closest('.lstab');if(!t||!/^Arrow(Left|Right)$/.test(e.key))return;e.preventDefault();const all=[...document.querySelectorAll('#lgrid .lstab')],n=all[(all.indexOf(t)+(e.key==='ArrowRight'?1:all.length-1))%all.length];lsPick(+n.dataset.lst);document.querySelector(`#lgrid .lstab[data-lst="${n.dataset.lst}"]`)?.focus();});
+$('ltab').addEventListener('click',e=>{const g=e.target.closest('.lsgo');if(g){e.preventDefault();lsPick(+g.dataset.lst);$('lgrid').scrollIntoView({block:'start',behavior:'smooth'});return;}const c=e.target.closest('.tg');if(!c)return;const f=Object.assign({},L[+c.dataset.lt]);const k=c.dataset.f;f[k]=f[k]===true?false:f[k]===false?null:true;putL(f).then(()=>toast('Gespeichert'));});
 $('ltab').addEventListener('keydown',e=>{const c=e.target.closest('.ce,.tg');if(!c)return;if(e.key==='Enter'){e.preventDefault();if(c.classList.contains('tg'))c.click();else c.blur();}});
 $('ltab').addEventListener('focusout',e=>{const c=e.target.closest('.ce');if(!c)return;const f=Object.assign({},L[+c.dataset.lt]),v=c.textContent.trim();if(v===(f[c.dataset.f]||''))return;f[c.dataset.f]=v;putL(f).then(()=>toast('Gespeichert'));});
 $('lgrid').addEventListener('submit',async e=>{if(!e.target.dataset.lf)return;e.preventDefault();const fm=e.target,i=+fm.dataset.lf,f=Object.assign({},L[i]),d=new FormData(fm);delete f._new;
@@ -4269,7 +4351,7 @@ $('lgrid').addEventListener('submit',async e=>{if(!e.target.dataset.lf)return;e.
  if(!f.id)f.id=f.k+Math.random().toString(36).slice(2,5).toUpperCase();
  const file=d.get('logo');if(file&&file.size){try{f.logo=await shrink(file);}catch(err){toast(err.message);return;}}
  if(await putL(f))toast('Gespeichert');});
-$('lsAdd').addEventListener('click',()=>{L.push({_new:1,k:'NEU',n:'Neuer Anbieter',sub:'Leasing',ac:'#94A3B8',drei:null,spe:null,pak:[],zubJa:[],zubNein:[]});lsEdit=L.length-1;lsQ='';$('lsSearch').value='';rl();document.querySelector('.lc.editing')?.scrollIntoView({block:'start',behavior:'smooth'});});
+$('lsAdd').addEventListener('click',()=>{L.push({_new:1,k:'NEU',n:'Neuer Anbieter',sub:'Leasing',ac:'#94A3B8',drei:null,spe:null,pak:[],zubJa:[],zubNein:[]});lsEdit=L.length-1;lsQ='';$('lsSearch').value='';rl();});
 $('lsSearch').addEventListener('input',e=>{lsQ=e.target.value.toLowerCase().trim();rl();});
 $('fDrei').addEventListener('click',e=>{lsDrei=!lsDrei;e.currentTarget.setAttribute('aria-pressed',lsDrei);rl();});
 

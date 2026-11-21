@@ -1,0 +1,18 @@
+const {chromium}=require('playwright');
+(async()=>{const b=await chromium.launch();const c=await b.newContext({viewport:{width:1750,height:950}});await c.route(/gstatic|googleapis|cdnjs/,r=>r.abort());const p=await c.newPage();const er=[];p.on('pageerror',e=>er.push(e.message));
+const R=[];const ok=(n,x)=>R.push((x?'OK  ':'FAIL')+' '+n);const w=t=>p.waitForTimeout(t||300);
+await p.goto('file://'+process.cwd()+'/test_fb.html');await w(400);await p.click('.wt[data-u=kevin]');await p.fill('#pw1','1');await p.fill('#pw2','1');await p.click('#pwGo');await w(1200);
+await p.click('.navbtn[data-v=leasing]');await w(500);
+ok('13 Reiter mit Logo',(await p.$$eval('.lstab',x=>x.length))===13&&(await p.$$eval('.lstab img',x=>x.length))===13);
+ok('genau eine Detailseite',(await p.$$eval('.lsd',x=>x.length))===1);
+await p.screenshot({path:'/tmp/claude-0/-home-user/e8d27867-7a95-5e81-936c-2a3d7daadffe/scratchpad/ls1.png'});
+await p.click('.lstab[data-lst]:nth-child(3)');await w();const n3=await p.$eval('.lsd h2',h=>h.textContent);ok('Reiter wechseln: '+n3,await p.$eval('.lstab.on',t=>t.title).then(t=>t.startsWith(n3)));
+await p.click('.lsgrp.vs .lstab');await w();ok('Versicherung: kein Zubehör-Knopf leer / Fragen da',(await p.$$eval('.lsg',x=>x.length))>2);
+await p.screenshot({path:'/tmp/claude-0/-home-user/e8d27867-7a95-5e81-936c-2a3d7daadffe/scratchpad/ls2.png'});
+await p.fill('#lsSearch','lesora');await w();ok('Suche: andere ausgegraut',(await p.$$eval('.lstab.nohit',x=>x.length))>=10&&(await p.$eval('.lsd h2',h=>h.textContent))!=='');
+await p.fill('#lsSearch','');await w();
+await p.click('.lsd .edbtn');await w();const f=p.locator('.edf input:not([type])').first();await f.fill('Testname XY');await p.click('.edf button[type=submit]');await w(600);ok('Bearbeiten → gespeichert + bleibt gewählt',(await p.$eval('.lsd h2',h=>h.textContent))==='Testname XY');
+await p.reload();await w(1500);await p.click('.navbtn[data-v=leasing]');await w(500);ok('Reiter gemerkt',(await p.$eval('.lsd h2',h=>h.textContent))==='Testname XY');
+await p.setViewportSize({width:390,height:800});await w(400);ok('Handy ohne Querscroll',await p.evaluate(()=>document.querySelector('#v-leasing').scrollWidth<=document.querySelector('#v-leasing').clientWidth+2));
+await p.screenshot({path:'/tmp/claude-0/-home-user/e8d27867-7a95-5e81-936c-2a3d7daadffe/scratchpad/ls3.png',fullPage:false});
+console.log(R.join('\n'),er);await b.close();})();

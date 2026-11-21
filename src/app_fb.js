@@ -1091,16 +1091,33 @@ const lOrd=()=>L.map((f,i)=>[f,i]).sort((a,b)=>isVers(a[0])-isVers(b[0])||lRank(
 const OFFEN='<span class="qo">offen</span>';
 const triV=v=>v===true?'<span class="qy">✓ ja</span>':v===false?'<span class="qn">✗ nein</span>':OFFEN;
 const qv=(f,[k,,t])=>t==='t'?triV(f[k]):String(f[k]||'').trim()?hl(f[k]):OFFEN;
-function lsCard(f,i){const nj=(f.zubJa||[]).length,nn=(f.zubNein||[]).length;
- return `<article class="lc" style="--ac:${esc(f.ac||'#94A3B8')}"><div class="lctop"><button class="edbtn" type="button" data-led="${i}" aria-label="${esc(f.n)} bearbeiten">✎ Bearbeiten</button></div><div class="lh">${logoOf(f)?`<div class="logo"><img src="${imgU(logoOf(f))}" alt="${esc(f.n)} Logo"></div>`:`<div class="mono">${esc(f.k)}</div>`}<div style="min-width:0">${logoOf(f)?'':`<b>${esc(f.n)}</b>`}<small>${esc(f.sub||'Leasing')} · ${esc(f.k)}</small></div></div>
- <div class="blk"><h4>${isVers(f)?'🛡 Tarife · Leistungen':'📦 Pakete · Leistungen · Preis für den Kunden'}</h4>${(f.pak||[]).length?`<ul>${f.pak.map(li).join('')}</ul>`:`<p class="qe">${OFFEN}</p>`}</div>
- ${qG(f).map(([h,qs])=>[h,qs.filter(q=>q[3]!=='o'||String(f[q[0]]||'').trim())]).filter(([h,qs])=>qs.length).map(([h,qs])=>`<div class="blk"><h4>${esc(h)}</h4><dl class="qa">${qs.map(q=>`<dt>${esc(q[1])}</dt><dd>${qv(f,q)}</dd>`).join('')}</dl></div>`).join('')}
- ${isVers(f)&&!nj&&!nn?'':`<button class="zubbtn" type="button" data-zub="${i}">🧩 Leasingfähiges Zubehör <span>${nj||nn?nj+' ✓ · '+nn+' ✗':'offen'}</span></button>`}
+/* 1.11.15 (Tiry): Reiter-Leiste oben (alle Anbieter mit Logo), darunter EINE breite Detailseite statt 13 schmaler Kacheln */
+let lsSel=(()=>{try{return localStorage.getItem('vc_lstab')||'';}catch(_){return '';}})();
+const lsId=f=>f.id||f.k;
+const lsHit=f=>!lsQ||JSON.stringify(Object.assign({},f,{logo:'',alt:''})).toLowerCase().includes(lsQ);
+const lsShow=f=>(!lsDrei||f.drei===true)&&lsHit(f);
+const triC=(v,n)=>`<span class="lsf ${v===true?'y':v===false?'n':'o'}">${v===true?'✓':v===false?'✗':'?'} ${n}</span>`;
+function lsTab(f,i,on){const lg=logoOf(f);return `<button class="lstab${on?' on':''}${lsShow(f)?'':' nohit'}" type="button" role="tab" aria-selected="${on}" data-lst="${i}" style="--ac:${esc(f.ac||'#94A3B8')}" title="${esc(f.n)} · ${esc(f.k)}">${lg?`<img src="${imgU(lg)}" alt="${esc(f.n)}">`:`<b class="lstk">${esc(f.k)}</b>`}<small>${esc(f.n)}</small></button>`;}
+function lsCard(f,i){const nj=(f.zubJa||[]).length,nn=(f.zubNein||[]).length,vs=isVers(f),lg=logoOf(f);
+ const grp=qG(f).map(([h,qs])=>[h,qs.filter(q=>q[3]!=='o'||String(f[q[0]]||'').trim())]).filter(([h,qs])=>qs.length);
+ const quick=vs?'':[triC(f.drei,'E-Dreirad'),triC(f.spe,'S-Pedelec'),String(f.vers||'').trim()?`<span class="lsf i" title="${esc(f.vers)}">🛡 ${esc(String(f.vers).slice(0,40))}${String(f.vers).length>40?'…':''}</span>`:''].join('');
+ return `<article class="lsd" style="--ac:${esc(f.ac||'#94A3B8')}">
+ <header class="lsdh"><div class="lsdlg">${lg?`<img src="${imgU(lg)}" alt="${esc(f.n)} Logo">`:`<div class="mono">${esc(f.k)}</div>`}</div>
+ <div class="lsdt"><h2>${esc(f.n)}</h2><div class="lsdm"><span class="lsk">${esc(f.k)}</span><span>${esc(f.sub||'Leasing')}</span></div>${quick?`<div class="lsfq">${quick}</div>`:''}</div>
+ <div class="lsda">${vs&&!nj&&!nn?'':`<button class="zubbtn" type="button" data-zub="${i}">🧩 Leasingfähiges Zubehör <span>${nj||nn?nj+' ✓ · '+nn+' ✗':'offen'}</span></button>`}<button class="edbtn" type="button" data-led="${i}" aria-label="${esc(f.n)} bearbeiten">✎ Bearbeiten</button></div></header>
+ <section class="lsdp"><h4>${vs?'🛡 Tarife · Leistungen':'📦 Pakete · Leistungen · Preis für den Kunden'}</h4>${(f.pak||[]).length?`<ul>${f.pak.map(li).join('')}</ul>`:`<p class="qe">${OFFEN}</p>`}</section>
+ <div class="lsdq">${grp.map(([h,qs])=>`<section class="lsg"><h4>${esc(h)}</h4><dl class="qa">${qs.map(q=>`<dt>${esc(q[1])}</dt><dd>${qv(f,q)}</dd>`).join('')}</dl></section>`).join('')}</div>
  </article>`;}
-function rl(){
- $('lgrid').innerHTML=lOrd().filter(([f,i])=>i===lsEdit||((!lsDrei||f.drei===true)&&(!lsQ||JSON.stringify(Object.assign({},f,{logo:'',alt:''})).toLowerCase().includes(lsQ)))).map(([f,i])=>i===lsEdit?editCard(f,i):lsCard(f,i)).join('')||'<p class="hint">Nichts gefunden.</p>';
- if(!document.querySelector('#ltab [contenteditable]:focus'))$('ltab').innerHTML='<thead><tr><th>Anbieter</th><th>E-Dreirad</th><th>S-Pedelec</th><th>Inspektion – wir bekommen</th><th>Verschleiß</th><th>Versicherung</th></tr></thead><tbody>'+lOrd().map(([f,i])=>`<tr><td><b style="color:${esc(f.ac)}">●</b> ${esc(f.n)}</td>${['drei','spe'].map(k=>`<td class="tg ${f[k]===true?'y':f[k]===false?'n':''}" data-lt="${i}" data-f="${k}" role="button" tabindex="0" title="Klick = ✓ / ✗ / offen">${f[k]===true?'✓':f[k]===false?'✗':'–'}</td>`).join('')}${['isz','vsd','vers'].map(k=>`<td class="ce" contenteditable="true" spellcheck="false" data-lt="${i}" data-f="${k}">${esc(f[k]||'')}</td>`).join('')}</tr>`).join('')+'</tbody>';
+function rl(){const ord=lOrd();
+ let cur=ord.find(([f,i])=>i===lsEdit)||ord.find(([f])=>lsId(f)===lsSel);
+ if(!cur||(!lsShow(cur[0])&&cur[1]!==lsEdit))cur=ord.find(([f])=>lsShow(f))||(lsQ||lsDrei?null:ord[0]);
+ const tabs=g=>ord.filter(([f])=>isVers(f)===g).map(([f,i])=>lsTab(f,i,!!cur&&cur[1]===i)).join('');
+ const hit=ord.filter(([f])=>lsShow(f)).length;
+ $('lgrid').innerHTML=`<div class="lsnav" role="tablist" aria-label="Anbieter"><div class="lsgrp"><span class="lsgl">Leasing</span><div class="lstabs">${tabs(false)}</div></div><div class="lsgrp vs"><span class="lsgl">Versicherungen</span><div class="lstabs">${tabs(true)}</div></div>${lsQ||lsDrei?`<span class="lshits">${hit} von ${ord.length} passen</span>`:''}</div>`+
+  (cur?(cur[1]===lsEdit?editCard(cur[0],cur[1]):lsCard(cur[0],cur[1])):'<p class="hint">Nichts gefunden.</p>');
+ if(!document.querySelector('#ltab [contenteditable]:focus'))$('ltab').innerHTML='<thead><tr><th>Anbieter</th><th>E-Dreirad</th><th>S-Pedelec</th><th>Inspektion – wir bekommen</th><th>Verschleiß</th><th>Versicherung</th></tr></thead><tbody>'+ord.map(([f,i])=>`<tr><td><b style="color:${esc(f.ac)}">●</b> <a class="lsgo" href="#" data-lst="${i}">${esc(f.n)}</a></td>${['drei','spe'].map(k=>`<td class="tg ${f[k]===true?'y':f[k]===false?'n':''}" data-lt="${i}" data-f="${k}" role="button" tabindex="0" title="Klick = ✓ / ✗ / offen">${f[k]===true?'✓':f[k]===false?'✗':'–'}</td>`).join('')}${['isz','vsd','vers'].map(k=>`<td class="ce" contenteditable="true" spellcheck="false" data-lt="${i}" data-f="${k}">${esc(f[k]||'')}</td>`).join('')}</tr>`).join('')+'</tbody>';
  fnUpd();}
+function lsPick(i){const f=L[i];if(!f)return;if(lsEdit>=0&&lsEdit!==i){if(L[lsEdit]&&L[lsEdit]._new)L.splice(lsEdit,1);lsEdit=-1;}lsSel=lsId(f);try{localStorage.setItem('vc_lstab',lsSel);}catch(_){}rl();}
 function fnUpd(){FN=Object.assign(Object.fromEntries(Object.entries({BL:'Bikeleasing',CB:'Company Bike',KM:'Kazenmaier',BB:'Businessbike',JR:'JobRad',DD:'Deutsche Dienstrad',LB:'Lease a Bike',RD:'RIDE',ER:'Eurorad',TB:'Targo Bank'}).filter(([k])=>!L.some(l=>l.id===k&&l.k&&l.k!==k))),Object.fromEntries(L.filter(f=>!/versicherung|schäden/i.test(f.sub||'')).map(f=>[f.k,f.n])));}
 function zubDlg(f){const L1=a=>(a||[]).map(t=>`<li>${esc(t)}</li>`).join(''),E='<p class="qe"><span class="qo">offen</span></p>';
  dlg(`<div class="zubd" style="--ac:${esc(f.ac||'#94A3B8')}"><h3>🧩 Leasingfähiges Zubehör · ${esc(f.n)}</h3>
@@ -1120,14 +1137,16 @@ function editCard(f,i){const ta=(k,lbl,r)=>`<label>${lbl} <em>(eine Zeile pro Pu
  <div class="acts"><button class="btn red" type="submit">Speichern</button><button class="btn" type="button" data-lcancel>Abbrechen</button><button class="btn del" type="button" data-ldel="${i}">Anbieter löschen</button></div></form></article>`;}
 function shrink(file){return new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>{const img=new Image();img.onload=()=>{const sc=Math.min(1,360/img.width,140/img.height),c=document.createElement('canvas');c.width=Math.max(1,Math.round(img.width*sc));c.height=Math.max(1,Math.round(img.height*sc));c.getContext('2d').drawImage(img,0,0,c.width,c.height);let u=c.toDataURL('image/webp',.88);if(!u.startsWith('data:image/webp'))u=c.toDataURL('image/png');res(u);};img.onerror=()=>rej(new Error('Bild nicht lesbar'));img.src=r.result;};r.onerror=()=>rej(new Error('Datei nicht lesbar'));r.readAsDataURL(file);});}
 async function putL(f){const o=Object.assign({},f);const id=o.id||o.k;o.id=id;if(JSON.stringify(o).length>700000){toast('Logo zu groß – bitte kleineres Bild');return false;}
- const i=L.findIndex(x=>x.id===id);if(i<0)L.push(o);else L[i]=o;lsEdit=-1;rl();try{await save('L',o);}catch(_){}return true;}
+ const i=L.findIndex(x=>x.id===id);if(i<0)L.push(o);else L[i]=o;lsEdit=-1;lsSel=id;try{localStorage.setItem('vc_lstab',id);}catch(_){}rl();try{await save('L',o);}catch(_){}return true;}
 $('lgrid').addEventListener('click',async e=>{
- const ed=e.target.closest('[data-led]');if(ed){lsEdit=+ed.dataset.led;rl();document.querySelector('.lc.editing')?.scrollIntoView({block:'start',behavior:'smooth'});return;}
+ const tb=e.target.closest('[data-lst]');if(tb){lsPick(+tb.dataset.lst);return;}
+ const ed=e.target.closest('[data-led]');if(ed){lsEdit=+ed.dataset.led;rl();return;}
  if(e.target.closest('[data-lcancel]')){if(L[lsEdit]&&L[lsEdit]._new)L.splice(lsEdit,1);lsEdit=-1;rl();return;}
  const dl=e.target.closest('[data-ldel]');if(dl){const i=+dl.dataset.ldel;if(!dl.dataset.sure){dl.dataset.sure=1;dl.textContent='Wirklich löschen?';return;}const f=L[i];L.splice(i,1);lsEdit=-1;rl();if(!f._new)del('L',f.id);toast(f.n+' gelöscht');return;}
  const rm=e.target.closest('[data-rmlogo]');if(rm){const f=Object.assign({},L[+rm.dataset.rmlogo]);delete f.logo;putL(f);toast('Eigenes Logo entfernt');return;}
  const z=e.target.closest('[data-zub]');if(z){zubDlg(L[+z.dataset.zub]);return;}});
-$('ltab').addEventListener('click',e=>{const c=e.target.closest('.tg');if(!c)return;const f=Object.assign({},L[+c.dataset.lt]);const k=c.dataset.f;f[k]=f[k]===true?false:f[k]===false?null:true;putL(f).then(()=>toast('Gespeichert'));});
+$('lgrid').addEventListener('keydown',e=>{const t=e.target.closest('.lstab');if(!t||!/^Arrow(Left|Right)$/.test(e.key))return;e.preventDefault();const all=[...document.querySelectorAll('#lgrid .lstab')],n=all[(all.indexOf(t)+(e.key==='ArrowRight'?1:all.length-1))%all.length];lsPick(+n.dataset.lst);document.querySelector(`#lgrid .lstab[data-lst="${n.dataset.lst}"]`)?.focus();});
+$('ltab').addEventListener('click',e=>{const g=e.target.closest('.lsgo');if(g){e.preventDefault();lsPick(+g.dataset.lst);$('lgrid').scrollIntoView({block:'start',behavior:'smooth'});return;}const c=e.target.closest('.tg');if(!c)return;const f=Object.assign({},L[+c.dataset.lt]);const k=c.dataset.f;f[k]=f[k]===true?false:f[k]===false?null:true;putL(f).then(()=>toast('Gespeichert'));});
 $('ltab').addEventListener('keydown',e=>{const c=e.target.closest('.ce,.tg');if(!c)return;if(e.key==='Enter'){e.preventDefault();if(c.classList.contains('tg'))c.click();else c.blur();}});
 $('ltab').addEventListener('focusout',e=>{const c=e.target.closest('.ce');if(!c)return;const f=Object.assign({},L[+c.dataset.lt]),v=c.textContent.trim();if(v===(f[c.dataset.f]||''))return;f[c.dataset.f]=v;putL(f).then(()=>toast('Gespeichert'));});
 $('lgrid').addEventListener('submit',async e=>{if(!e.target.dataset.lf)return;e.preventDefault();const fm=e.target,i=+fm.dataset.lf,f=Object.assign({},L[i]),d=new FormData(fm);delete f._new;
@@ -1136,7 +1155,7 @@ $('lgrid').addEventListener('submit',async e=>{if(!e.target.dataset.lf)return;e.
  if(!f.id)f.id=f.k+Math.random().toString(36).slice(2,5).toUpperCase();
  const file=d.get('logo');if(file&&file.size){try{f.logo=await shrink(file);}catch(err){toast(err.message);return;}}
  if(await putL(f))toast('Gespeichert');});
-$('lsAdd').addEventListener('click',()=>{L.push({_new:1,k:'NEU',n:'Neuer Anbieter',sub:'Leasing',ac:'#94A3B8',drei:null,spe:null,pak:[],zubJa:[],zubNein:[]});lsEdit=L.length-1;lsQ='';$('lsSearch').value='';rl();document.querySelector('.lc.editing')?.scrollIntoView({block:'start',behavior:'smooth'});});
+$('lsAdd').addEventListener('click',()=>{L.push({_new:1,k:'NEU',n:'Neuer Anbieter',sub:'Leasing',ac:'#94A3B8',drei:null,spe:null,pak:[],zubJa:[],zubNein:[]});lsEdit=L.length-1;lsQ='';$('lsSearch').value='';rl();});
 $('lsSearch').addEventListener('input',e=>{lsQ=e.target.value.toLowerCase().trim();rl();});
 $('fDrei').addEventListener('click',e=>{lsDrei=!lsDrei;e.currentTarget.setAttribute('aria-pressed',lsDrei);rl();});
 
