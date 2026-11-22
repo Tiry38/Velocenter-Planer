@@ -2619,6 +2619,8 @@ html:is(.hg3,.hgS) body:has(#whoOv:not([hidden])) .app{visibility:hidden}
 /* Suchfelder, Eingaben und helle Knöpfe = leichtes Glas (Weiß 55 %), rote Knöpfe bleiben deckend */
 html:is(.hg3,.hgS) section.view :is(label.search,.btn:not(.red):not([aria-pressed="true"]),.zubbtn,select,textarea,input:not([type=checkbox]):not([type=radio]):not([type=range])){background:rgba(255,255,255,.55)!important;background-image:none!important;border-color:rgba(255,255,255,.9)!important}
 html:is(.hg3,.hgS) section.view label.search input{background:transparent!important;border-color:transparent!important}
+/* Navi = Nebelschleier (Tiry 22.11.2026): Wald läuft durch, links dichter, nach rechts weich auslaufend, keine Kante/kein Schatten – wie links auf der Homepage. Gleich wie KI-Zentrale. */
+html:root nav{background:radial-gradient(140% 22% at 0% 0%,rgba(255,255,255,.45),rgba(255,255,255,0) 70%),radial-gradient(120% 20% at 0% 55%,rgba(255,255,255,.22),transparent 70%),radial-gradient(120% 22% at 0% 100%,rgba(255,255,255,.30),transparent 70%),linear-gradient(90deg,rgba(241,245,250,.74) 0%,rgba(239,243,248,.62) 55%,rgba(237,241,247,.44) 86%,rgba(236,240,246,.16) 100%)!important;border:0!important;box-shadow:none!important}
 </style></head><body>
 <div class="app">
 <nav aria-label="Bereiche">
@@ -2997,7 +2999,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 <script>
 const FB_CONFIG={apiKey:"AIzaSyC_uZPvc5rJETwlS4JbfCoTkkE4ckjtp0M",authDomain:"velocenter-planer.firebaseapp.com",projectId:"velocenter-planer",storageBucket:"velocenter-planer.firebasestorage.app",messagingSenderId:"1018330488700",appId:"1:1018330488700:web:262a4d1660353e6fde8ef9"};
 /* ================= Velocenter Werkstatt-Cockpit – Oberfläche ================= */
-const CLIENT_VERSION='1.11.18';
+const CLIENT_VERSION='1.11.19';
 const USERS=[{id:'kevin',n:'Kevin',c:'#E2232D'},{id:'stefan',n:'Stefan',c:'#F59E0B'},{id:'martina',n:'Martina',c:'#EC4899'},{id:'sascha',n:'Sascha',c:'#22D3EE'},{id:'rene',n:'René',c:'#34D399'}];
 const U=id=>USERS.find(u=>u.id===id)||{n:'',c:'#64748B',id:''};
 /* 1.10.37: Profilfarbe je Nutzer (meta/prefs[ID].col, für alle sichtbar) – Cache für den Login-Bildschirm */
