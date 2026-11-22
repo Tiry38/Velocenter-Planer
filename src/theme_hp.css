@@ -266,3 +266,49 @@ html:root nav .navbtn[aria-current="true"]::before{top:calc(50% - 54px)!importan
 #v-planer .tchip.toff svg{width:15px;height:15px;flex:none;fill:none;stroke:#C98A12;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
 #v-planer .tchip.toff span{display:flex;flex-direction:column;align-items:flex-start;font:800 11px/1.05 Outfit,sans-serif!important;letter-spacing:.02em;text-transform:uppercase}
 #v-planer .tchip.toff small{font:600 8.5px/1 Outfit,sans-serif;letter-spacing:.06em;opacity:.75}
+
+/* 1.11.18 (Tiry 22.11.2026): Hintergrund „Herbstallee“ wie Homepage/KI-Zentrale (WebGL #hg aus body_fb.html).
+   html.hg3 = Ebene läuft, html.hgS = Foto (ohne WebGL). Alter Himmel/Keil/Striche (body/.app/KW-Ebenen) aus.
+   Navi + KW-Kachel + Kästen = Nebel-Glas: Wald scheint nur dezent durch (Tiry). Kein backdrop-filter, kein background-attachment:fixed (Leistung). */
+#hg{position:fixed;left:0;top:0;width:100vw;height:100vh;z-index:-5;pointer-events:none;display:block}
+html.hg3,html.hg3 body,html.hg3 body[data-v]{background:transparent!important}
+html.hg3{background:#E9EBEE!important}
+html.hgS,html.hgS body,html.hgS body[data-v]{background:#E9EBEE url(hg-herbst.webp) 62% 50%/cover no-repeat!important}
+html:is(.hg3,.hgS) body::before,html:is(.hg3,.hgS) body::after,html:is(.hg3,.hgS) .app::before,html:is(.hg3,.hgS) .app::after,
+html:is(.hg3,.hgS) #grid .kw::before,html:is(.hg3,.hgS) #grid .kw::after,html:is(.hg3,.hgS) #grid .kw>.kwk{display:none!important;content:none!important}
+@media print{#hg{display:none!important}html.hg3,html.hgS,html.hgS body{background:#fff!important}}
+/* Navi: Nebel-Glas wie KI-Zentrale/Homepage, dunkle Schrift, aktiver Reiter = Glas-Pille mit rotem Schein (ersetzt Goldring), Hover = Glasblase */
+html:root nav{background:radial-gradient(130% 26% at 0% 0%,rgba(255,255,255,.55),rgba(255,255,255,0) 70%),radial-gradient(110% 18% at 100% 42%,rgba(255,255,255,.30),transparent 70%),radial-gradient(120% 22% at 0% 78%,rgba(255,255,255,.28),transparent 70%),linear-gradient(180deg,rgba(243,246,250,.80),rgba(236,240,246,.74))!important;
+  border:0!important;box-shadow:inset -1px 0 0 rgba(255,255,255,.95),1px 0 0 rgba(30,60,110,.12),14px 0 34px -18px rgba(30,60,110,.45)!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+html:root nav .navbtn,html:root nav .navbtn .lbl,html:root nav .navbtn .lbl b{color:#232734!important;text-shadow:0 0 6px rgba(255,255,255,.85),0 0 1px rgba(255,255,255,.9)!important}
+html:root nav .navbtn .lbl small,html:root nav .navbtn:not([aria-current="true"]) .lbl small{color:color-mix(in srgb,var(--ac) 55%,#232734)!important;text-shadow:none!important}
+html:root nav .navbtn,html:root nav .navbtn:not([aria-current="true"]){background:transparent!important;box-shadow:none!important;border-radius:999px!important;transition:color .3s,background .3s,box-shadow .3s}
+html:root nav .navbtn:not([aria-current="true"]):hover{background:radial-gradient(120% 90% at 30% 15%,rgba(255,255,255,.55),rgba(255,255,255,.08) 55%,rgba(255,255,255,.18))!important;box-shadow:inset 1.5px 1.5px 0 rgba(255,255,255,.95),inset -1px -1.5px 0 rgba(255,255,255,.55),inset 0 0 14px rgba(255,255,255,.35),0 10px 26px -10px rgba(60,20,90,.35),0 2px 6px rgba(60,20,90,.12)!important}
+html:root nav .navbtn:not([aria-current="true"]):hover .lbl b{color:#8E0E26!important}
+html:root nav .navbtn[aria-current="true"],html:root nav .navbtn[aria-current="true"]:not(:hover){background:radial-gradient(90% 70% at 28% 12%,rgba(255,255,255,.95),rgba(255,255,255,.35) 50%,transparent 70%),radial-gradient(80% 60% at 70% 110%,rgba(200,16,46,.30),transparent 70%),linear-gradient(160deg,rgba(226,240,252,.85),rgba(196,222,244,.6))!important;
+  box-shadow:inset 2px 2px 0 #fff,inset -1.5px -2px 0 rgba(255,255,255,.7),inset 0 -8px 16px rgba(47,111,176,.18),0 14px 28px -12px rgba(30,60,110,.45),0 6px 14px -8px rgba(200,16,46,.45)!important;border-radius:999px!important}
+html:root nav .navbtn[aria-current="true"] .lbl,html:root nav .navbtn[aria-current="true"] .lbl b{color:#8E0E26!important;text-shadow:0 0 6px rgba(255,255,255,.85)!important}
+html:root nav .navbtn[aria-current="true"] .lbl small{color:#5A6072!important;text-shadow:none!important}
+html:root nav .navbtn[aria-current="true"]::before,html:root nav .navbtn[aria-current="true"]::after{content:none!important;display:none!important}
+html:root nav .navbtn[aria-current="true"] .tile{transform:none;box-shadow:inset 0 1px 0 rgba(255,255,255,.4),0 4px 10px -4px rgba(30,40,60,.45)!important}
+body.navmini nav .navbtn,body.navmini nav .navbtn:not([aria-current="true"]){background:transparent!important;box-shadow:none!important}
+body.navmini nav .navbtn[aria-current="true"],body.navmini nav .navbtn[aria-current="true"]:not(:hover){background:transparent!important;box-shadow:none!important}
+body.navmini nav .navbtn[aria-current="true"] .tile{box-shadow:0 0 0 3px #fff,0 0 0 5px rgba(200,16,46,.55),0 8px 18px -6px rgba(200,16,46,.55)!important}
+html:root nav .navbtn .n{background:rgba(255,255,255,.7)!important;color:#232734!important;border-color:rgba(30,60,110,.15)!important;text-shadow:none!important}
+html:root nav hr,html:root nav .sep,html:root nav .navsep{border-color:rgba(30,60,110,.12)!important;background:rgba(30,60,110,.12)!important}
+html:root .kwbrand{background:none!important;border-color:transparent!important;box-shadow:none!important}
+html:root .kwbrand small{color:#8E0E26!important;text-shadow:none!important}
+html:root .kwbrand b{color:#232734!important;text-shadow:0 0 6px rgba(255,255,255,.9)!important}
+html:root .kwbrand span{color:#4D5468!important;text-shadow:none!important}
+html:root nav .me,html:root nav .metools{background:rgba(255,255,255,.55)!important;border-color:rgba(255,255,255,.95)!important;box-shadow:0 6px 16px -10px rgba(30,60,110,.4)!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+body.navmini nav .me,body.navmini nav .metools{background:transparent!important;border-color:transparent!important;box-shadow:none!important}
+/* KW-Trenner im Planer = Nebel-Glas wie die Navi (statt Grau), dunkle Schrift, rote Kante links */
+html:root #grid .kw{clip-path:none!important;background:radial-gradient(60% 140% at 0% 0%,rgba(255,255,255,.6),transparent 70%),linear-gradient(180deg,rgba(243,246,250,.92),rgba(232,237,244,.88))!important;
+  box-shadow:inset 3px 0 0 #C8102E,inset 0 -1px 0 rgba(30,60,110,.14),inset 0 1px 0 #fff!important}
+html:root #grid .kw,html:root #grid .kw *{color:#232734!important;text-shadow:none!important}
+html:root #grid .kw b,html:root #grid .kw strong{color:#8E0E26!important}
+/* Freistehende, halbdurchsichtige Kästen über dem Wald = Nebel-Glas (Wald nur dezent) */
+html:is(.hg3,.hgS) :is(#v-bestell .alert.pinkish,.vohead,.voempty){background:radial-gradient(120% 60% at 0% 0%,rgba(255,255,255,.55),rgba(255,255,255,0) 70%),linear-gradient(180deg,rgba(243,246,250,.88),rgba(236,240,246,.84))!important;border:1px solid rgba(255,255,255,.8)!important;box-shadow:0 12px 30px -14px rgba(30,60,110,.38),inset 0 1px 0 rgba(255,255,255,.9)!important;border-radius:16px!important}
+html:is(.hg3,.hgS) #v-bestell .alert.pinkish{box-shadow:inset 3px 0 0 #16A34A,0 12px 30px -14px rgba(30,60,110,.38)!important}
+html:is(.hg3,.hgS) .voempty{color:#4D5468!important}
+html:is(.hg3,.hgS) .vohead{padding:8px 12px!important}

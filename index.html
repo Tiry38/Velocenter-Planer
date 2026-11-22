@@ -2548,6 +2548,52 @@ html:root nav .navbtn[aria-current="true"]::before{top:calc(50% - 54px)!importan
 #v-planer .tchip.toff svg{width:15px;height:15px;flex:none;fill:none;stroke:#C98A12;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
 #v-planer .tchip.toff span{display:flex;flex-direction:column;align-items:flex-start;font:800 11px/1.05 Outfit,sans-serif!important;letter-spacing:.02em;text-transform:uppercase}
 #v-planer .tchip.toff small{font:600 8.5px/1 Outfit,sans-serif;letter-spacing:.06em;opacity:.75}
+
+/* 1.11.18 (Tiry 22.11.2026): Hintergrund „Herbstallee“ wie Homepage/KI-Zentrale (WebGL #hg aus body_fb.html).
+   html.hg3 = Ebene läuft, html.hgS = Foto (ohne WebGL). Alter Himmel/Keil/Striche (body/.app/KW-Ebenen) aus.
+   Navi + KW-Kachel + Kästen = Nebel-Glas: Wald scheint nur dezent durch (Tiry). Kein backdrop-filter, kein background-attachment:fixed (Leistung). */
+#hg{position:fixed;left:0;top:0;width:100vw;height:100vh;z-index:-5;pointer-events:none;display:block}
+html.hg3,html.hg3 body,html.hg3 body[data-v]{background:transparent!important}
+html.hg3{background:#E9EBEE!important}
+html.hgS,html.hgS body,html.hgS body[data-v]{background:#E9EBEE url(hg-herbst.webp) 62% 50%/cover no-repeat!important}
+html:is(.hg3,.hgS) body::before,html:is(.hg3,.hgS) body::after,html:is(.hg3,.hgS) .app::before,html:is(.hg3,.hgS) .app::after,
+html:is(.hg3,.hgS) #grid .kw::before,html:is(.hg3,.hgS) #grid .kw::after,html:is(.hg3,.hgS) #grid .kw>.kwk{display:none!important;content:none!important}
+@media print{#hg{display:none!important}html.hg3,html.hgS,html.hgS body{background:#fff!important}}
+/* Navi: Nebel-Glas wie KI-Zentrale/Homepage, dunkle Schrift, aktiver Reiter = Glas-Pille mit rotem Schein (ersetzt Goldring), Hover = Glasblase */
+html:root nav{background:radial-gradient(130% 26% at 0% 0%,rgba(255,255,255,.55),rgba(255,255,255,0) 70%),radial-gradient(110% 18% at 100% 42%,rgba(255,255,255,.30),transparent 70%),radial-gradient(120% 22% at 0% 78%,rgba(255,255,255,.28),transparent 70%),linear-gradient(180deg,rgba(243,246,250,.80),rgba(236,240,246,.74))!important;
+  border:0!important;box-shadow:inset -1px 0 0 rgba(255,255,255,.95),1px 0 0 rgba(30,60,110,.12),14px 0 34px -18px rgba(30,60,110,.45)!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+html:root nav .navbtn,html:root nav .navbtn .lbl,html:root nav .navbtn .lbl b{color:#232734!important;text-shadow:0 0 6px rgba(255,255,255,.85),0 0 1px rgba(255,255,255,.9)!important}
+html:root nav .navbtn .lbl small,html:root nav .navbtn:not([aria-current="true"]) .lbl small{color:color-mix(in srgb,var(--ac) 55%,#232734)!important;text-shadow:none!important}
+html:root nav .navbtn,html:root nav .navbtn:not([aria-current="true"]){background:transparent!important;box-shadow:none!important;border-radius:999px!important;transition:color .3s,background .3s,box-shadow .3s}
+html:root nav .navbtn:not([aria-current="true"]):hover{background:radial-gradient(120% 90% at 30% 15%,rgba(255,255,255,.55),rgba(255,255,255,.08) 55%,rgba(255,255,255,.18))!important;box-shadow:inset 1.5px 1.5px 0 rgba(255,255,255,.95),inset -1px -1.5px 0 rgba(255,255,255,.55),inset 0 0 14px rgba(255,255,255,.35),0 10px 26px -10px rgba(60,20,90,.35),0 2px 6px rgba(60,20,90,.12)!important}
+html:root nav .navbtn:not([aria-current="true"]):hover .lbl b{color:#8E0E26!important}
+html:root nav .navbtn[aria-current="true"],html:root nav .navbtn[aria-current="true"]:not(:hover){background:radial-gradient(90% 70% at 28% 12%,rgba(255,255,255,.95),rgba(255,255,255,.35) 50%,transparent 70%),radial-gradient(80% 60% at 70% 110%,rgba(200,16,46,.30),transparent 70%),linear-gradient(160deg,rgba(226,240,252,.85),rgba(196,222,244,.6))!important;
+  box-shadow:inset 2px 2px 0 #fff,inset -1.5px -2px 0 rgba(255,255,255,.7),inset 0 -8px 16px rgba(47,111,176,.18),0 14px 28px -12px rgba(30,60,110,.45),0 6px 14px -8px rgba(200,16,46,.45)!important;border-radius:999px!important}
+html:root nav .navbtn[aria-current="true"] .lbl,html:root nav .navbtn[aria-current="true"] .lbl b{color:#8E0E26!important;text-shadow:0 0 6px rgba(255,255,255,.85)!important}
+html:root nav .navbtn[aria-current="true"] .lbl small{color:#5A6072!important;text-shadow:none!important}
+html:root nav .navbtn[aria-current="true"]::before,html:root nav .navbtn[aria-current="true"]::after{content:none!important;display:none!important}
+html:root nav .navbtn[aria-current="true"] .tile{transform:none;box-shadow:inset 0 1px 0 rgba(255,255,255,.4),0 4px 10px -4px rgba(30,40,60,.45)!important}
+body.navmini nav .navbtn,body.navmini nav .navbtn:not([aria-current="true"]){background:transparent!important;box-shadow:none!important}
+body.navmini nav .navbtn[aria-current="true"],body.navmini nav .navbtn[aria-current="true"]:not(:hover){background:transparent!important;box-shadow:none!important}
+body.navmini nav .navbtn[aria-current="true"] .tile{box-shadow:0 0 0 3px #fff,0 0 0 5px rgba(200,16,46,.55),0 8px 18px -6px rgba(200,16,46,.55)!important}
+html:root nav .navbtn .n{background:rgba(255,255,255,.7)!important;color:#232734!important;border-color:rgba(30,60,110,.15)!important;text-shadow:none!important}
+html:root nav hr,html:root nav .sep,html:root nav .navsep{border-color:rgba(30,60,110,.12)!important;background:rgba(30,60,110,.12)!important}
+html:root .kwbrand{background:none!important;border-color:transparent!important;box-shadow:none!important}
+html:root .kwbrand small{color:#8E0E26!important;text-shadow:none!important}
+html:root .kwbrand b{color:#232734!important;text-shadow:0 0 6px rgba(255,255,255,.9)!important}
+html:root .kwbrand span{color:#4D5468!important;text-shadow:none!important}
+html:root nav .me,html:root nav .metools{background:rgba(255,255,255,.55)!important;border-color:rgba(255,255,255,.95)!important;box-shadow:0 6px 16px -10px rgba(30,60,110,.4)!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+body.navmini nav .me,body.navmini nav .metools{background:transparent!important;border-color:transparent!important;box-shadow:none!important}
+/* KW-Trenner im Planer = Nebel-Glas wie die Navi (statt Grau), dunkle Schrift, rote Kante links */
+html:root #grid .kw{clip-path:none!important;background:radial-gradient(60% 140% at 0% 0%,rgba(255,255,255,.6),transparent 70%),linear-gradient(180deg,rgba(243,246,250,.92),rgba(232,237,244,.88))!important;
+  box-shadow:inset 3px 0 0 #C8102E,inset 0 -1px 0 rgba(30,60,110,.14),inset 0 1px 0 #fff!important}
+html:root #grid .kw,html:root #grid .kw *{color:#232734!important;text-shadow:none!important}
+html:root #grid .kw b,html:root #grid .kw strong{color:#8E0E26!important}
+/* Freistehende, halbdurchsichtige Kästen über dem Wald = Nebel-Glas (Wald nur dezent) */
+html:is(.hg3,.hgS) :is(#v-bestell .alert.pinkish,.vohead,.voempty){background:radial-gradient(120% 60% at 0% 0%,rgba(255,255,255,.55),rgba(255,255,255,0) 70%),linear-gradient(180deg,rgba(243,246,250,.88),rgba(236,240,246,.84))!important;border:1px solid rgba(255,255,255,.8)!important;box-shadow:0 12px 30px -14px rgba(30,60,110,.38),inset 0 1px 0 rgba(255,255,255,.9)!important;border-radius:16px!important}
+html:is(.hg3,.hgS) #v-bestell .alert.pinkish{box-shadow:inset 3px 0 0 #16A34A,0 12px 30px -14px rgba(30,60,110,.38)!important}
+html:is(.hg3,.hgS) .voempty{color:#4D5468!important}
+html:is(.hg3,.hgS) .vohead{padding:8px 12px!important}
 </style></head><body>
 <div class="app">
 <nav aria-label="Bereiche">
@@ -2725,6 +2771,200 @@ html:root nav .navbtn[aria-current="true"]::before{top:calc(50% - 54px)!importan
 <div class="err" id="pwErr" role="alert"></div><div class="acts"><button class="btn" type="button" id="pwBack">← Zurück</button><button class="btn red" type="submit" id="pwGo">Anmelden</button></div></form></div></div>
 
 <div class="who-ov" id="dlg" hidden role="dialog" aria-modal="true"><div class="dlg-box" id="dlgBox"></div></div>
+<script>
+/* 1.11.18 (Tiry 22.11.2026): Hintergrund wie Homepage/KI-Zentrale – „Herbstallee“ (WebGL #hg, Blätter fallen, Maus = Wind). 30 Bilder/s, passt Auflösung an, Pause bei verstecktem Tab und nach 90 s ohne Eingabe. Animationen aus (body.noanim) oder schwacher PC (≤4 Kerne, Mini-PC) = ein stehendes Bild. Ohne WebGL: Foto (html.hgS). */
+(function(){
+var de=document.documentElement;
+var C={ty:[0,-.04],fxm:.50,fx:.50,fy:.55,fl:0,fp:.20,am:.030,sp:.012,wf:[0,0],sun:[.50,.66,.20],fg:1.6,sn:.95,sz:2.2,sc:[.92,.46,.12],ld:1,df:-1,gr:.30,cs:0,dy:0,nt:0};
+var FSRC=`#extension GL_OES_standard_derivatives : enable
+precision highp float;
+uniform vec2 uR,uM,uFoc,uImg;uniform vec2 uTy,uWf;uniform float uFg,uSn,uSz,uLd,uDf,uGr,uCs,uDy,uNt;uniform vec3 uSc;uniform float uT,uS,uFl,uFp,uAm,uSp,uFade,uV;uniform vec3 uK,uSun,uPo;
+uniform sampler2D uP,uD,uE;
+const vec3 RED=vec3(.886,.137,.176);
+float h21(vec2 p){p=fract(p*vec2(123.34,456.21));p+=dot(p,p+45.32);return fract(p.x*p.y);}
+float nz(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.-2.*f);
+ return mix(mix(h21(i),h21(i+vec2(1,0)),f.x),mix(h21(i+vec2(0,1)),h21(i+vec2(1,1)),f.x),f.y);}
+float fbm(vec2 p){float s=0.,a=.5;for(int i=0;i<4;i++){s+=a*nz(p);p=p*2.03+vec2(1.7,9.2);a*=.5;}return s;}
+vec2 fl(vec2 q){return uFl>.5?vec2(1.-q.x,q.y):q;}
+vec3 P(vec2 q){return texture2D(uP,fl(q)).rgb;}
+vec3 D(vec2 q){return texture2D(uD,fl(q)).rgb;}
+void main(){
+ vec2 uv=gl_FragCoord.xy/uR;float A=uR.x/uR.y,iA=uImg.x/uImg.y;bool mob=A<.9;
+ /* Cover-Ausschnitt mit Überstand für die Kamerabewegung */
+ float zoom=1.10+min(uS,3.)*.09+uPo.z+.025*sin(uT*.15);
+ vec2 s=A>iA?vec2(1.,iA/A):vec2(A/iA,1.);s/=zoom;s=min(s,vec2(.90));/* Rand für Parallaxe, nie über die Fotokante */
+ vec2 pan=(uM-.5)*vec2(.045,.020)+uPo.xy*1.6+vec2(sin(uT*.13),sin(uT*.097+1.))*vec2(.010,.004);
+ vec2 c=clamp(uFoc+pan+uTy*min(uS,2.2),s*.5+.05,1.-s*.5-.05);vec2 p=c+(uv-.5)*s;
+ /* Kamera: Maus + ruhiges Schweben, Scrollen = Fahrt ins Bild (nahe Dinge wachsen schneller) */
+ vec2 cam=(uM-.5)*vec2(.034,.014)+vec2(sin(uT*.13),sin(uT*.097+1.))*vec2(.006,.002);
+ float dol=min(uS,3.)*.045+.010*sin(uT*.19);
+ vec2 q=p;for(int i=0;i<6;i++){float d=D(q).r;q=c+(p-c)/(1.+dol*(d-uFp))+cam*(d-uFp);}q=clamp(q,.003,.997);
+ vec3 dat=D(q);float d=dat.r,sky=dat.g,fm=dat.b;
+ /* Wind im Gras/Büschen (Böen laufen übers Bild) + Wasser kräuselt */
+ vec3 mk3=texture2D(uE,fl(q)).rgb;vec2 mk=mk3.rg;
+ float gust=.35+.65*smoothstep(-.2,1.,sin(uT*.7-q.x*5.)*.5+.5);
+ q.x+=mk.r*(.4+.6*d)*gust*(sin(uT*2.6+q.y*55.+nz(q*9.)*6.)*.0021+sin(uT*1.1+q.x*7.)*.0012);
+ q.y+=mk.g*(sin(q.y*1100.-uT*2.4+q.x*35.)*.0006+(nz(vec2(q.x*70.,q.y*420.-uT*1.6))-.5)*.0016);
+ /* Fließen (Cinemagraph): zwei phasenversetzte Proben, weich überblendet – Wolken/Nebel ziehen endlos */
+ vec2 dir=vec2(1.,.12*sin(q.x*9.+uT*.1))*(.55+.45*nz(q*4.+uT*.02));
+ float f1=fract(uT*uSp),f2=fract(uT*uSp+.5);float wv=abs(1.-2.*f1);
+ vec2 o=dir*uAm*fm;
+ vec2 s1=q-o*f1,s2=q-o*f2;
+ float ok=(1.-smoothstep(.06,.14,max(D(s1).r,D(s2).r)))*(1.-smoothstep(.06,.14,d));
+ ok*=smoothstep(.55,.95,min(min(D(s1).g,D(s2).g),sky));
+ vec3 base=P(q);
+ if(uDf!=0.){vec2 pm=c+(uM-.5)*s;float fd=(D(pm).r*2.+D(pm+vec2(.02,0)).r+D(pm-vec2(.02,0)).r+D(pm+vec2(0,.02)).r+D(pm-vec2(0,.02)).r)/6.;
+  float rb=abs(uDf)*.0024*smoothstep(.10,.55,abs(d-fd))*(1.-sky);if(uDf<0.)rb*=smoothstep(fd,fd+.08,d);
+  if(rb>.0002){vec3 acc=base;float ga=2.39996;for(int i=0;i<10;i++){float fi=float(i)+.5;float rr2=sqrt(fi/10.)*rb;vec2 off=vec2(cos(fi*ga),sin(fi*ga))*rr2*vec2(1.,iA);acc+=P(q+off);}base=acc/11.;}}
+ vec3 col=mix(base,mix(P(s1),P(s2),1.-wv),ok);
+ /* Herbstallee (Tiry 22.11.2026): Scrollen = die Straße wird nass – Pfützen bilden sich von hinten nach vorne,
+    darin spiegeln sich die goldenen Bäume und das Licht, leicht gekräuselt. Das Foto selbst wird nicht verschoben. */
+ if(uLd>.5&&q.y<.39&&uS>.001){float vx=.497,n0=max((.6164-q.y)*1.647,.05),z0=1./n0,xw=(q.x-vx)*z0;
+  float wet=clamp(uS/1.6,0.,1.);
+  float far=(q.y)/.385;
+  float wm=smoothstep(0.,.35,wet*1.35-(1.-far)*.9)*(1.-smoothstep(.372,.388,q.y));
+  float pn=fbm(vec2(xw*2.6,z0*1.9))*.7+fbm(vec2(xw*7.,z0*5.5))*.3;
+  float pud=smoothstep(.62-.22*wet,.70-.22*wet,pn);
+  float rip=sin(z0*38.-uT*2.2+fbm(vec2(xw*4.,z0*3.)+uT*.05)*6.)*.0016*(.4+.6*n0);
+  vec2 rq=vec2(q.x+rip,.385+(.385-q.y)*1.05+rip*.6);
+  vec3 rf=P(clamp(rq,.003,.997));
+  float fres=.35+.45*(1.-n0);
+  col*=1.-.22*wm;
+  col=mix(col,rf*vec3(.86,.84,.82),wm*pud*fres);
+  col=mix(col,rf,wm*(1.-pud)*.07);
+  float gl=pow(max(0.,nz(vec2(xw*60.,z0*80.+uT*.4))-.55)*2.2,6.);col+=vec3(1.,.93,.8)*gl*wm*pud*.5;}
+ /* Wolkenschatten: ziehen mit dem Wind übers Gelände (nicht im Himmel) */
+ if(uCs>0.){float cs2=fbm(vec2(q.x*2.4-uT*.022,q.y*5.5+uT*.004));col*=1.-uCs*smoothstep(.48,.66,cs2)*(1.-sky)*(.55+.45*(1.-d));}
+ /* Wasser stürzt/rollt abwärts (Wasserfall, Bach, Brandung): zwei Phasen, nur innerhalb der Wasser-Maske */
+ if(uWf.x>0.&&mk3.b>.01){float g1=fract(uT*uWf.y),g2=fract(uT*uWf.y+.5);float gw=abs(1.-2.*g1);
+  vec2 w1=q+vec2(.0015*sin(q.y*40.+uT),uWf.x*g1),w2=q+vec2(.0015*sin(q.y*40.+uT+2.),uWf.x*g2);
+  float wo=min(texture2D(uE,fl(w1)).b,texture2D(uE,fl(w2)).b);
+  vec3 wc=mix(P(w1),P(w2),1.-gw);col=mix(col,wc,clamp(mk3.b*smoothstep(.15,.6,wo)*1.1,0.,1.));
+  col+=vec3(.06)*mk3.b*smoothstep(.55,.9,nz(vec2(q.x*90.,q.y*160.+uT*uWf.y*9.)));}
+ col+=vec3(1.,.98,.94)*mk.g*pow(nz(vec2(q.x*520.,q.y*1300.+uT*2.8)),26.)*1.6*step(D(q).r,.35);
+ /* zusätzliche Nebelschleier (bewegt) auf Fließ-Flächen und im Tal */
+ float mist=fbm(vec2(q.x*5.-uT*.035,q.y*14.+uT*.01));
+ float band=fm*(1.-sky*.6)*.20*uFg+smoothstep(.10,.0,abs(d-.16))*.14*(1.-sky);
+ col=mix(col,vec3(.95,.955,.965),clamp(band*smoothstep(.35,.85,mist),0.,.85));
+ /* dichte Nebelbank: zweite, gegenläufige Schicht rollt über die Flächen */
+ if(uFg>1.2){float m2=fbm(vec2(q.x*2.6+uT*.045,q.y*7.-uT*.012)+mist*.8);
+  col=mix(col,vec3(.955,.96,.968),fm*(1.-sky*.5)*smoothstep(.42,.78,m2)*.22*(uFg-1.));}
+ /* Teilchen in drei Tiefen: Schnee bzw. Laub. Laub: vorne groß, verschwindet hinter näheren Bäumen (Tiefenkarte), Maus bläst es weg */
+ if(uSn>0.){float sn=0.;vec3 lc=vec3(0.);for(int L=0;L<3;L++){float fL=float(L),k=(26.+fL*30.)/uSz/(1.+uLd*.35);
+  float Ld=.95-fL*.33;vec2 du=(uv-uM)*vec2(A,1.);float dl=length(du);
+  vec2 uvL=uv-uLd*normalize(du+1e-4)*exp(-dl*5.5)*(.10-fL*.025);
+  vec2 g=uvL*vec2(A,1.)*k;g.y+=uT*(1.5-fL*.38)*k*.07/uSz+uLd*uS*k*(.16+fL*.05);g.x+=sin(uT*.55+g.y*.045+fL*2.)*(.7+uLd*.8)+(uM.x-.5)*(3.-fL)*1.6+uT*(.25+uLd*.35);
+  vec2 id=floor(g),f=fract(g)-.5;float rr=h21(id+fL*17.);
+  if(rr>.80){vec2 o3=(vec2(h21(id+3.1),h21(id+5.7))-.5)*.55;vec2 lv=f-o3;float an=uT*(1.2+rr)+rr*20.;lv=mat2(cos(an),-sin(an),sin(an),cos(an))*lv;lv.y*=mix(1.,2.6,step(1.5,uSz));
+   float w=smoothstep(mix(.14,.24,uLd)-fL*.03,.0,length(lv))*(1.-fL*.22);
+   w*=mix(1.,1.-smoothstep(Ld-.02,Ld+.06,d),uLd);
+   float hh=h21(id+9.3);vec3 pc=uLd>.5?mix(mix(vec3(.72,.16,.07),uSc,smoothstep(.0,.5,hh)),vec3(.97,.70,.18),smoothstep(.5,1.,hh)):uSc;
+   pc*=.75+.35*abs(sin(an*1.7));sn+=w;lc+=pc*w;}}
+  col=mix(col,lc/max(sn,1e-4)*(.88+.12*sin(uT+uv.x*9.)),clamp(sn*uSn,0.,.92));}
+ /* Lichtstrahlen: helle Stellen (Dunst/Himmel) streuen zur Sonne hin – Strahlen wandern langsam */
+ if(uGr>0.){vec2 dl2=(uSun.xy-q);float acc2=0.,wt=1.;for(int i=0;i<14;i++){vec2 sp2=q+dl2*(float(i)/14.)*.85;vec3 cc=P(sp2);acc2+=smoothstep(.80,.98,dot(cc,vec3(.33)))*wt;wt*=.88;}
+  float shim=.65+.35*nz(vec2(atan(dl2.y,dl2.x*iA)*14.,uT*.15));col+=vec3(1.,.86,.62)*acc2/7.*uGr*shim*.55*(1.-smoothstep(.55,.9,dot(col,vec3(.33))))*(1.-smoothstep(.0,.9,length(dl2*vec2(iA,1.))));}
+ /* Sonne: Glühen + Strahlen nur im Himmel / auf Nebel */
+ vec2 sv=(q-uSun.xy)*vec2(iA,1.);float sr=length(sv);
+ float ray=pow(max(0.,nz(vec2(atan(sv.y,sv.x)*8.,uT*.05))*.6+.4*nz(vec2(atan(sv.y,sv.x)*21.,uT*.08+3.))-.25),2.);
+ float pul=.85+.15*sin(uT*.6);
+ col+=vec3(1.,.93,.84)*uSun.z*(exp(-sr*7.)*.35*pul+ray*exp(-sr*2.2)*.20*max(sky,fm*.6));
+ /* Klick: rote Lichtwelle läuft durch die Tiefe (kein Ring am Mauszeiger, Tiry 22.11.2026) */
+ float age=uT-uK.z;
+ if(uLd>.5){ }else if(age<6.){float fr=1.05-age*.42;float wvv=exp(-pow((d-fr)*24.,2.))*exp(-age*.55)*(1.-smoothstep(.2,.6,sky));
+  col=mix(col,RED,clamp(wvv*.85,0.,1.));col+=vec3(1.,.7,.7)*wvv*.15;}
+ /* Farbführung Rot/Grau/Weiß: Rosa/Lila raus, leicht entsättigt, klar */
+ float lu=dot(col,vec3(.299,.587,.114));
+ float pink=clamp(min(col.r,col.b)-col.g,0.,1.)*4.;col=mix(col,vec3(lu*1.02),clamp(pink,0.,.9));
+ col=mix(vec3(lu),col,.86);col=(col-.5)*1.05+.5;
+ /* Scrollen: Licht wird zum warmen Abend */
+ float ev=smoothstep(.2,2.6,uS)*(1.-uDy)*(1.-uNt);col=mix(col,col*vec3(1.10,.97,.86)+vec3(.03,.0,-.01),ev*.55);
+ /* Tageslauf (Weinberg): Morgen kühl -> Mittag klar -> Goldene Stunde -> Dämmerung, Himmel glüht am Horizont orange-rot */
+ if(uDy>0.){float tg=clamp(uS/2.6,0.,1.);
+  vec3 g1=mix(vec3(.94,.98,1.07),vec3(1.),smoothstep(0.,.3,tg));g1=mix(g1,vec3(1.18,.98,.74),smoothstep(.3,.65,tg));g1=mix(g1,vec3(.84,.62,.46),smoothstep(.65,1.,tg));
+  float lum2=dot(col,vec3(.3,.59,.11));float gh=smoothstep(.3,.65,tg)*(1.-smoothstep(.75,1.,tg));col=mix(col,pow(col,vec3(1.25)),gh*.8*(1.-sky*.5));col=col*g1;col=mix(col,vec3(lum2)*vec3(.55,.6,.8),smoothstep(.8,1.,tg)*.35*(1.-sky));
+  float hz=sky*smoothstep(.35,1.,tg)*(1.-smoothstep(.0,.45,q.y-.45));col=mix(col,col*vec3(1.28,.84,.42)+vec3(.15,.07,0.),hz*.85);col=(col-.5)*(1.+gh*.18)+.5;}
+ /* Polarlicht-Nacht (Island): Gelände ins Mondlicht, Himmel Nachtblau, Sterne funkeln, rot-weiße Vorhänge wogen */
+ if(uNt>0.){float nn=smoothstep(.25,1.9,uS);
+  float lum3=dot(col,vec3(.3,.59,.11));vec3 moon=vec3(.46,.54,.76)*(.08+lum3*.55);
+  vec2 aq=q;float au=0.;vec3 auC=vec3(0.);
+  for(int j=0;j<3;j++){float fj=float(j);
+   float fx=aq.x+.06*fbm(vec2(aq.x*1.3+fj*4.,uT*.035+fj));
+   float y0=.585+fj*.055+.08*fbm(vec2(fx*1.6+uT*.03+fj*7.,fj))+.025*sin(fx*7.+uT*.21+fj*2.);
+   float up=aq.y-y0;float prof=smoothstep(-.012,.006,up)*exp(-max(up,0.)*(14.-fj*3.));
+   float ry=(.55+.45*nz(vec2(fx*13.-uT*.2,fj)))*(.68+.32*pow(nz(vec2(fx*95.+uT*.5+fj*30.,aq.y*1.5)),1.4));
+   float br=(.45+.55*smoothstep(.25,.75,fbm(vec2(fx*3.+uT*.06,fj*3.))))*(1.-fj*.22);
+   float a1=prof*ry*br;au+=a1;
+   auC+=a1*mix(vec3(1.,.84,.58),mix(vec3(.95,.12,.10),vec3(.50,.03,.04),smoothstep(.06,.24,up)),smoothstep(.0,.035,up));}
+  auC/=max(au,1e-4);au=clamp(au*.85,0.,1.);
+  vec3 skyN=mix(vec3(.05,.06,.11),vec3(.11,.13,.21),smoothstep(1.,.45,q.y));
+  vec2 st=q*vec2(iA,1.)*260.;vec2 sid=floor(st);float sh=h21(sid);float star=step(.988,sh)*smoothstep(.35,0.,length(fract(st)-.5))*(.55+.45*sin(uT*(2.+sh*5.)+sh*40.));
+  vec3 night=mix(moon,skyN+vec3(star),sky);night=mix(night,night+auC*1.15,au*sky);night+=vec3(.6,.06,.05)*.10*sky*smoothstep(.55,.70,q.y)*(1.-smoothstep(.70,.95,q.y));night+=vec3(.8,.12,.06)*au*.10*(1.-sky)*smoothstep(.3,.7,lum3);
+  col=mix(col,night,nn);}
+ /* Lesbarkeit links: Milchglas (wie die Seite) */
+ float calm=mob?.50*smoothstep(.18,.55,uv.y):smoothstep(.62,.16,uv.x)*.74;
+ /* farbtreu (Tiry 22.11.: links nicht mehr schwarz-weiss): Milchglas behaelt die Farben des Fotos, nur heller + flacher */
+ vec3 fr=vec3(.95,.955,.962)*.76+col*.28;col=mix(col,fr,min(calm*1.08,.82));
+ col*=1.-.10*pow(length(uv-vec2(.62,.5)),2.);
+ col+=(h21(gl_FragCoord.xy+fract(uT))-.5)*.010;
+ gl_FragColor=vec4(mix(vec3(.914,.922,.933),col,uFade),1.);}
+`;
+var VQ='attribute vec2 a;void main(){gl_Position=vec4(a,0.,1.);}';
+var cv,gl,buf,pr,U={},W=0,H=0,raf=0,t0=performance.now(),M=[.5,.5],Mt=[.5,.5],E=null,fade=0,QS=1,FT=33,FN=0,TL=0,LA=performance.now(),LIT=null,PO=[-.01,.012,.03];
+function hgLITE(){var b=document.body;return !!(b&&b.classList.contains('noanim'))||(navigator.hardwareConcurrency||8)<=4}
+function hgSRC(i){return ['hg-herbst.webp','hg-herbst-d.png','hg-herbst-m.png'][i]}
+function hgSh(t,s){var o=gl.createShader(t);gl.shaderSource(o,s);gl.compileShader(o);if(!gl.getShaderParameter(o,gl.COMPILE_STATUS))throw new Error(gl.getShaderInfoLog(o));return o}
+function hgBuild(){pr=gl.createProgram();gl.attachShader(pr,hgSh(gl.VERTEX_SHADER,VQ));gl.attachShader(pr,hgSh(gl.FRAGMENT_SHADER,FSRC));gl.bindAttribLocation(pr,0,'a');gl.linkProgram(pr);
+ if(!gl.getProgramParameter(pr,gl.LINK_STATUS))throw new Error(gl.getProgramInfoLog(pr));
+ ['uFg','uSn','uSz','uSc','uLd','uDf','uGr','uCs','uDy','uNt','uTy','uWf','uR','uM','uFoc','uImg','uT','uS','uFl','uFp','uAm','uSp','uFade','uV','uK','uSun','uP','uD','uE','uPo'].forEach(function(n){U[n]=gl.getUniformLocation(pr,n)});
+ buf=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,buf);gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,3,-1,-1,3]),gl.STATIC_DRAW);gl.enableVertexAttribArray(0)}
+function hgTex(img){var t=gl.createTexture();gl.bindTexture(gl.TEXTURE_2D,t);gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL,true);
+ gl.texImage2D(gl.TEXTURE_2D,0,gl.RGB,gl.RGB,gl.UNSIGNED_BYTE,img);
+ gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.LINEAR);
+ gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);return t}
+/* Bilder: Foto, Tiefenkarte, Maske */
+function hgLoad(){var e={},n=3,ims=[0,1,2].map(function(i){var im=new Image();im.onload=function(){if(--n===0)done()};im.onerror=hgOff;im.src=hgSRC(i);return im});
+ function done(){if(!gl)return;try{e.p=hgTex(ims[0]);e.d=hgTex(ims[1]);e.e=hgTex(ims[2]);e.w=ims[0].naturalWidth;e.h=ims[0].naturalHeight;e.ok=1;E=e;hgGo()}catch(err){hgOff()}}}
+function hgSize(){var big=innerWidth*innerHeight>1.4e6,dpr=Math.min(devicePixelRatio||1,1.25)*(big?.8:.95)*QS;
+ var w=Math.max(1,Math.round(cv.clientWidth*dpr)),h=Math.max(1,Math.round(cv.clientHeight*dpr));if(w!==W||h!==H){W=cv.width=w;H=cv.height=h}}
+/* Takt: höchstens 30 Bilder/s; Fenster verdeckt/minimiert = Pause; 90 s ohne Maus/Tastatur = steht still (weiter bei der nächsten Bewegung);
+   Leistungsmodus = ein ruhendes Bild, keine Schleife */
+function hgGo(){if(gl&&!raf&&!document.hidden){TL=0;raf=requestAnimationFrame(hgFrame)}}
+function hgFrame(now){raf=0;if(!gl||document.hidden)return;var lite=hgLITE();
+ if(!lite&&now-LA<90000){raf=requestAnimationFrame(hgFrame);if(TL&&now-TL<30)return;
+  if(TL){FT+=(Math.min(200,now-TL)-FT)*.08;if(++FN>60){FN=0;if(FT>46&&QS>.5)QS=Math.max(.5,QS-.15);else if(FT<37&&QS<1)QS=Math.min(1,QS+.05)}}}
+ TL=now;hgSize();hgDraw(now,lite)}
+function hgDraw(now,lite){var c=C,t=(now-t0)/1000;
+ if(lite){M[0]=Mt[0];M[1]=Mt[1]}else{M[0]+=(Mt[0]-M[0])*.09;M[1]+=(Mt[1]-M[1])*.09}
+ gl.viewport(0,0,W,H);
+ if(!E){gl.clearColor(.914,.922,.933,1);gl.clear(gl.COLOR_BUFFER_BIT);return}
+ fade=lite?1:Math.min(1,fade+.05);gl.useProgram(pr);
+ gl.activeTexture(gl.TEXTURE0);gl.bindTexture(gl.TEXTURE_2D,E.p);gl.uniform1i(U.uP,0);
+ gl.activeTexture(gl.TEXTURE1);gl.bindTexture(gl.TEXTURE_2D,E.d);gl.uniform1i(U.uD,1);
+ gl.activeTexture(gl.TEXTURE2);gl.bindTexture(gl.TEXTURE_2D,E.e);gl.uniform1i(U.uE,2);
+ gl.uniform2f(U.uR,W,H);gl.uniform1f(U.uT,t);gl.uniform1f(U.uS,0);gl.uniform2f(U.uM,M[0],M[1]);gl.uniform3f(U.uK,0,0,-99);
+ gl.uniform2f(U.uImg,E.w,E.h);gl.uniform2f(U.uFoc,W/H<.9?c.fxm:c.fx,c.fy);gl.uniform1f(U.uFl,c.fl);gl.uniform2f(U.uWf,c.wf[0],c.wf[1]);gl.uniform1f(U.uFg,c.fg);gl.uniform1f(U.uSn,c.sn);gl.uniform1f(U.uSz,c.sz);gl.uniform1f(U.uLd,c.ld);gl.uniform1f(U.uDf,c.df);gl.uniform1f(U.uGr,c.gr);gl.uniform1f(U.uCs,c.cs);gl.uniform1f(U.uDy,c.dy);gl.uniform1f(U.uNt,c.nt);gl.uniform3f(U.uSc,c.sc[0],c.sc[1],c.sc[2]);gl.uniform2f(U.uTy,c.ty[0],c.ty[1]);gl.uniform1f(U.uFp,c.fp);gl.uniform1f(U.uAm,c.am);gl.uniform1f(U.uSp,c.sp);
+ gl.uniform3f(U.uSun,c.sun[0],c.sun[1],c.sun[2]);gl.uniform1f(U.uFade,fade*fade*(3-2*fade));gl.uniform1f(U.uV,0);gl.uniform3f(U.uPo,PO[0],PO[1],PO[2]);
+ gl.bindBuffer(gl.ARRAY_BUFFER,buf);gl.vertexAttribPointer(0,2,gl.FLOAT,false,0,0);gl.drawArrays(gl.TRIANGLES,0,3)}
+/* kein WebGL / Bild fehlt: ruhendes Foto per CSS (html.hgS) */
+function hgOff(){try{if(raf)cancelAnimationFrame(raf)}catch(e){}raf=0;gl=null;if(cv)cv.remove();de.classList.remove('hg3');de.classList.add('hgS')}
+function hgAct(){LA=performance.now();hgGo()}
+function hgInit(){if(document.getElementById('hg'))return;
+ cv=document.createElement('canvas');cv.id='hg';cv.setAttribute('aria-hidden','true');document.body.insertBefore(cv,document.body.firstChild);
+ try{gl=cv.getContext('webgl',{antialias:false,alpha:false,premultipliedAlpha:false,depth:false,stencil:false})}catch(e){gl=null}
+ if(!gl){hgOff();return}gl.getExtension('OES_standard_derivatives');
+ try{hgBuild()}catch(err){console.error('hg',err.message);hgOff();return}
+ de.classList.add('hg3');
+ addEventListener('pointermove',function(e){Mt=[e.clientX/innerWidth,1-e.clientY/innerHeight];if(!LIT)hgAct()},{passive:true});
+ ['pointerdown','keydown','wheel'].forEach(function(n){addEventListener(n,function(){if(!LIT)hgAct()},{passive:true,capture:true})});
+ addEventListener('resize',hgGo);document.addEventListener('visibilitychange',hgGo);
+ cv.addEventListener('webglcontextlost',function(e){e.preventDefault();if(raf)cancelAnimationFrame(raf);raf=0});
+ cv.addEventListener('webglcontextrestored',function(){E=null;try{hgBuild()}catch(err){hgOff();return}hgLoad()});
+ LIT=hgLITE();new MutationObserver(function(){var l=hgLITE();if(l!==LIT){LIT=l;hgAct()}}).observe(document.body,{attributes:true,attributeFilter:['class']});
+ hgLoad();hgGo()}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',hgInit);else hgInit();
+})();
+</script>
 
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
@@ -2732,7 +2972,7 @@ html:root nav .navbtn[aria-current="true"]::before{top:calc(50% - 54px)!importan
 <script>
 const FB_CONFIG={apiKey:"AIzaSyC_uZPvc5rJETwlS4JbfCoTkkE4ckjtp0M",authDomain:"velocenter-planer.firebaseapp.com",projectId:"velocenter-planer",storageBucket:"velocenter-planer.firebasestorage.app",messagingSenderId:"1018330488700",appId:"1:1018330488700:web:262a4d1660353e6fde8ef9"};
 /* ================= Velocenter Werkstatt-Cockpit – Oberfläche ================= */
-const CLIENT_VERSION='1.11.17';
+const CLIENT_VERSION='1.11.18';
 const USERS=[{id:'kevin',n:'Kevin',c:'#E2232D'},{id:'stefan',n:'Stefan',c:'#F59E0B'},{id:'martina',n:'Martina',c:'#EC4899'},{id:'sascha',n:'Sascha',c:'#22D3EE'},{id:'rene',n:'René',c:'#34D399'}];
 const U=id=>USERS.find(u=>u.id===id)||{n:'',c:'#64748B',id:''};
 /* 1.10.37: Profilfarbe je Nutzer (meta/prefs[ID].col, für alle sichtbar) – Cache für den Login-Bildschirm */
