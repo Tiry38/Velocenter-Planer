@@ -2799,7 +2799,7 @@ html:root nav{background:radial-gradient(140% 22% at 0% 0%,rgba(255,255,255,.45)
 
 <div class="who-ov" id="dlg" hidden role="dialog" aria-modal="true"><div class="dlg-box" id="dlgBox"></div></div>
 <script>
-/* 1.11.18 (Tiry 22.11.2026): Hintergrund wie Homepage/KI-Zentrale – „Herbstallee“ (WebGL #hg, Blätter fallen, Maus = Wind). 30 Bilder/s, passt Auflösung an, Pause bei verstecktem Tab und nach 90 s ohne Eingabe. Animationen aus (body.noanim) oder schwacher PC (≤4 Kerne, Mini-PC) = ein stehendes Bild. Ohne WebGL: Foto (html.hgS). */
+/* 1.11.18 (Tiry 22.11.2026): Hintergrund wie Homepage/KI-Zentrale – „Herbstallee“ (WebGL #hg, Blätter fallen, Maus = Wind). 30 Bilder/s, passt Auflösung an, Pause nur bei verstecktem Tab (ab 1.11.20 kein 90-s-Stopp, keine Kern-Abschaltung). Animationen aus (body.noanim) (früher auch ≤4 Kerne, Mini-PC) = ein stehendes Bild. Ohne WebGL: Foto (html.hgS). */
 (function(){
 var de=document.documentElement;
 var C={ty:[0,-.04],fxm:.50,fx:.50,fy:.55,fl:0,fp:.20,am:.030,sp:.012,wf:[0,0],sun:[.50,.66,.20],fg:1.6,sn:.95,sz:2.2,sc:[.92,.46,.12],ld:1,df:-1,gr:.30,cs:0,dy:0,nt:0};
@@ -2938,7 +2938,7 @@ void main(){
 `;
 var VQ='attribute vec2 a;void main(){gl_Position=vec4(a,0.,1.);}';
 var cv,gl,buf,pr,U={},W=0,H=0,raf=0,t0=performance.now(),M=[.5,.5],Mt=[.5,.5],E=null,fade=0,QS=1,FT=33,FN=0,TL=0,LA=performance.now(),LIT=null,PO=[-.01,.012,.03];
-function hgLITE(){var b=document.body;return !!(b&&b.classList.contains('noanim'))||(navigator.hardwareConcurrency||8)<=4}
+function hgLITE(){var b=document.body;return !!(b&&b.classList.contains('noanim'))}
 function hgSRC(i){return ['hg-herbst.webp','hg-herbst-d.png','hg-herbst-m.png'][i]}
 function hgSh(t,s){var o=gl.createShader(t);gl.shaderSource(o,s);gl.compileShader(o);if(!gl.getShaderParameter(o,gl.COMPILE_STATUS))throw new Error(gl.getShaderInfoLog(o));return o}
 function hgBuild(){pr=gl.createProgram();gl.attachShader(pr,hgSh(gl.VERTEX_SHADER,VQ));gl.attachShader(pr,hgSh(gl.FRAGMENT_SHADER,FSRC));gl.bindAttribLocation(pr,0,'a');gl.linkProgram(pr);
@@ -2954,11 +2954,12 @@ function hgLoad(){var e={},n=3,ims=[0,1,2].map(function(i){var im=new Image();im
  function done(){if(!gl)return;try{e.p=hgTex(ims[0]);e.d=hgTex(ims[1]);e.e=hgTex(ims[2]);e.w=ims[0].naturalWidth;e.h=ims[0].naturalHeight;e.ok=1;E=e;hgGo()}catch(err){hgOff()}}}
 function hgSize(){var big=innerWidth*innerHeight>1.4e6,dpr=Math.min(devicePixelRatio||1,1.25)*(big?.8:.95)*QS;
  var w=Math.max(1,Math.round(cv.clientWidth*dpr)),h=Math.max(1,Math.round(cv.clientHeight*dpr));if(w!==W||h!==H){W=cv.width=w;H=cv.height=h}}
-/* Takt: höchstens 30 Bilder/s; Fenster verdeckt/minimiert = Pause; 90 s ohne Maus/Tastatur = steht still (weiter bei der nächsten Bewegung);
+/* Takt: höchstens 30 Bilder/s; Fenster verdeckt/minimiert = Pause. 1.11.20 (Tiry): läuft IMMER durch – kein Stopp ohne Eingabe (2. Bildschirm),
+   keine Abschaltung nach Kernzahl (Mini-PC); langsame Geräte senkt QS die Auflösung bis 50 %. Aus nur per ⚙ „Animationen“ (noanim);
    Leistungsmodus = ein ruhendes Bild, keine Schleife */
 function hgGo(){if(gl&&!raf&&!document.hidden){TL=0;raf=requestAnimationFrame(hgFrame)}}
 function hgFrame(now){raf=0;if(!gl||document.hidden)return;var lite=hgLITE();
- if(!lite&&now-LA<90000){raf=requestAnimationFrame(hgFrame);if(TL&&now-TL<30)return;
+ if(!lite){raf=requestAnimationFrame(hgFrame);if(TL&&now-TL<30)return;
   if(TL){FT+=(Math.min(200,now-TL)-FT)*.08;if(++FN>60){FN=0;if(FT>46&&QS>.5)QS=Math.max(.5,QS-.15);else if(FT<37&&QS<1)QS=Math.min(1,QS+.05)}}}
  TL=now;hgSize();hgDraw(now,lite)}
 function hgDraw(now,lite){var c=C,t=(now-t0)/1000;
@@ -2999,7 +3000,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 <script>
 const FB_CONFIG={apiKey:"AIzaSyC_uZPvc5rJETwlS4JbfCoTkkE4ckjtp0M",authDomain:"velocenter-planer.firebaseapp.com",projectId:"velocenter-planer",storageBucket:"velocenter-planer.firebasestorage.app",messagingSenderId:"1018330488700",appId:"1:1018330488700:web:262a4d1660353e6fde8ef9"};
 /* ================= Velocenter Werkstatt-Cockpit – Oberfläche ================= */
-const CLIENT_VERSION='1.11.19';
+const CLIENT_VERSION='1.11.20';
 const USERS=[{id:'kevin',n:'Kevin',c:'#E2232D'},{id:'stefan',n:'Stefan',c:'#F59E0B'},{id:'martina',n:'Martina',c:'#EC4899'},{id:'sascha',n:'Sascha',c:'#22D3EE'},{id:'rene',n:'René',c:'#34D399'}];
 const U=id=>USERS.find(u=>u.id===id)||{n:'',c:'#64748B',id:''};
 /* 1.10.37: Profilfarbe je Nutzer (meta/prefs[ID].col, für alle sichtbar) – Cache für den Login-Bildschirm */
