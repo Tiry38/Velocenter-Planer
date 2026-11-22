@@ -2548,6 +2548,35 @@ html:root nav .navbtn[aria-current="true"]::before{top:calc(50% - 54px)!importan
 #v-planer .tchip.toff svg{width:15px;height:15px;flex:none;fill:none;stroke:#C98A12;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
 #v-planer .tchip.toff span{display:flex;flex-direction:column;align-items:flex-start;font:800 11px/1.05 Outfit,sans-serif!important;letter-spacing:.02em;text-transform:uppercase}
 #v-planer .tchip.toff small{font:600 8.5px/1 Outfit,sans-serif;letter-spacing:.06em;opacity:.75}
+
+/* 1.11.18 (Tiry 22.11.2026): Hintergrund wie die Homepage (Herbstallee, img/hg12/herbst-*.webp aus velo-center-web).
+   Statisches Foto als feste Ebene body::before (keine WebGL-Animation, kein background-attachment:fixed – Mini-PC).
+   Roter Keil, weißes Band und Striche der alten Fassung sind aus (Homepage blendet sie mit html.hg3 ebenfalls aus). */
+body::before{background:#2A2622 url(hg-herbst.webp) center 62%/cover no-repeat!important;background-blend-mode:normal!important}
+@media (max-width:1400px){body::before{background-image:url(hg-herbst-s.webp)!important}}
+body::after,.app::before,.app::after{display:none!important}
+html body,body[data-v]{background-color:#2A2622!important}
+/* KW-Leisten: ohne die festen Keil-/Band-/Strich-Ebenen, Farbe wie die neue Navi */
+html:root #grid .kw::before,html:root #grid .kw::after,html:root #grid .kw>.kwk{display:none!important}
+html:root #grid .kw,html:root nav{background-color:#1E2027!important;
+  background-image:linear-gradient(180deg,rgba(255,255,255,.07) 0%,rgba(255,255,255,0) 45%,rgba(0,0,0,.18) 100%),
+    linear-gradient(90deg,#2E3038 0%,#23252C 55%,#1A1C22 100%)!important;
+  background-size:auto!important;background-repeat:no-repeat!important;background-position:0 0!important;background-blend-mode:normal!important}
+/* Navi: dunkles Glas wie der Szenen-Umschalter der Homepage, Herbst-Glühen unten, rote Kante rechts – Text weiß, gut lesbar */
+html:root nav{background-image:radial-gradient(120% 38% at 0% 100%,rgba(232,137,42,.30),transparent 70%),
+    radial-gradient(90% 26% at 100% 0%,rgba(207,26,44,.22),transparent 70%),
+    linear-gradient(180deg,rgba(255,255,255,.06) 0%,rgba(255,255,255,0) 40%),
+    linear-gradient(90deg,#2E3038 0%,#23252C 55%,#1A1C22 100%)!important;
+  box-shadow:inset -3px 0 0 #C8102E,inset -4px 0 0 rgba(255,255,255,.12),8px 0 30px rgba(0,0,0,.35)!important}
+html:root nav .navbtn:not([aria-current="true"]){background:linear-gradient(90deg,color-mix(in srgb,var(--ac) 22%,transparent),color-mix(in srgb,var(--ac) 6%,transparent) 60%,transparent 92%)!important}
+html:root nav .navbtn:not([aria-current="true"]):hover{background:linear-gradient(90deg,color-mix(in srgb,var(--ac) 40%,transparent),color-mix(in srgb,var(--ac) 12%,transparent) 70%,transparent)!important}
+body.navmini nav .navbtn:not([aria-current="true"]){background:transparent!important}
+html:root nav .navbtn:not([aria-current="true"]) .lbl small{color:color-mix(in srgb,var(--ac) 55%,#fff)!important}
+html:root nav hr,html:root nav .sep,html:root nav .navsep{border-color:rgba(255,255,255,.12)!important;background:rgba(255,255,255,.12)!important}
+html:root nav .me,html:root nav .metools{background:rgba(255,255,255,.06)!important;border-color:rgba(255,255,255,.12)!important;box-shadow:none!important}
+html:root nav .me *{color:#fff}html:root nav .me #meRole,html:root nav .me small{color:#C9CCD3!important}
+html:root nav .metools button,html:root nav .metools .mt{color:#E6E8EC!important}html:root nav .metools svg{stroke:#E6E8EC!important}
+body.navmini nav .me,body.navmini nav .metools{background:transparent!important;border-color:transparent!important}
 </style></head><body>
 <div class="app">
 <nav aria-label="Bereiche">
@@ -2732,7 +2761,7 @@ html:root nav .navbtn[aria-current="true"]::before{top:calc(50% - 54px)!importan
 <script>
 const FB_CONFIG={apiKey:"AIzaSyC_uZPvc5rJETwlS4JbfCoTkkE4ckjtp0M",authDomain:"velocenter-planer.firebaseapp.com",projectId:"velocenter-planer",storageBucket:"velocenter-planer.firebasestorage.app",messagingSenderId:"1018330488700",appId:"1:1018330488700:web:262a4d1660353e6fde8ef9"};
 /* ================= Velocenter Werkstatt-Cockpit – Oberfläche ================= */
-const CLIENT_VERSION='1.11.17';
+const CLIENT_VERSION='1.11.18';
 const USERS=[{id:'kevin',n:'Kevin',c:'#E2232D'},{id:'stefan',n:'Stefan',c:'#F59E0B'},{id:'martina',n:'Martina',c:'#EC4899'},{id:'sascha',n:'Sascha',c:'#22D3EE'},{id:'rene',n:'René',c:'#34D399'}];
 const U=id=>USERS.find(u=>u.id===id)||{n:'',c:'#64748B',id:''};
 /* 1.10.37: Profilfarbe je Nutzer (meta/prefs[ID].col, für alle sichtbar) – Cache für den Login-Bildschirm */
