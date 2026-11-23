@@ -2676,6 +2676,14 @@ html:root nav{background:radial-gradient(140% 22% at 0% 0%,rgba(255,255,255,.45)
 .stbody .stchk input{background:#CBD2DC!important;box-shadow:inset 0 1px 2px rgba(0,0,0,.15)}
 .stbody .stchk input::after{background:#fff!important;box-shadow:0 1px 3px rgba(0,0,0,.3)!important}
 .stbody .stchk input:checked{background:linear-gradient(90deg,#C8102E,#E2232D)!important}
+
+/* 1.11.26 (Tiry): ⚙ Hintergrund passend zur Herbstallee – „mit hellem Schleier“ (bgdez) = Foto gedämpft, „Schlicht hell“ (bgruh) = ohne Bild, Eis-Verlauf */
+html.hg3 body.bgdez #hg{opacity:.5}
+html.hg3:has(body.bgdez){background:#F3F5F8!important}
+html.hgS body.bgdez{background:linear-gradient(rgba(243,245,248,.5),rgba(243,245,248,.5)),#E9EBEE url(hg-herbst.webp) 62% 50%/cover no-repeat!important}
+html body.bgruh #hg{display:none!important}
+html:has(body.bgruh),html:has(body.bgruh) body.bgruh{background:linear-gradient(160deg,#F6F8FB 0%,#E8EDF3 55%,#F1E9E9 100%)!important}
+html body.bgruh::after{display:none!important}
 </style></head><body>
 <div class="app">
 <nav aria-label="Bereiche">
@@ -2947,7 +2955,8 @@ void main(){
 `;
 var VQ='attribute vec2 a;void main(){gl_Position=vec4(a,0.,1.);}';
 var cv,gl,buf,pr,U={},W=0,H=0,raf=0,t0=performance.now(),M=[.5,.5],Mt=[.5,.5],E=null,fade=0,QS=1,FT=33,FN=0,TL=0,LIT=null,PO=[-.01,.012,.03],HGK=1;
-function hgLITE(){var b=document.body;return !!(b&&b.classList.contains('noanim'))}
+/* 1.11.26: stehend auch bei ⚙ Hintergrund „stehendes Bild“ (bgstill) und „Schlicht hell“ (bgruh, Ebene ausgeblendet) */
+function hgLITE(){var b=document.body;return !!(b&&(b.classList.contains('noanim')||b.classList.contains('bgstill')||b.classList.contains('bgruh')))}
 function hgSRC(i){return ['hg-herbst.webp','hg-herbst-d.png','hg-herbst-m.png'][i]}
 function hgSh(t,s){var o=gl.createShader(t);gl.shaderSource(o,s);gl.compileShader(o);if(!gl.getShaderParameter(o,gl.COMPILE_STATUS))throw new Error(gl.getShaderInfoLog(o));return o}
 function hgProg(fs){var p=gl.createProgram();gl.attachShader(p,hgSh(gl.VERTEX_SHADER,VQ));gl.attachShader(p,hgSh(gl.FRAGMENT_SHADER,fs));gl.bindAttribLocation(p,0,'a');gl.linkProgram(p);
@@ -3032,7 +3041,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 <script>
 const FB_CONFIG={apiKey:"AIzaSyC_uZPvc5rJETwlS4JbfCoTkkE4ckjtp0M",authDomain:"velocenter-planer.firebaseapp.com",projectId:"velocenter-planer",storageBucket:"velocenter-planer.firebasestorage.app",messagingSenderId:"1018330488700",appId:"1:1018330488700:web:262a4d1660353e6fde8ef9"};
 /* ================= Velocenter Werkstatt-Cockpit – Oberfläche ================= */
-const CLIENT_VERSION='1.11.25';
+const CLIENT_VERSION='1.11.26';
 const USERS=[{id:'kevin',n:'Kevin',c:'#E2232D'},{id:'stefan',n:'Stefan',c:'#F59E0B'},{id:'martina',n:'Martina',c:'#EC4899'},{id:'sascha',n:'Sascha',c:'#22D3EE'},{id:'rene',n:'René',c:'#34D399'}];
 const U=id=>USERS.find(u=>u.id===id)||{n:'',c:'#64748B',id:''};
 /* 1.10.37: Profilfarbe je Nutzer (meta/prefs[ID].col, für alle sichtbar) – Cache für den Login-Bildschirm */
@@ -3209,7 +3218,7 @@ function ucolApply(all){let ch=false;for(const u of USERS){const v=all&&all[u.id
  ls.set('vc_ucol',Object.fromEntries(USERS.map(u=>[u.id,u.c])));if(ME){$('meAv').style.setProperty('--uc',U(ME.id).c);}return ch;}
 /* Darstellung je Nutzer (meta/prefs[ID].ui = {fs,bg,anim,dense}), auf allen Geräten */
 function uiApply(ui){ui=ui||{};const fs=[85,90,100,110,120,135].includes(+ui.fs)?+ui.fs:100;UIZ=fs/100;document.documentElement.style.zoom=fs===100?'':String(UIZ);setTimeout(navFit,50);
- const b=document.body.classList;b.toggle('bgdez',ui.bg==='d');b.toggle('bgruh',ui.bg==='r');b.toggle('noanim',ui.anim===false);b.toggle('uidense',!!ui.dense);
+ const b=document.body.classList;b.toggle('bgdez',ui.bg==='d');b.toggle('bgruh',ui.bg==='r');b.toggle('bgstill',ui.bg==='s');b.toggle('noanim',ui.anim===false);b.toggle('uidense',!!ui.dense);
  b.toggle('hicon',!!ui.hc);b.toggle('fsys',ui.font==='s');b.toggle('rowhl',!!ui.rowhl);b.toggle('nonum',!!ui.nonum);b.toggle('bigcur',!!ui.cur);
  let cs=$('uiCss');if(!cs){cs=document.createElement('style');cs.id='uiCss';document.head.append(cs);}
  const hid=(Array.isArray(ui.hide)?ui.hide:[]).filter(v=>/^[a-z]+$/.test(v)&&v!=='planer');
@@ -3270,7 +3279,7 @@ function setDlg(tab){if(!ME)return;const u=U(ME.id),pin=NAVPIN,st=MYPREF.start||
    chk('stHc','Hoher Kontrast','hellere Texte und deutlichere Linien',ui.hc)+
    chk('stCur','Großer Mauszeiger','leichter zu finden auf großen Bildschirmen',ui.cur))}
   ${hc('🌌','Hintergrund & Effekte',ALLDEV,'#22D3EE',
-   sel('stBg','Hintergrund',[['k','Kräftige Farbverläufe (Standard)'],['d','Dezent'],['r','Ruhig – fast schwarz']],ui.bg||'k')+
+   sel('stBg','Hintergrund',[['k','🍂 Herbstallee – Blätter fallen (Standard)'],['s','🖼 Herbstallee – stehendes Bild (spart Leistung)'],['d','🌫 Herbstallee – mit hellem Schleier (ruhiger, besser lesbar)'],['r','⬜ Schlicht hell – ohne Bild (am sparsamsten)']],ui.bg||'k')+
    chk('stAnim','Animationen & Leuchten','aus = ruhiger und schneller auf schwachen PCs',ui.anim!==false))}
   ${hc('📋','Listen & Tabellen',ALLDEV,'#FBBF24',
    chk('stDense','Kompakte Listen','mehr Zeilen auf den Bildschirm',ui.dense)+

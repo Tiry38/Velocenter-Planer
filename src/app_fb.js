@@ -176,7 +176,7 @@ function ucolApply(all){let ch=false;for(const u of USERS){const v=all&&all[u.id
  ls.set('vc_ucol',Object.fromEntries(USERS.map(u=>[u.id,u.c])));if(ME){$('meAv').style.setProperty('--uc',U(ME.id).c);}return ch;}
 /* Darstellung je Nutzer (meta/prefs[ID].ui = {fs,bg,anim,dense}), auf allen Geräten */
 function uiApply(ui){ui=ui||{};const fs=[85,90,100,110,120,135].includes(+ui.fs)?+ui.fs:100;UIZ=fs/100;document.documentElement.style.zoom=fs===100?'':String(UIZ);setTimeout(navFit,50);
- const b=document.body.classList;b.toggle('bgdez',ui.bg==='d');b.toggle('bgruh',ui.bg==='r');b.toggle('noanim',ui.anim===false);b.toggle('uidense',!!ui.dense);
+ const b=document.body.classList;b.toggle('bgdez',ui.bg==='d');b.toggle('bgruh',ui.bg==='r');b.toggle('bgstill',ui.bg==='s');b.toggle('noanim',ui.anim===false);b.toggle('uidense',!!ui.dense);
  b.toggle('hicon',!!ui.hc);b.toggle('fsys',ui.font==='s');b.toggle('rowhl',!!ui.rowhl);b.toggle('nonum',!!ui.nonum);b.toggle('bigcur',!!ui.cur);
  let cs=$('uiCss');if(!cs){cs=document.createElement('style');cs.id='uiCss';document.head.append(cs);}
  const hid=(Array.isArray(ui.hide)?ui.hide:[]).filter(v=>/^[a-z]+$/.test(v)&&v!=='planer');
@@ -237,7 +237,7 @@ function setDlg(tab){if(!ME)return;const u=U(ME.id),pin=NAVPIN,st=MYPREF.start||
    chk('stHc','Hoher Kontrast','hellere Texte und deutlichere Linien',ui.hc)+
    chk('stCur','Großer Mauszeiger','leichter zu finden auf großen Bildschirmen',ui.cur))}
   ${hc('🌌','Hintergrund & Effekte',ALLDEV,'#22D3EE',
-   sel('stBg','Hintergrund',[['k','Kräftige Farbverläufe (Standard)'],['d','Dezent'],['r','Ruhig – fast schwarz']],ui.bg||'k')+
+   sel('stBg','Hintergrund',[['k','🍂 Herbstallee – Blätter fallen (Standard)'],['s','🖼 Herbstallee – stehendes Bild (spart Leistung)'],['d','🌫 Herbstallee – mit hellem Schleier (ruhiger, besser lesbar)'],['r','⬜ Schlicht hell – ohne Bild (am sparsamsten)']],ui.bg||'k')+
    chk('stAnim','Animationen & Leuchten','aus = ruhiger und schneller auf schwachen PCs',ui.anim!==false))}
   ${hc('📋','Listen & Tabellen',ALLDEV,'#FBBF24',
    chk('stDense','Kompakte Listen','mehr Zeilen auf den Bildschirm',ui.dense)+

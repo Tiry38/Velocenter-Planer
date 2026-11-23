@@ -268,7 +268,8 @@ void main(){
 `;
 var VQ='attribute vec2 a;void main(){gl_Position=vec4(a,0.,1.);}';
 var cv,gl,buf,pr,U={},W=0,H=0,raf=0,t0=performance.now(),M=[.5,.5],Mt=[.5,.5],E=null,fade=0,QS=1,FT=33,FN=0,TL=0,LIT=null,PO=[-.01,.012,.03],HGK=1;
-function hgLITE(){var b=document.body;return !!(b&&b.classList.contains('noanim'))}
+/* 1.11.26: stehend auch bei ⚙ Hintergrund „stehendes Bild“ (bgstill) und „Schlicht hell“ (bgruh, Ebene ausgeblendet) */
+function hgLITE(){var b=document.body;return !!(b&&(b.classList.contains('noanim')||b.classList.contains('bgstill')||b.classList.contains('bgruh')))}
 function hgSRC(i){return ['hg-herbst.webp','hg-herbst-d.png','hg-herbst-m.png'][i]}
 function hgSh(t,s){var o=gl.createShader(t);gl.shaderSource(o,s);gl.compileShader(o);if(!gl.getShaderParameter(o,gl.COMPILE_STATUS))throw new Error(gl.getShaderInfoLog(o));return o}
 function hgProg(fs){var p=gl.createProgram();gl.attachShader(p,hgSh(gl.VERTEX_SHADER,VQ));gl.attachShader(p,hgSh(gl.FRAGMENT_SHADER,fs));gl.bindAttribLocation(p,0,'a');gl.linkProgram(p);
