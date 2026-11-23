@@ -2891,7 +2891,7 @@ void main(){
  gl_FragColor=vec4(mix(vec3(.914,.922,.933),col,uFade),1.);}
 `;
 var VQ='attribute vec2 a;void main(){gl_Position=vec4(a,0.,1.);}';
-var cv,gl,buf,pr,U={},W=0,H=0,raf=0,t0=performance.now(),M=[.5,.5],Mt=[.5,.5],E=null,fade=0,QS=1,FT=33,FN=0,TL=0,LIT=null,PO=[-.01,.012,.03];
+var cv,gl,buf,pr,U={},W=0,H=0,raf=0,t0=performance.now(),M=[.5,.5],Mt=[.5,.5],E=null,fade=0,QS=1,FT=33,FN=0,TL=0,LIT=null,PO=[-.01,.012,.03],HGK=1;
 function hgLITE(){var b=document.body;return !!(b&&b.classList.contains('noanim'))}
 function hgSRC(i){return ['hg-herbst.webp','hg-herbst-d.png','hg-herbst-m.png'][i]}
 function hgSh(t,s){var o=gl.createShader(t);gl.shaderSource(o,s);gl.compileShader(o);if(!gl.getShaderParameter(o,gl.COMPILE_STATUS))throw new Error(gl.getShaderInfoLog(o));return o}
@@ -2921,8 +2921,11 @@ function hgDAt(Dm,u,v){var w=Dm.w,h=Dm.h,x=Math.min(w-1,Math.max(0,u*w-.5)),y=Ma
 /* Bilder: Foto, Tiefenkarte, Maske */
 function hgLoad(){var e={},n=3,ims=[0,1,2].map(function(i){var im=new Image();im.onload=function(){if(--n===0)done()};im.onerror=hgOff;im.src=hgSRC(i);return im});
  function done(){if(!gl)return;try{e.p=hgTex(ims[0]);e.d=hgTex(ims[1]);e.e=hgTex(ims[2]);e.w=ims[0].naturalWidth;e.h=ims[0].naturalHeight;e.b=hgPre(e);try{e.dm=hgDep(ims[1])}catch(x){e.dm=null}e.ok=1;E=e;hgGo()}catch(err){hgOff()}}}
-function hgSize(){var big=innerWidth*innerHeight>1.4e6,dpr=Math.min(devicePixelRatio||1,1.25)*(big?.8:.95)*QS;
- var w=Math.max(1,Math.round(cv.clientWidth*dpr)),h=Math.max(1,Math.round(cv.clientHeight*dpr));if(w!==W||h!==H){W=cv.width=w;H=cv.height=h}}
+/* 1.11.22 (Tiry: „schwache Geräte ohne Probleme, ohne Qualitätsverlust“): nie mehr Pixel rechnen, als das Foto im sichtbaren Ausschnitt hat
+   (Foto 1400 px, sichtbar ~1240 px) – darüber nur Hochrechnen ohne Bild-Detail. Großer Bildschirm: ~35–60 % weniger Pixel je Bild. */
+function hgSize(){var big=innerWidth*innerHeight>1.4e6,dpr=Math.min(devicePixelRatio||1,1.25)*(big?.8:.95)*QS,cw=cv.clientWidth,ch=cv.clientHeight;
+ if(E&&cw&&ch){var A=cw/ch,iA=E.w/E.h,z=1.13,mx=Math.min(A>iA?1:A/iA,.9*z)/z*E.w*HGK,my=Math.min(A>iA?iA/A:1,.9*z)/z*E.h*HGK;dpr=Math.min(dpr,Math.max(mx/cw,my/ch))}
+ var w=Math.max(1,Math.round(cw*dpr)),h=Math.max(1,Math.round(ch*dpr));if(w!==W||h!==H){W=cv.width=w;H=cv.height=h}}
 /* Takt: höchstens 30 Bilder/s; Fenster verdeckt/minimiert = Pause. 1.11.20 (Tiry): läuft IMMER durch – kein Stopp ohne Eingabe (2. Bildschirm),
    keine Abschaltung nach Kernzahl (Mini-PC); langsame Geräte senkt QS die Auflösung bis 50 %. Aus nur per ⚙ „Animationen“ (noanim);
    Leistungsmodus = ein ruhendes Bild, keine Schleife */
@@ -2974,7 +2977,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 <script>
 const FB_CONFIG={apiKey:"AIzaSyC_uZPvc5rJETwlS4JbfCoTkkE4ckjtp0M",authDomain:"velocenter-planer.firebaseapp.com",projectId:"velocenter-planer",storageBucket:"velocenter-planer.firebasestorage.app",messagingSenderId:"1018330488700",appId:"1:1018330488700:web:262a4d1660353e6fde8ef9"};
 /* ================= Velocenter Werkstatt-Cockpit – Oberfläche ================= */
-const CLIENT_VERSION='1.11.21';
+const CLIENT_VERSION='1.11.22';
 const USERS=[{id:'kevin',n:'Kevin',c:'#E2232D'},{id:'stefan',n:'Stefan',c:'#F59E0B'},{id:'martina',n:'Martina',c:'#EC4899'},{id:'sascha',n:'Sascha',c:'#22D3EE'},{id:'rene',n:'René',c:'#34D399'}];
 const U=id=>USERS.find(u=>u.id===id)||{n:'',c:'#64748B',id:''};
 /* 1.10.37: Profilfarbe je Nutzer (meta/prefs[ID].col, für alle sichtbar) – Cache für den Login-Bildschirm */
