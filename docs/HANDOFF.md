@@ -5,7 +5,8 @@
 - 1.11.20: Herbstallee-Animation (`#hg`) läuft IMMER durch – Pause nur bei `document.hidden`, aus nur per ⚙ Animationen (`noanim`). Kein 90-s-Stopp, keine Kern-Abschaltung (nicht wieder einbauen).
 - Planer wird wieder von der Planer-Sitzung betreut (KI-Zentrale hat bestätigt, ändert den Planer nicht mehr).
 
-## 2. Offene Aufgabe (Tiry 23.11.)
+## 2. ERLEDIGT in 1.11.21 (23.11.) – siehe CLAUDE.md §6 Herbstallee
+(alte Aufgabe:)
 „Überprüfe alle Knöpfe etc. und mache die Animationen mit minimaler Leistung, dass PC/Handy mit wenig Leistung kein Ruckeln haben – weniger Leistung, aber keine Qualität verlieren.“
 
 ## 3. Nächster Schritt
