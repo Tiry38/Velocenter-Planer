@@ -333,7 +333,7 @@ function setDlg(tab){if(!ME)return;const u=U(ME.id),pin=NAVPIN,st=MYPREF.start||
  if($('stKick'))$('stKick').addEventListener('click',e=>{const k=e.currentTarget;if(!k.dataset.sure){k.dataset.sure=1;k.textContent='Wirklich? Nochmal klicken';return;}const t=Date.now();ls.set('vc_lin',t+1);db.doc('meta/prefs').set({[ME.id]:{kick:t}},{merge:true}).then(()=>toast('Alle anderen Geräte werden abgemeldet')).catch(fail);k.textContent='✓ erledigt';k.disabled=true;});
  if($('stUpd'))$('stUpd').addEventListener('click',async e=>{const k=e.currentTarget;k.disabled=true;try{const r=await fetch('version.txt?'+Date.now(),{cache:'no-store'});if(!r.ok)throw 0;const v=(await r.text()).trim();if(!/^\d+\.\d+\.\d+$/.test(v))throw 0;if(v&&v!==CLIENT_VERSION){toast('Update '+v+' gefunden – lädt neu …');setTimeout(()=>location.replace(location.pathname+'?v='+encodeURIComponent(v)),600);}else toast('Aktuell: Version '+CLIENT_VERSION);}catch(_){toast('Keine Verbindung – später nochmal');}k.disabled=false;});
  if($('stRel'))$('stRel').addEventListener('click',()=>location.reload());
- if($('stCache'))$('stCache').addEventListener('click',async()=>{try{if(navigator.serviceWorker){for(const r of await navigator.serviceWorker.getRegistrations())await r.unregister();}if(window.caches){for(const k of await caches.keys())await caches.delete(k);}}catch(_){}toast('Zwischenspeicher geleert – lädt neu …');setTimeout(()=>location.replace(location.pathname+'?v='+Date.now()),500);});
+ if($('stCache'))$('stCache').addEventListener('click',async()=>{try{if(navigator.serviceWorker){for(const r of await navigator.serviceWorker.getRegistrations())await r.unregister();}if(window.caches){for(const k of await caches.keys())await caches.delete(k);}}catch(_){}try{await db.terminate();await db.clearPersistence();}catch(_){}try{if(indexedDB.databases){for(const d of await indexedDB.databases())if(d.name&&/firestore/i.test(d.name))indexedDB.deleteDatabase(d.name);}}catch(_){}toast('Zwischenspeicher geleert – lädt neu …');setTimeout(()=>location.replace(location.pathname+'?v='+Date.now()),500);});
  if($('stReset'))$('stReset').addEventListener('click',e=>{const k=e.currentTarget;if(!k.dataset.sure){k.dataset.sure=1;k.textContent='Wirklich? Nochmal klicken';return;}
   const d={fs:100,bg:'k',dense:false,anim:true,hc:false,font:'o',cur:false,rowhl:false,nonum:false,hide:[],wk:10,past:false,mine:false,vks:'',undo:6,tl:'n',snd:false,ntf:false,ntfV:false};
   MYPREF.ui=d;uiApply(d);navMini(true);db.doc('meta/prefs').set({[ME.id]:{ui:d}},{merge:true}).then(()=>{toast('Auf Standard zurückgesetzt');setDlg('u');}).catch(fail);});
@@ -454,6 +454,16 @@ function uiNotify(k,snap){const ui=MYPREF.ui||{};if(!(ui.snd||ui.ntf)||!ME)retur
  const add=snap.docChanges().filter(c=>c.type==='added').map(c=>c.doc.data()||{}).filter(d=>d.tsVon&&d.tsVon!==ME.id);if(!add.length)return;
  const t=Date.now();if(t-NOTE_T<4000)return;NOTE_T=t;if(ui.snd)uiBeep();
  if(ui.ntf&&document.hidden&&window.Notification&&Notification.permission==='granted'){const d=add[0],who=U(d.tsVon).n||'Jemand',txt=String(d.text||d.artikel||d.kunde||d.modell||'').slice(0,120);try{new Notification(`${map[k]}: neu von ${who}`,{body:(txt||'Neuer Eintrag')+(add.length>1?` (+${add.length-1} weitere)`:''),tag:'vc-'+k,silent:!!ui.snd});}catch(_){}}}
+// 1.11.23 (Tiry: „auf meinem PC keine Kunden, am anderen schon“): Lesefehler der Kunden-Docs nicht mehr still schlucken –
+// Ersatz-Abfrage direkt beim Server (am Zwischenspeicher vorbei) + Meldung mit Fehlercode; KDERR zeigt den Grund in der Kundenliste.
+let KDERR='',kdErrT=0;
+function kdLoadErr(y,e,ok){const c=(e&&(e.code||e.message))||'unbekannt';try{console.warn('kd_'+y,c);}catch(_){}
+ db.doc('meta/kd_'+y).get({source:'server'}).then(d=>{ok(d);}).catch(e2=>{KDERR=String((e2&&(e2.code||e2.message))||c);kdDirty=true;scheduleRender();
+  if(Date.now()-kdErrT>60000){kdErrT=Date.now();toast('Kunden konnten nicht geladen werden ('+KDERR+') – ⚙ → Gerät & Hilfe → „Zwischenspeicher leeren“');}});}
+function kdWatch(){if(!(ME&&ME.adm))return;if(Object.keys(KD).some(y=>KD[y]&&Object.keys(KD[y]).length))return;
+ const ys=[];for(let y=1995;y<=new Date().getFullYear()+1;y++)ys.push(String(y));ys.push('x');
+ Promise.all(ys.map(y=>db.doc('meta/kd_'+y).get({source:'server'}).then(d=>{if(d.exists){KD[y]=d.data().items||{};KDERR='';}}).catch(e=>{KDERR=String((e&&(e.code||e.message))||'Fehler');})))
+  .then(()=>{kdDirty=true;scheduleRender();});}
 function stopLive(){BK_IMPOK=false;unsubs.forEach(u=>{try{u();}catch(_){}});unsubs=[];}
 function startLive(){stopLive();const from=iso(new Date(Date.now()-35*864e5));
  listen('P',x=>P=x,db.collection('planer').where('datum','>=',from));
@@ -461,11 +471,12 @@ function startLive(){stopLive();const from=iso(new Date(Date.now()-35*864e5));
  listen('L',x=>{L=x.map(o=>Object.assign({},o,{k:o.k||o.id}));fnUpd();setTimeout(leasRename,0);if(!x.length)seedLeasing();else recLeasing().then(rewSeed).then(finSeed);});
  listen('I',x=>{I={};x.forEach(o=>I[o.id]=o.wert);});
  if(ME&&ME.adm)unsubs.push(db.doc('tresor/pw').onSnapshot(d=>{if(KEY&&NOTES&&d.exists&&d.data().ct&&(d.data().sid?d.data().sid!==TABID:d.data().tsVon!==ME.id)&&!document.querySelector('#nGrid [contenteditable]:focus'))open_(KEY,d.data()).then(x=>{if(!Array.isArray(x)){NOTES=x.notes||[];PWGRID=x.grid||PWGRID;rn();}}).catch(()=>{});},()=>{}));
- if(ME&&ME.adm)for(let y=1995;y<=new Date().getFullYear()+1;y++)unsubs.push(db.doc('meta/kd_'+y).onSnapshot(d=>{KD[y]=(d.exists&&d.data().items)||{};kdDirty=true;scheduleRender();if(KDEIN.length)kdeinRun();else kdeMailFix();},()=>{}));
+ if(ME&&ME.adm)for(let y=1995;y<=new Date().getFullYear()+1;y++){const kOk=d=>{KD[y]=(d.exists&&d.data().items)||{};if(d.exists)KDERR='';kdDirty=true;scheduleRender();if(KDEIN.length)kdeinRun();else kdeMailFix();};unsubs.push(db.doc('meta/kd_'+y).onSnapshot(kOk,e=>kdLoadErr(y,e,kOk)));}
+ if(ME&&ME.adm){const t0=setTimeout(kdWatch,20000);unsubs.push(()=>clearTimeout(t0));}
  if(ME&&ME.adm)unsubs.push(db.collection('kdein').onSnapshot(q=>{KDEIN=q.docs.map(d=>Object.assign({},d.data(),{id:d.id}));kdeinRun();},()=>{}));
  if(ME&&ME.adm){unsubs.push(db.doc('meta/mailauto').onSnapshot(d=>{MAU=d.exists?(d.data()||{}):{};mauBadge();},()=>{}));mauStart();}
  if(ME&&ME.adm)unsubs.push(db.doc('meta/kd_trash').onSnapshot(d=>{const it=(d.exists&&d.data().items)||{},o={};for(const k in it)if(it[k])o[k]=it[k];KDT=o;kdDirty=true;scheduleRender();kdBinPrune();},()=>{}));
- if(ME&&ME.adm)unsubs.push(db.doc('meta/kd_x').onSnapshot(d=>{KD.x=(d.exists&&d.data().items)||{};kdDirty=true;scheduleRender();},()=>{}));
+ if(ME&&ME.adm){const kOk=d=>{KD.x=(d.exists&&d.data().items)||{};if(d.exists)KDERR='';kdDirty=true;scheduleRender();};unsubs.push(db.doc('meta/kd_x').onSnapshot(kOk,e=>kdLoadErr('x',e,kOk)));}
  unsubs.push(db.doc('meta/prefs').onSnapshot(d=>{PREFALL=d.exists?d.data():{};const mp=ME&&PREFALL[ME.id];if(mp&&mp.kick&&+mp.kick>+ls.get('vc_lin',0)){ls.set('vc_lin',Date.now());toast('Ein Admin hat dich auf allen Geräten abgemeldet');$('switchUser').click();return;}if(ucolApply(PREFALL))renderAll();if(document.querySelector('#dlgBox .umgrid'))umRefresh();},()=>{}));
  unsubs.push(db.doc('meta/layout').onSnapshot(d=>{const x=d.exists?d.data():{},j=JSON.stringify(x);if(j===LAYJ)return;LAYJ=j;LAYALL=x;layPlaner();layRefresh();},()=>{}));
  unsubs.push(db.doc('meta/import').onSnapshot(d=>{IMPX=d.exists?d.data():{};if(!BK_IMPOK){BK_IMPOK=true;setTimeout(bkRemind,6000);}KDIMP=!!(d.exists&&d.data().kunden);if($('kdImp'))$('kdImp').hidden=!(ME&&ME.adm)||KDIMP;},()=>{}));
@@ -1308,7 +1319,7 @@ function rk(){const g=$('kdGrid');if(!g)return;kdAngMig();const all=kdAll();{con
  {const nb=Object.keys(KDT).length;$('kdBin').hidden=!nb;$('kdBinN').textContent=nb;}mauBadge();
  const cols=kdCols();kdTpl();
  const it=[];let h=`<div class="hd kdh kgh" style="--hc:${KDRB[0]}"></div>`;it.push({k:'h0',h});cols.forEach((c,i)=>it.push({k:'h'+(i+1),h:`<div class="hd kdh${c.k==='kunde'?' kl':''}${kdF[c.k]?' kfon':''}" draggable="true" data-kc="${c.k}" title="Klick = filtern · Ziehen = Spalte verschieben · rechter Rand = Breite" style="--hc:${KDRB[i%KDRB.length]}">${c.n||'·'}<i class="kfi">${kdF[c.k]?'▼':'▾'}</i><span class="kres" data-kres="${c.k}" title="Ziehen = Breite ändern · Doppelklick = Standard"></span></div>`}));it.push({k:'hz',h:`<div class="hd kdh" style="--hc:${KDRB[KDRB.length-1]}"></div>`});h=it.map(x=>x.h).join('');let yr=null;const cnt={};list.forEach(r=>{const y=kdYear(r);cnt[y]=(cnt[y]||0)+1;});
- if(!all.length){kdPopClose();g.innerHTML=h+`<div class="kdempty">${ME&&ME.adm?'Noch keine Kunden – oben „📥 Kunden aus Sheet übernehmen“ und die .xlsx des Sheets wählen.':'Noch keine Kunden übernommen.'}</div>`;return;}
+ if(!all.length){kdPopClose();g.innerHTML=h+`<div class="kdempty">${ME&&ME.adm?(KDERR?'⚠ Kunden konnten auf diesem Gerät nicht geladen werden ('+esc(KDERR)+'). ⚙ Einstellungen → Gerät & Hilfe → „🧹 Zwischenspeicher leeren“.':'Noch keine Kunden – oben „📥 Kunden aus Sheet übernehmen“ und die .xlsx des Sheets wählen.'):'Noch keine Kunden übernommen.'}</div>`;return;}
  for(const r of list){const y=kdYear(r);if(y!==yr){yr=y;it.push({k:'y'+y,h:`<div class="kw kdy">${y}<span>${cnt[y]} ${cnt[y]===1?'Verkauf':'Verkäufe'}${q||fk.length?' (Treffer)':''}</span></div>`});}
   const id=esc(r.id),ky=esc(r.y);
   const pr=Array.isArray(r.pr)&&r.pr.length?r.pr:null;
