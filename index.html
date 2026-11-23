@@ -1550,6 +1550,40 @@ b.lsn{font-weight:800;color:#fff;white-space:nowrap}
 
 /* 1.11.17: lange Wörter/Adressen umbrechen (Handy) */
 .lsa,.lsq,.lspk{min-width:0;overflow-wrap:anywhere;hyphens:auto}
+/* 1.11.24 (Tiry: Einstellungen „komplett anders, verständlich, sauber, modern“): Seitenleiste links, je Bereich eine Seite rechts, Suche, Schalter statt Häkchen */
+.dlg-box.wide.stwide{width:min(1180px,96vw);height:min(860px,92vh);max-height:92vh;overflow:hidden;padding:0;display:flex}
+.stlay{display:grid;grid-template-columns:250px 1fr;width:100%;height:100%;min-height:0}
+.stside{display:flex;flex-direction:column;gap:12px;padding:20px 14px;border-right:1px solid rgba(255,255,255,.09);background:rgba(255,255,255,.03);min-height:0;overflow:auto}
+.stside .sthd{display:flex;flex-direction:column;align-items:stretch;gap:12px;margin:0}.stside .sthd h3{padding:0 6px}
+#stQ{width:100%;box-sizing:border-box;padding:9px 12px;border-radius:11px;font:600 13px "Outfit",sans-serif}
+.stnav{display:flex;flex-direction:column;gap:2px}
+.stnh{font:800 10.5px "Outfit",sans-serif;letter-spacing:.12em;text-transform:uppercase;color:#64748B;padding:12px 10px 5px}
+.stnav button{all:unset;box-sizing:border-box;display:flex;align-items:center;gap:11px;padding:9px 10px;border-radius:11px;cursor:pointer;font:600 14px "Outfit",sans-serif;color:#CBD5E1;transition:background .15s,color .15s}
+.stnav button i{font-style:normal;display:grid;place-items:center;width:30px;height:30px;border-radius:9px;background:rgba(255,255,255,.06);font-size:16px;flex:none}
+.stnav button:hover{background:rgba(255,255,255,.06);color:#fff}
+.stnav button.on{background:linear-gradient(90deg,rgba(226,35,45,.22),rgba(226,35,45,.06));color:#fff;box-shadow:inset 3px 0 0 #E2232D}
+.stnav button.on i{background:rgba(226,35,45,.25)}
+.stmain{display:flex;flex-direction:column;min-width:0;min-height:0}
+.stmain .stbody{flex:1;min-height:0;overflow:auto;padding:22px 26px 10px}
+.stmain>.acts{padding:12px 26px 16px;border-top:1px solid rgba(255,255,255,.08)}
+.stbody .stgrp{display:none;margin:0}.stbody .stgrp.on{display:block}
+.stwide.stsrch .stgrp{display:none}.stwide.stsrch .stgrp.hit{display:block;margin-bottom:22px}
+.stsh{display:flex;align-items:center;gap:14px;margin:0 0 18px}
+.stshi{display:grid;place-items:center;width:48px;height:48px;border-radius:14px;font-size:24px;background:rgba(226,35,45,.16);border:1px solid rgba(226,35,45,.35);flex:none}
+.stsh h4{margin:0!important;font:800 22px "Outfit",sans-serif!important;letter-spacing:0!important;text-transform:none!important;color:#fff!important}
+.stsh p{margin:3px 0 0;font:500 13.5px "Outfit",sans-serif;color:#94A3B8}
+.stnone{padding:40px;text-align:center;color:#94A3B8;font:600 14px "Outfit",sans-serif}
+.stbody .stgrid{grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:14px}
+.stbody .stc{border-radius:16px;padding:16px 18px}
+/* Schalter statt Häkchen */
+.stbody .stchk{align-items:center;padding:9px 0;border-top:1px solid rgba(255,255,255,.06)}.stbody .stchk:first-of-type{border-top:0}
+.stbody .stchk input{appearance:none;-webkit-appearance:none;position:relative;width:40px;height:23px;border-radius:12px;background:rgba(148,163,184,.35);cursor:pointer;transition:background .2s;margin:0;order:2;margin-left:auto}
+.stbody .stchk input::after{content:"";position:absolute;top:3px;left:3px;width:17px;height:17px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.35);transition:transform .2s}
+.stbody .stchk input:checked{background:#E2232D}.stbody .stchk input:checked::after{transform:translateX(17px)}
+.stbody .setl{display:flex;flex-direction:column;gap:5px;font:700 12px "Outfit",sans-serif;color:#94A3B8}
+.stbody .setl select{padding:9px 10px;border-radius:10px;font:600 13.5px "Outfit",sans-serif}
+@media(max-width:760px){.stlay{grid-template-columns:1fr;grid-template-rows:auto 1fr}.stside{border-right:0;border-bottom:1px solid rgba(255,255,255,.09);padding:12px}.stnav{flex-direction:row;overflow-x:auto}.stnh{display:none}.stnav button span{white-space:nowrap}.stmain .stbody{padding:14px}.stbody .stgrid{grid-template-columns:1fr}}
+.stwide.stsrch .stnav button.on{background:none;box-shadow:none}
 
 [hidden]{display:none!important}
 #sTab td.b{font-weight:700}#sTab .pwm.ed{outline:none;padding:2px 6px;border-radius:6px;font-family:var(--mono)}#sTab td{vertical-align:top}
@@ -2278,6 +2312,23 @@ b.lsn{color:#1F1F1F}
 .lspr span{color:#1F1F1F}
 .lsq{color:#545860}
 .lsa{color:#252728}
+.stside{border-right:1px solid rgba(27,30,37,0.111);background:rgba(27,30,37,0.027)}
+.stnh{color:#8C94A0}
+.stnav button{color:#3B3F44}
+.stnav button i{background:rgba(27,30,37,0.054)}
+.stnav button:hover{background:rgba(27,30,37,0.054);color:#1F1F1F}
+.stnav button.on{background:linear-gradient(90deg,rgba(226,35,45,0.176),rgba(226,35,45,0.048));color:#1F1F1F;box-shadow:inset 3px 0 0 rgba(226,35,45,0.38)}
+.stnav button.on i{background:rgba(226,35,45,0.2)}
+.stmain>.acts{border-top:1px solid rgba(27,30,37,0.102)}
+.stshi{background:rgba(226,35,45,0.128);border:1px solid rgba(226,35,45,0.35)}
+.stsh h4{color:#1F1F1F!important}
+.stsh p{color:#616872}
+.stnone{color:#616872}
+.stbody .stchk{border-top:1px solid rgba(27,30,37,0.084)}
+.stbody .stchk input{background:rgba(27,30,37,0.315)}
+.stbody .stchk input::after{background:rgba(27,30,37,0.9);box-shadow:0 1px 3px rgba(40,44,60,0.112)}
+.stbody .setl{color:#616872}
+@media(max-width:760px){.stside{border-bottom:1px solid rgba(27,30,37,0.111)}}
 #sTab td.ce,#ltab td.ce{border-bottom:1px dashed #CED2D7}
 #sTab td.ce:hover,#ltab td.tg:hover,#ltab td.ce:hover{background:rgba(27,30,37,0.036)}
 /* theme_hp.css – Velocenter Planer im Design der Homepage velo-center.de (Design A, 1.10.80, Tiry 15.11.2026).
@@ -2621,6 +2672,10 @@ html:is(.hg3,.hgS) section.view :is(label.search,.btn:not(.red):not([aria-presse
 html:is(.hg3,.hgS) section.view label.search input{background:transparent!important;border-color:transparent!important}
 /* Navi = Nebelschleier (Tiry 22.11.2026): Wald läuft durch, links dichter, nach rechts weich auslaufend, keine Kante/kein Schatten – wie links auf der Homepage. Gleich wie KI-Zentrale. */
 html:root nav{background:radial-gradient(140% 22% at 0% 0%,rgba(255,255,255,.45),rgba(255,255,255,0) 70%),radial-gradient(120% 20% at 0% 55%,rgba(255,255,255,.22),transparent 70%),radial-gradient(120% 22% at 0% 100%,rgba(255,255,255,.30),transparent 70%),linear-gradient(90deg,rgba(241,245,250,.74) 0%,rgba(239,243,248,.62) 55%,rgba(237,241,247,.44) 86%,rgba(236,240,246,.16) 100%)!important;border:0!important;box-shadow:none!important}
+/* 1.11.24: Einstellungs-Schalter (hier, weil theme_xform helle Farben aus sections.css verdunkelt) */
+.stbody .stchk input{background:#CBD2DC!important;box-shadow:inset 0 1px 2px rgba(0,0,0,.15)}
+.stbody .stchk input::after{background:#fff!important;box-shadow:0 1px 3px rgba(0,0,0,.3)!important}
+.stbody .stchk input:checked{background:linear-gradient(90deg,#C8102E,#E2232D)!important}
 </style></head><body>
 <div class="app">
 <nav aria-label="Bereiche">
@@ -2977,7 +3032,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 <script>
 const FB_CONFIG={apiKey:"AIzaSyC_uZPvc5rJETwlS4JbfCoTkkE4ckjtp0M",authDomain:"velocenter-planer.firebaseapp.com",projectId:"velocenter-planer",storageBucket:"velocenter-planer.firebasestorage.app",messagingSenderId:"1018330488700",appId:"1:1018330488700:web:262a4d1660353e6fde8ef9"};
 /* ================= Velocenter Werkstatt-Cockpit – Oberfläche ================= */
-const CLIENT_VERSION='1.11.23';
+const CLIENT_VERSION='1.11.24';
 const USERS=[{id:'kevin',n:'Kevin',c:'#E2232D'},{id:'stefan',n:'Stefan',c:'#F59E0B'},{id:'martina',n:'Martina',c:'#EC4899'},{id:'sascha',n:'Sascha',c:'#22D3EE'},{id:'rene',n:'René',c:'#34D399'}];
 const U=id=>USERS.find(u=>u.id===id)||{n:'',c:'#64748B',id:''};
 /* 1.10.37: Profilfarbe je Nutzer (meta/prefs[ID].col, für alle sichtbar) – Cache für den Login-Bildschirm */
@@ -3182,7 +3237,7 @@ function umBind(box){box.addEventListener('click',e=>{const k=e.target.closest('
   if(e.target.closest('[data-umnew]')){dlgClose();$('meSet').click();}});
  box.addEventListener('change',e=>{const c=e.target.closest('[data-umcol]');if(!c)return;const id=c.dataset.umcol,v=c.value.toUpperCase();if(id===ME.id)MYPREF.col=v;db.doc('meta/prefs').set({[id]:{col:v}},{merge:true}).then(()=>toast('Farbe von '+U(id).n+' gespeichert')).catch(fail);});}
 function setDlg(tab){if(!ME)return;const u=U(ME.id),pin=NAVPIN,st=MYPREF.start||'last',adm=!!ME.adm,ui=MYPREF.ui||{};
- tab=adm?(tab||ls.get('vc_settab','u')):'u';if(tab!=='a')tab='u';
+ tab=adm&&tab==='a'?'a':'';
  const tabs=[...document.querySelectorAll('.navbtn[data-v]')].filter(b=>!b.hidden).map(b=>[b.dataset.v,(b.querySelector('.lbl b')||b.querySelector('.lbl')||b).childNodes[0].textContent.trim()]);
  const nK=adm?kdAll().length:0,dd=t=>t?esc(String(t).slice(0,10).split('-').reverse().join('.')):'';
  const TAG={imp:['IMPORT','#22D3EE'],exp:['EXPORT','#39F26B'],set:['EINRICHTEN','#F5B83D'],sec:['SICHERHEIT','#A78BFA'],del:['GEFAHR','#FF4D6D']};
@@ -3196,8 +3251,7 @@ function setDlg(tab){if(!ME)return;const u=U(ME.id),pin=NAVPIN,st=MYPREF.start||
   nB=B.filter(x=>mine(x.von)).length,nBo=B.filter(x=>mine(x.von)&&x.status!=='fertig').length,nT=T.filter(x=>mine(x.von)).length;
  const lin=+ls.get('vc_lin',0),linS=lin?new Date(lin).toLocaleString('de-DE',{day:'2-digit',month:'2-digit',year:'2-digit',hour:'2-digit',minute:'2-digit'}):'–';
  const ntfP=window.Notification?Notification.permission:'none';
- const U1=`<div class="stjump">${[['stg1','👤 Konto'],['stg2','✨ Aussehen'],['stg3','🧭 Navi & Start'],['stg4','📅 Planer & Verkauf'],['stg5','🔔 Meldungen'],['stg6','🖥 Gerät & Hilfe']].map(([i,n])=>`<button type="button" data-jump="${i}">${n}</button>`).join('')}</div>
- <div class="stgrp" id="stg1"><h4>👤 Konto & Profil</h4><div class="stgrid">
+ const U1=`<div class="stgrp" id="stg1" data-sg="u" data-si="👤" data-sn="Profil & Konto"><div class="stsh"><span class="stshi">👤</span><div><h4>Profil & Konto</h4><p>Anmeldung, Passwort, deine Farbe und was du schon alles eingetragen hast.</p></div></div><div class="stgrid">
   <div class="stc" style="--tc:${u.c}"><div class="stch"><span class="av big" style="--uc:${u.c}">${esc(u.n[0])}</span><div><b>${esc(u.n)}</b><em>${adm?'ADMIN – DARF ALLES':'TEAM'}</em></div></div><p class="stp">Angemeldet auf diesem Gerät seit <b>${linS}</b>. Die Anmeldung bleibt gespeichert, bis du dich abmeldest.</p><div class="stcb"><button type="button" class="btn" id="stPw">🔑 Passwort ändern</button><button type="button" class="btn" id="stOut">⇄ Abmelden</button><button type="button" class="btn" id="stKick" title="Meldet dich auf allen anderen PCs/Handys ab – dieses Gerät bleibt angemeldet">📵 Andere Geräte abmelden</button></div></div>
   <div class="stc" style="--tc:${u.c}"><div class="stch"><span class="stic">🎨</span><div><b>Profilfarbe</b><em>SIEHT JEDER – ÜBERALL</em></div></div><p class="stp">Farbe deines Kürzel-Kreises „${esc(u.n[0])}“ – an jedem Eintrag, jeder Bestellung, jedem Status-Knopf und unten in der Navi.</p>
    <div class="stsw">${UCOLS.map(c=>`<button type="button" data-col="${c}" class="${c.toLowerCase()===u.c.toLowerCase()?'on':''}" style="--sw:${c}" title="${c}"></button>`).join('')}<label class="stswc" title="Eigene Farbe">＋<input type="color" id="stColX" value="${u.c}"></label></div>
@@ -3209,7 +3263,7 @@ function setDlg(tab){if(!ME)return;const u=U(ME.id),pin=NAVPIN,st=MYPREF.start||
    <div><b>${nB}</b><span>Bestellungen angelegt<br><i>davon offen ${nBo}</i></span></div>
    <div><b>${nT}</b><span>Trinkgeld-Einträge<br><i>von dir erfasst</i></span></div></div><p class="hint">Planer: geladen sind die letzten 5 Wochen und alles danach.</p>`)}
  </div></div>
- <div class="stgrp" id="stg2"><h4>✨ Aussehen</h4><div class="stgrid">
+ <div class="stgrp" id="stg2" data-sg="u" data-si="✨" data-sn="Aussehen"><div class="stsh"><span class="stshi">✨</span><div><h4>Aussehen</h4><p>Schrift, Kontrast, Hintergrund und Listen – so, wie es für dich am besten lesbar ist.</p></div></div><div class="stgrid">
   ${hc('🔠','Schrift & Größe',ALLDEV,'#A78BFA',
    sel('stFs','Schriftgröße / Zoom',[[85,'Sehr klein (85 %)'],[90,'Klein (90 %)'],[100,'Normal (100 %)'],[110,'Groß (110 %)'],[120,'Größer (120 %)'],[135,'Sehr groß (135 %)']],+(ui.fs||100))+
    sel('stFont','Schriftart',[['o','Outfit – rund (Standard)'],['s','Windows-Schrift (Segoe UI) – schlicht']],ui.font||'o')+
@@ -3222,14 +3276,14 @@ function setDlg(tab){if(!ME)return;const u=U(ME.id),pin=NAVPIN,st=MYPREF.start||
    chk('stDense','Kompakte Listen','mehr Zeilen auf den Bildschirm',ui.dense)+
    chk('stRowhl','Zeile unter der Maus hervorheben','hilft beim Lesen breiter Tabellen (Verkauf, Kunden, Lieferanten)',ui.rowhl))}
  </div></div>
- <div class="stgrp" id="stg3"><h4>🧭 Navi & Start</h4><div class="stgrid">
+ <div class="stgrp" id="stg3" data-sg="u" data-si="🧭" data-sn="Navi & Start"><div class="stsh"><span class="stshi">🧭</span><div><h4>Navi & Start</h4><p>Womit der Planer startet und welche Reiter du in der Navi siehst.</p></div></div><div class="stgrid">
   ${hc('🖥','Start',ALLDEV,'#22D3EE',
    sel('stNav','Navi beim Start',[['0','eingeklappt'],['1','ausgeklappt']],pin?'1':'0')+
    sel('stStart','Startseite nach dem Anmelden',[['last','zuletzt geöffneter Reiter'],...tabs],st)+
    chk('stNum','Zahlen-Schilder in der Navi','z. B. offene Räder, Bestellungen',!ui.nonum))}
   ${hc('👁','Reiter ausblenden','NUR FÜR DICH – ANDERE SEHEN ALLES','#FB923C',`<p class="stp">Was du nie brauchst, verschwindet aus deiner Navi. Daten bleiben unberührt, jederzeit wieder einblendbar.</p><div class="sthide">${tabs.filter(([v])=>v!=='planer').map(([v,n])=>`<label class="stchk"><input type="checkbox" data-hide="${v}"${hid.includes(v)?'':' checked'}> <span>${esc(n)}</span></label>`).join('')}</div>`)}
  </div></div>
- <div class="stgrp" id="stg4"><h4>📅 Planer & Verkauf</h4><div class="stgrid">
+ <div class="stgrp" id="stg4" data-sg="u" data-si="📅" data-sn="Planer & Verkauf"><div class="stsh"><span class="stshi">📅</span><div><h4>Planer & Verkauf</h4><p>Wie viele Wochen der Planer zeigt und wie der Verkauf sortiert ist.</p></div></div><div class="stgrid">
   ${hc('📅','Planer',ALLDEV,'#FF4D6D',
    sel('stWk','Wochen im Voraus anzeigen',[[4,'4 Wochen'],[6,'6 Wochen'],[10,'10 Wochen (Standard)'],[16,'16 Wochen'],[26,'26 Wochen (halbes Jahr)']],[4,6,10,16,26].includes(+ui.wk)?+ui.wk:10)+
    chk('stPast','Vergangene 4 Wochen immer mitzeigen','sonst startet der Planer bei heute',ui.past)+
@@ -3237,7 +3291,7 @@ function setDlg(tab){if(!ME)return;const u=U(ME.id),pin=NAVPIN,st=MYPREF.start||
   ${hc('🚲','Verkauf',ALLDEV,'#FBBF24',
    sel('stVks','Sortierung beim Anmelden',[['','wie zuletzt auf diesem Gerät'],...VKSL],ui.vks||'')+'<p class="hint">Im Tabellenkopf kannst du jederzeit anders sortieren.</p>')}
  </div></div>
- <div class="stgrp" id="stg5"><h4>🔔 Meldungen & Rückgängig</h4><div class="stgrid">
+ <div class="stgrp" id="stg5" data-sg="u" data-si="🔔" data-sn="Meldungen"><div class="stsh"><span class="stshi">🔔</span><div><h4>Meldungen</h4><p>Rückgängig-Zeit, Meldungsdauer, Ton und Windows-Meldungen bei neuen Einträgen.</p></div></div><div class="stgrid">
   ${hc('⏱','Meldungen unten rechts',ALLDEV,'#39F26B',
    sel('stUndo','Zeit für „Rückgängig“ nach dem Löschen',[[6,'6 Sekunden (Standard)'],[10,'10 Sekunden'],[15,'15 Sekunden'],[20,'20 Sekunden']],[6,10,15,20].includes(+ui.undo)?+ui.undo:6)+
    sel('stTl','Andere Meldungen („Gespeichert“ …)',[['k','kurz (1,5 s)'],['n','normal (2,2 s)'],['l','lang (4,5 s)']],ui.tl||'n'))}
@@ -3247,7 +3301,7 @@ function setDlg(tab){if(!ME)return;const u=U(ME.id),pin=NAVPIN,st=MYPREF.start||
    chk('stNtfV','auch neue verkaufte Räder melden','',ui.ntfV)+
    `<div class="stcb">${ui.ntf&&ntfP!=='granted'?`<span class="err">${ntfP==='denied'?'Im Browser blockiert – Schloss-Symbol links neben der Adresse → Benachrichtigungen → Zulassen':'Noch nicht erlaubt'}</span>`:''}<button type="button" class="btn" id="stTest">▶ Testen</button></div>`)}
  </div></div>
- <div class="stgrp" id="stg6"><h4>🖥 Dieses Gerät & Hilfe</h4><div class="stgrid">
+ <div class="stgrp" id="stg6" data-sg="u" data-si="🖥" data-sn="Gerät & Hilfe"><div class="stsh"><span class="stshi">🖥</span><div><h4>Gerät & Hilfe</h4><p>Version, Updates, Neu laden, Zwischenspeicher und Tastenkürzel.</p></div></div><div class="stgrid">
   ${hc('💻','Dieses Gerät','NUR DIESES GERÄT','#60A5FA',`<div class="stinfo"><span>Gerät</span><b>${esc(devName())}</b><span>Version</span><b>${esc(CLIENT_VERSION)}</b><span>Verbindung</span><b>${navigator.onLine?'🟢 online':'🔴 offline'}</b><span>Angemeldet seit</span><b>${linS}</b></div>
    <p class="hint">Updates kommen automatisch (alle 30 s geprüft). Hängt etwas, hilft „Neu laden“, bei hartnäckigen Fehlern „Zwischenspeicher leeren“ – Daten gehen dabei nicht verloren.</p>
    <div class="stcb"><button type="button" class="btn" id="stUpd">⟳ Auf Update prüfen</button><button type="button" class="btn" id="stRel">↻ Neu laden</button><button type="button" class="btn" id="stCache">🧹 Zwischenspeicher leeren</button></div>`)}
@@ -3262,33 +3316,39 @@ function setDlg(tab){if(!ME)return;const u=U(ME.id),pin=NAVPIN,st=MYPREF.start||
    <span><kbd>Strg</kbd> + <kbd>+</kbd>/<kbd>−</kbd></span><i>Browser-Zoom (besser: Schriftgröße oben)</i></div>`)}
   ${hc('↺','Zurücksetzen',ALLDEV,'#FF4D6D',`<p class="stp">Setzt Aussehen, Navi-Reiter, Planer-, Verkauf- und Meldungs-Einstellungen auf Standard. Passwort, Profilfarbe und Startseite bleiben.</p><div class="stcb"><button type="button" class="btn" id="stReset">↺ Alles auf Standard</button></div>`)}
  </div></div>`;
- const A1=adm?`<div class="stgrp"><h4>👥 Nutzerverwaltung</h4><div class="stgrid umgrid">${umCards()}</div><p class="hint umnote">Neue Person anlegen oder Rolle (Admin ⇄ Team) ändern geht nur über eine Programmänderung + die Firebase-Regeln – einfach Claude Bescheid sagen.</p></div>
- <div class="stgrp"><h4>🏷 Marken & Lieferanten</h4><div class="stgrid">
+ const A1=adm?`<div class="stgrp" id="sta1" data-sg="a" data-si="👥" data-sn="Team & Konten"><div class="stsh"><span class="stshi">👥</span><div><h4>Team & Konten</h4><p>Wer darf was, wer war zuletzt aktiv – Farben, Abmelden und Passwort-Hilfe je Person.</p></div></div><div class="stgrid umgrid">${umCards()}</div><p class="hint umnote">Neue Person anlegen oder Rolle (Admin ⇄ Team) ändern geht nur über eine Programmänderung + die Firebase-Regeln – einfach Claude Bescheid sagen.</p></div>
+ <div class="stgrp" id="sta2" data-sg="a" data-si="🏷" data-sn="Marken & Lieferanten"><div class="stsh"><span class="stshi">🏷</span><div><h4>Marken & Lieferanten</h4><p>Markenlogos verwalten und Lieferanten-Namen exportieren.</p></div></div><div class="stgrid">
   <div class="stc" style="--tc:#FB923C"><div class="stch"><span class="stic">🏷</span><div><b>Markenlogos</b><em>GILT FÜR ALLE</em></div></div><p class="stp">Logos für Marken hochladen (werden automatisch freigestellt, zugeschnitten und geschärft), eigene Marken mit Modellwörtern anlegen, doppelte Marken zusammenführen.</p><div class="stcb"><button type="button" class="btn" id="stBr">Markenlogos verwalten</button></div></div>
   ${card('📋','Lieferanten-Namen kopieren','exp',[['Wofür','Liste aller Lieferanten-Namen, z. B. um Kontaktdaten recherchieren zu lassen.'],['Du brauchst','nichts – kommt direkt aus dem Reiter Lieferanten.'],['Was passiert','Alle Namen A–Z (nur Namen, <b>keine</b> Kunden-Nr., keine Logins) landen in der Zwischenablage → mit Strg+V einfügen. Geht das nicht, kommt eine Textdatei in den Download-Ordner.']],'<button type="button" class="btn" data-sx="sExp">📋 Namen kopieren</button>',(typeof S!=='undefined'?S.length:0)+' Lieferanten')}
  </div></div>
- <div class="stgrp"><h4>📥 Importe</h4><div class="stgrid">
+ <div class="stgrp" id="sta3" data-sg="a" data-si="📥" data-sn="Importe"><div class="stsh"><span class="stshi">📥</span><div><h4>Importe</h4><p>Daten aus dem Google-Sheet und aus Veloport übernehmen.</p></div></div><div class="stgrid">
   ${card('📊','Kunden aus dem Sheet übernehmen','imp',[['Wofür','Holt die Verkaufshistorie (seit 1995) aus dem Google-Sheet in den Reiter <b>Kunden</b> – Grundlage für Kundenliste, E-Mails und 📊 Auswertung.'],['Du brauchst','Die Excel-Datei (.xlsx) des Google-Sheets „Abhol-Werkstattplaner“ mit dem Reiter <b>„Kunden“</b>.'],['So geht’s','Sheet in Chrome öffnen → <b>Datei → Herunterladen → Microsoft Excel (.xlsx)</b> → hier die Datei wählen.'],['Was passiert','Nur der Reiter „Kunden“ wird gelesen, das Sheet bleibt unverändert. <b>Achtung:</b> je Jahr wird der komplette Bestand in der App ersetzt. <b>Angeschrieben, E-Mail, WhatsApp-Markierung und Anrede bleiben erhalten</b> (Zuordnung über Beleg + Datum + Name, sonst Rahmen-Nr.); andere Änderungen und in der App neu angelegte Zeilen gehen in diesen Jahren verloren. Vorher 💾 Sicherung machen.']],'<button type="button" class="btn red" data-sx="kdImp">📥 Datei wählen & übernehmen</button>',KDIMP?`✓ übernommen${IMPX.kundenAm?' am '+dd(IMPX.kundenAm):''}${IMPX.kundenN?' · '+Number(IMPX.kundenN).toLocaleString('de-DE')+' Zeilen':''} · jetzt ${nK.toLocaleString('de-DE')} Kunden in der App`:'noch nicht übernommen')}
   ${card('📧','E-Mails aus Veloport zuordnen','imp',[['Wofür','Ergänzt bei den Kunden fehlende <b>E-Mail-Adressen</b> – für Inspektions-/Bewertungs-Mails direkt aus der Kundenliste.'],['Du brauchst','<b>1. Kunden-Export</b> aus Veloport (.csv, Pflicht)<br><b>2. Fahrzeuge-Export</b> aus Veloport (.csv, optional – macht die Zuordnung über die Rahmen-Nr. möglich und damit am genauesten)'],['So geht’s','Dieselben Veloport-Exporte wie für die KI-Zentrale (Ordner „Veloport-Export“). Veloport hat keine Schnittstelle – die Dateien werden in Veloport von Hand exportiert.'],['Was passiert','Zuordnung zuerst über <b>Rahmen-Nr.</b>, dann <b>Telefon/Mobil</b>, dann <b>Vor- + Nachname</b>. Nur eindeutige Treffer, nur Kunden <b>ohne</b> E-Mail – Eingetragenes bleibt. Danach Übersicht, wie viele zugeordnet wurden.']],nK?'<button type="button" class="btn red" data-sx="kdMailImp">📧 Dateien wählen & zuordnen</button>':'<span class="stno">Erst Kunden übernehmen</span>',nK?nK.toLocaleString('de-DE')+' Kunden · davon mit E-Mail: '+kdAll().filter(r=>String(r.mail||'').trim()).length.toLocaleString('de-DE'):'')}
   ${card('🔐','Passwortliste & Lieferanten-Logins','imp',[['Wofür','Holt die Passwortliste (Reiter „PW“) und die Lieferanten-Logins (Reiter „Lieferanten“) aus dem Google-Sheet in den verschlüsselten Tresor.'],['Du brauchst','Die Tresor-PIN und die Excel-Datei (.xlsx) des Google-Sheets „Abhol-Werkstattplaner“.'],['So geht’s','Sheet → <b>Datei → Herunterladen → Microsoft Excel (.xlsx)</b> → hier wählen → PIN eingeben.'],['Was passiert','Alles wird mit der PIN verschlüsselt gespeichert (nur Admins). Planer, Verkauf, Trinkgeld und Lieferanten sind schon übernommen und werden <b>nicht</b> doppelt angelegt.']],'<button type="button" class="btn red" data-sx="imp">🔐 Mit PIN übernehmen</button>',IMPX.tresor===true?'✓ bereits übernommen':'noch nicht übernommen')}
   ${card('🗒','Notizen aus der Passwortliste','imp',[['Wofür','Füllt die 🔒 Notizen einmalig mit den Zeilen der Passwortliste.'],['Du brauchst','Tresor-PIN; die Notizen müssen noch leer sein.'],['Was passiert','Jede Zeile wird eine Notiz (1. Spalte = Eintrag, Rest = Zusatz). Bleibt im Tresor verschlüsselt.']],'<button type="button" class="btn" data-sx="nImp">🔒 Zu den Notizen</button>','')}
  </div></div>
- <div class="stgrp"><h4>📤 Exporte & Sicherheit</h4><div class="stgrid">
+ <div class="stgrp" id="sta4" data-sg="a" data-si="💾" data-sn="Sicherung & E-Mail"><div class="stsh"><span class="stshi">💾</span><div><h4>Sicherung & E-Mail</h4><p>Sicherung herunterladen, automatische Kunden-Mail, E-Mail-Versand, Konten und Gefahrenzone.</p></div></div><div class="stgrid">
   ${card('💾','Sicherung herunterladen','exp',[['Wofür','Komplette Sicherung aller Daten – der kostenlose Firebase-Tarif macht selbst <b>keine</b> Backups. Am besten 1× pro Woche.'],['Was drin ist','Planer, Verkauf, Bestellungen, Reklamationen, Kunden, Leasing, Lieferanten, Trinkgeld, Einstellungen. Tresor/Notizen <b>nicht</b>.'],['Was passiert','Eine .json-Datei landet im Download-Ordner. <b>Enthält Kundendaten – nur auf dem Büro-PC speichern, nie verschicken.</b>']],'<button type="button" class="btn red" id="stBk">💾 Jetzt sichern</button><span class="err" id="stBkE"></span>',bkTxt()?'Letzte Sicherung: '+esc(bkTxt()):'noch keine Sicherung erfasst')}
   ${card('🤖','Automatische Kunden-Mail','set',[['Wofür','Jeder Kunde (Kauf ab 08.05.2026) bekommt <b>genau 2 Monate nach dem Kauf</b> automatisch die Inspektions-/Bewertungs-Mail, Anrede „Hallo Herr/Frau Nachname,“.'],['Was passiert','Läuft, solange der Planer bei einem Admin offen ist. Unklare Namen landen in „⚠ Anrede prüfen“ und gehen erst nach deiner Wahl raus. Nie doppelt.']],'<button type="button" class="btn red" data-sx="kdAuto">🤖 Öffnen</button>',MAU.ok?(MAU.on===false?'ausgeschaltet':'läuft'):'noch nicht freigegeben')}
   ${card('📨','E-Mail-Versand','set',[['Wofür','Mails an Kunden direkt aus der App verschicken (über EmailJS).'],['Du brauchst','Service-ID, Template-ID und Public Key aus dem EmailJS-Konto. Passwörter werden <b>nur bei EmailJS</b> eingetragen, nie hier.']],'<button type="button" class="btn" id="stMail">Einrichten</button>','')}
   ${card('🛡','Konten & Passwort-Hilfe','sec',[['Wofür','Fehlende Konten mit Startpasswort anlegen; Anleitung, wenn ein Mitarbeiter sein Passwort vergessen hat.'],['Spalten ändern','Stift „Bearbeiten“ unten in der Navi.']],'<button type="button" class="btn" id="stAdm">Konten öffnen</button>','')}
   ${card('🗑','Alle Kunden löschen','del',[['Wofür','Nur für einen kompletten Neu-Import aus dem Sheet.'],['Was passiert','Löscht <b>alle</b> Kunden für alle Nutzer (zur Bestätigung LÖSCHEN eintippen). Geht <b>nicht</b> in den Papierkorb. Das Sheet bleibt unverändert.']],nK?'<button type="button" class="btn kdclr" data-sx="kdClr">🗑 Alle löschen …</button>':'<span class="stno">keine Kunden vorhanden</span>','','stdel')}
  </div></div>`:'';
- dlg(`<div class="sthd"><h3>⚙ Einstellungen</h3>${adm?`<div class="sttabs"><button type="button" data-st="u" class="${tab==='u'?'on':''}">👤 Nutzer-Einstellungen</button><button type="button" data-st="a" class="${tab==='a'?'on':''}">🛡 Admin-Einstellungen</button></div>`:''}</div>
- <div class="stbody">${tab==='a'?A1:U1}</div>
- <div class="acts" style="justify-content:flex-end"><button type="button" class="btn red" data-close>Fertig</button></div>`);$('dlgBox').classList.add('wide','stwide');
+ dlg(`<div class="stlay"><aside class="stside"><div class="sthd"><h3>⚙ Einstellungen</h3><input type="search" id="stQ" placeholder="Einstellung suchen …" autocomplete="off"></div><div class="stnav" id="stNavL"></div></aside>
+ <div class="stmain"><div class="stbody" id="stBody">${U1}${A1}<div class="stnone" id="stNone" hidden>Nichts gefunden.</div></div>
+ <div class="acts" style="justify-content:flex-end"><button type="button" class="btn red" data-close>Fertig</button></div></div></div>`);$('dlgBox').classList.add('wide','stwide');
+ {const bx=$('dlgBox'),gs=[...bx.querySelectorAll('.stgrp[data-sn]')],nav=$('stNavL');let cur=tab==='a'?'sta1':ls.get('vc_stsec','stg1');if(!gs.some(g=>g.id===cur))cur='stg1';
+  nav.innerHTML=gs.map((g,i)=>(i===0?'<div class="stnh">Persönlich</div>':g.dataset.sg==='a'&&gs[i-1].dataset.sg!=='a'?'<div class="stnh">Verwaltung · Admin</div>':'')+`<button type="button" data-sec="${g.id}"><i>${g.dataset.si}</i><span>${esc(g.dataset.sn)}</span></button>`).join('');
+  const pick=id=>{cur=id;ls.set('vc_stsec',id);if($('stQ').value){$('stQ').value='';flt();}gs.forEach(g=>g.classList.toggle('on',g.id===id));nav.querySelectorAll('[data-sec]').forEach(b=>b.classList.toggle('on',b.dataset.sec===id));$('stBody').scrollTop=0;};
+  const flt=()=>{const q=$('stQ').value.trim().toLowerCase();bx.classList.toggle('stsrch',!!q);let hit=0;
+   gs.forEach(g=>{let n=0;g.querySelectorAll('.stc').forEach(c=>{const ok=!q||c.textContent.toLowerCase().includes(q)||g.dataset.sn.toLowerCase().includes(q);c.hidden=!ok;if(ok)n++;});g.classList.toggle('hit',!!q&&n>0);hit+=n;});
+   $('stNone').hidden=!q||!!hit;if(!q)gs.forEach(g=>g.classList.toggle('on',g.id===cur));};
+  nav.querySelectorAll('[data-sec]').forEach(b=>b.addEventListener('click',()=>pick(b.dataset.sec)));$('stQ').addEventListener('input',flt);pick(cur);}
  const box=$('dlgBox'),go=f=>()=>{dlgClose();f();};
- box.querySelectorAll('[data-st]').forEach(b=>b.addEventListener('click',()=>{ls.set('vc_settab',b.dataset.st);setDlg(b.dataset.st);}));
- box.querySelectorAll('[data-sx]').forEach(b=>b.addEventListener('click',()=>{const x=b.dataset.sx;
+  box.querySelectorAll('[data-sx]').forEach(b=>b.addEventListener('click',()=>{const x=b.dataset.sx;
   if(x==='sExp'){$('sExp').click();return;}dlgClose();
   if(x==='imp')importDlg();else if(x==='nImp'){if(NOTES&&PWGRID&&PWGRID.length&&!NOTES.length)$('nImp').click();else{show('notes');toast(NOTES?(NOTES.length?'Notizen sind schon gefüllt':'Keine Passwortliste vorhanden'):'Erst mit der PIN öffnen, dann „Aus Passwort-Liste übernehmen“');}}else $(x).click();}));
- if(tab==='a'&&box.querySelector('.umgrid'))umBind(box.querySelector('.umgrid'));if(tab==='a')db.doc('meta/users').get().then(d=>{USERSET=d.exists?d.data():{};umRefresh();}).catch(()=>{});
+ if(adm&&box.querySelector('.umgrid'))umBind(box.querySelector('.umgrid'));if(adm)db.doc('meta/users').get().then(d=>{USERSET=d.exists?d.data():{};umRefresh();}).catch(()=>{});
  if($('stPw'))$('stPw').addEventListener('click',go(()=>$('meSet').click()));if($('stOut'))$('stOut').addEventListener('click',go(()=>$('switchUser').click()));
  if($('stBr'))$('stBr').addEventListener('click',go(brandDlg));if($('stAdm'))$('stAdm').addEventListener('click',go(()=>$('meSet').click()));if($('stMail'))$('stMail').addEventListener('click',go(mailCfgDlg));
  const bk=$('stBk');if(bk)bk.addEventListener('click',async()=>{bk.disabled=true;$('stBkE').textContent='Sammle Daten …';try{const n=await backupDl();$('stBkE').textContent='✓ '+n+' Einträge – liegt im Download-Ordner';}catch(err){$('stBkE').textContent=err.message||String(err);}finally{bk.disabled=false;}});
@@ -3307,8 +3367,7 @@ function setDlg(tab){if(!ME)return;const u=U(ME.id),pin=NAVPIN,st=MYPREF.start||
  if($('stNtf'))$('stNtf').addEventListener('change',async e=>{const on=e.target.checked;if(on&&window.Notification&&Notification.permission==='default'){try{await Notification.requestPermission();}catch(_){}}uiSave('ntf',on);setTimeout(()=>{if($('stNtf'))setDlg('u');},300);});
  if($('stTest'))$('stTest').addEventListener('click',()=>{const ui2=MYPREF.ui||{};if(ui2.snd||!ui2.ntf)uiBeep();if(ui2.ntf&&window.Notification&&Notification.permission==='granted'){try{new Notification('Planer: Test',{body:'So sieht eine Meldung aus.',tag:'vc-test',silent:!!ui2.snd});}catch(_){}}toast(ui2.snd||ui2.ntf?'Test ausgelöst':'Ton/Meldung sind aus – Test-Ton gespielt');});
  box.querySelectorAll('[data-hide]').forEach(c=>c.addEventListener('change',()=>{const h=[...box.querySelectorAll('[data-hide]')].filter(x=>!x.checked).map(x=>x.dataset.hide);uiSave('hide',h,'Navi angepasst');}));
- box.querySelectorAll('[data-jump]').forEach(j=>j.addEventListener('click',()=>{const g=$(j.dataset.jump);if(g)g.scrollIntoView({behavior:'smooth',block:'start'});}));
- if($('stKick'))$('stKick').addEventListener('click',e=>{const k=e.currentTarget;if(!k.dataset.sure){k.dataset.sure=1;k.textContent='Wirklich? Nochmal klicken';return;}const t=Date.now();ls.set('vc_lin',t+1);db.doc('meta/prefs').set({[ME.id]:{kick:t}},{merge:true}).then(()=>toast('Alle anderen Geräte werden abgemeldet')).catch(fail);k.textContent='✓ erledigt';k.disabled=true;});
+  if($('stKick'))$('stKick').addEventListener('click',e=>{const k=e.currentTarget;if(!k.dataset.sure){k.dataset.sure=1;k.textContent='Wirklich? Nochmal klicken';return;}const t=Date.now();ls.set('vc_lin',t+1);db.doc('meta/prefs').set({[ME.id]:{kick:t}},{merge:true}).then(()=>toast('Alle anderen Geräte werden abgemeldet')).catch(fail);k.textContent='✓ erledigt';k.disabled=true;});
  if($('stUpd'))$('stUpd').addEventListener('click',async e=>{const k=e.currentTarget;k.disabled=true;try{const r=await fetch('version.txt?'+Date.now(),{cache:'no-store'});if(!r.ok)throw 0;const v=(await r.text()).trim();if(!/^\d+\.\d+\.\d+$/.test(v))throw 0;if(v&&v!==CLIENT_VERSION){toast('Update '+v+' gefunden – lädt neu …');setTimeout(()=>location.replace(location.pathname+'?v='+encodeURIComponent(v)),600);}else toast('Aktuell: Version '+CLIENT_VERSION);}catch(_){toast('Keine Verbindung – später nochmal');}k.disabled=false;});
  if($('stRel'))$('stRel').addEventListener('click',()=>location.reload());
  if($('stCache'))$('stCache').addEventListener('click',async()=>{try{if(navigator.serviceWorker){for(const r of await navigator.serviceWorker.getRegistrations())await r.unregister();}if(window.caches){for(const k of await caches.keys())await caches.delete(k);}}catch(_){}try{await db.terminate();await db.clearPersistence();}catch(_){}try{if(indexedDB.databases){for(const d of await indexedDB.databases())if(d.name&&/firestore/i.test(d.name))indexedDB.deleteDatabase(d.name);}}catch(_){}toast('Zwischenspeicher geleert – lädt neu …');setTimeout(()=>location.replace(location.pathname+'?v='+Date.now()),500);});

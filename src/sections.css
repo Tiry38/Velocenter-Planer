@@ -1245,3 +1245,37 @@ b.lsn{font-weight:800;color:#fff;white-space:nowrap}
 
 /* 1.11.17: lange Wörter/Adressen umbrechen (Handy) */
 .lsa,.lsq,.lspk{min-width:0;overflow-wrap:anywhere;hyphens:auto}
+/* 1.11.24 (Tiry: Einstellungen „komplett anders, verständlich, sauber, modern“): Seitenleiste links, je Bereich eine Seite rechts, Suche, Schalter statt Häkchen */
+.dlg-box.wide.stwide{width:min(1180px,96vw);height:min(860px,92vh);max-height:92vh;overflow:hidden;padding:0;display:flex}
+.stlay{display:grid;grid-template-columns:250px 1fr;width:100%;height:100%;min-height:0}
+.stside{display:flex;flex-direction:column;gap:12px;padding:20px 14px;border-right:1px solid rgba(255,255,255,.09);background:rgba(255,255,255,.03);min-height:0;overflow:auto}
+.stside .sthd{display:flex;flex-direction:column;align-items:stretch;gap:12px;margin:0}.stside .sthd h3{padding:0 6px}
+#stQ{width:100%;box-sizing:border-box;padding:9px 12px;border-radius:11px;font:600 13px "Outfit",sans-serif}
+.stnav{display:flex;flex-direction:column;gap:2px}
+.stnh{font:800 10.5px "Outfit",sans-serif;letter-spacing:.12em;text-transform:uppercase;color:#64748B;padding:12px 10px 5px}
+.stnav button{all:unset;box-sizing:border-box;display:flex;align-items:center;gap:11px;padding:9px 10px;border-radius:11px;cursor:pointer;font:600 14px "Outfit",sans-serif;color:#CBD5E1;transition:background .15s,color .15s}
+.stnav button i{font-style:normal;display:grid;place-items:center;width:30px;height:30px;border-radius:9px;background:rgba(255,255,255,.06);font-size:16px;flex:none}
+.stnav button:hover{background:rgba(255,255,255,.06);color:#fff}
+.stnav button.on{background:linear-gradient(90deg,rgba(226,35,45,.22),rgba(226,35,45,.06));color:#fff;box-shadow:inset 3px 0 0 #E2232D}
+.stnav button.on i{background:rgba(226,35,45,.25)}
+.stmain{display:flex;flex-direction:column;min-width:0;min-height:0}
+.stmain .stbody{flex:1;min-height:0;overflow:auto;padding:22px 26px 10px}
+.stmain>.acts{padding:12px 26px 16px;border-top:1px solid rgba(255,255,255,.08)}
+.stbody .stgrp{display:none;margin:0}.stbody .stgrp.on{display:block}
+.stwide.stsrch .stgrp{display:none}.stwide.stsrch .stgrp.hit{display:block;margin-bottom:22px}
+.stsh{display:flex;align-items:center;gap:14px;margin:0 0 18px}
+.stshi{display:grid;place-items:center;width:48px;height:48px;border-radius:14px;font-size:24px;background:rgba(226,35,45,.16);border:1px solid rgba(226,35,45,.35);flex:none}
+.stsh h4{margin:0!important;font:800 22px "Outfit",sans-serif!important;letter-spacing:0!important;text-transform:none!important;color:#fff!important}
+.stsh p{margin:3px 0 0;font:500 13.5px "Outfit",sans-serif;color:#94A3B8}
+.stnone{padding:40px;text-align:center;color:#94A3B8;font:600 14px "Outfit",sans-serif}
+.stbody .stgrid{grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:14px}
+.stbody .stc{border-radius:16px;padding:16px 18px}
+/* Schalter statt Häkchen */
+.stbody .stchk{align-items:center;padding:9px 0;border-top:1px solid rgba(255,255,255,.06)}.stbody .stchk:first-of-type{border-top:0}
+.stbody .stchk input{appearance:none;-webkit-appearance:none;position:relative;width:40px;height:23px;border-radius:12px;background:rgba(148,163,184,.35);cursor:pointer;transition:background .2s;margin:0;order:2;margin-left:auto}
+.stbody .stchk input::after{content:"";position:absolute;top:3px;left:3px;width:17px;height:17px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.35);transition:transform .2s}
+.stbody .stchk input:checked{background:#E2232D}.stbody .stchk input:checked::after{transform:translateX(17px)}
+.stbody .setl{display:flex;flex-direction:column;gap:5px;font:700 12px "Outfit",sans-serif;color:#94A3B8}
+.stbody .setl select{padding:9px 10px;border-radius:10px;font:600 13.5px "Outfit",sans-serif}
+@media(max-width:760px){.stlay{grid-template-columns:1fr;grid-template-rows:auto 1fr}.stside{border-right:0;border-bottom:1px solid rgba(255,255,255,.09);padding:12px}.stnav{flex-direction:row;overflow-x:auto}.stnh{display:none}.stnav button span{white-space:nowrap}.stmain .stbody{padding:14px}.stbody .stgrid{grid-template-columns:1fr}}
+.stwide.stsrch .stnav button.on{background:none;box-shadow:none}
