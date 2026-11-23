@@ -1,6 +1,6 @@
 # CLAUDE.md – Velocenter Werkstatt-Cockpit (Web-App „Planer“)
 
-Diese Datei liest Claude Code bei jeder Sitzung automatisch. Sie enthält alles, was aus dem Aufbau-Chat (02.11.2026) wichtig ist.
+Diese Datei liest Claude Code bei jeder Sitzung automatisch. **Design → immer `DESIGN.md` (aktuell: Herbstallee + Nebel-Glas), nie das alte Design A.** Sie enthält alles, was aus dem Aufbau-Chat (02.11.2026) wichtig ist.
 
 ## 1. Was ist das?
 
@@ -18,7 +18,7 @@ Web-App für **Velocenter Hessert** (Fahrradgeschäft, Wörth am Rhein). Ersetzt
 - **Lange Testläufe nerven ihn** (er bricht sie ab). Kurztest `quick.js` reicht pro Änderung; großer Test `tf.js` nur bei größeren Umbauten.
 - 100 % faktenkorrekt, Unsicheres als unsicher benennen.
 - **Am Ende jeder Antwort kurze Empfehlung zu `/compact` bzw. `/clear`** (Tiry, 04.11.): `/clear`, wenn alles ausgeliefert und in CLAUDE.md steht; `/compact <Fokus>`, wenn eine Aufgabe noch offen ist; sonst „weiter so“.
-- Design: **futuristisch, dunkel, leuchtend, stylisch** („kein 0815, nicht nach Excel aussehen“), trotzdem **sehr übersichtlich**. Schrift muss gut herausstechen.
+- **Design: verbindlich ist `DESIGN.md` (Herbstallee + Nebel-Glas, seit 22.11.2026, gleiche Datei in Planer, KI-Zentrale und velo-center-web).** Ältere Beschreibungen weiter unten (dunkel/futuristisch, Homepage-Design A mit Eis-Himmel, rotem Keil, Strichen, Goldring, grauer Navi) sind **Verlauf, nicht mehr gültig**. Kein 0815, nicht nach Excel aussehen, sehr übersichtlich, Schrift muss gut herausstechen.
 
 ## 3. Technik
 
