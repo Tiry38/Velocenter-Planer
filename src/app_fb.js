@@ -166,7 +166,7 @@ async function kontenSichern(start){const sec=((firebase.apps||[]).find(a=>a.nam
  return {neu,da};}
 function dlgClose(){if(DLGLOCK)return;$('dlg').hidden=true;$('dlgBox').innerHTML='';$('dlgBox').classList.remove('wide','xwide','stwide');}
 /* 1.10.24: Klick neben das Fenster schließt NICHT mehr (Tiry) – nur Abbrechen/✕ oder ESC */$('dlg').addEventListener('click',e=>{if(e.target.closest('[data-close]'))dlgClose();});
-document.addEventListener('keydown',e=>{if(e.key!=='Escape'||$('dlg').hidden||e.defaultPrevented)return;if(typeof kdPop!=='undefined'&&kdPop)return;const t=e.target;if(t&&t.closest&&t.closest('#dlg')&&t.matches('input[type=date],select'))return;dlgClose();});
+document.addEventListener('keydown',e=>{if(e.key!=='Escape'||$('dlg').hidden||e.defaultPrevented)return;if(typeof kdPop!=='undefined'&&kdPop)return;const t=e.target;if(t&&t.closest&&t.closest('#dlg')&&t.matches('input[type=date],select')&&!t.closest('.stwide'))return;if(t&&t.id==='stQ'&&t.value){e.preventDefault();t.value='';t.dispatchEvent(new Event('input'));return;}dlgClose();});
 $('meCfg').addEventListener('click',()=>setDlg());
 /* 1.9.1: eigene Einstellungen je Nutzer (Profil-Menü → ⚙ Einstellungen, auch eingeklappt) */
 /* 1.10.36: ⚙ Einstellungen neu – Reiter Nutzer/Admin, jeder Import/Export als eigene Karte mit Beschreibung */

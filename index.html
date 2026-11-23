@@ -3032,7 +3032,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 <script>
 const FB_CONFIG={apiKey:"AIzaSyC_uZPvc5rJETwlS4JbfCoTkkE4ckjtp0M",authDomain:"velocenter-planer.firebaseapp.com",projectId:"velocenter-planer",storageBucket:"velocenter-planer.firebasestorage.app",messagingSenderId:"1018330488700",appId:"1:1018330488700:web:262a4d1660353e6fde8ef9"};
 /* ================= Velocenter Werkstatt-Cockpit – Oberfläche ================= */
-const CLIENT_VERSION='1.11.24';
+const CLIENT_VERSION='1.11.25';
 const USERS=[{id:'kevin',n:'Kevin',c:'#E2232D'},{id:'stefan',n:'Stefan',c:'#F59E0B'},{id:'martina',n:'Martina',c:'#EC4899'},{id:'sascha',n:'Sascha',c:'#22D3EE'},{id:'rene',n:'René',c:'#34D399'}];
 const U=id=>USERS.find(u=>u.id===id)||{n:'',c:'#64748B',id:''};
 /* 1.10.37: Profilfarbe je Nutzer (meta/prefs[ID].col, für alle sichtbar) – Cache für den Login-Bildschirm */
@@ -3199,7 +3199,7 @@ async function kontenSichern(start){const sec=((firebase.apps||[]).find(a=>a.nam
  return {neu,da};}
 function dlgClose(){if(DLGLOCK)return;$('dlg').hidden=true;$('dlgBox').innerHTML='';$('dlgBox').classList.remove('wide','xwide','stwide');}
 /* 1.10.24: Klick neben das Fenster schließt NICHT mehr (Tiry) – nur Abbrechen/✕ oder ESC */$('dlg').addEventListener('click',e=>{if(e.target.closest('[data-close]'))dlgClose();});
-document.addEventListener('keydown',e=>{if(e.key!=='Escape'||$('dlg').hidden||e.defaultPrevented)return;if(typeof kdPop!=='undefined'&&kdPop)return;const t=e.target;if(t&&t.closest&&t.closest('#dlg')&&t.matches('input[type=date],select'))return;dlgClose();});
+document.addEventListener('keydown',e=>{if(e.key!=='Escape'||$('dlg').hidden||e.defaultPrevented)return;if(typeof kdPop!=='undefined'&&kdPop)return;const t=e.target;if(t&&t.closest&&t.closest('#dlg')&&t.matches('input[type=date],select')&&!t.closest('.stwide'))return;if(t&&t.id==='stQ'&&t.value){e.preventDefault();t.value='';t.dispatchEvent(new Event('input'));return;}dlgClose();});
 $('meCfg').addEventListener('click',()=>setDlg());
 /* 1.9.1: eigene Einstellungen je Nutzer (Profil-Menü → ⚙ Einstellungen, auch eingeklappt) */
 /* 1.10.36: ⚙ Einstellungen neu – Reiter Nutzer/Admin, jeder Import/Export als eigene Karte mit Beschreibung */
