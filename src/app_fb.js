@@ -1649,7 +1649,7 @@ async function mtplGet(){if(MTPL)return MTPL;let d={};try{const x=await db.doc('
  /* 1.10.22: alter Bewertungs-Satz in gespeicherten Vorlagen → neuer automatischer Satz */
  [['sie','ein',0,0],['sie','fam',0,1],['du','ein',1,0],['du','fam',1,1]].forEach(([k,f,du,fa])=>{const t=MTPL[k][f];if(t&&t.b)t.b=t.b.replace(/^(Sie sind|Du bist|Ihr seid) zufrieden mit uns\? Über eine Google-Bewertung freuen wir uns sehr:$/m,kdRvTxt(du,fa)).replace(/(bei Google!) 🙂$/m,'$1 😊');});return MTPL;}
 // Name aus „Müller, Hans“ bzw. „Hans Müller“
-/* 1.10.18: Kunden-Liste schreibt „Nachname Vorname“ (z. B. „Thirolf Kevin“) → Standard: 1. Wort = Nachname. Pro Kunde umdrehbar (Feld nameOrd='vn' = „Vorname Nachname“). */
+/* 1.10.18: Kunden-Liste schreibt „Nachname Vorname“ (z. B. „Mustermann Max“) → Standard: 1. Wort = Nachname. Pro Kunde umdrehbar (Feld nameOrd='vn' = „Vorname Nachname“). */
 function kdNameSplit(k,ord){k=String(k||'').replace(/\s+/g,' ').trim();if(!k)return{vn:'',nn:''};if(k.includes(',')){const [a,b]=k.split(',');return{nn:a.trim(),vn:(b||'').trim()};}const w=k.split(' ');if(w.length<2)return{nn:k,vn:''};if(ord==='vn'){const nn=w.pop();return{nn,vn:w.join(' ')};}return{nn:w[0],vn:w.slice(1).join(' ')};}
 function kdAnrede(r,a,du){const {vn,nn}=kdNameSplit(r.kunde,r.nameOrd);if(a==='fam')return 'Hallo Familie '+nn+',';
  if(du){if(a==='neu')return 'Hallo,';return 'Hallo'+(vn?' '+vn.split(' ')[0]:'')+',';}
@@ -2293,7 +2293,7 @@ function kdeSpell(v,rows,f,mk){v=String(v||'').trim();if(!v)return v;const n=kde
  for(const r of rows){if(mk&&kdeN(r.marke).replace(/ /g,'')!==mk)continue;const x=String(r[f]||'').trim();if(!x)continue;if(kdeN(x).replace(/ /g,'')===n||kdeTok(x)===t)c[x]=(c[x]||0)+1;}
  const b=Object.keys(c).sort((a,b)=>c[b]-c[a])[0];return b||v;}
 const kdeRecent=()=>{const ab=Date.now()-365*864e5;return kdAll().filter(r=>r._d&&r._d>=ab&&r._d<=Date.now()+864e5);};
-/* „Kevin Thirolf“ → „Thirolf Kevin“ (Kunden-Liste: Nachname zuerst); Firmen bleiben */
+/* „Max Mustermann“ → „Mustermann Max“ (Kunden-Liste: Nachname zuerst); Firmen bleiben */
 const kdeName=(vn,nn,full)=>{vn=String(vn||'').trim();nn=String(nn||'').trim();if(nn)return (nn+' '+vn).trim();full=String(full||'').trim().replace(/^(herr|frau|familie)\s+/i,'');
  if(!full||/\b(gmbh|ag|kg|ug|e\.?\s?k|ohg|gbr|mbh|co\.?)\b/i.test(full)||full.includes(','))return full;const p=full.split(/\s+/);return p.length>1?p[p.length-1]+' '+p.slice(0,-1).join(' '):full;};
 /* Kunde aus den Kandidaten der KI-Zentrale (Reihenfolge: Übernahme, Fahrzeug-Export über Rahmen-Nr., Kunden-Nr. der Rechnung, Rechnungsadresse).
